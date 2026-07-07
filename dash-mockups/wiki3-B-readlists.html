@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 · B : Read lists (Masthead)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V5 · DIRECTION B "MASTHEAD" · VIEW: readlists · ROUTE /wiki/readlists
+ The flagship publication paced lead / well / back-of-book.
+ ───────────────────────────────────────────────────────────────────────────────
+ CONSENSUS DECISIONS IMPLEMENTED:
+  · One rule-based hero per view: the LEAD is the single "MOST READ LIST" slot,
+    fed by the Most-read sort (never a staff pick, never personalized). With one
+    real list the rule is trivially true; at scale the same O(1) slot surfaces
+    the top of the Most-read sort.
+  · Breadcrumb on every non-home view (Wiki / Read lists), linked segments,
+    "/" separators, current segment text-primary.
+  · Every state is a URL: /wiki/readlists?tab=&sort=&search=&page= (query state
+    on the toolbar tabs, sort control, search input and pagination footer).
+  · No fake metrics: read-list tables carry Items / Reads / Updated and NEVER a
+    per-list Saves column (savesCount is per-article only). Type filters carry
+    no counts except the real total. Only real Alice list rendered by default.
+  · Zero-signal designed, not padded: the sparse state ships the hero + single
+    real row + a dashed "create the second list" funnel invitation.
+  · Density confined to the back of book: the paginated archive absorbs growth.
+ NEW PRIMITIVES ON THIS PAGE (new primitive, add to kit.html + common/ same PR):
+  · Breadcrumb  · TypeBadge (monochrome icon+label chip, 5 types, replaces the
+    64px monogram tile)  · SaveToListButton (persistent one-click star, never
+    hover-only, used on the detail view).
+ GROWTH PROOF (visible):
+  · The labeled "SCALED PREVIEW" directory carries hundreds of lists (Page 1 of
+    9) with sortable Items / Reads / Updated columns, a Curator column and
+    search, while the hero stays exactly one rule-based slot. The sparse state
+    is explicitly designed so the page sells curation before supply exists.
+ Tokens + shell (232px sidebar, halo, max-w-[1400px]) copied verbatim from
+ wiki2-E-topichub.html. No em dash. English copy. No CSS line-clamp.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-brand font-medium bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- ═══ Breadcrumb (NEW PRIMITIVE) ═══ -->
+      <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+        <a class="hover:text-text-primary cursor-pointer">Wiki</a>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-text-primary">Read lists</span>
+      </nav>
+
+      <!-- ═══ PageHeader (no stats in header) ═══ -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight">Read lists</h1>
+          <p class="text-sm text-text-secondary">Curated reading paths by the community.</p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ New list</button>
+        </div>
+      </div>
+
+      <!-- ═══ LEAD · rule-based hero (MOST READ LIST) · two-column card ═══ -->
+      <section class="overflow-hidden rounded-lg border border-border-subtle bg-surface">
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+          <!-- left half: the editorial front -->
+          <div class="bg-[linear-gradient(120deg,rgba(131,233,255,0.06),transparent_65%)] p-5 sm:p-6 flex flex-col">
+            <div class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary">Most read list</div>
+            <h2 class="mt-2 font-inter text-[20px] font-semibold tracking-tight text-text-primary">Alice public list</h2>
+            <p class="mt-1.5 text-[12.5px] text-text-secondary">A public reading list</p>
+            <div class="mt-3 flex items-center gap-2">
+              <span class="w-6 h-6 shrink-0 rounded-full grid place-items-center text-[9px] font-semibold bg-surface-3 text-text-secondary">AL</span>
+              <span class="text-[12px] text-text-secondary">by alice</span>
+            </div>
+            <div class="mono mt-2 text-[11px] text-text-tertiary">2 items · 1 reader · updated 12d</div>
+            <div class="mt-auto pt-5">
+              <button class="h-8 inline-flex items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-text-on hover:bg-brand/90">Open the list</button>
+            </div>
+          </div>
+          <!-- right half: numbered table-of-contents preview -->
+          <div class="border-t lg:border-t-0 lg:border-l border-border-subtle bg-surface-2/30 p-5 sm:p-6">
+            <div class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary mb-3">In this list</div>
+            <div class="space-y-px rounded-md border border-border-subtle overflow-hidden">
+              <div class="flex items-center gap-3 bg-surface px-3 py-2.5">
+                <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">01</span>
+                <!-- TypeBadge · article -->
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>Article</span>
+                <span class="min-w-0 flex-1 truncate text-[13px] text-text-primary">HIP-3 Explained: Why Hyperliquid Will Flip Binance</span>
+              </div>
+              <div class="flex items-center gap-3 bg-surface px-3 py-2.5">
+                <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">02</span>
+                <!-- TypeBadge · X thread -->
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.4l-5-6.5L5.8 22H2.7l7.8-8.9L2 2h6.6l4.5 6z"/></svg>X thread</span>
+                <span class="min-w-0 flex-1 truncate text-[13px] text-text-primary">What Is HIP-2, Hyper Liquidity?</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ BACK OF BOOK · default directory (real data only) ═══ -->
+      <section class="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
+        <!-- toolbar -->
+        <div class="flex flex-wrap items-center gap-3 border-b border-border-subtle px-4 py-3">
+          <div class="relative flex-1 min-w-[180px] max-w-xs">
+            <input placeholder="Search lists or curators" class="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+          </div>
+          <div class="flex items-center gap-3 text-xs">
+            <button class="text-brand font-medium">All <span class="mono text-text-tertiary">1</span></button>
+            <button class="text-text-tertiary hover:text-text-primary">Mine <span class="mono">0</span></button>
+            <button class="text-text-tertiary hover:text-text-primary">Started <span class="mono">1</span></button>
+          </div>
+          <div class="flex items-center gap-2 text-[11px]">
+            <span class="text-text-tertiary">Sort</span>
+            <button class="text-brand font-medium">Newest</button>
+            <button class="text-text-tertiary hover:text-text-primary">Most items</button>
+            <button class="text-text-tertiary hover:text-text-primary">Most read</button>
+          </div>
+          <span class="text-text-tertiary text-[11.5px] ml-auto shrink-0">1 list</span>
+        </div>
+        <table class="w-full border-collapse table-fixed">
+          <colgroup><col><col style="width:180px"><col style="width:84px"><col style="width:84px"><col style="width:110px"></colgroup>
+          <thead><tr>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">List</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Curator</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Items</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Reads</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Updated</th>
+          </tr></thead>
+          <tbody>
+            <tr class="hover:bg-surface-2/60 transition-colors cursor-pointer">
+              <td class="px-4 py-3 align-top">
+                <div class="text-[13px] font-medium text-text-primary">Alice public list</div>
+                <div class="text-[11.5px] text-text-secondary">A public reading list</div>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 shrink-0 rounded-full grid place-items-center text-[8px] font-semibold bg-surface-3 text-text-secondary">AL</span>
+                  <span class="text-[12.5px] text-text-secondary">alice</span>
+                </div>
+              </td>
+              <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">2</td>
+              <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">1</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">12d</td>
+            </tr>
+            <!-- dashed funnel invitation: create the second list (sparse state, not padded) -->
+            <tr>
+              <td colspan="5" class="px-4 py-3">
+                <div class="flex flex-wrap items-center gap-3 rounded-md border border-dashed border-border-default bg-surface-2/30 px-4 py-3">
+                  <div class="min-w-0">
+                    <div class="text-[12.5px] font-medium text-text-secondary">Create the second read list on Liquid Terminal</div>
+                    <div class="text-[11px] text-text-tertiary">Curation is a roadmap bet. Be the next curator.</div>
+                  </div>
+                  <button class="ml-auto h-7 shrink-0 inline-flex items-center gap-1.5 rounded-md border border-border-default bg-surface-2 px-2.5 text-[11.5px] text-text-secondary hover:text-text-primary">+ New list</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ═══ SCALED PREVIEW · same directory at growth scale ═══ -->
+      <div class="space-y-2">
+        <div class="text-[10px] uppercase tracking-[0.14em] text-text-tertiary">Scaled preview · plausible placeholders</div>
+        <section class="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
+          <div class="flex flex-wrap items-center gap-3 border-b border-border-subtle px-4 py-3">
+            <div class="relative flex-1 min-w-[180px] max-w-xs">
+              <input placeholder="Search lists or curators" class="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <button class="text-brand font-medium">All <span class="mono text-text-tertiary">218</span></button>
+              <button class="text-text-tertiary hover:text-text-primary">Mine <span class="mono">3</span></button>
+              <button class="text-text-tertiary hover:text-text-primary">Started <span class="mono">12</span></button>
+            </div>
+            <div class="flex items-center gap-2 text-[11px]">
+              <span class="text-text-tertiary">Sort</span>
+              <button class="text-text-tertiary hover:text-text-primary">Newest</button>
+              <button class="text-text-tertiary hover:text-text-primary">Most items</button>
+              <button class="text-brand font-medium">Most read</button>
+            </div>
+            <span class="text-text-tertiary text-[11.5px] ml-auto shrink-0"><span class="mono">218</span> lists</span>
+          </div>
+          <table class="w-full border-collapse table-fixed">
+            <colgroup><col><col style="width:180px"><col style="width:84px"><col style="width:84px"><col style="width:110px"></colgroup>
+            <thead><tr>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">List</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Curator</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Items</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Reads</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Updated</th>
+            </tr></thead>
+            <tbody>
+              <tr class="hover:bg-surface-2/60 transition-colors cursor-pointer">
+                <td class="px-4 py-3 align-top"><div class="text-[13px] font-medium text-text-primary">Hyperliquid onboarding path</div><div class="text-[11.5px] text-text-secondary">Zero to first trade, step by step</div></td>
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-5 h-5 shrink-0 rounded-full grid place-items-center text-[8px] font-semibold bg-surface-3 text-text-secondary">HP</span><span class="text-[12.5px] text-text-secondary">hyperpc</span></div></td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">8</td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">24</td>
+                <td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">3d</td>
+              </tr>
+              <tr class="hover:bg-surface-2/60 transition-colors cursor-pointer">
+                <td class="px-4 py-3 align-top"><div class="text-[13px] font-medium text-text-primary">HIP-3 builder starter pack</div><div class="text-[11.5px] text-text-secondary">Deploy your first builder perp</div></td>
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-5 h-5 shrink-0 rounded-full grid place-items-center text-[8px] font-semibold bg-surface-3 text-text-secondary">OM</span><span class="text-[12.5px] text-text-secondary">omnia</span></div></td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">12</td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">18</td>
+                <td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">6d</td>
+              </tr>
+              <tr class="hover:bg-surface-2/60 transition-colors cursor-pointer">
+                <td class="px-4 py-3 align-top"><div class="text-[13px] font-medium text-text-primary">Security essentials</div><div class="text-[11.5px] text-text-secondary">OPSEC and self-custody for HyperEVM</div></td>
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-5 h-5 shrink-0 rounded-full grid place-items-center text-[8px] font-semibold bg-surface-3 text-text-secondary">SK</span><span class="text-[12.5px] text-text-secondary">skygg</span></div></td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">6</td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">31</td>
+                <td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">9d</td>
+              </tr>
+              <tr class="hover:bg-surface-2/60 transition-colors cursor-pointer">
+                <td class="px-4 py-3 align-top"><div class="text-[13px] font-medium text-text-primary">Farming season 2 prep</div><div class="text-[11.5px] text-text-secondary">Points, airdrops and rotation reads</div></td>
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-5 h-5 shrink-0 rounded-full grid place-items-center text-[8px] font-semibold bg-surface-3 text-text-secondary">OA</span><span class="text-[12.5px] text-text-secondary">oak</span></div></td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">9</td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">12</td>
+                <td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">11d</td>
+              </tr>
+              <tr class="hover:bg-surface-2/60 transition-colors cursor-pointer">
+                <td class="px-4 py-3 align-top"><div class="text-[13px] font-medium text-text-primary">Alice public list</div><div class="text-[11.5px] text-text-secondary">A public reading list</div></td>
+                <td class="px-4 py-3"><div class="flex items-center gap-2"><span class="w-5 h-5 shrink-0 rounded-full grid place-items-center text-[8px] font-semibold bg-surface-3 text-text-secondary">AL</span><span class="text-[12.5px] text-text-secondary">alice</span></div></td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-primary">2</td>
+                <td class="px-4 py-3 text-right mono text-[13px] text-text-secondary">1</td>
+                <td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">12d</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- server pagination footer -->
+          <div class="flex items-center justify-between border-t border-border-subtle px-4 py-2.5">
+            <span class="text-[11px] text-text-tertiary">Page <span class="mono">1</span> of <span class="mono">9</span></span>
+            <div class="flex items-center gap-1">
+              <button class="h-7 rounded-md border border-border-subtle px-2.5 text-[11px] text-text-tertiary">‹ Prev</button>
+              <button class="h-7 rounded-md border border-border-subtle bg-surface-2 px-2.5 text-[11px] text-text-primary">Next ›</button>
+            </div>
+          </div>
+        </section>
+        <p class="text-[11px] text-text-tertiary max-w-2xl">At scale the hero slot stays one rule-based pick fed by the Most read sort (highlighted above), never a staff pick. The archive below absorbs all growth through search, sort and server pagination.</p>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

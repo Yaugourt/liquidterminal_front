@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 · B (Masthead) : Home</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V5 · DIRECTION B "MASTHEAD" · VIEW: home · route /wiki
+ ───────────────────────────────────────────────────────────────────────────────
+ The flagship publication, paced lead / well / back-of-book.
+ · LEAD  = ONE rule-based hero (Chapter 01 "Introduction", the curriculum entry
+           point, honestly labelled "START HERE"), no personalization, no staff
+           pick. Fixed O(1) cost. Sticky 280px rail = real signals only
+           (Most saved: exactly the 2 articles with saves; Read lists: the one
+           real Alice list).
+ · WELL  = the curriculum rendered as a table of contents (7 real chapters,
+           real article counts 8/3/11/10/12/3/32, HIP Framework expanded to its
+           3 real subs). O(1) by construction.
+ · BACK OF BOOK = the dense, paginated archive where all growth lands
+           ("Latest across the wiki", 6 real articles, server pagination
+           "Page 1 of 9").
+
+ CONSENSUS DECISIONS IMPLEMENTED
+ · Kit-only composition (PageHeader, OverviewModule/ModuleTable/ModuleRow,
+   plain KpiRibbon, text PillTabs, ArticleShell toolbar, server pagination
+   footer). Tokens + Inter/JetBrains Mono + 232px sidebar shell + halo +
+   max-w-[1400px] copied verbatim from wiki2-E-topichub.html.
+ · NEW PRIMITIVES used here (new primitive, add to kit.html + common/ in the
+   same PR): TypeBadge (monochrome icon+label chip, replaces the 64px monogram
+   tile; the 5 types article/X thread/video/podcast/official doc appear as the
+   type filter tabs), SaveToListButton (persistent one-click star on every
+   article card, never hover-only).
+ · No fake metrics: gold star appears ONLY on the 2 articles that really have
+   saves (blocmates ★2, "What Is HIP-2" ★1). Type tabs carry no counts except
+   the real "All 194". No view counts / deltas / sparklines anywhere.
+ · Page header carries no stats (description only). Numbers live in the ribbon,
+   modules and toolbar. UI copy English, no em dash, no CSS line-clamp.
+
+ GROWTH PROOF (visible in-file)
+ · The Curriculum ToC card carries a "SCALED PREVIEW · PLAUSIBLE" divider and 4
+   extra chapters (HyperEVM DeFi, Trading, Security essentials, Validator
+   operations), proving 15 chapters still fit one sub-700px card. Lead + well
+   are O(1). The back-of-book shows server pagination "Page 1 of 9" - that is
+   where the 194 to 2,000 article growth is absorbed.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- ── PageHeader (no stats: description only) ────────────────────── -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold tracking-tight">Wiki</h1>
+          <p class="text-sm text-text-secondary">The Hyperliquid curriculum, and what the community writes about it.</p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">My contributions <span class="mono ml-1.5 text-[10px] text-text-tertiary">2</span></button>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Suggest content</button>
+        </div>
+      </div>
+
+      <!-- ══ LEAD ══ hero (rule-based, honestly labelled) + real-signal rail ══ -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+        <!-- Left: ONE hero card (PrimerBand treatment, Chapter 01 = curriculum entry point) -->
+        <div class="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
+          <div class="bg-[linear-gradient(120deg,rgba(131,233,255,0.08),transparent_62%)] p-5 sm:p-6">
+            <div class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary">START HERE · CHAPTER 01</div>
+            <h2 class="mt-2 font-inter text-2xl font-semibold tracking-tight text-text-primary">Introduction</h2>
+            <p class="mt-1 text-[12.5px] font-medium text-brand/90">A sovereign L1 for fully on-chain finance</p>
+            <p class="mt-3 max-w-2xl text-[13px] leading-relaxed text-text-secondary">
+              Hyperliquid runs its own L1 built for markets: a fully on-chain order book with
+              sub-second finality, and an EVM that reads that native state directly.
+            </p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <button class="h-8 inline-flex items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-text-on hover:bg-brand/90">Read the primer →</button>
+              <button class="h-8 inline-flex items-center gap-1.5 rounded-md border border-border-default bg-surface-2 px-3 text-xs font-medium text-text-secondary hover:text-text-primary">Browse all chapters</button>
+            </div>
+          </div>
+          <!-- embedded plain KpiRibbon (real facts) -->
+          <div class="grid grid-cols-3 divide-x divide-border-subtle border-t border-border-subtle">
+            <div class="px-5 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Founded</div><div class="mono mt-1 text-[17px] font-medium leading-none">2022</div></div>
+            <div class="px-5 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Mainnet</div><div class="mono mt-1 text-[17px] font-medium leading-none">Feb 2023</div></div>
+            <div class="px-5 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Architecture</div><div class="mono mt-1 text-[17px] font-medium leading-none">3-layer</div></div>
+          </div>
+        </div>
+
+        <!-- Right sticky rail: real signals only -->
+        <aside class="min-w-0 space-y-4 xl:sticky xl:top-6">
+
+          <!-- OverviewModule: Most saved (exactly the 2 articles that have saves) -->
+          <div class="bg-surface border border-border-subtle rounded-lg">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Most saved</h3>
+            </div>
+            <a class="flex items-center gap-2.5 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+              <div class="min-w-0 flex-1">
+                <div class="text-[12px] font-medium text-text-primary truncate">HIP-3 Explained: Why Hyperliquid Will Flip Binance</div>
+                <div class="text-[10px] text-text-tertiary truncate">blocmates.com</div>
+              </div>
+              <span class="inline-flex items-center gap-1 shrink-0 text-gold"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg><span class="mono text-[11px] font-medium">2</span></span>
+            </a>
+            <a class="flex items-center gap-2.5 px-4 py-2.5 hover:bg-surface-2/60 transition-colors cursor-pointer">
+              <div class="min-w-0 flex-1">
+                <div class="text-[12px] font-medium text-text-primary truncate">What Is HIP-2, Hyper Liquidity?</div>
+                <div class="text-[10px] text-text-tertiary truncate">x.com</div>
+              </div>
+              <span class="inline-flex items-center gap-1 shrink-0 text-gold"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg><span class="mono text-[11px] font-medium">1</span></span>
+            </a>
+            <div class="px-4 py-2 border-t border-border-subtle text-[10px] text-text-tertiary">saves come from read lists</div>
+          </div>
+
+          <!-- OverviewModule: Read lists (the one real list) -->
+          <div class="bg-surface border border-border-subtle rounded-lg">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Read lists</h3>
+              <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary cursor-pointer">All →</a>
+            </div>
+            <a class="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2/60 transition-colors cursor-pointer">
+              <span class="w-7 h-7 shrink-0 rounded-md bg-surface-2 grid place-items-center text-[10px] font-semibold text-text-secondary">AP</span>
+              <div class="min-w-0 flex-1">
+                <div class="text-[12.5px] font-medium text-text-primary truncate">Alice public list</div>
+                <div class="text-[10px] text-text-tertiary truncate">by alice</div>
+              </div>
+              <span class="mono text-[11px] text-text-secondary shrink-0">2 items</span>
+            </a>
+          </div>
+
+        </aside>
+      </div>
+
+      <!-- ══ WELL ══ curriculum as a table of contents (O(1)) ══ -->
+      <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Curriculum</h3>
+          <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary cursor-pointer">All topics →</a>
+        </div>
+
+        <!-- 01 Introduction -->
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">01</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">✦</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">Introduction</div><div class="text-[10px] text-text-tertiary truncate">A sovereign L1 for fully on-chain finance</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">8</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <!-- 02 HyperBFT -->
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">02</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">⚡</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">HyperBFT</div><div class="text-[10px] text-text-tertiary truncate">Trader-grade consensus, built for latency</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">3</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <!-- 03 HyperCore -->
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">03</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">▤</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">HyperCore</div><div class="text-[10px] text-text-tertiary truncate">Fully on-chain order books, zero gas to trade</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">11</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <!-- 04 HyperEVM -->
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">04</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">‹›</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">HyperEVM</div><div class="text-[10px] text-text-tertiary truncate">Ethereum-compatible, HyperCore-aware</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">10</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <!-- 05 HyperCore <-> HyperEVM -->
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">05</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">⇄</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">HyperCore ↔ HyperEVM</div><div class="text-[10px] text-text-tertiary truncate">Where DeFi meets a native CLOB</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">12</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <!-- 06 $HYPE -->
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">06</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">◎</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">$HYPE</div><div class="text-[10px] text-text-tertiary truncate">Fuel, stake and governance of the network</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">3</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <!-- 07 HIP Framework + 3 real subs -->
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">07</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">⑆</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">HIP Framework</div><div class="text-[10px] text-text-tertiary truncate">Binding code upgrades that extend the protocol</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">32</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <a class="flex items-center gap-2 h-9 pl-10 pr-4 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="text-[12px] text-text-secondary">HIP-1</span><span class="text-[11px] text-text-tertiary">Token standard</span>
+          <span class="mono ml-auto text-[11.5px] text-text-secondary shrink-0">7</span>
+        </a>
+        <a class="flex items-center gap-2 h-9 pl-10 pr-4 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="text-[12px] text-text-secondary">HIP-2</span><span class="text-[11px] text-text-tertiary">Hyperliquidity</span>
+          <span class="mono ml-auto text-[11.5px] text-text-secondary shrink-0">7</span>
+        </a>
+        <a class="flex items-center gap-2 h-9 pl-10 pr-4 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="text-[12px] text-text-secondary">HIP-3</span><span class="text-[11px] text-text-tertiary">Builder perps</span>
+          <span class="mono ml-auto text-[11.5px] text-text-secondary shrink-0">17</span>
+        </a>
+
+        <!-- GROWTH PROOF: scaled preview chapters, still one card -->
+        <div class="px-4 py-1.5 border-b border-border-subtle bg-surface-2/30">
+          <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary">SCALED PREVIEW · PLAUSIBLE · CURRICULUM GROWS 7 → 15</span>
+        </div>
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">08</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">◈</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">HyperEVM DeFi</div><div class="text-[10px] text-text-tertiary truncate">Lending, DEXs and vaults on the EVM</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">14</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">09</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">↗</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">Trading</div><div class="text-[10px] text-text-tertiary truncate">Order types, funding and execution</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">21</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <a class="flex items-center gap-3 px-4 h-11 border-b border-border-subtle hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">10</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">⛨</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">Security essentials</div><div class="text-[10px] text-text-tertiary truncate">Wallet hygiene, approvals and OPSEC</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">9</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+        <a class="flex items-center gap-3 px-4 h-11 hover:bg-surface-2/60 transition-colors cursor-pointer">
+          <span class="mono w-5 shrink-0 text-[11px] text-text-tertiary">11</span>
+          <span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[12px] bg-surface-2 text-text-secondary">⬡</span>
+          <div class="min-w-0 flex-1"><div class="text-[12.5px] font-medium text-text-primary truncate">Validator operations</div><div class="text-[10px] text-text-tertiary truncate">Staking, delegation and node duties</div></div>
+          <span class="mono text-[11.5px] text-text-secondary shrink-0">6</span>
+          <svg class="w-3.5 h-3.5 text-text-tertiary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </a>
+      </div>
+
+      <!-- ══ BACK OF BOOK ══ the dense paginated archive ══ -->
+      <div class="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
+        <div class="flex flex-wrap items-center gap-3 border-b border-border-subtle px-3.5 py-3">
+          <span class="text-[13px] font-semibold">Latest across the wiki</span>
+          <div class="relative min-w-[150px] flex-1 sm:max-w-[220px]">
+            <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+            <input placeholder="Search all resources" class="h-7 w-full rounded-md border border-border-subtle bg-transparent pl-7 pr-3 text-[12px] text-text-primary placeholder:text-text-tertiary" />
+          </div>
+          <!-- type PillTabs (variant=text), uncounted except the real All 194; the 5 types are the filters -->
+          <div class="flex items-center gap-3 text-xs">
+            <button class="text-brand font-medium">All <span class="mono text-text-tertiary">194</span></button>
+            <button class="text-text-tertiary hover:text-text-primary">Article</button>
+            <button class="text-text-tertiary hover:text-text-primary">X thread</button>
+            <button class="text-text-tertiary hover:text-text-primary">Video</button>
+            <button class="text-text-tertiary hover:text-text-primary">Podcast</button>
+            <button class="text-text-tertiary hover:text-text-primary">Doc</button>
+          </div>
+          <div class="ml-auto flex items-center bg-surface-2 p-0.5 rounded-md">
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium bg-brand text-brand-text-on">Cards</button>
+            <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">Table</button>
+          </div>
+        </div>
+
+        <!-- 2-col gap-px grid of 6 ArticleCards (28px TypeBadge, persistent SaveToListButton) -->
+        <div class="grid grid-cols-1 gap-px bg-border-subtle sm:grid-cols-2">
+          <!-- card 1 : blocmates article, saved ★2 -->
+          <article class="flex flex-col gap-2.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-tertiary shrink-0"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg><span class="text-[10px] font-medium uppercase tracking-[0.06em]">Article</span></span>
+              <button class="inline-flex items-center gap-1 h-7 px-1.5 rounded-md text-gold shrink-0" title="In 2 read lists"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg><span class="mono text-[11px] font-medium">2</span></button>
+            </div>
+            <h3 class="text-[13.5px] font-semibold leading-snug text-text-primary">HIP-3 Explained: Why Hyperliquid Will Flip Binance</h3>
+            <div class="mt-auto flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>blocmates.com</span><span>·</span><span class="mono">272d</span></div>
+          </article>
+          <!-- card 2 : X thread -->
+          <article class="flex flex-col gap-2.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-tertiary shrink-0"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.8l-5.3-7-6.1 7H1.7l7.8-8.9L1 2h7l4.8 6.4L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/></svg><span class="text-[10px] font-medium uppercase tracking-[0.06em]">X thread</span></span>
+              <button class="inline-flex items-center gap-1 h-7 px-1.5 rounded-md text-text-tertiary hover:text-gold shrink-0" title="Save to a read list"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg></button>
+            </div>
+            <h3 class="text-[13.5px] font-semibold leading-snug text-text-primary">HIP-3 in Q1 2026: 40% of Hyperliquid Is Now Commodities</h3>
+            <div class="mt-auto flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>x.com</span><span>·</span><span class="mono">58d</span></div>
+          </article>
+          <!-- card 3 : official doc -->
+          <article class="flex flex-col gap-2.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-tertiary shrink-0"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/></svg><span class="text-[10px] font-medium uppercase tracking-[0.06em]">Doc</span></span>
+              <button class="inline-flex items-center gap-1 h-7 px-1.5 rounded-md text-text-tertiary hover:text-gold shrink-0" title="Save to a read list"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg></button>
+            </div>
+            <h3 class="text-[13.5px] font-semibold leading-snug text-text-primary">HyperEVM | Hyperliquid Docs</h3>
+            <div class="mt-auto flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>hyperliquid.gitbook.io</span><span>·</span><span class="mono">96d</span></div>
+          </article>
+          <!-- card 4 : article -->
+          <article class="flex flex-col gap-2.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-tertiary shrink-0"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg><span class="text-[10px] font-medium uppercase tracking-[0.06em]">Article</span></span>
+              <button class="inline-flex items-center gap-1 h-7 px-1.5 rounded-md text-text-tertiary hover:text-gold shrink-0" title="Save to a read list"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg></button>
+            </div>
+            <h3 class="text-[13.5px] font-semibold leading-snug text-text-primary">Beginner and Intermediate Guide to HyperCore and HyperEVM</h3>
+            <div class="mt-auto flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>skygg.substack.com</span><span>·</span><span class="mono">140d</span></div>
+          </article>
+          <!-- card 5 : X thread, saved ★1 -->
+          <article class="flex flex-col gap-2.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-tertiary shrink-0"><svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.8l-5.3-7-6.1 7H1.7l7.8-8.9L1 2h7l4.8 6.4L18.9 2Zm-1.2 18h1.9L7.4 4H5.4l12.3 16Z"/></svg><span class="text-[10px] font-medium uppercase tracking-[0.06em]">X thread</span></span>
+              <button class="inline-flex items-center gap-1 h-7 px-1.5 rounded-md text-gold shrink-0" title="In 1 read list"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg><span class="mono text-[11px] font-medium">1</span></button>
+            </div>
+            <h3 class="text-[13.5px] font-semibold leading-snug text-text-primary">What Is HIP-2, Hyper Liquidity?</h3>
+            <div class="mt-auto flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>x.com</span><span>·</span><span class="mono">201d</span></div>
+          </article>
+          <!-- card 6 : article -->
+          <article class="flex flex-col gap-2.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 h-7 px-2 rounded-md border border-border-subtle bg-surface-2 text-text-tertiary shrink-0"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg><span class="text-[10px] font-medium uppercase tracking-[0.06em]">Article</span></span>
+              <button class="inline-flex items-center gap-1 h-7 px-1.5 rounded-md text-text-tertiary hover:text-gold shrink-0" title="Save to a read list"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.8 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8L12 2Z"/></svg></button>
+            </div>
+            <h3 class="text-[13.5px] font-semibold leading-snug text-text-primary">Demystifying the Hyperliquid Precompiles and CoreWriter</h3>
+            <div class="mt-auto flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>medium.com</span><span>·</span><span class="mono">88d</span></div>
+          </article>
+        </div>
+
+        <!-- server pagination footer (growth lands here) -->
+        <div class="flex items-center justify-between border-t border-border-subtle px-4 py-2.5">
+          <span class="text-[11px] text-text-tertiary">Page <span class="mono">1</span> of <span class="mono">9</span></span>
+          <div class="flex items-center gap-1">
+            <button class="h-7 rounded-md border border-border-subtle px-2.5 text-[11px] text-text-tertiary">‹ Prev</button>
+            <button class="h-7 rounded-md border border-border-subtle bg-surface-2 px-2.5 text-[11px] text-text-primary">Next ›</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

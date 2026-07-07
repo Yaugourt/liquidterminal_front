@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 · C-Ledger : Home (/wiki)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V5 · DIRECTION C "LEDGER" · VIEW: home · ROUTE /wiki
+ ───────────────────────────────────────────────────────────────────────────────
+ One index, six filters. The whole library is ONE URL-driven TypedDataTable
+ with a filterable rail. Scan, filter, open - the wiki read like a terminal.
+
+ CONSENSUS DECISIONS IMPLEMENTED HERE
+ · Kit-only composition: PageHeader, KpiRibbon variant=plain, PillTabs text,
+   TypedDataTable + toolbar, OverviewModule/ModuleTable/ModuleTableRow/ModuleRow.
+   Shell (232px sidebar + halo + max-w-[1400px]) copied verbatim from wiki2-E.
+ · No hero slots, no cards: curation is expressed through capped rail modules
+   ("Curriculum" 7, "Top categories" top 8) and sort orders, never card grids.
+ · No fake metrics: only real numbers render in the default state - 194 resources,
+   41 categories, 7 chapters, exactly 2 articles with saves (gold star 2 and 1),
+   1 read list. No view counts, deltas or sparklines. Type tabs carry no counts
+   in the default state (only "All 194", which is real).
+ · Every state is a URL: type filter, sort, page and search live in the query
+   string (?type=&sort=newest&page=1&q=). Top-categories footer links /wiki/topics.
+ · NEW PRIMITIVES used (flagged: add to kit.html + common/ in the same PR):
+   TypeBadge (monochrome icon chip for the 5 types; replaces the 64px monogram),
+   SaveToListButton (persistent one-click star on every row, never hover-only).
+ · Copy rules: English, no em dash, no CSS line-clamp (titles cut in the copy),
+   .mono on every number, header carries no stats (description "updated 12s ago").
+
+ GROWTH PROOF (visible in-file): a labelled "SCALED PREVIEW · PLAUSIBLE" strip
+ under the real table re-renders the same toolbar with COUNTED type tabs
+ (Articles 118 · X threads 52 · Videos 9 · Podcasts 8 · Docs 7) and a server
+ pagination footer "Page 1 of 84 · 2,000 resources" - the honest placement of
+ Kenji's scaled counts. The default table above it carries only real numbers.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <!-- Sidebar shell - verbatim from wiki2-E -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- PageHeader - no stats, description only -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Wiki</h1>
+          <p class="text-sm text-text-secondary">updated <span class="mono text-text-secondary">12s ago</span></p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <a href="/wiki/contributions" class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">My contributions <span class="mono ml-1 text-[10px] text-text-tertiary">2</span></a>
+          <a href="/wiki/contributions?tab=suggest" class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Suggest content</a>
+        </div>
+      </div>
+
+      <!-- KpiRibbon variant=plain · 4 real cells -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+        <div class="px-5 py-4 flex flex-col">
+          <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Resources</div>
+          <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">194</div>
+          <div class="text-[10.5px] text-text-tertiary mt-1.5">approved</div>
+        </div>
+        <div class="px-5 py-4 flex flex-col">
+          <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Categories</div>
+          <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">41</div>
+          <div class="text-[10.5px] text-text-tertiary mt-1.5">across the ecosystem</div>
+        </div>
+        <div class="px-5 py-4 flex flex-col">
+          <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Chapters</div>
+          <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">7</div>
+          <div class="text-[10.5px] text-text-tertiary mt-1.5">Learn</div>
+        </div>
+        <div class="px-5 py-4 flex flex-col">
+          <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Read lists</div>
+          <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">1</div>
+          <div class="text-[10.5px] text-text-tertiary mt-1.5">start yours</div>
+        </div>
+      </div>
+
+      <!-- table (1fr) + 280px sticky rail -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+        <!-- LEFT: the whole library as ONE TypedDataTable, newest first -->
+        <div class="min-w-0 space-y-4">
+          <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+            <!-- toolbar: search (/ keycap) + uncounted type PillTabs + sort note -->
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 border-b border-border-subtle">
+              <div class="relative flex-1 min-w-[200px] max-w-sm">
+                <input placeholder="Search 194 resources" class="w-full pl-3 pr-9 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 mono text-[10px] px-1.5 py-0.5 rounded border border-border-default bg-surface-2 text-text-tertiary">/</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <button class="text-brand font-medium">All <span class="mono text-text-tertiary">194</span></button>
+                <button class="text-text-tertiary hover:text-text-primary">Article</button>
+                <button class="text-text-tertiary hover:text-text-primary">X thread</button>
+                <button class="text-text-tertiary hover:text-text-primary">Video</button>
+                <button class="text-text-tertiary hover:text-text-primary">Podcast</button>
+                <button class="text-text-tertiary hover:text-text-primary">Official doc</button>
+              </div>
+              <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">sorted by newest</span>
+            </div>
+
+            <div class="overflow-x-auto">
+            <table class="w-full border-collapse min-w-[720px]">
+              <thead><tr>
+                <th class="px-3 py-2.5 w-9 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Type</th>
+                <th class="px-3 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Title</th>
+                <th class="px-3 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Domain</th>
+                <th class="px-3 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Category</th>
+                <th class="px-3 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Saves</th>
+                <th class="px-3 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Age</th>
+                <th class="px-3 py-2.5 w-10 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Save</th>
+              </tr></thead>
+              <tbody>
+                <!-- Row 1 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">HyperEVM is Dead</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HyperEVM</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">6d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 2 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">MARKET MAKING 101</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">Market maker</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">12d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 3 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="Article"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">How HyperCore Powers Performance Across Hyperliquid</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">hyperpc.app</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HyperCore</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">19d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 4 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">Hyperliquid Precompiles: A Breakdown for Dummies</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">Core &harr; EVM</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">27d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 5 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">HIP-3 in Q1 2026: 40% of Hyperliquid Is Now Commodities</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HIP-3</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">58d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 6 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="Article"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">Hyperliquid Unveils HIP-1 Spot Token Deployment</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">metaversepost.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HIP-1</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">74d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 7 · real save ★1 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">What Is HIP-2, Hyper Liquidity?</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HIP-2</td>
+                  <td class="px-3 py-3 text-right"><span class="mono text-[12px] text-gold">&starf; 1</span></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">96d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 8 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="Official doc"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">HyperEVM | Hyperliquid Docs</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">hyperliquid.gitbook.io</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HyperEVM</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">130d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 9 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">Kinetiq Launch: Making way for the People's Exchange</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HIP-3</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">210d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 10 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">HIP-3 and the Future of Decentralized Market Infrastructure</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HIP-3</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">240d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 11 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">HIP-3: Turning Hyperliquid into the Everything Exchange</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HIP-3</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">268d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold" title="Save to list"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <!-- Row 12 · real save ★2 (blocmates only) + persistent saved state -->
+                <tr class="hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="Article"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">HIP-3 Explained: Why Hyperliquid Will Flip Binance</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">blocmates.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">HIP-3</td>
+                  <td class="px-3 py-3 text-right"><span class="mono text-[12px] text-gold">&starf; 2</span></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">272d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-gold" title="Saved to list" aria-pressed="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+
+            <!-- server pagination footer -->
+            <div class="flex items-center justify-between border-t border-border-subtle px-4 py-2.5">
+              <span class="text-[11px] text-text-tertiary">Page <span class="mono">1</span> of <span class="mono">9</span> <span class="text-text-tertiary/70">·</span> <span class="mono">24</span> per page</span>
+              <div class="flex items-center gap-1">
+                <button class="h-7 rounded-md border border-border-subtle px-2.5 text-[11px] text-text-tertiary" disabled>&lsaquo; Prev</button>
+                <button class="h-7 rounded-md border border-border-subtle bg-surface-2 px-2.5 text-[11px] text-text-primary">Next &rsaquo;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ GROWTH PROOF · scaled type-tab counts live only after this label ══ -->
+          <div class="min-w-0 bg-surface border border-dashed border-border-default rounded-lg overflow-hidden">
+            <div class="px-4 pt-3 pb-0">
+              <span class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary">Scaled preview &middot; plausible</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3 border-b border-border-subtle">
+              <div class="relative flex-1 min-w-[200px] max-w-sm">
+                <input placeholder="Search 2,000 resources" class="w-full pl-3 pr-9 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 mono text-[10px] px-1.5 py-0.5 rounded border border-border-default bg-surface-2 text-text-tertiary">/</span>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <button class="text-brand font-medium">All <span class="mono text-text-tertiary">2,000</span></button>
+                <button class="text-text-tertiary hover:text-text-primary">Articles <span class="mono">118</span></button>
+                <button class="text-text-tertiary hover:text-text-primary">X threads <span class="mono">52</span></button>
+                <button class="text-text-tertiary hover:text-text-primary">Videos <span class="mono">9</span></button>
+                <button class="text-text-tertiary hover:text-text-primary">Podcasts <span class="mono">8</span></button>
+                <button class="text-text-tertiary hover:text-text-primary">Docs <span class="mono">7</span></button>
+              </div>
+              <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">sorted by newest</span>
+            </div>
+            <div class="overflow-x-auto">
+            <table class="w-full border-collapse min-w-[720px]">
+              <tbody>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3 w-9"><span class="text-text-tertiary inline-flex" title="Video"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="M22 8.5v7l-7-3.5z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">Hyperliquid Architecture Deep Dive</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">youtube.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">Introduction</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">2d</td>
+                  <td class="px-3 py-3 text-right w-10"><button class="text-text-tertiary hover:text-gold"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="Podcast"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">The Hyperliquid Podcast: Season Recap</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">spotify.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">Podcast</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">4d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+                <tr class="hover:bg-surface-2/60 transition-colors">
+                  <td class="px-3 py-3"><span class="text-text-tertiary inline-flex" title="X thread"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23 22h-6.9l-5.4-7-6.2 7H1.4l8.1-9.3L1 2h7l4.9 6.5L18.9 2Zm-2.4 18h1.9L7.6 4H5.6l10.9 16Z"/></svg></span></td>
+                  <td class="px-3 py-3 text-[13px] font-medium text-text-primary">Semiannual Report: Inside Hyperliquid's Growth</td>
+                  <td class="px-3 py-3 mono text-[11.5px] text-text-tertiary">x.com</td>
+                  <td class="px-3 py-3 text-[12px] text-text-secondary">Analysis</td>
+                  <td class="px-3 py-3 text-right"></td>
+                  <td class="px-3 py-3 text-right mono text-[12px] text-text-secondary">9d</td>
+                  <td class="px-3 py-3 text-right"><button class="text-text-tertiary hover:text-gold"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+            <div class="flex items-center justify-between border-t border-border-subtle px-4 py-2.5">
+              <span class="text-[11px] text-text-tertiary">Page <span class="mono">1</span> of <span class="mono">84</span> <span class="text-text-tertiary/70">·</span> <span class="mono">2,000</span> resources</span>
+              <div class="flex items-center gap-1">
+                <button class="h-7 rounded-md border border-border-subtle px-2.5 text-[11px] text-text-tertiary" disabled>&lsaquo; Prev</button>
+                <button class="h-7 rounded-md border border-border-subtle bg-surface-2 px-2.5 text-[11px] text-text-primary">Next &rsaquo;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: sticky rail - capped curation modules -->
+        <aside class="xl:sticky xl:top-[24px] space-y-4">
+
+          <!-- Curriculum · 7 ModuleRows -->
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Curriculum</h3>
+              <span class="ml-auto shrink-0 mono text-[11px] text-text-tertiary">7</span>
+            </div>
+            <a href="/wiki/learn/introduction" class="flex items-center gap-3 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">01</span><span class="w-5 h-5 shrink-0 rounded bg-surface-2 grid place-items-center text-brand/70 text-[11px]">&#10022;</span><span class="min-w-0 flex-1 text-[12.5px] text-text-secondary">Introduction</span><span class="ml-auto mono text-[11px] text-text-tertiary">8</span></a>
+            <a href="/wiki/learn/hyperbft" class="flex items-center gap-3 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">02</span><span class="w-5 h-5 shrink-0 rounded bg-surface-2 grid place-items-center text-brand/70 text-[11px]">&#9889;</span><span class="min-w-0 flex-1 text-[12.5px] text-text-secondary">HyperBFT</span><span class="ml-auto mono text-[11px] text-text-tertiary">3</span></a>
+            <a href="/wiki/learn/hypercore" class="flex items-center gap-3 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">03</span><span class="w-5 h-5 shrink-0 rounded bg-surface-2 grid place-items-center text-brand/70 text-[11px]">&#9636;</span><span class="min-w-0 flex-1 text-[12.5px] text-text-secondary">HyperCore</span><span class="ml-auto mono text-[11px] text-text-tertiary">11</span></a>
+            <a href="/wiki/learn/hyperevm" class="flex items-center gap-3 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">04</span><span class="w-5 h-5 shrink-0 rounded bg-surface-2 grid place-items-center text-brand/70 text-[11px]">&#8249;&#8250;</span><span class="min-w-0 flex-1 text-[12.5px] text-text-secondary">HyperEVM</span><span class="ml-auto mono text-[11px] text-text-tertiary">10</span></a>
+            <a href="/wiki/learn/core-evm" class="flex items-center gap-3 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">05</span><span class="w-5 h-5 shrink-0 rounded bg-surface-2 grid place-items-center text-brand/70 text-[11px]">&#8644;</span><span class="min-w-0 flex-1 text-[12.5px] text-text-secondary">Core &harr; EVM</span><span class="ml-auto mono text-[11px] text-text-tertiary">12</span></a>
+            <a href="/wiki/learn/hype" class="flex items-center gap-3 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">06</span><span class="w-5 h-5 shrink-0 rounded bg-surface-2 grid place-items-center text-brand/70 text-[11px]">&#9678;</span><span class="min-w-0 flex-1 text-[12.5px] text-text-secondary">$HYPE</span><span class="ml-auto mono text-[11px] text-text-tertiary">3</span></a>
+            <a href="/wiki/learn/hip-framework" class="flex items-center gap-3 px-4 py-2 border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">07</span><span class="w-5 h-5 shrink-0 rounded bg-surface-2 grid place-items-center text-brand/70 text-[11px]">&#9158;</span><span class="min-w-0 flex-1 text-[12.5px] text-text-secondary">HIP Framework</span><span class="ml-auto mono text-[11px] text-text-tertiary">32</span></a>
+            <a href="/wiki/learn" class="px-4 py-2.5 text-[11px] text-text-tertiary hover:text-text-primary">All chapters &rarr;</a>
+          </div>
+
+          <!-- Top categories · ModuleTable top 8 -->
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Top categories</h3>
+              <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">by count</span>
+            </div>
+            <table class="w-full border-collapse table-fixed">
+              <colgroup><col><col style="width:64px"></colgroup>
+              <thead><tr>
+                <th class="px-4 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Category</th>
+                <th class="px-4 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Articles</th>
+              </tr></thead>
+              <tbody>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">HypurrCollective</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">28</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">Farming</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">24</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">HIP-3</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">17</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">Thesis</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">11</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">Builder codes</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">9</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">HyperEVM</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">9</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">Podcast</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">8</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-4 py-2 text-[12.5px] text-text-secondary">HyperLiquid</td><td class="px-4 py-2 text-right mono text-[12px] text-text-secondary">8</td></tr>
+              </tbody>
+            </table>
+            <a href="/wiki/topics" class="px-4 py-2.5 text-[11px] text-text-tertiary hover:text-text-primary">All <span class="mono">41</span> &rarr;</a>
+          </div>
+
+          <!-- Read lists · the single real list -->
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary">Read lists</h3>
+              <span class="ml-auto shrink-0 mono text-[11px] text-text-tertiary">1</span>
+            </div>
+            <a href="/wiki/readlists/alice-public-list" class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+              <span class="w-6 h-6 shrink-0 rounded-md bg-surface-2 grid place-items-center text-[10px] font-semibold text-text-secondary">AL</span>
+              <div class="min-w-0 flex-1">
+                <div class="text-[12.5px] font-medium text-text-primary">Alice public list</div>
+                <div class="mono text-[10px] text-text-tertiary">by alice &middot; 2 items &middot; 1 read</div>
+              </div>
+            </a>
+            <a href="/wiki/readlists" class="px-4 py-2.5 text-[11px] text-text-tertiary hover:text-text-primary">All &rarr;</a>
+          </div>
+
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

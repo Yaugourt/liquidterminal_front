@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 · C "Ledger" : Read list detail</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V5 · DIRECTION C "LEDGER" · VIEW: readlist-detail
+ Route: /wiki/readlists/alice-public-list  (URL is the state)
+ ───────────────────────────────────────────────────────────────────────────────
+ Consensus decisions implemented here:
+ · The ordered path IS a TypedDataTable; the mono order column is the product.
+ · Context compressed to a ~90px one-line header Card + a fixed StackedShareBar
+   progress line (the ONLY progress visual - no ProgressMeter).
+ · Breadcrumb on every non-home view (Wiki / Read lists / Alice public list).
+ · No fake metrics: the real list is 2 items with 1 read; every enriched row is
+   inside a visibly labeled 'PLAUSIBLE ENRICHMENT · SCALED PREVIEW' band.
+ · Nadia's mis-click fix: the Status badge is the discrete toggle hit target,
+   separated from the row link; Save is a persistent SaveToListButton per row.
+ · TypeBadge replaces the 64px monogram tile everywhere (monochrome, never colored).
+ · No pagination at 8 rows; the footer note states it appears past 24.
+
+ New primitives used here (new primitive, add to kit.html + common/ in the same PR):
+   Breadcrumb, TypeBadge (article, X thread, video, podcast, official doc -
+   text-secondary/tertiary only), SaveToListButton (persistent star per row).
+
+ Growth proof: a 60-item path is the same table under a sticky header with the
+ read-status column marking exactly where the reader stopped; the mono order column
+ plus mixed TypeBadges prove sequence and type at scale; the StackedShareBar stays
+ one fixed line regardless of length, and all enrichment is visibly labeled plausible.
+ Tokens + sidebar shell + halo copied verbatim from wiki2-E-topichub.html.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <!-- Sidebar shell (verbatim from wiki2-E-topichub.html) -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 relative">Wiki</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative pl-5">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Read lists
+    </a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- ═══ Region 1 · Breadcrumb ═══ -->
+      <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+        <a class="hover:text-text-primary transition-colors" href="/wiki">Wiki</a>
+        <span class="text-text-tertiary">/</span>
+        <a class="hover:text-text-primary transition-colors" href="/wiki/readlists">Read lists</a>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-text-primary">Alice public list</span>
+      </nav>
+
+      <!-- ═══ Region 2 · one-line header Card + fixed StackedShareBar progress ═══ -->
+      <div class="bg-surface border border-border-subtle rounded-lg px-4 py-3.5 space-y-2.5">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <h1 class="text-[20px] font-semibold text-text-primary tracking-tight">Alice public list</h1>
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Public</span>
+          <span class="text-[12px] text-text-secondary">by alice</span>
+          <span class="ml-auto mono text-[11px] text-text-tertiary">2 real items · enriched to 8 · plausible</span>
+        </div>
+        <!-- StackedShareBar (height 10px) - the only progress visual -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="font-semibold text-success">Read 1</span>
+            <span class="font-medium text-text-tertiary">Unread 7</span>
+          </div>
+          <div class="flex w-full overflow-hidden rounded-full bg-surface-2" style="height:10px">
+            <div class="h-full bg-success" style="width:12.5%"></div>
+            <div class="h-full bg-surface-3" style="width:87.5%"></div>
+          </div>
+          <div class="text-[10px] text-text-tertiary">real list: 2 items, 1 read; rows 03-08 are plausible placeholders</div>
+        </div>
+      </div>
+
+      <!-- ═══ Region 3 (left) + Region 4 (rail) ═══ -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+        <!-- LEFT · the ordered path as a TypedDataTable -->
+        <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+            <span class="text-[13px] font-semibold text-text-primary">Reading path</span>
+            <span class="ml-auto mono text-[11px] text-text-tertiary">8 items</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse min-w-[820px]">
+              <thead><tr>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-[48px]">#</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[128px]">Type</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Title</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[132px]">Domain</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-[68px]">Age</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[132px]">Status</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-[64px]">Save</th>
+              </tr></thead>
+              <tbody>
+                <!-- Real row 01 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">01</span></td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary">
+                      <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M6 4h9l3 3v13H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
+                      Article
+                    </span>
+                  </td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">HIP-3 Explained: Why Hyperliquid Will Flip Binance</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">blocmates.com</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">272d</td>
+                  <td class="px-4 py-3">
+                    <button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Read</button>
+                  </td>
+                  <td class="px-4 py-3 text-right">
+                    <button class="inline-flex items-center gap-1 text-[12px] font-medium text-gold" title="In 2 read lists"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg><span class="mono">2</span></button>
+                  </td>
+                </tr>
+                <!-- Real row 02 (Unread, with Continue link beside the badge) -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">02</span></td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary">
+                      <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>
+                      X thread
+                    </span>
+                  </td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">What Is HIP-2, Hyper Liquidity?</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">x.com</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">240d</td>
+                  <td class="px-4 py-3">
+                    <div class="flex items-center gap-2">
+                      <button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Unread</button>
+                      <a class="text-[11px] font-medium text-brand hover:text-brand-hover">Continue →</a>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3 text-right">
+                    <button class="inline-flex items-center gap-1 text-[12px] font-medium text-gold" title="In 1 read list"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg><span class="mono">1</span></button>
+                  </td>
+                </tr>
+                <!-- Divider row: enrichment band -->
+                <tr>
+                  <td colspan="7" class="bg-surface-2/40 border-b border-border-subtle px-4 py-1.5">
+                    <span class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary">PLAUSIBLE ENRICHMENT · SCALED PREVIEW</span>
+                  </td>
+                </tr>
+                <!-- Enriched 03 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">03</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span></td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">HIP-3: Turning Hyperliquid into the Everything Exchange</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">x.com</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">201d</td>
+                  <td class="px-4 py-3"><button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Unread</button></td>
+                  <td class="px-4 py-3 text-right"><button class="inline-flex items-center gap-1 text-[12px] text-text-tertiary hover:text-gold" title="Save to a list"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg></button></td>
+                </tr>
+                <!-- Enriched 04 -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">04</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span></td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">Hyperliquid Precompiles: A Breakdown for Dummies</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">x.com</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">168d</td>
+                  <td class="px-4 py-3"><button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Unread</button></td>
+                  <td class="px-4 py-3 text-right"><button class="inline-flex items-center gap-1 text-[12px] text-text-tertiary hover:text-gold" title="Save to a list"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg></button></td>
+                </tr>
+                <!-- Enriched 05 (official doc) -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">05</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l3 3v15H6z"/><path d="M15 3v3h3"/><path d="M9 12h6M9 16h6"/></svg>Official doc</span></td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">HyperEVM | Hyperliquid Docs</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">hyperliquid.gitbook.io</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">140d</td>
+                  <td class="px-4 py-3"><button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Unread</button></td>
+                  <td class="px-4 py-3 text-right"><button class="inline-flex items-center gap-1 text-[12px] text-text-tertiary hover:text-gold" title="Save to a list"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg></button></td>
+                </tr>
+                <!-- Enriched 06 (article) -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">06</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h9l3 3v13H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>Article</span></td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">Beginner/Intermediate Guide to HyperCore and HyperEVM</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">skygg.substack.com</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">120d</td>
+                  <td class="px-4 py-3"><button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Unread</button></td>
+                  <td class="px-4 py-3 text-right"><button class="inline-flex items-center gap-1 text-[12px] text-text-tertiary hover:text-gold" title="Save to a list"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg></button></td>
+                </tr>
+                <!-- Enriched 07 (article) -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">07</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h9l3 3v13H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>Article</span></td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">Demystifying the Hyperliquid Precompiles and CoreWriter</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">medium.com</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">96d</td>
+                  <td class="px-4 py-3"><button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Unread</button></td>
+                  <td class="px-4 py-3 text-right"><button class="inline-flex items-center gap-1 text-[12px] text-text-tertiary hover:text-gold" title="Save to a list"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg></button></td>
+                </tr>
+                <!-- Enriched 08 (X thread) -->
+                <tr class="hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-text-secondary">08</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span></td>
+                  <td class="px-4 py-3"><a class="text-[13px] font-medium text-text-primary hover:text-brand">DYOR or be Poor: A HyperEVM OPSEC Guide</a></td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">x.com</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">72d</td>
+                  <td class="px-4 py-3"><button class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Unread</button></td>
+                  <td class="px-4 py-3 text-right"><button class="inline-flex items-center gap-1 text-[12px] text-text-tertiary hover:text-gold" title="Save to a list"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- No pagination at 8; the server footer appears past 24 items (see file comment) -->
+          <div class="border-t border-border-subtle px-4 py-2.5">
+            <span class="text-[11px] text-text-tertiary">8 of 8 items · pagination footer appears past 24</span>
+          </div>
+        </div>
+
+        <!-- RIGHT · sticky rail -->
+        <aside class="xl:sticky xl:top-[24px] space-y-4">
+
+          <!-- More by alice: collapsed to one honest tertiary line -->
+          <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+            <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+              <h3 class="text-[13px] font-medium text-text-primary truncate">More by alice</h3>
+            </div>
+            <div class="px-4 py-3 text-[12px] text-text-tertiary">alice has 1 list</div>
+          </div>
+
+          <!-- Most read lists: fully inside a labeled scaled wrapper -->
+          <div class="space-y-2">
+            <div class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary px-0.5">SCALED PREVIEW · PLAUSIBLE</div>
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">Most read lists</h3>
+                <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">reads</span>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">01</span>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary">Security essentials</div><div class="mono text-[10px] text-text-tertiary">by opsec_anon</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-text-secondary">31</div>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">02</span>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary">Hyperliquid onboarding path</div><div class="mono text-[10px] text-text-tertiary">by hyperfren</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-text-secondary">24</div>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2/60 transition-colors">
+                <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">03</span>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary">HIP-3 builder starter pack</div><div class="mono text-[10px] text-text-tertiary">by builder_max</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-text-secondary">18</div>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>
