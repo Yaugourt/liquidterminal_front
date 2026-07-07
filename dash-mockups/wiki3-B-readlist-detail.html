@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 · B : Read list detail (Masthead)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V5 · DIRECTION B "MASTHEAD" · VIEW: readlist-detail
+ ROUTE /wiki/readlists/alice-public-list
+ The issue: masthead lead, the ordered path as the well, an O(1) progress rail.
+ ───────────────────────────────────────────────────────────────────────────────
+ CONSENSUS DECISIONS IMPLEMENTED:
+  · One rule-based lead: the masthead surfaces the list identity; the primary
+    action "Continue reading" is rule-based, anchoring to the FIRST UNREAD item
+    (row 02), not a personalized or staff pick.
+  · Breadcrumb on every non-home view (Wiki / Read lists / Alice public list).
+  · No fake metrics: the progress rail math is labeled against the REAL state
+    (real list: 1 of 2 read); the enriched 1 / 8 count is explicitly a preview.
+    savesCount is per-article (gold star 2 and 1 on the two real items only).
+  · Sub-navigation has one home (the ordered path card); no duplicate nav.
+ NEW PRIMITIVES ON THIS PAGE (new primitive, add to kit.html + common/ same PR):
+  · Breadcrumb  · TypeBadge (monochrome icon+label chip, 5 types)
+  · SaveToListButton (persistent one-click star on every row, never hover-only;
+    gold when saved with count, tertiary outline when not)
+  · ReadListItemRow (Direction B only): mono rank + TypeBadge + title +
+    domain·age + persistent SaveToListButton + right state slot
+    (read check / Continue pill / empty circle).
+ GROWTH PROOF (visible):
+  · The numbered ReadListItemRow path with a visible mid-list read frontier and
+    mixed TypeBadges proves a 50-item sequence stays navigable (rows paginate
+    after 25, see the server pagination note on the path card). The progress rail
+    is O(1) at any length and its math is labeled against the real 1-of-2 state.
+ Tokens + shell (232px sidebar, halo, max-w-[1400px]) copied verbatim from
+ wiki2-E-topichub.html. No em dash. English copy. No CSS line-clamp.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-brand font-medium bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- ═══ Breadcrumb (NEW PRIMITIVE) ═══ -->
+      <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+        <a class="hover:text-text-primary cursor-pointer">Wiki</a>
+        <span class="text-text-tertiary">/</span>
+        <a class="hover:text-text-primary cursor-pointer">Read lists</a>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-text-primary">Alice public list</span>
+      </nav>
+
+      <!-- ═══ two-column: path (fluid) + sticky progress rail (280px) ═══ -->
+      <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+        <!-- LEFT column -->
+        <div class="min-w-0 space-y-4">
+
+          <!-- LEAD · the issue masthead -->
+          <section class="overflow-hidden rounded-lg border border-border-subtle bg-surface">
+            <div class="bg-[linear-gradient(120deg,rgba(131,233,255,0.06),transparent_60%)] p-5 sm:p-6">
+              <div class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary">Read list</div>
+              <h2 class="mt-2 font-inter text-[22px] font-semibold tracking-tight text-text-primary">Alice public list</h2>
+              <p class="mt-1.5 text-[12.5px] text-text-secondary">A public reading list</p>
+              <div class="mt-3 flex items-center gap-2">
+                <span class="w-6 h-6 shrink-0 rounded-full grid place-items-center text-[9px] font-semibold bg-surface-3 text-text-secondary">AL</span>
+                <span class="text-[12px] text-text-secondary">by alice</span>
+                <!-- StatusBadge inactive · Public -->
+                <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Public</span>
+              </div>
+              <div class="mt-4 flex items-center gap-2">
+                <button class="h-8 inline-flex items-center gap-1.5 rounded-md border border-border-default bg-surface-2 px-3 text-xs font-medium text-text-secondary hover:text-text-primary">Save list</button>
+                <!-- rule-based primary action: anchors to first unread (row 02) -->
+                <a href="#item-02" class="h-8 inline-flex items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-text-on hover:bg-brand/90">Continue reading</a>
+              </div>
+            </div>
+          </section>
+
+          <!-- THE PATH · one bordered card of ReadListItemRow (NEW PRIMITIVE) -->
+          <!-- Server pagination: at >25 items the path paginates (footer identical to directory tables). -->
+          <section class="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
+            <div class="flex items-center gap-2 border-b border-border-subtle px-4 py-3">
+              <span class="text-[13px] font-semibold text-text-primary">The path</span>
+              <span class="ml-auto text-[10px] tracking-wide text-text-tertiary">Ordered · read top to bottom</span>
+            </div>
+            <div class="divide-y divide-border-subtle">
+
+              <!-- Row 01 · real · read -->
+              <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">01</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>Article</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">HIP-3 Explained: Why Hyperliquid Will Flip Binance</div>
+                  <div class="mono text-[11px] text-text-tertiary">blocmates.com · 272d</div>
+                </div>
+                <!-- SaveToListButton · saved (gold star 2) -->
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-gold/25 bg-gold/10 h-7 px-2 text-[11px] text-gold font-medium hover:bg-gold/15" title="In 2 read lists">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg><span class="mono">2</span>
+                </button>
+                <!-- state slot · read -->
+                <span class="shrink-0 text-success" title="Read"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></span>
+              </div>
+
+              <!-- Row 02 · real · first unread (Continue frontier, border-l brand accent) -->
+              <div id="item-02" class="flex items-center gap-3 border-l-2 border-brand bg-brand/[0.04] px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">02</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.4l-5-6.5L5.8 22H2.7l7.8-8.9L2 2h6.6l4.5 6z"/></svg>X thread</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">What Is HIP-2, Hyper Liquidity?</div>
+                  <div class="mono text-[11px] text-text-tertiary">x.com · 272d</div>
+                </div>
+                <!-- SaveToListButton · saved (gold star 1) -->
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-gold/25 bg-gold/10 h-7 px-2 text-[11px] text-gold font-medium hover:bg-gold/15" title="In 1 read list">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg><span class="mono">1</span>
+                </button>
+                <!-- state slot · Continue pill -->
+                <a href="#item-02" class="shrink-0 inline-flex items-center gap-1 rounded-full bg-brand h-7 px-3 text-[11px] font-semibold text-brand-text-on hover:bg-brand/90">Continue →</a>
+              </div>
+
+              <!-- divider · enrichment preview -->
+              <div class="bg-surface-2/40 px-4 py-1.5 text-[10px] uppercase tracking-[0.14em] text-text-tertiary">Plausible enrichment · scaled preview</div>
+
+              <!-- Row 03 · unread -->
+              <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">03</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.4l-5-6.5L5.8 22H2.7l7.8-8.9L2 2h6.6l4.5 6z"/></svg>X thread</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">Kinetiq Launch: Making way for the People's Exchange</div>
+                  <div class="mono text-[11px] text-text-tertiary">x.com · 272d</div>
+                </div>
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-border-subtle bg-surface-2 h-7 px-2 text-[11px] text-text-tertiary hover:text-text-primary" title="Save to a list">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg>
+                </button>
+                <span class="shrink-0 text-text-tertiary" title="Unread"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg></span>
+              </div>
+
+              <!-- Row 04 · unread -->
+              <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">04</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.4l-5-6.5L5.8 22H2.7l7.8-8.9L2 2h6.6l4.5 6z"/></svg>X thread</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">HIP-3 and the Future of Decentralized Market Infrastructure</div>
+                  <div class="mono text-[11px] text-text-tertiary">x.com · 272d</div>
+                </div>
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-border-subtle bg-surface-2 h-7 px-2 text-[11px] text-text-tertiary hover:text-text-primary" title="Save to a list">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg>
+                </button>
+                <span class="shrink-0 text-text-tertiary" title="Unread"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg></span>
+              </div>
+
+              <!-- Row 05 · unread · official doc -->
+              <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">05</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5a2 2 0 012-2h9l5 5v11a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><path d="M9 8h4M9 12h6M9 16h6"/></svg>Official doc</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">HyperEVM | Hyperliquid Docs</div>
+                  <div class="mono text-[11px] text-text-tertiary">hyperliquid.gitbook.io · 120d</div>
+                </div>
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-border-subtle bg-surface-2 h-7 px-2 text-[11px] text-text-tertiary hover:text-text-primary" title="Save to a list">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg>
+                </button>
+                <span class="shrink-0 text-text-tertiary" title="Unread"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg></span>
+              </div>
+
+              <!-- Row 06 · unread · article -->
+              <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">06</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>Article</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">Beginner/Intermediate Guide to HyperCore and HyperEVM</div>
+                  <div class="mono text-[11px] text-text-tertiary">skygg.substack.com · 96d</div>
+                </div>
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-border-subtle bg-surface-2 h-7 px-2 text-[11px] text-text-tertiary hover:text-text-primary" title="Save to a list">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg>
+                </button>
+                <span class="shrink-0 text-text-tertiary" title="Unread"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg></span>
+              </div>
+
+              <!-- Row 07 · unread · article -->
+              <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">07</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>Article</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">Demystifying the Hyperliquid Precompiles and CoreWriter</div>
+                  <div class="mono text-[11px] text-text-tertiary">medium.com · 84d</div>
+                </div>
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-border-subtle bg-surface-2 h-7 px-2 text-[11px] text-text-tertiary hover:text-text-primary" title="Save to a list">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg>
+                </button>
+                <span class="shrink-0 text-text-tertiary" title="Unread"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg></span>
+              </div>
+
+              <!-- Row 08 · unread · X thread -->
+              <div class="flex items-center gap-3 px-4 py-3 hover:bg-surface-2/50 transition-colors">
+                <span class="mono w-6 shrink-0 text-[11px] text-text-tertiary">08</span>
+                <span class="inline-flex shrink-0 items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.3 8.3L23 22h-6.4l-5-6.5L5.8 22H2.7l7.8-8.9L2 2h6.6l4.5 6z"/></svg>X thread</span>
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-[13px] font-medium text-text-primary">MARKET MAKING 101</div>
+                  <div class="mono text-[11px] text-text-tertiary">x.com · 210d</div>
+                </div>
+                <button class="inline-flex shrink-0 items-center gap-1 rounded-md border border-border-subtle bg-surface-2 h-7 px-2 text-[11px] text-text-tertiary hover:text-text-primary" title="Save to a list">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2.9 6.3 6.8.6-5.1 4.5 1.5 6.7L12 17l-6 3.6 1.5-6.7L2.4 8.9l6.8-.6z"/></svg>
+                </button>
+                <span class="shrink-0 text-text-tertiary" title="Unread"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/></svg></span>
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+
+        <!-- RIGHT sticky rail (280px) -->
+        <aside class="xl:sticky xl:top-6 space-y-4">
+
+          <!-- Progress card · O(1) at any list length -->
+          <div class="rounded-lg border border-border-subtle bg-surface p-4">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Progress</div>
+            <div class="mono mt-1.5 text-[22px] font-medium leading-none text-text-primary">1 / 8</div>
+            <div class="text-[10px] text-text-tertiary mt-1.5">enriched preview · real list: 1 of 2 read</div>
+            <!-- StackedShareBar · read vs remaining -->
+            <div class="flex w-full overflow-hidden rounded-full bg-surface-3 mt-3" style="height:10px">
+              <div class="h-full bg-success" style="width:12.5%"></div>
+              <div class="h-full bg-surface-3" style="width:87.5%"></div>
+            </div>
+          </div>
+
+          <!-- Curator card -->
+          <div class="rounded-lg border border-border-subtle bg-surface p-4">
+            <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary mb-2.5">Curator</div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 shrink-0 rounded-full grid place-items-center text-[10px] font-semibold bg-surface-3 text-text-secondary">AL</span>
+              <div class="min-w-0">
+                <div class="text-[13px] font-medium text-text-primary">alice</div>
+                <div class="mono text-[10.5px] text-text-tertiary">1 list · 2 items curated</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- More by alice · collapsed to one line (no fake supply) -->
+          <div class="rounded-lg border border-border-subtle bg-surface px-4 py-3">
+            <div class="text-[11px] text-text-tertiary">alice has 1 list</div>
+          </div>
+
+        </aside>
+
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

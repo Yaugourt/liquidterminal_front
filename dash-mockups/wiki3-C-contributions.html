@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 · C "Ledger" : Contributions</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V5 · DIRECTION C "LEDGER" · VIEW: contributions
+ Route: /wiki/contributions?tab=submissions|queue|reports  (deep-linkable; contributions
+        is a ROUTED page, never a dialog; tab lives in the query string)
+ ───────────────────────────────────────────────────────────────────────────────
+ Consensus decisions implemented here:
+ · Breadcrumb on every non-home view (Wiki / Contributions).
+ · The 5/day budget is visible BEFORE the wall: '3 of 5 today' mono pill in the
+   header + a two-segment StackedShareBar (2 used / 3 left) in the suggest strip.
+ · Suggest form prefills the current category (HIP-3) and previews the auto-detected
+   TypeBadge ('x.com -> X thread').
+ · XP shows only really granted events (mono gold), flagged as real API values.
+ · Moderation queue defaults to oldest-first; waiting age past 7 days is text-danger
+   (the 9d row); Reject opens ConfirmWithNote (DeleteConfirmDialog variant with a
+   REQUIRED textarea - spec in comment below the queue).
+ · Stats live in-card (toolbar / queue header), never in the PageHeader.
+ · Every scaled block is visibly labeled; server pagination footers everywhere.
+
+ New primitives used here (new primitive, add to kit.html + common/ in the same PR):
+   Breadcrumb, TypeBadge (article, X thread, video, podcast, official doc),
+   ConfirmWithNote (DeleteConfirmDialog + required textarea, used for Reject).
+
+ Growth proof: the oldest-first queue with a text-danger 9d waiting cell, status-tab
+ counts and a pagination footer shows a 200-item backlog as one keyboard-clearable
+ table; the always-visible budget meter and deep-linkable ?tab=queue prove the loop's
+ operations surface at volume. (j/k + a/r keyboard flow is flagged as a follow-up
+ interaction primitive, not hand-rolled here.)
+ Tokens + sidebar shell + halo copied verbatim from wiki2-E-topichub.html.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <!-- Sidebar shell (verbatim from wiki2-E-topichub.html) -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-5">
+
+      <!-- ═══ Region 1 · Breadcrumb ═══ -->
+      <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+        <a class="hover:text-text-primary transition-colors" href="/wiki">Wiki</a>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-text-primary">Contributions</span>
+      </nav>
+
+      <!-- ═══ Region 2 · PageHeader (no stats; budget pill is an action, not a stat) ═══ -->
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="space-y-1.5 min-w-0">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Contributions</h1>
+          <p class="text-sm text-text-secondary max-w-2xl">updated <span class="mono text-text-secondary">12s ago</span></p>
+        </div>
+        <div class="flex items-center gap-2 sm:shrink-0">
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">+ Suggest content</button>
+          <span class="h-8 inline-flex items-center px-2.5 rounded-md border border-border-default bg-surface-2 mono text-[11px] text-text-secondary">3 of 5 today</span>
+        </div>
+      </div>
+
+      <!-- ═══ Region 3 · Suggest strip (one-row Card ~56px) ═══ -->
+      <div class="bg-surface border border-border-subtle rounded-lg px-3 py-2.5">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <input placeholder="Paste a URL to suggest" class="flex-1 min-w-[200px] h-8 px-3 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+          <!-- prefilled category chip -->
+          <span class="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">HIP-3</span>
+          <!-- TypeBadge auto-preview -->
+          <span class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary">
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>
+            x.com → X thread
+          </span>
+          <button class="h-8 inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90 text-xs font-semibold">Submit</button>
+          <!-- right block: budget meter -->
+          <div class="flex items-center gap-2 pl-2.5 sm:border-l border-border-subtle">
+            <div class="flex w-24 overflow-hidden rounded-full bg-surface-3" style="height:8px">
+              <div class="h-full bg-brand" style="width:40%"></div>
+              <div class="h-full bg-surface-3" style="width:60%"></div>
+            </div>
+            <span class="mono text-[11px] text-text-tertiary whitespace-nowrap">2 used · 3 left today</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Region 4 · PillTabs text (routed tabs) ═══ -->
+      <div class="flex items-center gap-4 text-[13px] border-b border-border-subtle pb-2.5">
+        <button class="text-brand font-medium">My submissions <span class="mono text-text-tertiary">2</span></button>
+        <button class="text-text-tertiary hover:text-text-primary flex items-center gap-1.5">Review queue <span class="mono">5</span> <span class="text-[9px] uppercase tracking-[0.08em] px-1 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">MOD</span></button>
+        <button class="text-text-tertiary hover:text-text-primary flex items-center gap-1.5">Reports <span class="mono">1</span> <span class="text-[9px] uppercase tracking-[0.08em] px-1 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">MOD</span></button>
+      </div>
+
+      <!-- ═══ Region 5 · My submissions TypedDataTable (full width) ═══ -->
+      <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+          <div class="flex items-center gap-3 text-xs">
+            <button class="text-brand font-medium">All <span class="mono text-text-tertiary">2</span></button>
+            <button class="text-text-tertiary hover:text-text-primary">Pending <span class="mono">1</span></button>
+            <button class="text-text-tertiary hover:text-text-primary">Approved <span class="mono">1</span></button>
+            <button class="text-text-tertiary hover:text-text-primary">Rejected <span class="mono">0</span></button>
+          </div>
+          <div class="relative flex-1 min-w-[160px] max-w-xs">
+            <input placeholder="Search submissions" class="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+          </div>
+          <span class="text-text-tertiary text-[11.5px] ml-auto shrink-0 mono">2 submissions</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse min-w-[900px]">
+            <thead><tr>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Resource</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[140px]">Categories</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-[92px]">Submitted</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[112px]">Status</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[220px]">Note</th>
+              <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-[64px]">XP</th>
+            </tr></thead>
+            <tbody>
+              <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                <td class="px-4 py-3">
+                  <div class="min-w-0">
+                    <div class="text-[13px] font-medium text-text-primary">Kinetiq Launch: Making way for the People's Exchange</div>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="mono text-[11px] text-text-tertiary">x.com</span>
+                      <span class="inline-flex items-center gap-1 text-[11px] text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">HIP-3</span></td>
+                <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">2d</td>
+                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium"><span class="w-1.5 h-1.5 rounded-full bg-gold"></span>Pending</span></td>
+                <td class="px-4 py-3"><span class="text-[11.5px] text-text-tertiary">Waiting for review.</span></td>
+                <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-gold">+5</span></td>
+              </tr>
+              <tr class="hover:bg-surface-2/60 transition-colors">
+                <td class="px-4 py-3">
+                  <div class="min-w-0">
+                    <div class="text-[13px] font-medium text-text-primary">Demystifying the Hyperliquid Precompiles and CoreWriter</div>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span class="mono text-[11px] text-text-tertiary">medium.com</span>
+                      <span class="inline-flex items-center gap-1 text-[11px] text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h9l3 3v13H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>Article</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-4 py-3"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">CoreWriter</span></td>
+                <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">9d</td>
+                <td class="px-4 py-3"><span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Approved</span></td>
+                <td class="px-4 py-3"><span class="text-[11.5px] text-text-tertiary">Solid primer, mapped to CoreWriter.</span></td>
+                <td class="px-4 py-3 text-right"><span class="mono text-[12px] font-medium text-gold">+20</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ Region 6 · Moderator queue (?tab=queue), oldest-first ═══ -->
+      <div class="space-y-2">
+        <div class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary px-0.5">MODERATOR · ?tab=queue</div>
+        <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+            <span class="text-[13px] font-semibold text-text-primary">Review queue</span>
+            <span class="text-[11px] text-text-tertiary">oldest first</span>
+            <span class="ml-auto shrink-0 mono text-[11px] text-text-secondary">Pending 5 · oldest <span class="text-danger">9d</span></span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse min-w-[920px]">
+              <thead><tr>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Resource</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[120px]">Submitter</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left w-[140px]">Categories</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-[80px]">Waiting</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right w-[196px]">Actions</th>
+              </tr></thead>
+              <tbody>
+                <!-- oldest (9d) in text-danger -->
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="min-w-0">
+                      <div class="text-[13px] font-medium text-text-primary">MARKET MAKING 101</div>
+                      <div class="flex items-center gap-2 mt-0.5"><span class="mono text-[11px] text-text-tertiary">x.com</span><span class="inline-flex items-center gap-1 text-[11px] text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">mm_anon</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">Market maker</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] font-medium text-danger">9d</td>
+                  <td class="px-4 py-3 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-success/30 bg-success/10 text-success text-[11px] font-medium hover:bg-success/15">Approve</button>
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-danger/30 bg-danger/10 text-danger text-[11px] font-medium hover:bg-danger/15">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="min-w-0">
+                      <div class="text-[13px] font-medium text-text-primary">Why HYPE DATs Can Win</div>
+                      <div class="flex items-center gap-2 mt-0.5"><span class="mono text-[11px] text-text-tertiary">x.com</span><span class="inline-flex items-center gap-1 text-[11px] text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">thesis_guy</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">Thesis</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">6d</td>
+                  <td class="px-4 py-3 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-success/30 bg-success/10 text-success text-[11px] font-medium hover:bg-success/15">Approve</button>
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-danger/30 bg-danger/10 text-danger text-[11px] font-medium hover:bg-danger/15">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="min-w-0">
+                      <div class="text-[13px] font-medium text-text-primary">Felix, The Liquidity Backbone of HyperEVM</div>
+                      <div class="flex items-center gap-2 mt-0.5"><span class="mono text-[11px] text-text-tertiary">x.com</span><span class="inline-flex items-center gap-1 text-[11px] text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">evm_deep</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">HyperEVM</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">4d</td>
+                  <td class="px-4 py-3 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-success/30 bg-success/10 text-success text-[11px] font-medium hover:bg-success/15">Approve</button>
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-danger/30 bg-danger/10 text-danger text-[11px] font-medium hover:bg-danger/15">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="min-w-0">
+                      <div class="text-[13px] font-medium text-text-primary">Uncoil x HypurrCo Community Research</div>
+                      <div class="flex items-center gap-2 mt-0.5"><span class="mono text-[11px] text-text-tertiary">hypurr.co</span><span class="inline-flex items-center gap-1 text-[11px] text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h9l3 3v13H6z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>Article</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">hypurr_res</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">HypurrCollective</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">2d</td>
+                  <td class="px-4 py-3 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-success/30 bg-success/10 text-success text-[11px] font-medium hover:bg-success/15">Approve</button>
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-danger/30 bg-danger/10 text-danger text-[11px] font-medium hover:bg-danger/15">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-surface-2/60 transition-colors">
+                  <td class="px-4 py-3">
+                    <div class="min-w-0">
+                      <div class="text-[13px] font-medium text-text-primary">If You Just Heard About Hyperliquid</div>
+                      <div class="flex items-center gap-2 mt-0.5"><span class="mono text-[11px] text-text-tertiary">x.com</span><span class="inline-flex items-center gap-1 text-[11px] text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7 8 8.2 12H16l-5-6.6L4.8 22H2l7.5-8.6L1.5 2H9l4.5 6L18.9 2z"/></svg>X thread</span></div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary">newfren</span></td>
+                  <td class="px-4 py-3"><span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary">HyperLiquid</span></td>
+                  <td class="px-4 py-3 text-right mono text-[12px] text-text-secondary">1d</td>
+                  <td class="px-4 py-3 text-right">
+                    <div class="flex items-center justify-end gap-1.5">
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-success/30 bg-success/10 text-success text-[11px] font-medium hover:bg-success/15">Approve</button>
+                      <button class="h-7 inline-flex items-center px-2.5 rounded-md border border-danger/30 bg-danger/10 text-danger text-[11px] font-medium hover:bg-danger/15">Reject</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- server pagination footer (SCALED PREVIEW rows above are plausible placeholders) -->
+          <div class="flex items-center justify-between border-t border-border-subtle px-4 py-2.5">
+            <span class="text-[11px] text-text-tertiary">Page <span class="mono">1</span> of <span class="mono">1</span> · <span class="uppercase tracking-[0.1em] text-[10px]">plausible labeled rows</span></span>
+            <div class="flex items-center gap-1">
+              <button class="h-7 rounded-md border border-border-subtle px-2.5 text-[11px] text-text-tertiary">‹ Prev</button>
+              <button class="h-7 rounded-md border border-border-subtle bg-surface-2 px-2.5 text-[11px] text-text-primary">Next ›</button>
+            </div>
+          </div>
+        </div>
+        <!--
+          ConfirmWithNote (Reject) - new primitive, DeleteConfirmDialog variant:
+          same modal chrome as kit.html DeleteConfirmDialog, but the body carries a
+          REQUIRED <textarea> for the reviewer note (validation: submit disabled until
+          non-empty). Confirm label "Reject", tone danger, loading label "Rejecting...".
+          The note is written back to the submitter's Note column. Reference dialog markup
+          below (rendered on Reject click, not shown in the static page flow):
+
+          <div class="grid gap-4 p-6 bg-surface/95 border border-border-default rounded-2xl">
+            <div class="text-lg font-semibold">Reject submission</div>
+            <textarea required placeholder="Why is this being rejected? (required)"></textarea>
+            <div class="flex justify-end gap-2">
+              <button>Cancel</button>
+              <button class="bg-danger text-white" disabled>Reject</button>
+            </div>
+          </div>
+
+          Follow-up interaction primitive (NOT hand-rolled here): j/k to move between queue
+          rows, a to Approve, r to open Reject/ConfirmWithNote.
+        -->
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>

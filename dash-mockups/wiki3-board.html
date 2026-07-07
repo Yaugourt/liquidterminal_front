@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 — Design council board (A Atlas / B Masthead / C Ledger)</title>
+<style>
+  :root { --bg:#08101A; --surface:#0F1421; --border:#1E2535; --brand:#83E9FF; --t1:#E8EAED; --t2:#9CA3AF; --t3:#6B7280; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--t1); font:14px/1.5 Inter, system-ui, sans-serif; }
+  header { padding:22px 28px 6px; }
+  h1 { font-size:21px; margin:0 0 4px; }
+  .sub { color:var(--t2); margin:0; font-size:13px; max-width:70ch; }
+  .legend { display:flex; gap:18px; margin:14px 0 4px; flex-wrap:wrap; }
+  .legend div { font-size:12px; color:var(--t2); }
+  .legend b { color:var(--brand); }
+  .viewsec { padding:10px 28px 26px; }
+  .viewsec h2 { font-size:13px; text-transform:uppercase; letter-spacing:.12em; color:var(--t2); margin:20px 0 2px; }
+  .viewsec p.vd { font-size:12px; color:var(--t3); margin:0 0 10px; }
+  .row { display:grid; grid-template-columns:repeat(3,minmax(300px,1fr)); gap:16px; }
+  .cell { border:1px solid var(--border); border-radius:10px; overflow:hidden; background:var(--surface); }
+  .cell h3 { font-size:12px; margin:0; padding:8px 12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:baseline; }
+  .cell h3 b { font-weight:600; }
+  .cell h3 .k { color:var(--brand); }
+  .cell h3 a { color:var(--brand); text-decoration:none; font-size:11px; font-weight:500; }
+  .frame { position:relative; width:100%; overflow:hidden; }
+  .frame iframe { width:1440px; border:0; transform-origin:0 0; position:absolute; top:0; left:0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Wiki V5 — conseil de design</h1>
+  <p class="sub">3 directions issues du débat de 4 designers seniors, déclinées sur les 6 vues. Clique un titre pour ouvrir la maquette en taille réelle. Chaque colonne est une direction cohérente de bout en bout.</p>
+  <div class="legend">
+    <div><b>A · Atlas</b> — recherche en porte d'entrée, index canoniques, boucle save/curate partout (Nadia + Sofia)</div>
+    <div><b>B · Masthead</b> — publication : un hero par vue, rythme lead/corps/archives (Marco + routing)</div>
+    <div><b>C · Ledger</b> — terminal : une table filtrable partout, densité maximale (Kenji + URLs)</div>
+  </div>
+</header>
+
+<div class="viewsec" id="sections"></div>
+
+<script>
+  const VIEWS = [
+    ['home', 'Accueil', 'Curriculum Learn + articles communautaires + preuve de montée en charge (chapitres futurs).'],
+    ['topic-chapter', 'Vue thème — chapitre', 'HIP Framework : primer Learn + sous HIP-1/2/3 + articles du thème.'],
+    ['topic-community', 'Vue thème — communauté', 'HypurrCollective (28) : pas de primer Learn, slot "suggérer la doc canonique".'],
+    ['readlists', 'Index des read lists', 'Répertoire des parcours de lecture (1 réel + aperçu à des centaines).'],
+    ['readlist-detail', 'Détail read list', 'Alice public list : ordre de lecture, progression réelle, enrichissement plausible.'],
+    ['contributions', 'Contributions + modération', 'Mes soumissions, budget 5/j, file de modération oldest-first.'],
+  ];
+  const DIRS = [['A','Atlas'],['B','Masthead'],['C','Ledger']];
+  const root = document.getElementById('sections');
+  for (const [vkey, vlabel, vdesc] of VIEWS) {
+    const h = document.createElement('h2'); h.textContent = vlabel; root.appendChild(h);
+    const p = document.createElement('p'); p.className='vd'; p.textContent = vdesc; root.appendChild(p);
+    const row = document.createElement('div'); row.className='row';
+    for (const [dk, dname] of DIRS) {
+      const file = `wiki3-${dk}-${vkey}.html`;
+      const cell = document.createElement('div'); cell.className='cell';
+      cell.innerHTML = `<h3><b><span class="k">${dk}</span> ${dname}</b><a href="${file}" target="_blank">plein écran ↗</a></h3><div class="frame"><iframe src="${file}" scrolling="no"></iframe></div>`;
+      row.appendChild(cell);
+    }
+    root.appendChild(row);
+  }
+  function fit() {
+    document.querySelectorAll('.frame').forEach(f => {
+      const s = f.clientWidth / 1440;
+      const ifr = f.querySelector('iframe');
+      ifr.style.transform = 'scale(' + s + ')';
+      f.style.height = (1150 * s) + 'px';
+      ifr.style.height = (1150 / s) + 'px';
+    });
+  }
+  addEventListener('resize', fit); addEventListener('load', fit); fit();
+</script>
+</body>
+</html>

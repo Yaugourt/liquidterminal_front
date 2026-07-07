@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wiki V5 · A "Atlas" : Topic Chapter (/wiki/learn/hip-framework/hip-3)</title>
+<!--
+═══════════════════════════════════════════════════════════════════════════════
+ WIKI V5 · DIRECTION A "ATLAS" · VIEW: topic-chapter
+ ROUTE: /wiki/learn/hip-framework/hip-3  (?type=&page=&q= documented here; the
+   sub-chapter tab, type filter, sort, page and search all live in the query string)
+ ───────────────────────────────────────────────────────────────────────────────
+ DIRECTION: routed searchable atlas. A chapter is a canonical index page with a
+ breadcrumb spine, a designed primer band, ONE sub-nav home (the PillTabs row),
+ and a curated card head over the article tail.
+
+ CONSENSUS DECISIONS IMPLEMENTED HERE:
+  · Breadcrumb on every non-home view (NEW PRIMITIVE): Wiki / Learn / HIP
+    Framework / HIP-3, first three segments are tertiary hover-primary links,
+    current segment is text-text-primary.
+  · Sub-chapter navigation has exactly ONE home: the PillTabs variant=text row
+    under the primer head (All / HIP-1 / HIP-2 / HIP-3). It is NOT duplicated in
+    the breadcrumb meta line (the primer overline carries no pills).
+  · PrimerBand is a designed reading state (~180px collapsed); the expanded
+    65ch measure + docked ribbon + collapse control is specified below and
+    reached via "Read the full primer". The docked plain stat ribbon uses the
+    KpiRibbon plain 3-cell pattern.
+  · Curated chapter head keeps CARDS (Cards/Table switch, Cards active).
+  · NEW PRIMITIVES: Breadcrumb, TypeBadge (monochrome, replaces the 64px tile),
+    SaveToListButton (persistent star, gold saves signal only), RailSearch
+    (compact h-7 "Filter topics" at the rail top).
+  · No fake metrics: HIP-3 has 17 resources, gold star 2 only on the blocmates
+    row, no view counts. Type tabs uncounted. Gold only on saves (and the 50%
+    builder-fee stat, a real protocol fact from the brief).
+  · Community group ends in a terminal "All 41 categories" index link to
+    /wiki/topics (no "Show N more" toggle). Copy English, no em dash, no
+    line-clamp (titles cut in copy).
+
+ GROWTH PROOF (visible): below the real rail, a "SCALED PREVIEW · PLAUSIBLE"
+  mini-rail shows RailSearch pre-filled with "hyp", filtering a 15-chapter +
+  100-category set down to 6 matching rows, proving find-don't-scroll at scale.
+  The Community terminal index link and the uncounted type tabs are the standing
+  mechanisms. Article tail carries a server pagination footer.
+ Tokens + shell (232px sidebar, halo, max-w-[1400px]) copied verbatim from wiki2-E-topichub.html.
+═══════════════════════════════════════════════════════════════════════════════
+-->
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    base: "#0A0B0F", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+    "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+    "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+    brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+    gold: "#F9E370", success: "#1FA85B", danger: "#E53E3E", violet: "#A78BFA",
+  },
+  fontFamily: {
+    sans: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    inter: ["Inter","ui-sans-serif","system-ui","sans-serif"],
+    mono: ["JetBrains Mono","ui-monospace","monospace"],
+  },
+} } };
+</script>
+<style>
+  body { background:#0A0B0F; }
+  .mono { font-family:"JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  ::-webkit-scrollbar { height:8px; width:8px; }
+  ::-webkit-scrollbar-thumb { background:#2C354A; border-radius:4px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="flex min-h-screen">
+  <!-- Sidebar shell : verbatim from wiki2-E-topichub.html -->
+  <aside class="hidden lg:flex w-[232px] shrink-0 flex-col bg-surface border-r border-border-subtle px-3 py-4 gap-1">
+    <div class="px-2 mb-3 flex items-center gap-2">
+      <div class="w-7 h-7 rounded-md bg-brand/15 grid place-items-center text-brand font-bold">L</div>
+      <span class="text-sm font-semibold tracking-tight">Liquid Terminal</span>
+    </div>
+    <span class="px-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary mt-2">Ecosystem</span>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Projects</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2">Public Goods</a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] bg-brand/10 text-brand font-medium relative">
+      <span class="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-brand rounded-full"></span>Wiki
+    </a>
+    <a class="px-2 py-1.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 pl-5">Read lists</a>
+  </aside>
+
+  <div class="flex-1 min-w-0 relative">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(131,233,255,0.05),transparent)] z-0"></div>
+
+    <main class="relative z-10 px-4 sm:px-6 py-8 max-w-[1400px] mx-auto space-y-4">
+
+      <!-- (1) Breadcrumb (NEW PRIMITIVE): linked tertiary segments, "/" separators, current in text-primary -->
+      <nav class="flex items-center gap-1.5 text-[12px]">
+        <a href="/wiki" class="text-text-tertiary hover:text-text-primary">Wiki</a>
+        <span class="text-text-tertiary">/</span>
+        <a href="/wiki/topics?group=learn" class="text-text-tertiary hover:text-text-primary">Learn</a>
+        <span class="text-text-tertiary">/</span>
+        <a href="/wiki/learn/hip-framework" class="text-text-tertiary hover:text-text-primary">HIP Framework</a>
+        <span class="text-text-tertiary">/</span>
+        <span class="text-text-primary">HIP-3</span>
+      </nav>
+
+      <!-- (2) rail + main -->
+      <div class="grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] gap-6 items-start">
+
+        <!-- RAIL -->
+        <nav class="min-w-0 lg:sticky lg:top-6 space-y-4">
+          <!-- RailSearch compact (NEW PRIMITIVE) -->
+          <div class="relative">
+            <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input placeholder="Filter topics" class="h-7 w-full rounded-md border border-border-subtle bg-transparent pl-8 pr-2 text-[12px] text-text-primary placeholder:text-text-tertiary focus:border-brand/50 focus:outline-none" />
+          </div>
+
+          <div>
+            <div class="px-1 mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">Fundamentals</div>
+            <div class="space-y-0.5">
+              <a href="/wiki/learn/introduction" class="flex w-full items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span class="text-brand/70">&#10022;</span><span class="flex-1 text-left">Introduction</span><span class="mono text-[11px] text-text-tertiary">8</span></a>
+              <a href="/wiki/learn/hyperbft" class="flex w-full items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span class="text-brand/70">&#9889;</span><span class="flex-1 text-left">HyperBFT</span><span class="mono text-[11px] text-text-tertiary">3</span></a>
+              <a href="/wiki/learn/hypercore" class="flex w-full items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span class="text-brand/70">&#9636;</span><span class="flex-1 text-left">HyperCore</span><span class="mono text-[11px] text-text-tertiary">11</span></a>
+              <a href="/wiki/learn/hyperevm" class="flex w-full items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span class="text-brand/70">&#8249;&#8250;</span><span class="flex-1 text-left">HyperEVM</span><span class="mono text-[11px] text-text-tertiary">10</span></a>
+              <a href="/wiki/learn/core-evm" class="flex w-full items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span class="text-brand/70">&#8644;</span><span class="flex-1 text-left">Core &harr; EVM</span><span class="mono text-[11px] text-text-tertiary">12</span></a>
+              <a href="/wiki/learn/hype" class="flex w-full items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span class="text-brand/70">&#9678;</span><span class="flex-1 text-left">$HYPE</span><span class="mono text-[11px] text-text-tertiary">3</span></a>
+              <!-- expanded parent with active sub-topic HIP-3 -->
+              <div class="rounded-lg bg-surface-2/40">
+                <a href="/wiki/learn/hip-framework" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-text-primary"><span class="text-brand/70">&#9670;</span><span class="flex-1 text-left font-medium">HIP Framework</span><span class="mono text-[11px] text-text-tertiary">32</span></a>
+                <div class="pb-1 pl-6 space-y-0.5">
+                  <a href="/wiki/learn/hip-framework/hip-1" class="flex w-full items-center rounded-md px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="flex-1 text-left">HIP-1 &middot; Token standard</span><span class="mono text-[11px] text-text-tertiary">7</span></a>
+                  <a href="/wiki/learn/hip-framework/hip-2" class="flex w-full items-center rounded-md px-3 py-1.5 text-[12.5px] text-text-secondary hover:text-text-primary"><span class="flex-1 text-left">HIP-2 &middot; Hyperliquidity</span><span class="mono text-[11px] text-text-tertiary">7</span></a>
+                  <a href="/wiki/learn/hip-framework/hip-3" class="flex w-full items-center rounded-md border border-brand/30 bg-brand/10 px-3 py-1.5 text-[12.5px] font-medium text-brand"><span class="flex-1 text-left">HIP-3 &middot; Builder perps</span><span class="mono text-[11px] text-brand/80">17</span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="px-1 mb-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">Community</div>
+            <div class="space-y-0.5">
+              <a href="/wiki/c/hypurrcollective" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>HypurrCollective</span><span class="mono text-[11px] text-text-tertiary">28</span></a>
+              <a href="/wiki/c/farming" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Farming</span><span class="mono text-[11px] text-text-tertiary">24</span></a>
+              <a href="/wiki/c/hip-3" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>HIP-3</span><span class="mono text-[11px] text-text-tertiary">17</span></a>
+              <a href="/wiki/c/thesis" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Thesis</span><span class="mono text-[11px] text-text-tertiary">11</span></a>
+              <a href="/wiki/c/builder-codes" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Builder codes</span><span class="mono text-[11px] text-text-tertiary">9</span></a>
+              <a href="/wiki/c/hyperevm" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>HyperEVM</span><span class="mono text-[11px] text-text-tertiary">9</span></a>
+              <a href="/wiki/c/podcast" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>Podcast</span><span class="mono text-[11px] text-text-tertiary">8</span></a>
+              <a href="/wiki/c/hyperliquid" class="flex w-full items-center justify-between rounded-lg border border-transparent px-3 py-2 text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary"><span>HyperLiquid</span><span class="mono text-[11px] text-text-tertiary">8</span></a>
+              <!-- terminal index link, no toggle -->
+              <a href="/wiki/topics" class="flex w-full items-center rounded-lg px-3 py-2 text-[12px] font-medium text-brand hover:text-brand-hover">All 41 categories &rarr;</a>
+            </div>
+          </div>
+
+          <!-- GROWTH PROOF : scaled-preview mini-rail, RailSearch typed "hyp" filters 15 chapters + 100 categories to 6 rows -->
+          <div class="rounded-lg border border-dashed border-border-default/70 p-2.5 space-y-2">
+            <div class="text-[10px] uppercase tracking-[0.12em] text-text-tertiary">Scaled preview &middot; plausible</div>
+            <div class="relative">
+              <svg class="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input value="hyp" readonly class="h-7 w-full rounded-md border border-brand/40 bg-surface-2 pl-8 pr-2 text-[12px] text-text-primary" />
+            </div>
+            <div class="text-[10px] text-text-tertiary">6 of 115 topics match</div>
+            <div class="space-y-0.5">
+              <div class="flex items-center justify-between rounded-md px-2.5 py-1 text-[12px] text-text-secondary"><span>HyperBFT</span><span class="mono text-[11px] text-text-tertiary">3</span></div>
+              <div class="flex items-center justify-between rounded-md px-2.5 py-1 text-[12px] text-text-secondary"><span>HyperCore</span><span class="mono text-[11px] text-text-tertiary">11</span></div>
+              <div class="flex items-center justify-between rounded-md px-2.5 py-1 text-[12px] text-text-secondary"><span>HyperEVM</span><span class="mono text-[11px] text-text-tertiary">10</span></div>
+              <div class="flex items-center justify-between rounded-md px-2.5 py-1 text-[12px] text-text-secondary"><span>HIP Framework</span><span class="mono text-[11px] text-text-tertiary">32</span></div>
+              <div class="flex items-center justify-between rounded-md px-2.5 py-1 text-[12px] text-text-secondary"><span>HypurrCollective</span><span class="mono text-[11px] text-text-tertiary">28</span></div>
+              <div class="flex items-center justify-between rounded-md px-2.5 py-1 text-[12px] text-text-secondary"><span>HyperLiquid</span><span class="mono text-[11px] text-text-tertiary">8</span></div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- MAIN -->
+        <div class="min-w-0 space-y-4">
+
+          <!-- (3) PrimerBand (~180px) -->
+          <div class="overflow-hidden rounded-lg border border-border-subtle bg-surface">
+            <div class="bg-[linear-gradient(120deg,rgba(131,233,255,0.07),transparent_60%)] p-5">
+              <!-- overline row : NO pills here (sub-nav lives in the tabs row below) -->
+              <div class="mb-2 text-[11px] uppercase tracking-[0.12em] text-text-tertiary">HIP Framework &middot; Chapter 7</div>
+              <h2 class="font-inter text-[22px] font-semibold tracking-tight">HIP-3: Builder-Deployed Perpetuals</h2>
+              <p class="mt-1 text-[12.5px] font-medium text-brand/90">Permissionless market creation, secured by stake</p>
+              <p class="mt-2.5 max-w-2xl text-[13px] leading-relaxed text-text-secondary">HIP-3 lets any builder deploy a perpetual market on Hyperliquid: stake HYPE, win a dutch-auction slot, run the oracle and earn half the fees. It turns the exchange into permissionless market infrastructure.</p>
+              <div class="mt-4 flex items-center gap-3">
+                <button class="h-8 inline-flex items-center gap-1.5 rounded-md bg-brand px-3 text-xs font-semibold text-brand-text-on hover:bg-brand/90">Read the full primer &rarr;</button>
+                <span class="text-[11px] text-text-tertiary">~6 min &middot; from the Learn curriculum</span>
+              </div>
+            </div>
+            <!-- ONE sub-nav home : PillTabs variant=text (All / HIP-1 / HIP-2 / HIP-3 active) -->
+            <div class="flex items-center gap-4 border-t border-border-subtle px-5 py-2.5 text-xs">
+              <a href="/wiki/learn/hip-framework" class="text-text-tertiary hover:text-text-primary">All <span class="mono">32</span></a>
+              <a href="/wiki/learn/hip-framework/hip-1" class="text-text-tertiary hover:text-text-primary">HIP-1 <span class="mono">7</span></a>
+              <a href="/wiki/learn/hip-framework/hip-2" class="text-text-tertiary hover:text-text-primary">HIP-2 <span class="mono">7</span></a>
+              <a href="/wiki/learn/hip-framework/hip-3" class="text-brand font-medium">HIP-3 <span class="mono text-brand/80">17</span></a>
+            </div>
+            <!-- docked plain stat ribbon : 3 cells (KpiRibbon plain pattern) -->
+            <div class="grid grid-cols-3 divide-x divide-border-subtle border-t border-border-subtle">
+              <div class="px-5 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Stake</div><div class="mono mt-1 text-[17px] font-medium">500k HYPE</div><div class="text-[10.5px] text-text-tertiary">~$15-20M</div></div>
+              <div class="px-5 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Builder fees</div><div class="mono mt-1 text-[17px] font-medium text-gold">50%</div><div class="text-[10.5px] text-text-tertiary">per deployed market</div></div>
+              <div class="px-5 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">HIP-3 volume</div><div class="mono mt-1 text-[17px] font-medium text-success">$25B+</div><div class="text-[10.5px] text-text-tertiary">cumulative</div></div>
+            </div>
+          </div>
+
+          <!-- (4) ArticleShell : curated chapter head keeps cards -->
+          <div class="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
+            <div class="flex flex-wrap items-center gap-3 border-b border-border-subtle px-3.5 py-3">
+              <span class="text-[13px] font-semibold">Community articles</span>
+              <div class="flex items-center bg-surface-2 p-0.5 rounded-md">
+                <button class="px-2.5 py-1 rounded text-[11px] font-medium bg-brand text-brand-text-on">Cards</button>
+                <button class="px-2.5 py-1 rounded text-[11px] font-medium text-text-tertiary hover:text-text-primary">Table</button>
+              </div>
+              <input placeholder="Search in HIP-3" class="h-7 min-w-[150px] flex-1 rounded-md border border-border-subtle bg-transparent px-3 text-[12px] text-text-primary placeholder:text-text-tertiary sm:max-w-[220px]" />
+              <span class="ml-auto text-[10px] tracking-wide text-text-tertiary">Sorted by newest &middot; <span class="mono">17</span> resources</span>
+            </div>
+            <!-- type PillTabs uncounted -->
+            <div class="flex items-center gap-3 overflow-x-auto border-b border-border-subtle px-3.5 py-2 text-xs">
+              <button class="text-brand font-medium shrink-0">All <span class="mono text-text-tertiary">17</span></button>
+              <button class="text-text-tertiary hover:text-text-primary shrink-0">Articles</button>
+              <button class="text-text-tertiary hover:text-text-primary shrink-0">X threads</button>
+              <button class="text-text-tertiary hover:text-text-primary shrink-0">Videos</button>
+              <button class="text-text-tertiary hover:text-text-primary shrink-0">Podcasts</button>
+              <button class="text-text-tertiary hover:text-text-primary shrink-0">Official docs</button>
+            </div>
+
+            <div class="grid grid-cols-1 gap-px bg-border-subtle lg:grid-cols-2">
+              <!-- card 1 : X thread -->
+              <div class="relative flex flex-col gap-1.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">&#120143; X thread</span>
+                  <button title="Save to list" class="ml-auto grid h-6 w-6 place-items-center rounded-md border border-border-subtle text-text-tertiary hover:text-gold hover:border-border-default">&#9734;</button>
+                </div>
+                <h3 class="text-[13px] font-semibold text-text-primary">HIP-3 in Q1 2026: 40% of Hyperliquid Is Now Commodities</h3>
+                <p class="text-[11.5px] text-text-secondary">Research on the commodity takeover of builder-deployed markets.</p>
+                <div class="mt-auto pt-1 flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>x.com</span><span>&middot;</span><span class="mono">58d</span></div>
+              </div>
+              <!-- card 2 : article, gold saves 2 -->
+              <div class="relative flex flex-col gap-1.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary"><svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4"/></svg> Article</span>
+                  <div class="ml-auto flex items-center gap-2">
+                    <span class="mono inline-flex items-center gap-0.5 text-[11px] font-medium text-gold">&#9733; 2</span>
+                    <button title="Saved" class="grid h-6 w-6 place-items-center rounded-md border border-gold/40 bg-gold/10 text-gold">&#9733;</button>
+                  </div>
+                </div>
+                <h3 class="text-[13px] font-semibold text-text-primary">HIP-3 Explained: Why Hyperliquid Will Flip Binance</h3>
+                <p class="text-[11.5px] text-text-secondary">The bull case for permissionless perp deployment, by blocmates.</p>
+                <div class="mt-auto pt-1 flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>blocmates.com</span><span>&middot;</span><span class="mono">272d</span></div>
+              </div>
+              <!-- card 3 : X thread -->
+              <div class="relative flex flex-col gap-1.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">&#120143; X thread</span>
+                  <button title="Save to list" class="ml-auto grid h-6 w-6 place-items-center rounded-md border border-border-subtle text-text-tertiary hover:text-gold hover:border-border-default">&#9734;</button>
+                </div>
+                <h3 class="text-[13px] font-semibold text-text-primary">Kinetiq Launch: Making way for the People's Exchange</h3>
+                <p class="text-[11.5px] text-text-secondary">First wave of HIP-3 deployments reviewed with Omnia.</p>
+                <div class="mt-auto pt-1 flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>x.com</span><span>&middot;</span><span class="mono">272d</span></div>
+              </div>
+              <!-- card 4 : X thread -->
+              <div class="relative flex flex-col gap-1.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">&#120143; X thread</span>
+                  <button title="Save to list" class="ml-auto grid h-6 w-6 place-items-center rounded-md border border-border-subtle text-text-tertiary hover:text-gold hover:border-border-default">&#9734;</button>
+                </div>
+                <h3 class="text-[13px] font-semibold text-text-primary">HIP-3 and the Future of Decentralized Market Infrastructure</h3>
+                <p class="text-[11.5px] text-text-secondary">Why builder-deployed markets change the exchange landscape.</p>
+                <div class="mt-auto pt-1 flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>x.com</span><span>&middot;</span><span class="mono">272d</span></div>
+              </div>
+              <!-- card 5 : X thread -->
+              <div class="relative flex flex-col gap-1.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">&#120143; X thread</span>
+                  <button title="Save to list" class="ml-auto grid h-6 w-6 place-items-center rounded-md border border-border-subtle text-text-tertiary hover:text-gold hover:border-border-default">&#9734;</button>
+                </div>
+                <h3 class="text-[13px] font-semibold text-text-primary">HIP-3: Turning Hyperliquid into the Everything Exchange</h3>
+                <p class="text-[11.5px] text-text-secondary">From perps to commodities, the roadmap of builder markets.</p>
+                <div class="mt-auto pt-1 flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>x.com</span><span>&middot;</span><span class="mono">272d</span></div>
+              </div>
+              <!-- card 6 : X thread -->
+              <div class="relative flex flex-col gap-1.5 bg-surface p-3.5 hover:bg-surface-2/60 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1 rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-medium text-text-tertiary">&#120143; X thread</span>
+                  <button title="Save to list" class="ml-auto grid h-6 w-6 place-items-center rounded-md border border-border-subtle text-text-tertiary hover:text-gold hover:border-border-default">&#9734;</button>
+                </div>
+                <h3 class="text-[13px] font-semibold text-text-primary">Everyone's buzzing about HIP-3 on Hyperliquid</h3>
+                <p class="text-[11.5px] text-text-secondary">A thread on auction dynamics and early builder demand.</p>
+                <div class="mt-auto pt-1 flex items-center gap-1.5 text-[11px] text-text-tertiary"><span>x.com</span><span>&middot;</span><span class="mono">272d</span></div>
+              </div>
+            </div>
+            <!-- server pagination footer -->
+            <div class="flex items-center justify-between border-t border-border-subtle px-4 py-2.5">
+              <span class="text-[11px] text-text-tertiary">Page <span class="mono">1</span> of <span class="mono">1</span> &middot; <span class="mono">17</span> of <span class="mono">17</span></span>
+              <div class="flex items-center gap-1">
+                <button class="h-7 rounded-md border border-border-subtle px-2.5 text-[11px] text-text-tertiary/50" disabled>&lsaquo; Prev</button>
+                <button class="h-7 rounded-md border border-border-subtle px-2.5 text-[11px] text-text-tertiary/50" disabled>Next &rsaquo;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- (5) Keep learning chip row -->
+          <div class="flex flex-wrap items-center gap-2 px-1 text-[11.5px] text-text-tertiary">
+            <span class="uppercase tracking-[0.1em] text-[10px] font-semibold">Keep learning</span>
+            <a href="/wiki/learn/hype" class="rounded-md border border-border-subtle bg-surface px-2.5 py-1 text-text-secondary hover:text-text-primary">&#9678; $HYPE &rarr;</a>
+            <a href="/wiki/learn/hyperevm" class="rounded-md border border-border-subtle bg-surface px-2.5 py-1 text-text-secondary hover:text-text-primary">&#8249;&#8250; HyperEVM &rarr;</a>
+            <a href="/wiki/learn/core-evm" class="rounded-md border border-border-subtle bg-surface px-2.5 py-1 text-text-secondary hover:text-text-primary">&#8644; Core &harr; EVM &rarr;</a>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+</body>
+</html>
