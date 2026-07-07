@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePageTitle } from "@/store/use-page-title";
 import { PageHeader, ProtectedAction } from "@/components/common";
-import { WikiHub } from "@/components/wiki/hub/WikiHub";
-import { ContributionsDialog } from "@/components/wiki/ContributionsDialog";
+import { AtlasHome } from "@/components/wiki/atlas/AtlasHome";
 import { EducationModal } from "@/components/wiki/EducationModal";
 import { UserSubmissionModal } from "@/components/wiki/UserSubmissionModal";
 import { useAuthContext } from "@/contexts/auth.context";
 
 export default function WikiPage() {
-  // Bumped after a submission/creation so the hub refetches without a reload
+  // Bumped after a submission/creation so the home refetches without a reload
   const [refreshToken, setRefreshToken] = useState(0);
   const { user, authenticated } = useAuthContext();
   const { setTitle } = usePageTitle();
@@ -25,10 +25,17 @@ export default function WikiPage() {
     <div className="space-y-6">
       <PageHeader
         title="Wiki"
-        description="One place per topic: the primer, then what the community wrote about it."
+        description="The Hyperliquid curriculum and what the community writes about it."
         actions={
           <div className="flex items-center gap-2">
-            {authenticated && <ContributionsDialog />}
+            {authenticated && (
+              <Link
+                href="/wiki/contributions"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md border border-border-default bg-surface-2 px-3 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary"
+              >
+                My contributions
+              </Link>
+            )}
             <UserSubmissionModal onSuccess={handleContentAdded} />
             <ProtectedAction requiredRole="MODERATOR" user={user}>
               <EducationModal onSuccess={handleContentAdded} />
@@ -37,7 +44,7 @@ export default function WikiPage() {
         }
       />
 
-      <WikiHub refreshToken={refreshToken} />
+      <AtlasHome refreshToken={refreshToken} />
     </div>
   );
 }
