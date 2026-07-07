@@ -87,6 +87,8 @@ export interface PublicReadList {
   description?: string;
   isPublic: boolean;
   itemsCount: number;
+  /** Items marked read across the list (returned by the public endpoint). */
+  readCount?: number;
   creator: {
     id: number;
     name: string;

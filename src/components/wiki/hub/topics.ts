@@ -30,6 +30,27 @@ export const SUBCHAPTER_CATEGORY_MAP: Record<string, string[]> = {
   "hip-3": ["HIP-3: Builder-Deployed Perpetuals"],
 };
 
+/** Kebab-case slug for URL segments (chapter titles, category names). */
+export function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/↔/g, "to")
+    .replace(/\$/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Route to a chapter (optionally a sub-chapter). */
+export function chapterHref(chapterTitle: string, subId?: string): string {
+  const base = `/wiki/learn/${slugify(chapterTitle)}`;
+  return subId ? `${base}/${subId}` : base;
+}
+
+/** Route to a community category. */
+export function categoryHref(categoryName: string): string {
+  return `/wiki/c/${slugify(categoryName)}`;
+}
+
 export interface EducationSubChapter {
   id: string;
   title: string;
