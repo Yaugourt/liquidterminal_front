@@ -68,6 +68,23 @@ function collectClips() {
     if (over <= 2) continue;
     const rect = el.getBoundingClientRect();
     if (rect.width < 40 || rect.height < 8) continue; // ignore slivers / off-screen
+    // Decorative glows (`pointer-events-none absolute -right-* blur-*`) are
+    // MEANT to be cropped by the card — only flag when a real (interactive /
+    // content) child actually extends past the clip edge. The walk stops at
+    // scrollable children: their content pans, it is not silently clipped.
+    const clipRight = rect.left + el.clientWidth;
+    const hasRealOverflow = (node) => {
+      for (const c of node.children) {
+        const cs = getComputedStyle(c);
+        if (cs.pointerEvents === "none" && cs.position === "absolute") continue;
+        if (c.getBoundingClientRect().right > clipRight + 2) return true;
+        const cox = cs.overflowX;
+        if (cox === "auto" || cox === "scroll") continue;
+        if (hasRealOverflow(c)) return true;
+      }
+      return false;
+    };
+    if (!hasRealOverflow(el)) continue;
     const cls = typeof el.className === "string" ? el.className.slice(0, 70) : "";
     findings.push({ tag: el.tagName.toLowerCase(), cls, over, w: Math.round(rect.width) });
   }

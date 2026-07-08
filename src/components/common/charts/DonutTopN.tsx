@@ -139,7 +139,7 @@ export function DonutTopN({
 
   return (
     <div
-      className="relative"
+      className="relative max-w-full"
       style={{ width: size, height: size }}
     >
       <ResponsiveContainer width="100%" height="100%">

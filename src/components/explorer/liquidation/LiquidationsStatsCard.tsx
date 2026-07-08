@@ -39,7 +39,7 @@ interface LongShortRatioBarProps {
 
 function LongShortRatioBar({ longPercent, shortPercent, isLoading }: LongShortRatioBarProps) {
   return (
-    <div className="hidden xl:block xl:col-span-2">
+    <div className="col-span-2">
       <div className="text-text-secondary mb-2 flex items-center text-xs font-medium">
         Volume Ratio
       </div>
@@ -103,7 +103,7 @@ export function LiquidationsStatsCard() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-4 flex-1 content-center">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4 flex-1 content-center">
           <InlineStat
             icon={<DollarSign className="h-3.5 w-3.5 text-danger" />}
             label="Total Volume"
@@ -147,14 +147,12 @@ export function LiquidationsStatsCard() {
             label="Avg Size"
             value={<>${formatNumber(stats.avgSize, format, { maximumFractionDigits: 0 })}</>}
             isLoading={statsLoading}
-            className="hidden xl:block"
           />
           <InlineStat
             icon={<Target className="h-3.5 w-3.5 text-text-primary" />}
             label="Max Liq"
             value={<>${formatNumber(stats.maxLiq, format, { maximumFractionDigits: 0 })}</>}
             isLoading={statsLoading}
-            className="hidden xl:block"
           />
           <LongShortRatioBar
             longPercent={longPercent}

@@ -9,7 +9,7 @@ import { socials, reasons, screenshots, apiProviders } from "./landing-data";
 
 export function SectionsEditorialPremium() {
   return (
-    <div className="min-h-screen w-full overflow-y-auto overflow-x-hidden bg-base font-inter scroll-smooth pb-[env(safe-area-inset-bottom,0)]">
+    <div className="min-h-screen w-full overflow-y-auto bg-base font-inter scroll-smooth pb-[env(safe-area-inset-bottom,0)]">
       {/* Hero/global gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-base" />

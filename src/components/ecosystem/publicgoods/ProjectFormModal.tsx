@@ -373,7 +373,7 @@ export function ProjectFormModal({
                 </DialogHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-                    <TabsList className="grid w-full grid-cols-5 bg-base border border-border-subtle rounded-lg p-1">
+                    <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-base border border-border-subtle rounded-lg p-1">
                         <TabsTrigger value="project" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
                             1. Project
                         </TabsTrigger>

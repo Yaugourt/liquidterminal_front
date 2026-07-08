@@ -66,9 +66,7 @@ const WALLET_COLUMNS: Column<Hip4SystemWalletRow>[] = [
     key: "address",
     header: "Address",
     type: "address",
-    accessor: (r) => (
-      <span className="font-mono text-[11px] text-table-cell">{r.address}</span>
-    ),
+    accessor: (r) => r.address,
   },
   {
     key: "role",
@@ -103,9 +101,7 @@ const S3_COLUMNS: Column<Hip4S3DatasetRow>[] = [
     key: "path",
     header: "Path / dataset",
     type: "address",
-    accessor: (r) => (
-      <span className="font-mono text-[11px] text-table-cell">{r.path}</span>
-    ),
+    accessor: (r) => r.path,
   },
   {
     key: "notes",
