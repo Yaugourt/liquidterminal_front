@@ -15,12 +15,17 @@ export interface PerpMarketData {
 export type PerpSortableFields = "volume" | "openInterest" | "change24h" | "price" | "name"; 
 
 // Interface pour les statistiques globales des perp
+// Shape mirrors the backend /market/perp/globalstats response exactly
+// (perpStats.service.ts → { totalVolume24h, totalOpenInterest, totalPairs, hlpTvl }).
 export interface PerpGlobalStats {
+  /** Σ 24h notional volume across all perp markets (USD). */
   totalVolume24h: number;
-  totalTrades24h: number;
+  /** Σ open interest across all perp markets, in USD (size × mark price). */
   totalOpenInterest: number;
+  /** Number of perp markets with non-zero 24h volume. */
+  totalPairs: number;
+  /** TVL of the HLP vault (USD). */
   hlpTvl: number;
-  // Ajoutez d'autres champs selon votre API
 }
 
 // Paramètres pour les requêtes de marché perp
