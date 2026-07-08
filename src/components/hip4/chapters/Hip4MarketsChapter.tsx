@@ -30,7 +30,7 @@ function buildScanColumns(result: Hip4ScanDeploymentResult): Column<Hip4ContestR
         <span>
           Pool —{" "}
           <span className="font-semibold text-text-primary">{result.label}</span>{" "}
-          <span className="font-mono text-[11px] text-brand">{result.address}</span>
+          <span className="font-mono break-all text-[11px] text-brand">{result.address}</span>
           {result.error ? (
             <span className="ml-2 text-danger">RPC: {result.error}</span>
           ) : null}

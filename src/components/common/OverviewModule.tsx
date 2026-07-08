@@ -251,8 +251,15 @@ export function ModuleTable({
   );
   return (
     <ModuleTableContext.Provider value={{ density, alignments }}>
+      {/* overflow-x-auto : sans lui, une table plus large que la Card
+          (overflow-hidden) perd silencieusement ses colonnes de droite
+          sur mobile — ici elle scrolle horizontalement à la place. */}
+      <div className="overflow-x-auto scrollbar-brand">
+      {/* min-w-max (fixed layout) : sans lui `w-full` écrase les colonnes sous
+          leur largeur déclarée et les cellules se chevauchent — on préfère
+          scroller dans le wrapper ci-dessus. */}
       <table
-        className={`w-full border-collapse ${hasWidths ? "table-fixed" : "table-auto"}`}
+        className={`w-full border-collapse ${hasWidths ? "table-fixed min-w-max" : "table-auto"}`}
       >
         {hasWidths && (
           <colgroup>
@@ -279,6 +286,7 @@ export function ModuleTable({
         </thead>
         <tbody>{children}</tbody>
       </table>
+      </div>
     </ModuleTableContext.Provider>
   );
 }
@@ -327,7 +335,7 @@ function ModuleCell({
     <td
       className={`${
         density === "compact" ? "px-3 py-1.5" : "px-4 py-2.5"
-      } text-[12.5px] overflow-hidden ${
+      } text-[12.5px] overflow-hidden text-ellipsis whitespace-nowrap ${
         align === "left" ? "text-left" : "text-right"
       }`}
     >

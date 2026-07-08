@@ -164,7 +164,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 gap-0 overflow-hidden bg-transparent border-0 shadow-none">
+      <DialogContent className="max-w-4xl max-h-[90vh] p-0 gap-0 overflow-hidden bg-transparent border-0 shadow-none">
         <Card className="rounded-lg flex flex-col h-full max-h-[90vh]">
           {/* Header */}
           <DialogHeader className="p-6 border-b border-border-subtle flex flex-row items-center justify-between space-y-0">

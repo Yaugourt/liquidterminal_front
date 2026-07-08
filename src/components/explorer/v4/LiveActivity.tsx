@@ -155,7 +155,7 @@ function BlocksCard({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 px-3.5 py-2.5 border-b border-border-subtle">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Boxes size={13} className="text-brand" />
         </span>
@@ -252,7 +252,7 @@ function TxCard({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 px-3.5 py-2.5 border-b border-border-subtle">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Activity size={13} className="text-brand" />
         </span>

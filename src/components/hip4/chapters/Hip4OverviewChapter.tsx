@@ -45,13 +45,13 @@ export function Hip4OverviewChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>V1 — Contract information</Hip4SectionTitle>
         <InfoRow k="Address">
-          <span className="font-mono text-brand">{HIP4_CONFIG.contracts.v1.address}</span>
+          <span className="font-mono break-all text-brand">{HIP4_CONFIG.contracts.v1.address}</span>
         </InfoRow>
         <InfoRow k="Network">
           HyperEVM Testnet <Badge variant="outline" className="ml-1 text-[10px]">Chain 998</Badge>
         </InfoRow>
         <InfoRow k="Owner">
-          <span className="font-mono text-gold">{HIP4_CONFIG.sameOwner}</span>
+          <span className="font-mono break-all text-gold">{HIP4_CONFIG.sameOwner}</span>
         </InfoRow>
         <InfoRow k="Platform fee">
           <span className="font-bold text-gold">90 bps (0.9%)</span> — from reward pool
@@ -65,13 +65,13 @@ export function Hip4OverviewChapter() {
       <Hip4GlassPanel>
         <Hip4SectionTitle>V2 — Contract information</Hip4SectionTitle>
         <InfoRow k="Address">
-          <span className="font-mono text-brand">{HIP4_CONFIG.contracts.v2.address}</span>
+          <span className="font-mono break-all text-brand">{HIP4_CONFIG.contracts.v2.address}</span>
         </InfoRow>
         <InfoRow k="Network">
           HyperEVM Testnet <Badge variant="outline" className="ml-1 text-[10px]">Chain 998</Badge>
         </InfoRow>
         <InfoRow k="Owner">
-          <span className="font-mono text-gold">{HIP4_CONFIG.sameOwner}</span>
+          <span className="font-mono break-all text-gold">{HIP4_CONFIG.sameOwner}</span>
           <span className="mt-1 block text-[11px] text-text-secondary">Same owner as V1</span>
         </InfoRow>
         <InfoRow k="Reference">

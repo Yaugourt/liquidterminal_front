@@ -92,7 +92,7 @@ export function FlowGrid<T>({
           {columns.map((c, i) => (
             <span
               key={i}
-              className={flowAlignClass(c.align)}
+              className={`min-w-0 truncate ${flowAlignClass(c.align)}`}
             >
               {c.header}
             </span>

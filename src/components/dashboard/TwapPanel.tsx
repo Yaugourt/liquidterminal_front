@@ -232,7 +232,7 @@ export const TwapPanel = memo(function TwapPanel() {
           <span className="shrink-0">Side</span>
           <span className="shrink-0">Ticker</span>
           <span className="shrink-0">Amount</span>
-          <span className="w-[100px] text-right">Filled</span>
+          <span className="w-10 sm:w-[100px] text-right">Filled</span>
           <span className="w-[72px] text-right">Value</span>
         </div>
 
@@ -279,7 +279,7 @@ export const TwapPanel = memo(function TwapPanel() {
                 >
                   {isBuy ? "BUY" : "SELL"}
                 </span>
-                <div className="shrink-0 flex items-center gap-2 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
                   <TokenAvatar
                     assetName={
                       order.marketType === "hip3"
@@ -294,7 +294,7 @@ export const TwapPanel = memo(function TwapPanel() {
                   </span>
                   <MarketTypeBadge type={order.marketType} />
                 </div>
-                <div className="shrink-0 min-w-0">
+                <div className="min-w-0">
                   <div className="mono text-[12.5px] font-semibold text-text-primary leading-tight truncate">
                     {formatSize(String(remainingAmount))}{" "}
                     <span className="text-[10px] text-text-tertiary font-normal">
@@ -305,8 +305,10 @@ export const TwapPanel = memo(function TwapPanel() {
                     {formatDuration(twap.m)}
                   </div>
                 </div>
-                <div className="w-[100px] flex items-center gap-2">
-                  <span className="flex-1 h-1.5 rounded bg-base overflow-hidden">
+                <div className="w-10 sm:w-[100px] flex items-center gap-2 shrink-0">
+                  {/* La barre est une redondance visuelle du % — masquée sur
+                      mobile pour que la ligne tienne à 375px sans clip. */}
+                  <span className="hidden sm:block flex-1 h-1.5 rounded bg-base overflow-hidden">
                     <i
                       className={`block h-full ${
                         isBuy ? "bg-success" : "bg-danger"

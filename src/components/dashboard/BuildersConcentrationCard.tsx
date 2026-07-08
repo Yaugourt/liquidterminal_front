@@ -94,7 +94,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* card-head V4 — title + 24h pill + Volume / Users live stats */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 px-3.5 py-2.5 border-b border-border-subtle">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <PieIcon size={13} className="text-brand" />
         </span>
@@ -131,9 +131,11 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
         </div>
       ) : (
         <>
-          {/* Body — donut hero (left) + legend (right) */}
-          <div className="flex-1 flex items-stretch gap-3 px-4 py-4">
-            <div className="self-center shrink-0">
+          {/* Body — donut hero (left) + legend (right).
+              flex-wrap + min-w sur la légende : quand la carte est étroite
+              (grille lg), la légende passe sous le donut au lieu de clipper. */}
+          <div className="flex-1 flex flex-wrap items-stretch gap-3 px-4 py-4">
+            <div className="self-center shrink-0 mx-auto">
               <DonutTopN
                 data={segments}
                 size={164}
@@ -163,7 +165,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
             </div>
 
             {/* Legend — one row per segment, vertically aligned */}
-            <div className="flex-1 min-w-0 flex flex-col justify-center gap-px">
+            <div className="flex-1 min-w-[150px] flex flex-col justify-center gap-px">
               {segments.map((s, i) => {
                 const pct = total > 0 ? (s.value / total) * 100 : 0;
                 const isHov = hoveredIdx === i;
