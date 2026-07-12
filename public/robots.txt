@@ -1,25 +1,56 @@
-# Liquid Terminal - Robots.txt
+# Liquid Terminal - robots.txt
+# AI crawlers are explicitly welcome: this site wants to be indexed,
+# cited and browsed by AI assistants. Machine-readable entry points:
+#   https://liquidterminal.xyz/llms.txt       (site map for LLMs)
+#   https://liquidterminal.xyz/llms-full.txt  (full wiki corpus, markdown)
+
 User-agent: *
 Allow: /
-
-# Disallow auth/admin pages
 Disallow: /api/
 Disallow: /user/
 Disallow: /dashboard
+Disallow: /profile
+Disallow: /labs/
 
-# Sitemap
+# --- AI search & assistant crawlers (indexing) ---
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+# --- AI on-demand fetchers (a user asked about this site) ---
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
 Sitemap: https://liquidterminal.xyz/sitemap.xml
-
-# Crawl delay (be nice to servers)
-Crawl-delay: 1
-
-# Popular bots
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Slurp
-Allow: /
-
