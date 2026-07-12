@@ -24,12 +24,15 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
   title: {
-    default: "Liquid Terminal - HyperLiquid Data Platform & Services",
+    default: "Liquid Terminal - Hyperliquid Analytics, Explorer & Wiki",
     template: "%s | Liquid Terminal"
   },
-  description: "Comprehensive data processing platform for the HyperLiquid ecosystem. Free tools for HyperCore & HyperEVM: Explorer, Market tracking, Ecosystem overview, Wiki. Premium products: API, RPC, Tracker, DCA.",
+  description: "Free real-time analytics for the Hyperliquid ecosystem: spot & perp markets, vaults, validators, auctions, HyperCore & HyperEVM explorer, and a curated wiki.",
   keywords: [
-    "HyperLiquid",
+    "Hyperliquid",
+    "hyperliquid analytics",
+    "hyperliquid dashboard",
+    "hyperliquid explorer",
     "HyperCore",
     "HyperEVM",
     "crypto explorer",
@@ -55,8 +58,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_CONFIG.url,
     siteName: "Liquid Terminal",
-    title: "Liquid Terminal - HyperLiquid Data Platform",
-    description: "Complete data processing platform for the HyperLiquid ecosystem. Free tools and premium services for HyperCore & HyperEVM.",
+    title: "Liquid Terminal - Hyperliquid Analytics, Explorer & Wiki",
+    description: "Free real-time analytics for the Hyperliquid ecosystem: markets, vaults, validators, explorer & wiki.",
     images: [
       {
         url: "/og-image.png",
@@ -71,8 +74,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@liquidterminal",
     creator: "@liquidterminal",
-    title: "Liquid Terminal - HyperLiquid Platform",
-    description: "Data platform for HyperLiquid ecosystem - Free tools & premium services",
+    title: "Liquid Terminal - Hyperliquid Analytics, Explorer & Wiki",
+    description: "Free real-time analytics for the Hyperliquid ecosystem: markets, vaults, validators, explorer & wiki.",
     images: ["/twitter-image.png"],
   },
   robots: {
