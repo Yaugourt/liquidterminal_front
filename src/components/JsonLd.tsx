@@ -40,11 +40,6 @@ export const softwareApplicationSchema = {
     price: "0",
     priceCurrency: "USD",
   },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "4.8",
-    ratingCount: "1000",
-  },
 };
 
 // Schema for WebSite with SearchAction
