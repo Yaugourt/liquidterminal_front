@@ -30,6 +30,7 @@ import {
 } from "@/services/search";
 import { useGlobalSearch } from "@/store/use-global-search";
 import { trackSearch } from "@/lib/analytics";
+import { Hypurr } from "@/components/hypurr/Hypurr";
 
 const RECENTS_KEY = "lt.search.recents";
 const MAX_RECENTS = 6;
@@ -241,7 +242,8 @@ export function GlobalSearchPalette() {
         ))}
 
         {isEmpty && !loading && (
-          <div className="px-3 py-8 text-center text-[12.5px] text-text-tertiary">
+          <div className="flex flex-col items-center gap-3 px-3 py-8 text-center text-[12.5px] text-text-tertiary">
+            <Hypurr mood="shrug" height={72} />
             No match. Paste an address, a tx hash or a block number to jump straight to it.
           </div>
         )}
