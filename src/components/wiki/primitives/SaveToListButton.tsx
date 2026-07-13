@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useReadLists } from "@/store/use-readlists";
 import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
+import { trackResourceSaved } from "@/lib/analytics";
 import { AddToReadListModal } from "../AddToReadListModal";
 
 interface SaveToListButtonProps {
@@ -61,6 +62,7 @@ export function SaveToListButton({
         await addItemToReadList(readListId, { resourceId });
         setOpen(false);
         setSearch("");
+        trackResourceSaved();
         readListMessages.success.addedToList(list?.name || "Read List");
       } catch (error) {
         handleReadListApiError(error);

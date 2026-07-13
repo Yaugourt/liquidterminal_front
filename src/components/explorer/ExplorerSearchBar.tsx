@@ -5,6 +5,7 @@ import { Search, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useGlobalAliases } from "@/services/explorer";
+import { trackSearch } from "@/lib/analytics";
 
 interface ExplorerSearchBarProps {
   placeholder?: string;
@@ -82,24 +83,28 @@ export function ExplorerSearchBar({
 
     // 1. Vérifier si c'est un bloc (nombre uniquement)
     if (/^\d+$/.test(valueToSearch)) {
+      trackSearch("block");
       router.push(`/explorer/block/${valueToSearch}`);
       return;
     }
 
     // 2. Vérifier si c'est une adresse Ethereum (42 caractères incluant 0x)
     if (/^0x[a-fA-F0-9]{40}$/i.test(valueToSearch)) {
+      trackSearch("address");
       router.push(`/explorer/address/${valueToSearch}`);
       return;
     }
 
     // 3. Vérifier si c'est un hash de transaction (66 caractères incluant 0x)
     if (/^0x[a-fA-F0-9]{64}$/i.test(valueToSearch)) {
+      trackSearch("transaction");
       router.push(`/explorer/transaction/${valueToSearch}`);
       return;
     }
 
     // 4. Si le format n'est pas reconnu mais commence par 0x, essayer comme une adresse
     if (valueToSearch.startsWith("0x")) {
+      trackSearch("address-guess");
       router.push(`/explorer/address/${valueToSearch}`);
       return;
     }
@@ -107,6 +112,7 @@ export function ExplorerSearchBar({
     // 5. Chercher par alias
     const addressFromAlias = findAddressByAlias(valueToSearch);
     if (addressFromAlias) {
+      trackSearch("alias");
       router.push(`/explorer/address/${addressFromAlias}`);
       return;
     }
