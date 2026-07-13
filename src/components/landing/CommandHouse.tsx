@@ -169,13 +169,15 @@ function LivePulse() {
   ];
 
   return (
-    <section className="relative">
+    <section className="hypurr-peek-zone relative">
       {mood && (
-        <div className="absolute -top-[60px] right-6 hidden md:block" title={moodLabel ?? undefined}>
-          <Hypurr mood={mood} height={64} />
+        <div className="absolute -top-[60px] right-6 z-0 hidden md:block" title={moodLabel ?? undefined}>
+          <Hypurr mood={mood} height={64} animation="peek" />
         </div>
       )}
-      <KpiRibbon cells={cells} columns="grid-cols-2 md:grid-cols-3 xl:grid-cols-6" />
+      <div className="relative z-10">
+        <KpiRibbon cells={cells} columns="grid-cols-2 md:grid-cols-3 xl:grid-cols-6" />
+      </div>
     </section>
   );
 }
@@ -486,7 +488,7 @@ function Footer() {
           <div className="flex items-center gap-2">
             <LogoMark size={16} />
             <span className="font-inter text-[13px] font-semibold tracking-tight">Liquid Terminal</span>
-            <Hypurr mood="meowdy" height={36} className="ml-1" title="meowdy" />
+            <Hypurr mood="meowdy" height={36} className="ml-1" title="meowdy" animation="sway" />
           </div>
           <p className="text-[11.5px] leading-relaxed text-text-tertiary max-w-[260px]">
             Open source. Free API. Built for Hyperliquid.
