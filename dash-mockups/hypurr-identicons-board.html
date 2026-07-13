@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LT · Hypurr & Identicons · Proposals</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root, keep in sync.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  /* page-mockup only: live ribbon drift */
+  @keyframes lt-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .lt-marquee { animation: lt-marquee 48s linear infinite; }
+  @media (prefers-reduced-motion: reduce) { .lt-marquee { animation: none; } }
+  .lt-ticker { -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent); mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid #83E9FF; outline-offset: 2px; border-radius: 6px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+
+<div class="max-w-[1280px] mx-auto px-6 py-14 space-y-16">
+
+<header class="space-y-2">
+  <div class="mono text-[11px] font-semibold tracking-[0.18em] uppercase text-brand">Proposals · Hyperliquid spirit</div>
+  <h1 class="font-inter text-[32px] font-semibold tracking-tight">Identicons & Hypurr</h1>
+  <p class="text-[14px] text-text-secondary max-w-2xl">Part 1: the "Liquid Silhouette" address identicon (your pfp, systematized). Part 2: four light Hypurr integrations. Pick your favorites.</p>
+</header>
+
+<!-- ═══════════ PART 1 · IDENTICONS ═══════════ -->
+<section class="space-y-8">
+  <div>
+    <h2 class="font-inter text-[24px] font-semibold tracking-tight">1 · Address identicons, "Liquid Silhouette"</h2>
+    <p class="text-[13px] text-text-secondary mt-1 max-w-2xl">Deterministic: an address always renders the same colors, everywhere on the site. SVG, zero request, ~0.3KB each.</p>
+  </div>
+  <div id="variants" class="space-y-10"></div>
+
+  <div>
+    <h3 class="text-[15px] font-semibold text-text-primary mb-3">In context (table row)</h3>
+    <div id="context-rows" class="border border-border-subtle rounded-lg divide-y divide-border-subtle overflow-hidden"></div>
+  </div>
+</section>
+
+<!-- ═══════════ PART 2 · HYPURR ═══════════ -->
+<section class="space-y-8">
+  <div>
+    <h2 class="font-inter text-[24px] font-semibold tracking-tight">2 · Hypurr in the terminal, four light touches</h2>
+    <p class="text-[13px] text-text-secondary mt-1 max-w-2xl">All optional, all cheap: a static image swapped by context. No animation library, no layout shift.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+    <!-- B1 Empty & error states -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-5 space-y-4">
+      <div class="flex items-baseline justify-between"><h3 class="text-[15px] font-semibold">B1 · Mood states</h3><span class="mono text-[10.5px] text-brand">reco · zero cost</span></div>
+      <p class="text-[12.5px] text-text-secondary leading-relaxed">Hypurr only appears when there is nothing else to show: empty search, 404, API down, loading. One image per situation, picked from the 42 moods.</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-surface-2 rounded-lg p-4 flex flex-col items-center gap-2 border border-border-subtle">
+          <img src="../public/hypurr/shrug.png" class="h-20 w-auto" alt="shrug">
+          <span class="mono text-[10.5px] text-text-tertiary">search: no result → shrug</span>
+        </div>
+        <div class="bg-surface-2 rounded-lg p-4 flex flex-col items-center gap-2 border border-border-subtle">
+          <img src="../public/hypurr/sherlock.png" class="h-20 w-auto" alt="404">
+          <span class="mono text-[10.5px] text-text-tertiary">404 → sherlock</span>
+        </div>
+        <div class="bg-surface-2 rounded-lg p-4 flex flex-col items-center gap-2 border border-border-subtle">
+          <img src="../public/hypurr/this is fine.png" class="h-20 w-auto" alt="degraded">
+          <span class="mono text-[10.5px] text-text-tertiary">API degraded → this is fine</span>
+        </div>
+        <div class="bg-surface-2 rounded-lg p-4 flex flex-col items-center gap-2 border border-border-subtle">
+          <img src="../public/hypurr/meditation.png" class="h-20 w-auto" alt="loading">
+          <span class="mono text-[10.5px] text-text-tertiary">long loading → meditation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- B2 Market mood -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-5 space-y-4">
+      <div class="flex items-baseline justify-between"><h3 class="text-[15px] font-semibold">B2 · Market-mood Hypurr</h3><span class="mono text-[10.5px] text-text-tertiary">landing / dashboard</span></div>
+      <p class="text-[12.5px] text-text-secondary leading-relaxed">One small Hypurr next to the HYPE KPI whose mood follows the 24h move. Hover shows the exact number. Five thresholds, five images.</p>
+      <div class="flex items-end justify-between gap-2 bg-surface-2 rounded-lg p-4 border border-border-subtle">
+        <div class="flex flex-col items-center gap-1"><img src="../public/hypurr/dead.png" class="h-14 w-auto"><span class="mono text-[10px] text-danger">&lt; -10%</span></div>
+        <div class="flex flex-col items-center gap-1"><img src="../public/hypurr/cry.png" class="h-14 w-auto"><span class="mono text-[10px] text-danger">-10..-3%</span></div>
+        <div class="flex flex-col items-center gap-1"><img src="../public/hypurr/meowdy.png" class="h-14 w-auto"><span class="mono text-[10px] text-text-tertiary">flat</span></div>
+        <div class="flex flex-col items-center gap-1"><img src="../public/hypurr/cheers.png" class="h-14 w-auto"><span class="mono text-[10px] text-success">+3..10%</span></div>
+        <div class="flex flex-col items-center gap-1"><img src="../public/hypurr/saiyan.png" class="h-14 w-auto"><span class="mono text-[10px] text-success">&gt; +10%</span></div>
+      </div>
+    </div>
+
+    <!-- B3 Palette easter egg -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-5 space-y-4">
+      <div class="flex items-baseline justify-between"><h3 class="text-[15px] font-semibold">B3 · Cmd+K easter egg</h3><span class="mono text-[10.5px] text-text-tertiary">for the community</span></div>
+      <p class="text-[12.5px] text-text-secondary leading-relaxed">Typing "hypurr" or "gm" in the palette shows a random mood with its name. Nothing in the UI otherwise. The kind of detail people screenshot and post.</p>
+      <div class="bg-surface-2 rounded-lg border border-border-subtle p-3">
+        <div class="flex items-center gap-2 border-b border-border-subtle pb-2 mb-2"><span class="mono text-[11px] text-text-tertiary">⌘K</span><span class="text-[12px] text-text-primary">gm</span></div>
+        <div class="flex items-center gap-3 px-2 py-1.5 rounded-md bg-surface">
+          <img src="../public/hypurr/gm.png" class="h-12 w-auto" alt="gm">
+          <div><div class="text-[12.5px] text-text-primary">gm anon</div><div class="mono text-[10.5px] text-text-tertiary">hypurr says hi · 1 of 42</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B4 Wiki purrfessor -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-5 space-y-4">
+      <div class="flex items-baseline justify-between"><h3 class="text-[15px] font-semibold">B4 · Purrfessor in the wiki</h3><span class="mono text-[10.5px] text-text-tertiary">wiki only</span></div>
+      <p class="text-[12.5px] text-text-secondary leading-relaxed">The purrfessor presents each Learn chapter: a small figure beside the chapter title, teacher-bow on completion of a read list. Gives the wiki a face without touching data density.</p>
+      <div class="flex items-center gap-4 bg-surface-2 rounded-lg p-4 border border-border-subtle">
+        <img src="../public/hypurr/purrfessor.png" class="h-24 w-auto" alt="purrfessor">
+        <div class="space-y-1">
+          <div class="mono text-[10px] uppercase tracking-[0.1em] text-brand">Chapter 3</div>
+          <div class="text-[15px] font-semibold text-text-primary">HyperCore</div>
+          <div class="text-[11.5px] text-text-tertiary">Order book, oracle, 30 articles</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="text-[11.5px] text-text-tertiary">Weight note: source PNGs are 0.5-2.5MB each; shipping = resize 400px + WebP (~15-30KB), lazy-loaded, only when their state triggers.</p>
+</section>
+
+</div>
+
+<script>
+// ── Liquid Silhouette identicon ──────────────────────────────
+// Head = the Hyperliquid drop, shoulders = classic avatar. Deterministic per address.
+function hashAddress(addr) {
+  let h = 0;
+  for (let i = 2; i < addr.length; i++) { h = (h * 31 + addr.charCodeAt(i)) >>> 0; }
+  return h;
+}
+const SIL = '<path d="M 50 76 C 41 76 29 67 24 52 C 17 32 28 14 50 14 C 72 14 83 32 76 52 C 71 67 59 76 50 76 Z M 50 84 C 77 84 95 99 99 126 L 1 126 C 5 99 23 84 50 84 Z"/>';
+function svgFor(addr, variant) {
+  const h = hashAddress(addr);
+  const hue = h % 360;
+  const hue2 = (hue + 40 + (h >> 8) % 60) % 360;
+  let bg, fg, extra = "";
+  if (variant === "A1") { bg = `hsl(${hue} 62% 78%)`; fg = "#0A2540"; }
+  if (variant === "A2") { bg = "#141B2A"; fg = `hsl(${hue} 75% 66%)`; }
+  if (variant === "A3") { bg = `url(#g${hue}-${hue2})`; fg = "#0A0B0F";
+    extra = `<defs><linearGradient id="g${hue}-${hue2}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${hue} 78% 62%)"/><stop offset="1" stop-color="hsl(${hue2} 78% 58%)"/></linearGradient></defs>`; }
+  if (variant === "A4") { bg = "#0F1421"; fg = `hsl(${hue} 70% 68%)`;
+    extra = `<circle cx="50" cy="50" r="47" fill="none" stroke="hsl(${hue} 70% 55%)" stroke-width="5"/>`; }
+  return `<svg viewBox="0 0 100 100" class="rounded-full" style="width:100%;height:100%"><rect width="100" height="100" fill="${bg.startsWith("url") ? "#0A0B0F" : bg}"/>${extra}${bg.startsWith("url") ? `<rect width="100" height="100" fill="${bg}"/>` : ""}<g fill="${fg}">${SIL}</g></svg>`;
+}
+const ADDRS = ["0xdfc24b077bc1425ad1dea75bcb6f8158e10df303","0x8bc4a1e9b177aa00112233445566778899aabbcc","0x7a3f9c2e552277889900aabbccddeeff00112233","0x1111978899aabb00ccddeeff2233445566778811","0xc64cc00b46101bd40aa1c3121195e85c0b0918d8","0x2222aa9cbb00ffeeDdcc99887766554433221100","0x43e977665544332211009988aabbccddeeffa251","0x5aC7f00112233445566778899aabbccddeeff321"];
+const VARIANTS = [
+  { id: "A1", name: "A1 · Pastel plate", desc: "Your pfp verbatim: navy silhouette, pastel plate derived from the address. Bright, friendly, reads at 16px." },
+  { id: "A2", name: "A2 · Terminal ink", desc: "Inverse: colored silhouette on surface-2. The most at home in the dark UI, closest to a data product." },
+  { id: "A3", name: "A3 · Duotone gradient", desc: "Two hues from the hash, dark silhouette. The most distinctive between two addresses side by side." },
+  { id: "A4", name: "A4 · Ringed", desc: "Surface plate + colored ring and silhouette. The ring survives even when the avatar is tiny or clipped by a row." },
+];
+const wrap = document.getElementById("variants");
+for (const v of VARIANTS) {
+  const cell = document.createElement("div");
+  cell.innerHTML = `<div class="flex flex-col md:flex-row md:items-center gap-4">
+    <div class="md:w-[300px] shrink-0"><h3 class="text-[15px] font-semibold text-text-primary">${v.name}</h3><p class="text-[12px] text-text-secondary mt-1 leading-relaxed">${v.desc}</p></div>
+    <div class="flex items-center gap-3 flex-wrap">${ADDRS.map(a => `<div class="flex flex-col items-center gap-1.5"><div style="width:44px;height:44px">${svgFor(a, v.id)}</div><span class="mono text-[9px] text-text-tertiary">${a.slice(0,6)}…</span></div>`).join("")}</div>
+  </div>`;
+  wrap.appendChild(cell);
+}
+// Context rows: A2 in a fake table
+const ctx = document.getElementById("context-rows");
+ctx.innerHTML = ADDRS.slice(0, 4).map((a, i) => `
+  <div class="flex items-center gap-3 px-4 py-2.5 bg-surface">
+    <div style="width:24px;height:24px">${svgFor(a, "A2")}</div>
+    <span class="mono text-[12px] text-text-primary">${a.slice(0,8)}…${a.slice(-6)}</span>
+    <span class="mono text-[12px] ml-auto ${i % 2 ? "text-danger" : "text-success"}">${i % 2 ? "-" : "+"}$${(Math.abs(hashAddress(a)) % 900 + 100).toLocaleString()}K</span>
+    <span class="mono text-[11px] text-text-tertiary w-20 text-right">${i + 2}m ago</span>
+  </div>`).join("");
+</script>
+</body>
+</html>
