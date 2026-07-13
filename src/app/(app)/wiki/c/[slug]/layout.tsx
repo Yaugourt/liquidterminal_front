@@ -19,6 +19,7 @@ export async function generateMetadata({
   return buildMetadata({
     title: `${name} - Hyperliquid Wiki`,
     description: `Community-curated ${name} resources for the Hyperliquid ecosystem: articles, docs and threads.`,
+    image: "/og/wiki.png",
     path: `/wiki/c/${slug}`,
   });
 }
