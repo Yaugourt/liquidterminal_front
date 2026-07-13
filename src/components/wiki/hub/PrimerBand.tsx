@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { DEFAULT_SUB_META } from "../education-meta";
 import { excerpt, type ChapterTopic } from "./topics";
+import { Hypurr } from "@/components/hypurr/Hypurr";
 
 interface PrimerBandProps {
   topic: ChapterTopic;
@@ -83,10 +84,20 @@ export function PrimerBand({ topic, activeSubId, onSubChange }: PrimerBandProps)
           )}
         </div>
 
-        <h2 className="font-inter text-xl font-semibold tracking-tight text-text-primary sm:text-2xl">
-          {title}
-        </h2>
-        <p className="mt-1 text-[12.5px] font-medium text-brand/90">{tagline}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="font-inter text-xl font-semibold tracking-tight text-text-primary sm:text-2xl">
+              {title}
+            </h2>
+            <p className="mt-1 text-[12.5px] font-medium text-brand/90">{tagline}</p>
+          </div>
+          <Hypurr
+            mood="purrfessor"
+            height={60}
+            className="hidden shrink-0 sm:block"
+            title="The purrfessor walks you through this chapter"
+          />
+        </div>
         <p
           className={cn(
             "mt-3 max-w-3xl text-[13px] leading-relaxed text-text-secondary",

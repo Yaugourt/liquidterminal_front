@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { truncateAddress } from "@/lib/formatters/numberFormatting";
 import { type PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
+import { AddressIdenticon } from "./AddressIdenticon";
 import {
     Table,
     TableBody,
@@ -656,7 +657,12 @@ function renderCellContent<T>(
     const raw = row[column.accessor];
     if (column.format) return column.format(raw, row);
     if (column.type === "address" && typeof raw === "string") {
-        return truncateAddress(raw);
+        return (
+            <span className="inline-flex items-center gap-2 align-middle">
+                <AddressIdenticon address={raw} size={18} />
+                {truncateAddress(raw)}
+            </span>
+        );
     }
     if (column.type === "change" && typeof raw === "number") {
         return `${raw > 0 ? "+" : ""}${raw}`;

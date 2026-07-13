@@ -10,6 +10,9 @@ import { useHypePrice } from "@/services/market/hype/hooks";
 import { compactCount, compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { trackBotCta, trackConnectStarted } from "@/lib/analytics";
+import { useDataFetching } from "@/hooks/useDataFetching";
+import { fetchSpotTokens } from "@/services/market/spot/api";
+import { Hypurr, marketMood } from "@/components/hypurr/Hypurr";
 
 /**
  * Landing "Command House" (dash-mockups/home-v4-D-command-house.html):
@@ -120,13 +123,30 @@ function LivePulse() {
   const { price: hypePrice } = useHypePrice();
   const { format } = useNumberFormat();
 
+  // HYPE 24h move drives Hypurr's mood; top-of-volume page always has it.
+  const { data: topSpot } = useDataFetching({
+    fetchFn: () => fetchSpotTokens({ limit: 10, sortBy: "volume", sortOrder: "desc" }),
+    refreshInterval: 60000,
+    maxRetries: 2,
+  });
+  const hypeChange = topSpot?.data?.find((t) => t.name === "HYPE")?.change24h ?? null;
+  const mood = marketMood(hypeChange);
+
   const loading = "…";
 
   const cells: KpiCell[] = [
     {
       label: "HYPE",
       value: hypePrice != null ? formatPrice(hypePrice, format) : loading,
-      sub: "live",
+      sub:
+        hypeChange != null ? (
+          <span className={hypeChange >= 0 ? "text-success" : "text-danger"}>
+            {hypeChange >= 0 ? "+" : ""}
+            {hypeChange.toFixed(2)}% · 24h
+          </span>
+        ) : (
+          "live"
+        ),
     },
     {
       label: "24h Volume",
@@ -157,7 +177,12 @@ function LivePulse() {
   ];
 
   return (
-    <section>
+    <section className="relative">
+      {mood && (
+        <div className="absolute -top-11 right-5 hidden md:block" title={mood.label}>
+          <Hypurr mood={mood.mood} height={48} />
+        </div>
+      )}
       <KpiRibbon cells={cells} columns="grid-cols-2 md:grid-cols-3 xl:grid-cols-6" />
     </section>
   );
