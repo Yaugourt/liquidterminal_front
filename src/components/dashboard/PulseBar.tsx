@@ -47,13 +47,15 @@ export const PulseBar = memo(function PulseBar() {
   ];
 
   return (
-    <div className="relative">
+    <div className="hypurr-peek-zone relative">
       {mood && (
-        <div className="absolute -top-[54px] right-4 hidden md:block" title={moodLabel ?? undefined}>
-          <Hypurr mood={mood} height={56} />
+        <div className="absolute -top-[54px] right-4 z-0 hidden md:block" title={moodLabel ?? undefined}>
+          <Hypurr mood={mood} height={56} animation="peek" />
         </div>
       )}
-      <KpiRibbon cells={kpis} columns="grid-cols-2 sm:grid-cols-4" />
+      <div className="relative z-10">
+        <KpiRibbon cells={kpis} columns="grid-cols-2 sm:grid-cols-4" />
+      </div>
     </div>
   );
 });

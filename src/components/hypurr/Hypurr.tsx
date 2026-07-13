@@ -13,12 +13,17 @@ export const HYPURR_MOODS = [
 
 export type HypurrMood = (typeof HYPURR_MOODS)[number];
 
+/** Micro-animations defined in globals.css; all transform-only and
+ *  disabled under prefers-reduced-motion. */
+export type HypurrAnimation = "float" | "peek" | "sway" | "pop";
+
 interface HypurrProps {
   mood: HypurrMood;
   /** Rendered height in px; width follows the 4:3 source ratio. */
   height?: number;
   className?: string;
   title?: string;
+  animation?: HypurrAnimation;
 }
 
 /**
@@ -26,7 +31,8 @@ interface HypurrProps {
  * states around the data (loading, empty, degraded, celebration) and as a
  * mood companion; it never covers or replaces a number.
  */
-export function Hypurr({ mood, height = 80, className, title }: HypurrProps) {
+export function Hypurr({ mood, height = 80, className, title, animation }: HypurrProps) {
+  const animationClass = animation ? `hypurr-${animation}` : "";
   return (
     <Image
       src={`/hypurr-web/${mood}.webp`}
@@ -34,7 +40,7 @@ export function Hypurr({ mood, height = 80, className, title }: HypurrProps) {
       title={title}
       width={Math.round((height * 4) / 3)}
       height={height}
-      className={className}
+      className={[animationClass, className].filter(Boolean).join(" ")}
       style={{ height, width: "auto" }}
     />
   );
