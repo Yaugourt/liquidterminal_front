@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
+import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { KpiRibbon, type KpiCell } from "@/components/common";
 import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
@@ -97,7 +97,7 @@ function Hero() {
       </p>
 
       <div className="w-full max-w-2xl mt-8">
-        <ExplorerSearchBar className="w-full" />
+        <SearchTrigger variant="hero" />
         <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
           {SEARCH_CHIPS.map((chip) => (
             <Link
