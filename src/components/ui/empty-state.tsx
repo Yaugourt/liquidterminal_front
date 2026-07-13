@@ -1,9 +1,9 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { Hypurr } from "@/components/hypurr/Hypurr";
 
 interface EmptyStateProps {
     title?: string;
@@ -28,9 +28,13 @@ export function EmptyState({
             "flex flex-col items-center justify-center text-center px-4 py-8 w-full h-[300px]",
             className
         )}>
-            <div className="w-16 h-16 mb-4 bg-surface-2 rounded-lg flex items-center justify-center">
-                {icon || <Database className="w-8 h-8 text-text-tertiary" />}
-            </div>
+            {icon ? (
+                <div className="w-16 h-16 mb-4 bg-surface-2 rounded-lg flex items-center justify-center">
+                    {icon}
+                </div>
+            ) : (
+                <Hypurr mood="shrug" height={84} className="mb-4" />
+            )}
             <p className="text-text-primary text-lg mb-2">{title}</p>
             <p className="text-text-tertiary text-sm mb-4">{description}</p>
             {action}

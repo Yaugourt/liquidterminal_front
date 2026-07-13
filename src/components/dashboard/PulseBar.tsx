@@ -6,6 +6,8 @@ import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalSt
 import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { KpiRibbon, type KpiCell } from "@/components/common";
+import { Hypurr } from "@/components/hypurr/Hypurr";
+import { useHypeMood } from "@/components/hypurr/useHypeMood";
 
 /**
  * PulseBar — horizontal KPI ribbon for the Dashboard.
@@ -15,6 +17,7 @@ export const PulseBar = memo(function PulseBar() {
   const { stats, isLoading: statsLoading } = useDashboardStats();
   const { stats: perpStats } = usePerpGlobalStats();
   const { format } = useNumberFormat();
+  const { mood, label: moodLabel } = useHypeMood();
 
   const loadingPlaceholder = "…";
   const emptyPlaceholder = "—";
@@ -43,5 +46,14 @@ export const PulseBar = memo(function PulseBar() {
     },
   ];
 
-  return <KpiRibbon cells={kpis} columns="grid-cols-2 sm:grid-cols-4" />;
+  return (
+    <div className="relative">
+      {mood && (
+        <div className="absolute -top-[54px] right-4 hidden md:block" title={moodLabel ?? undefined}>
+          <Hypurr mood={mood} height={56} />
+        </div>
+      )}
+      <KpiRibbon cells={kpis} columns="grid-cols-2 sm:grid-cols-4" />
+    </div>
+  );
 });

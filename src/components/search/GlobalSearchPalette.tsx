@@ -30,7 +30,10 @@ import {
 } from "@/services/search";
 import { useGlobalSearch } from "@/store/use-global-search";
 import { trackSearch } from "@/lib/analytics";
-import { Hypurr } from "@/components/hypurr/Hypurr";
+import { Hypurr, HYPURR_MOODS, type HypurrMood } from "@/components/hypurr/Hypurr";
+
+/** Typing one of these summons a random Hypurr instead of results. */
+const EGG_QUERIES = new Set(["gm", "hypurr", "meow", "wagmi", "purr"]);
 
 const RECENTS_KEY = "lt.search.recents";
 const MAX_RECENTS = 6;
@@ -138,12 +141,16 @@ export function GlobalSearchPalette() {
   }, [open]);
 
   const pattern = useMemo(() => detectPattern(query), [query]);
+  const eggMood: HypurrMood | null = useMemo(() => {
+    if (!EGG_QUERIES.has(query.trim().toLowerCase())) return null;
+    return HYPURR_MOODS[Math.floor(Math.random() * HYPURR_MOODS.length)];
+  }, [query]);
   const groups: SearchGroup[] = useMemo(
     () => (index ? searchIndex(index, query) : []),
     [index, query]
   );
   const hasQuery = query.trim().length > 0;
-  const isEmpty = hasQuery && !pattern && groups.length === 0;
+  const isEmpty = hasQuery && !pattern && !eggMood && groups.length === 0;
 
   const handleSelect = useCallback(
     (result: SearchResult) => {
@@ -185,6 +192,18 @@ export function GlobalSearchPalette() {
       <Command.List className="max-h-[min(420px,60vh)] overflow-y-auto p-2">
         {loading && (
           <div className="px-3 py-6 text-center text-[12.5px] text-text-tertiary">Loading index…</div>
+        )}
+
+        {eggMood && (
+          <div className="flex items-center gap-4 rounded-md bg-surface-2 px-4 py-3 m-1 border border-border-subtle">
+            <Hypurr mood={eggMood} height={64} />
+            <div>
+              <div className="text-[13px] text-text-primary">gm anon</div>
+              <div className="mono text-[11px] text-text-tertiary">
+                hypurr says {eggMood.replace(/-/g, " ")} · 1 of {HYPURR_MOODS.length}
+              </div>
+            </div>
+          </div>
         )}
 
         {pattern && (

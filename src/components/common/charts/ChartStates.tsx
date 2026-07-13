@@ -1,6 +1,7 @@
 "use client";
 
-import { AlertCircle, BarChart3, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import { Hypurr } from "@/components/hypurr/Hypurr";
 
 interface ChartLoadingProps {
   className?: string;
@@ -41,7 +42,7 @@ export function ChartEmpty({
 }: ChartEmptyProps) {
   return (
     <div className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-2 ${className}`}>
-      <BarChart3 className="h-8 w-8 text-text-tertiary" strokeWidth={1.5} />
+      <Hypurr mood="this-is-fine" height={64} />
       <p className="text-text-tertiary text-sm">{message}</p>
       {suggestion && (
         <p className="text-text-tertiary/60 text-xs">{suggestion}</p>
