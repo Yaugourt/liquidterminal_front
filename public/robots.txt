@@ -54,3 +54,7 @@ User-agent: Perplexity-User
 Allow: /
 
 Sitemap: https://liquidterminal.xyz/sitemap.xml
+
+# ByteDance: documented as ignoring robots.txt, no citation surface for us
+User-agent: Bytespider
+Disallow: /
