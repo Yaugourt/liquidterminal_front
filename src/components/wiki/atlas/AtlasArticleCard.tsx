@@ -4,7 +4,8 @@ import { memo } from "react";
 import { safeHref } from "@/lib/safeUrl";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 import type { EducationalResource } from "@/services/wiki/types";
-import { TypeBadge, SaveToListButton } from "../primitives";
+import { trackResourceOpened } from "@/lib/analytics";
+import { TypeBadge, SaveToListButton, detectContentType } from "../primitives";
 
 interface AtlasArticleCardProps {
   resource: EducationalResource;
@@ -43,6 +44,7 @@ export const AtlasArticleCard = memo(function AtlasArticleCard({ resource }: Atl
         href={safeHref(resource.url)}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={() => trackResourceOpened(detectContentType(resource.url))}
         className="flex min-w-0 flex-col gap-1.5"
       >
         <h3 className="text-[13px] font-semibold leading-snug text-text-primary transition-colors group-hover:text-brand">
