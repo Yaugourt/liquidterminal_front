@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { SectionsEditorialPremium } from "./SectionsEditorialPremium";
+import { CommandHouse } from "./CommandHouse";
 
 /**
- * Landing page: hybrid Editorial + Premium.
- * Structure: Hero → Why → See it → Get started
- * Style: glassmorphism, gradients cyan/gold, refined
+ * Landing page: "Command House" (mockup home-v4-D).
+ * Structure: search hero, live KPI ribbon, product screens, data
+ * sources, charter + Telegram bot.
  */
 export function LandingViewport() {
   useEffect(() => {
@@ -16,5 +16,5 @@ export function LandingViewport() {
     };
   }, []);
 
-  return <SectionsEditorialPremium />;
+  return <CommandHouse />;
 }
