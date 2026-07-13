@@ -7,7 +7,7 @@ import { KpiRibbon, type KpiCell } from "@/components/common";
 import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useHypePrice } from "@/services/market/hype/hooks";
-import { compactUsd, formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { trackBotCta, trackConnectStarted } from "@/lib/analytics";
 
@@ -118,10 +118,6 @@ function LivePulse() {
   const { format } = useNumberFormat();
 
   const loading = "…";
-  const formatCount = (value: number | null | undefined): string => {
-    if (value == null || !Number.isFinite(value)) return "—".replace("—", "-");
-    return formatNumber(value, format, { maximumFractionDigits: 0 });
-  };
 
   const cells: KpiCell[] = [
     {
@@ -141,7 +137,7 @@ function LivePulse() {
     },
     {
       label: "HYPE Staked",
-      value: statsLoading && !stats ? loading : formatCount(stats?.totalHypeStake),
+      value: statsLoading && !stats ? loading : compactCount(stats?.totalHypeStake),
       sub: "across validators",
     },
     {
@@ -152,7 +148,7 @@ function LivePulse() {
     },
     {
       label: "Users",
-      value: statsLoading && !stats ? loading : formatCount(stats?.numberOfUsers),
+      value: statsLoading && !stats ? loading : compactCount(stats?.numberOfUsers),
       sub: "all time",
     },
   ];
