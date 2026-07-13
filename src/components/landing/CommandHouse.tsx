@@ -10,9 +10,8 @@ import { useHypePrice } from "@/services/market/hype/hooks";
 import { compactCount, compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { trackBotCta, trackConnectStarted } from "@/lib/analytics";
-import { useDataFetching } from "@/hooks/useDataFetching";
-import { fetchSpotTokens } from "@/services/market/spot/api";
-import { Hypurr, marketMood } from "@/components/hypurr/Hypurr";
+import { Hypurr } from "@/components/hypurr/Hypurr";
+import { useHypeMood } from "@/components/hypurr/useHypeMood";
 
 /**
  * Landing "Command House" (dash-mockups/home-v4-D-command-house.html):
@@ -123,14 +122,7 @@ function LivePulse() {
   const { price: hypePrice } = useHypePrice();
   const { format } = useNumberFormat();
 
-  // HYPE 24h move drives Hypurr's mood; top-of-volume page always has it.
-  const { data: topSpot } = useDataFetching({
-    fetchFn: () => fetchSpotTokens({ limit: 10, sortBy: "volume", sortOrder: "desc" }),
-    refreshInterval: 60000,
-    maxRetries: 2,
-  });
-  const hypeChange = topSpot?.data?.find((t) => t.name === "HYPE")?.change24h ?? null;
-  const mood = marketMood(hypeChange);
+  const { mood, label: moodLabel, change24h: hypeChange } = useHypeMood();
 
   const loading = "…";
 
@@ -179,8 +171,8 @@ function LivePulse() {
   return (
     <section className="relative">
       {mood && (
-        <div className="absolute -top-11 right-5 hidden md:block" title={mood.label}>
-          <Hypurr mood={mood.mood} height={48} />
+        <div className="absolute -top-[60px] right-6 hidden md:block" title={moodLabel ?? undefined}>
+          <Hypurr mood={mood} height={64} />
         </div>
       )}
       <KpiRibbon cells={cells} columns="grid-cols-2 md:grid-cols-3 xl:grid-cols-6" />
@@ -412,9 +404,12 @@ function CharterAndBot() {
             <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">the charter</span>
           </div>
           <div className="px-4 py-4 space-y-4">
-            <p className="text-[13.5px] leading-relaxed text-text-secondary">
-              Liquid Terminal is a public good. Site data never sits behind a paywall. That is written into the charter.
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="min-w-0 flex-1 text-[13.5px] leading-relaxed text-text-secondary">
+                Liquid Terminal is a public good. Site data never sits behind a paywall. That is written into the charter.
+              </p>
+              <Hypurr mood="handshake" height={72} className="hidden shrink-0 sm:block" />
+            </div>
             <div className="space-y-0">
               {CHARTER_ITEMS.map((item, i) => (
                 <div
@@ -443,15 +438,18 @@ function CharterAndBot() {
               Fills, liquidations, vault moves and governance, pushed as they happen. You set the threshold, the bot
               watches it.
             </p>
-            <div className="bg-surface-2 rounded-lg p-3 mono text-[12px] leading-relaxed border border-border-subtle max-w-md">
-              <div className="flex items-center gap-2 text-[10px] text-text-tertiary mb-1.5">
-                <span className="font-semibold text-text-secondary">LiquidTerminal Bot</span>
-                <span>14:32</span>
+            <div className="flex items-end gap-3">
+              <div className="min-w-0 flex-1 bg-surface-2 rounded-lg p-3 mono text-[12px] leading-relaxed border border-border-subtle max-w-md">
+                <div className="flex items-center gap-2 text-[10px] text-text-tertiary mb-1.5">
+                  <span className="font-semibold text-text-secondary">LiquidTerminal Bot</span>
+                  <span>14:32</span>
+                </div>
+                <div className="text-text-primary">
+                  ⚡ Fill: <span className="text-brand">0x8bc…e9b1</span> bought 12,400 HYPE @ $65.31 ·{" "}
+                  <span className="text-gold">$809K</span>
+                </div>
               </div>
-              <div className="text-text-primary">
-                ⚡ Fill: <span className="text-brand">0x8bc…e9b1</span> bought 12,400 HYPE @ $65.31 ·{" "}
-                <span className="text-gold">$809K</span>
-              </div>
+              <Hypurr mood="calls" height={88} className="hidden shrink-0 sm:block" title="Hypurr never misses a fill" />
             </div>
             <div className="bg-surface-2 rounded-lg p-3 mono text-[12px] leading-relaxed border border-border-subtle max-w-md">
               <div className="flex items-center gap-2 text-[10px] text-text-tertiary mb-1.5">
@@ -488,6 +486,7 @@ function Footer() {
           <div className="flex items-center gap-2">
             <LogoMark size={16} />
             <span className="font-inter text-[13px] font-semibold tracking-tight">Liquid Terminal</span>
+            <Hypurr mood="meowdy" height={36} className="ml-1" title="meowdy" />
           </div>
           <p className="text-[11.5px] leading-relaxed text-text-tertiary max-w-[260px]">
             Open source. Free API. Built for Hyperliquid.

@@ -3,6 +3,7 @@
 import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
+import { Hypurr } from "@/components/hypurr/Hypurr";
 
 interface LoadingStateProps {
     message?: string;
@@ -32,7 +33,14 @@ export function LoadingState({
             config.height,
             className
         )}>
-            <Loader2 className={cn(config.icon, "animate-spin text-brand mb-3")} />
+            {size === "sm" ? (
+                <Loader2 className={cn(config.icon, "animate-spin text-brand mb-3")} />
+            ) : (
+                <div className="mb-3 flex flex-col items-center gap-2">
+                    <Hypurr mood="meditation" height={size === "lg" ? 88 : 64} className="animate-pulse" />
+                    <Loader2 className="h-4 w-4 animate-spin text-brand" />
+                </div>
+            )}
             <span className={cn("text-text-tertiary", config.text)}>{message}</span>
         </div>
     );

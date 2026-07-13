@@ -1,18 +1,17 @@
 import Image from "next/image";
 
-/** Optimized moods available under public/hypurr-web (400px WebP, 13-40KB). */
-export type HypurrMood =
-  | "shrug"
-  | "sherlock"
-  | "this-is-fine"
-  | "meditation"
-  | "dead"
-  | "cry"
-  | "meowdy"
-  | "cheers"
-  | "saiyan"
-  | "purrfessor"
-  | "teacher-bow";
+/** Every optimized mood under public/hypurr-web (400px WebP, 13-40KB). */
+export const HYPURR_MOODS = [
+  "calls", "cash", "cheers", "cry", "crystalball", "dafuq", "dead",
+  "fire-panic", "fire-smirk", "gm", "handshake", "happy", "hearteyes",
+  "hypurr", "in-my-lane", "karate", "liquid", "meditation", "meowdy",
+  "notes", "photo", "purrfessor", "saiyan", "samurai", "sherlock",
+  "shook", "shrug", "ski", "sleepy", "smoking", "snowboard", "sweating",
+  "teacher-angry", "teacher-bow", "theories", "this-is-fine", "throne",
+  "thumbs-down", "thumbs-up-sad", "thumbs-up", "tired",
+] as const;
+
+export type HypurrMood = (typeof HYPURR_MOODS)[number];
 
 interface HypurrProps {
   mood: HypurrMood;
@@ -23,9 +22,9 @@ interface HypurrProps {
 }
 
 /**
- * Hypurr, the Hyperliquid mascot. Rule of the house: Hypurr only shows up
- * where there is no data to read (empty/error states) or as a small mood
- * companion; it never competes with numbers.
+ * Hypurr, the Hyperliquid mascot. Rule of the house: Hypurr lives in the
+ * states around the data (loading, empty, degraded, celebration) and as a
+ * mood companion; it never covers or replaces a number.
  */
 export function Hypurr({ mood, height = 80, className, title }: HypurrProps) {
   return (
@@ -41,7 +40,7 @@ export function Hypurr({ mood, height = 80, className, title }: HypurrProps) {
   );
 }
 
-/** Map a 24h % move to Hypurr's market mood (B2 thresholds). */
+/** Map a 24h % move to Hypurr's market mood. */
 export function marketMood(change24hPct: number | null | undefined): { mood: HypurrMood; label: string } | null {
   if (change24hPct == null || !Number.isFinite(change24hPct)) return null;
   if (change24hPct <= -10) return { mood: "dead", label: `HYPE ${change24hPct.toFixed(1)}% 24h` };
