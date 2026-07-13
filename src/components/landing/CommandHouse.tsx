@@ -35,12 +35,15 @@ const SEARCH_CHIPS = [
   { label: "Tx hash", href: "/explorer" },
 ] as const;
 
-function LogoMark({ size = 18 }: { size?: number }) {
+function LogoMark({ size = 22 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 18 18" fill="none" aria-hidden="true" className="text-brand">
-      <rect x="1" y="1" width="16" height="16" rx="4" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M5.5 5.5v7h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <Image
+      src="/logo.svg"
+      alt="Liquid Terminal"
+      width={size}
+      height={size}
+      style={{ height: size, width: size }}
+    />
   );
 }
 
