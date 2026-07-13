@@ -93,6 +93,7 @@ export const seoConfig = {
       "validator tracking",
     ],
     path: "/explorer",
+    image: "/og/explorer.png",
   },
   
   market: {
@@ -108,6 +109,7 @@ export const seoConfig = {
       "market dashboard",
     ],
     path: "/market",
+    image: "/og/market.png",
   },
   
   ecosystem: {
@@ -115,6 +117,7 @@ export const seoConfig = {
     description: "Comprehensive directory of HyperLiquid ecosystem projects. Discover dApps, tools, and services built on HyperCore and HyperEVM.",
     keywords: ["HyperLiquid ecosystem", "dApps", "crypto projects", "DeFi tools", "blockchain apps"],
     path: "/ecosystem",
+    image: "/og/ecosystem.png",
   },
   
   publicGoods: {
@@ -122,6 +125,7 @@ export const seoConfig = {
     description: "Discover and support open-source projects building public goods for the HyperLiquid ecosystem. Funded by validator fees without community donations. Curated by Ryzed, Imad, and Kirby.",
     keywords: ["public goods", "open source", "grants", "HyperLiquid funding", "crypto grants", "validator funding"],
     path: "/ecosystem/public-goods",
+    image: "/og/ecosystem.png",
   },
   
   wiki: {
@@ -129,6 +133,7 @@ export const seoConfig = {
     description: "Complete knowledge base for HyperLiquid ecosystem. Guides, tutorials, documentation, and curated resources for builders and users.",
     keywords: ["HyperLiquid wiki", "crypto guides", "blockchain tutorials", "documentation", "learning resources"],
     path: "/wiki",
+    image: "/og/wiki.png",
   },
 
   hip4: {
@@ -151,6 +156,7 @@ export const seoConfig = {
     description: "Track your HyperLiquid wallets and portfolios in real-time. Organize wallets in lists, import via CSV, monitor performance. Free and premium tiers.",
     keywords: ["wallet tracker", "portfolio tracker", "crypto wallet", "multi-wallet", "HyperLiquid tracker"],
     path: "/market/tracker",
+    image: "/og/market.png",
   },
   
   api: {
@@ -172,6 +178,7 @@ export const seoConfig = {
     description: "Browse and copy public wallet lists shared by the HyperLiquid community. Discover interesting addresses and follow top traders.",
     keywords: ["wallet lists", "public lists", "trader lists", "crypto addresses", "portfolio sharing"],
     path: "/market/tracker/public-lists",
+    image: "/og/market.png",
   },
 
   spot: {
@@ -179,6 +186,7 @@ export const seoConfig = {
     description: "Real-time spot trading data for HyperLiquid tokens. Track prices, volume, liquidity, and market metrics.",
     keywords: ["spot trading", "token prices", "HyperLiquid tokens", "crypto market", "trading volume"],
     path: "/market/spot",
+    image: "/og/market.png",
   },
 
   perp: {
@@ -186,6 +194,7 @@ export const seoConfig = {
     description: "Track HyperLiquid perpetual futures markets. Real-time funding rates, open interest, liquidations, and trading volumes.",
     keywords: ["perpetual futures", "perps", "funding rates", "open interest", "crypto derivatives"],
     path: "/market/perp",
+    image: "/og/market.png",
   },
 
   spotAuction: {
@@ -193,12 +202,14 @@ export const seoConfig = {
     description: "Monitor ongoing and upcoming spot token auctions on HyperLiquid. Participate in fair launches and token distributions.",
     keywords: ["token auctions", "fair launch", "HyperLiquid auctions", "token distribution", "IDO", "spot auction"],
     path: "/market/spot/auction",
+    image: "/og/market.png",
   },
   perpAuction: {
     title: "Perpetual Auctions - HyperLiquid DEXs",
     description: "Monitor HyperLiquid Perpetual DEX auctions. Track new perpetual listings and participate in the ecosystem.",
     keywords: ["perp auctions", "HyperLiquid perps", "new listings", "DEX auctions"],
     path: "/market/perp/auction",
+    image: "/og/market.png",
   },
 
   marketBuilders: {
@@ -207,6 +218,7 @@ export const seoConfig = {
       "Explore HyperLiquid referral builders: global volume and fee stats, top builders by activity, and per-builder detail with top users.",
     keywords: ["HyperLiquid builders", "referral fees", "builder fees", "DEX builders", "indexer"],
     path: "/market/builders",
+    image: "/og/market.png",
   },
 
   marketHip4: {
@@ -215,6 +227,7 @@ export const seoConfig = {
       "Live HIP-4 prediction markets on HyperLiquid — outcome probabilities, trading volume, open interest, fills, and market resolutions.",
     keywords: ["HIP-4", "prediction markets", "HyperLiquid outcomes", "binary markets", "DEX predictions"],
     path: "/market/hip4",
+    image: "/og/market.png",
   },
 
   dashboard: {
@@ -229,6 +242,7 @@ export const seoConfig = {
     description: "Browse open-source public goods projects building on HyperLiquid. Funded by validator fees through EnigmaValidator. Curated by Ryzed (Hyperswap), Imad (Enigma), and Kirby (HypurrCo).",
     keywords: ["public goods", "open source", "HyperLiquid grants", "validator funding", "community projects", "EnigmaValidator"],
     path: "/ecosystem/publicgoods",
+    image: "/og/ecosystem.png",
   },
 
   vaults: {
@@ -236,6 +250,7 @@ export const seoConfig = {
     description: "Explore HyperLiquid vaults and their performance. Track TVL, returns, strategies, and vault metrics.",
     keywords: ["crypto vaults", "HyperLiquid vaults", "TVL", "vault strategies", "DeFi vaults"],
     path: "/explorer/vaults",
+    image: "/og/explorer.png",
   },
 
   priorityFees: {
@@ -251,6 +266,7 @@ export const seoConfig = {
       "indexer",
     ],
     path: "/explorer/priority-fees",
+    image: "/og/explorer.png",
   },
 
   validators: {
@@ -258,6 +274,7 @@ export const seoConfig = {
     description: "Monitor HyperLiquid validators, staking stats, commission rates, and network security metrics.",
     keywords: ["validators", "staking", "HyperLiquid validators", "proof of stake", "network security"],
     path: "/explorer/validator",
+    image: "/og/explorer.png",
   },
 
   liquidations: {
@@ -265,6 +282,7 @@ export const seoConfig = {
     description: "Track HyperLiquid liquidation events in real-time. Monitor size, notional value, and market impact of liquidations.",
     keywords: ["liquidations", "HyperLiquid liquidations", "trading liquidations", "perp liquidations", "market data"],
     path: "/explorer/liquidations",
+    image: "/og/explorer.png",
   },
 };
 

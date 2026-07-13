@@ -20,6 +20,7 @@ export async function generateMetadata({
   return buildMetadata({
     title: `${name} - Hyperliquid Read List`,
     description: `${name}: a curated Hyperliquid reading list on Liquid Terminal, with reading order and progress tracking.`,
+    image: "/og/wiki.png",
     path: `/wiki/readlists/${slug}`,
   });
 }
