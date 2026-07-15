@@ -33,7 +33,14 @@ export const LiquidationsChartSection = () => {
     lastUpdated
   } = useLiquidationsContext();
 
-  // Transformer les buckets en données de chart
+  // The endpoint returns a full grid of buckets even when the window holds no
+  // liquidations; an all-zero series must read as "no data", not a $0 chart.
+  const chartHasData = useMemo(
+    () => chartBuckets.some((bucket) => bucket.totalVolume > 0 || bucket.liquidationsCount > 0),
+    [chartBuckets]
+  );
+
+  // Transform buckets into chart data points
   const chartData = useMemo(() => {
     if (!chartBuckets.length) return [];
 
@@ -190,8 +197,8 @@ export const LiquidationsChartSection = () => {
           <ChartError message="Failed to load liquidation data" />
         ) : chartLoading ? (
           <ChartLoading />
-        ) : chartData.length === 0 ? (
-          <ChartEmpty message="No liquidation data available" />
+        ) : chartData.length === 0 || !chartHasData ? (
+          <ChartEmpty message="No liquidation history available for this period" />
         ) : (
           <AuroraHistogramChart
             data={chartData}

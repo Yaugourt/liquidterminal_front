@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { chapterHref, type ChapterTopic } from "../hub/topics";
 import { SUBCHAPTER_CATEGORY_MAP } from "../hub/topics";
 import type { EducationalCategory } from "@/services/wiki/types";
@@ -9,8 +8,6 @@ import type { EducationalCategory } from "@/services/wiki/types";
 interface ChapterCardProps {
   topic: ChapterTopic;
   categories: EducationalCategory[];
-  /** Muted style for the scaled-preview (future chapter) cards. */
-  preview?: boolean;
 }
 
 /**
@@ -18,7 +15,7 @@ interface ChapterCardProps {
  * title, tagline, article count. HIP Framework additionally lists its
  * HIP-1/2/3 sub-rows with counts. Links to the chapter route.
  */
-export function ChapterCard({ topic, categories, preview = false }: ChapterCardProps) {
+export function ChapterCard({ topic, categories }: ChapterCardProps) {
   const Icon = topic.icon;
   const subs = topic.chapter.subChapters ?? [];
   const byName = new Map(categories.map((c) => [c.name, c]));
@@ -32,14 +29,7 @@ export function ChapterCard({ topic, categories, preview = false }: ChapterCardP
     .filter((r) => r.count > 0);
 
   const body = (
-    <div
-      className={cn(
-        "flex h-full flex-col rounded-lg border bg-surface p-3.5 transition-colors",
-        preview
-          ? "border-border-subtle/60 opacity-80"
-          : "border-border-subtle hover:border-border-default"
-      )}
-    >
+    <div className="flex h-full flex-col rounded-lg border border-border-subtle bg-surface p-3.5 transition-colors hover:border-border-default">
       <div className="mb-2 flex items-center justify-between">
         <span className="grid h-7 w-7 place-items-center rounded-md bg-surface-2 text-brand">
           <Icon className="h-3.5 w-3.5" />
@@ -63,12 +53,10 @@ export function ChapterCard({ topic, categories, preview = false }: ChapterCardP
       )}
 
       <div className="mono mt-auto pt-2.5 text-[10.5px] text-text-tertiary">
-        {preview ? "preview" : `${topic.articleCount} ${topic.articleCount === 1 ? "article" : "articles"}`}
+        {topic.articleCount} {topic.articleCount === 1 ? "article" : "articles"}
       </div>
     </div>
   );
-
-  if (preview) return body;
 
   return (
     <Link href={chapterHref(topic.chapter.title)} className="block">

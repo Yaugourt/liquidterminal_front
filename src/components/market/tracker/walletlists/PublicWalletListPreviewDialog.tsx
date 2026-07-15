@@ -24,6 +24,7 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { toast } from "sonner";
 import { getWalletListById } from "@/services/market/tracker/walletlist.service";
 import { useWalletLists } from "@/store/use-wallet-lists";
+import { useAuthContext } from "@/contexts/auth.context";
 import { useRouter } from "next/navigation";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 
@@ -42,6 +43,7 @@ export function PublicWalletListPreviewDialog({
   const [loading, setLoading] = useState(false);
   const [copying, setCopying] = useState(false);
   const { copyList } = useWalletLists();
+  const { isAuthenticated, login } = useAuthContext();
   const router = useRouter();
 
   // Load full list details when dialog opens
@@ -65,6 +67,14 @@ export function PublicWalletListPreviewDialog({
 
   const handleCopyList = async () => {
     if (!list?.id) return;
+
+    // Copying requires an account: prompt Privy login for anonymous visitors
+    // instead of hitting the API and surfacing a cryptic token error.
+    if (!isAuthenticated) {
+      toast.info("Sign in to copy this list to your account");
+      login();
+      return;
+    }
 
     try {
       setCopying(true);

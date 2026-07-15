@@ -14,6 +14,7 @@ interface ProjectHeaderProps {
 
 export function ProjectHeader({ project }: ProjectHeaderProps) {
     const [imageError, setImageError] = useState(false);
+    const [bannerError, setBannerError] = useState(false);
 
     return (
         <div className="space-y-6">
@@ -102,8 +103,8 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                 </div>
             </div>
 
-            {/* Banner */}
-            {project.banner && (
+            {/* Banner (hidden entirely when the image is missing or broken) */}
+            {project.banner && !bannerError && (
                 <div className="relative w-full h-64 rounded-lg overflow-hidden">
                     <Image
                         src={project.banner}
@@ -111,6 +112,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                         fill
                         className="object-cover"
                         priority
+                        onError={() => setBannerError(true)}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-base/60 to-transparent" />
                 </div>

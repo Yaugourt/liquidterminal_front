@@ -9,6 +9,7 @@ import { Project } from "@/services/ecosystem/project/types";
 import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { safeHref } from "@/lib/safeUrl";
+import { groupCategories } from "@/lib/categoryLabels";
 
 interface ProjectCardProps {
   project: Project;
@@ -117,9 +118,10 @@ export const ProjectCard = memo(function ProjectCard({
             </Link>
             {project.categories && project.categories.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {project.categories.map(category => (
-                  <span key={category.id} className="text-label text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">
-                    {category.name}
+                {/* Normalized labels: dirty backend variants collapse to one pill. */}
+                {groupCategories(project.categories).map(group => (
+                  <span key={group.label} className="text-label text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">
+                    {group.label}
                   </span>
                 ))}
               </div>

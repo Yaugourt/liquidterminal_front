@@ -3,7 +3,7 @@
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Zap, TrendingUp, TrendingDown, DollarSign, BarChart3, Target } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
-import { useLiquidationsContext, TIMEFRAME_OPTIONS } from "./LiquidationsContext";
+import { useLiquidationsContext } from "./LiquidationsContext";
 import { StatsPanel } from "@/components/common";
 import { cn } from "@/lib/utils";
 
@@ -66,8 +66,6 @@ function LongShortRatioBar({ longPercent, shortPercent, isLoading }: LongShortRa
 
 export function LiquidationsStatsCard() {
   const {
-    selectedPeriod,
-    setSelectedPeriod,
     stats,
     statsLoading,
   } = useLiquidationsContext();
@@ -83,25 +81,15 @@ export function LiquidationsStatsCard() {
       title="Liquidation Stats"
       icon={<Zap size={16} className="text-danger" />}
       iconClassName="bg-danger/10"
+      // Single honest window label: the backend serves one stats snapshot and
+      // ignores narrower windows, so a period selector here would be cosmetic.
+      headerAction={
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-danger/10 text-danger border border-danger/25">
+          24h
+        </span>
+      }
     >
       <div className="flex flex-col gap-4 h-full">
-        {/* Period Selector */}
-        <div className="flex bg-base rounded-lg p-0.5 border border-border-subtle">
-          {TIMEFRAME_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setSelectedPeriod(option.value)}
-              className={`flex-1 px-2 py-1 rounded-md text-label transition-all ${
-                selectedPeriod === option.value
-                  ? 'bg-danger/20 text-danger font-bold'
-                  : 'tab-inactive'
-              }`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-
         {/* Stats Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-x-6 gap-y-4 flex-1 content-center">
           <InlineStat

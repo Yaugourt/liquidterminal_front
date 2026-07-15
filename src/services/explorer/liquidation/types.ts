@@ -126,6 +126,46 @@ export interface LiquidationsPeriodData {
 }
 
 /**
+ * Valid periods accepted by /liquidations/historical/chart (local DB endpoint)
+ */
+export type HistoricalChartPeriod = "24h" | "7d" | "14d" | "30d" | "90d";
+
+/**
+ * Bucket returned by /liquidations/historical/chart
+ */
+export interface HistoricalChartBucket {
+  timestamp: string;         // ISO datetime (start of bucket)
+  totalVolume_USD: number;
+  count: number;
+  longVolume_USD: number;
+  shortVolume_USD: number;
+  longCount: number;
+  shortCount: number;
+}
+
+/**
+ * API response for /liquidations/historical/chart
+ */
+export interface HistoricalChartResponse {
+  success: boolean;
+  data: {
+    buckets: HistoricalChartBucket[];
+    filters: {
+      period: HistoricalChartPeriod;
+      coin: string | null;
+      bucketSizeMinutes: number;
+    };
+    metadata: {
+      computedAt: string;
+      dataFrom: string;
+      dataTo: string;
+      totalBuckets: number;
+      cacheTTL: number;
+    };
+  };
+}
+
+/**
  * Réponse de l'API pour /liquidations/data (endpoint unifié)
  */
 export interface LiquidationsDataResponse {
