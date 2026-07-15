@@ -126,7 +126,9 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
             formatValue={(v) => compactUsd(v)}
           />
         ) : (
-          <EmptyState />
+          // The indexer ledger returns nothing at all for some vaults (e.g.
+          // HLP); be explicit about the missing source, not the period.
+          <EmptyState message="Ledger data unavailable for this vault." />
         );
       case "followers":
         return followersData.length ? (
@@ -168,10 +170,10 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ message = "No data available for this period." }: { message?: string }) {
   return (
     <div className="flex items-center justify-center h-full">
-      <p className="text-text-tertiary text-sm">No data available for this period.</p>
+      <p className="text-text-tertiary text-sm">{message}</p>
     </div>
   );
 }

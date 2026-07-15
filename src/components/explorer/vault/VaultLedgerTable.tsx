@@ -221,7 +221,11 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
         error={error}
         errorTitle="Failed to load ledger"
         emptyMessage="No ledger entries found"
-        emptyDescription={filterQuery ? `No results for "${filterQuery}"` : "Check back soon"}
+        emptyDescription={
+          filterQuery
+            ? `No results for "${filterQuery}"`
+            : "The indexer has no ledger history for this vault"
+        }
         paginate
         itemsPerPage={20}
         rowsPerPageOptions={[20, 50, 100]}

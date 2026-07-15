@@ -4,7 +4,9 @@ import { ENDPOINTS } from '@/services/api/constants';
 import {
   LiquidationResponse,
   LiquidationsParams,
-  LiquidationsDataResponse
+  LiquidationsDataResponse,
+  HistoricalChartPeriod,
+  HistoricalChartResponse
 } from './types';
 
 /**
@@ -51,4 +53,21 @@ export const fetchLiquidationsData = async (): Promise<LiquidationsDataResponse>
     );
     return response;
   }, 'fetching liquidations data');
+};
+
+/**
+ * Fetches historical liquidation chart buckets from the local DB endpoint
+ * (the robust source - see CLAUDE.md data source reliability)
+ * @param period Aggregation window (24h, 7d, 14d, 30d, 90d)
+ * @returns Bucketed volumes/counts plus filters and metadata
+ */
+export const fetchLiquidationsHistoricalChart = async (
+  period: HistoricalChartPeriod
+): Promise<HistoricalChartResponse> => {
+  return withErrorHandling(async () => {
+    const response = await get<HistoricalChartResponse>(
+      `${ENDPOINTS.LIQUIDATIONS_HISTORICAL_CHART}?period=${period}`
+    );
+    return response;
+  }, 'fetching liquidations historical chart');
 };

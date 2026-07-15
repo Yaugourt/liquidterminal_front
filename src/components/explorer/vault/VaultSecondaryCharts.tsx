@@ -104,6 +104,13 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
         summaryLabel="deposits − withdrawals"
         data={netFlows}
         isLoading={ledgerLoading}
+        // The indexer ledger returns nothing at all for some vaults (e.g. HLP);
+        // say so explicitly instead of implying a quiet window.
+        emptyMessage={
+          ledger.length === 0
+            ? "Ledger data unavailable for this vault."
+            : "No flows in this window."
+        }
       />
     </motion.div>
   );
@@ -117,6 +124,8 @@ interface SecondaryChartCardProps {
   summaryLabel: string;
   data: HistogramDataPoint[];
   isLoading: boolean;
+  /** Shown when there is no data to chart. */
+  emptyMessage?: string;
 }
 
 function SecondaryChartCard({
@@ -127,6 +136,7 @@ function SecondaryChartCard({
   summaryLabel,
   data,
   isLoading,
+  emptyMessage = "No data for this window.",
 }: SecondaryChartCardProps) {
   return (
     <Card className="flex flex-col overflow-hidden">
@@ -157,7 +167,7 @@ function SecondaryChartCard({
           <Skeleton className="h-full rounded" />
         ) : data.length === 0 ? (
           <div className="h-full flex items-center justify-center">
-            <p className="text-text-tertiary text-xs">No data for this window.</p>
+            <p className="text-text-tertiary text-xs">{emptyMessage}</p>
           </div>
         ) : (
           <AuroraHistogramChart

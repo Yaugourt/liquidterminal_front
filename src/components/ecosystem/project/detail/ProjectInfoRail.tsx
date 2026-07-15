@@ -1,6 +1,7 @@
 "use client";
 
 import { Project, ProjectDataSourceType } from "@/services/ecosystem/project/types";
+import { groupCategories } from "@/lib/categoryLabels";
 
 const SOURCE_META: Record<ProjectDataSourceType, { label: string; className: string; detail: string }> = {
   DEFILLAMA: { label: "DeFiLlama", className: "bg-brand/10 border-brand/25 text-brand", detail: "TVL · fees · vol" },
@@ -42,9 +43,10 @@ export function ProjectInfoRail({ project, sources, updatedAt }: ProjectInfoRail
             <div className="flex items-start justify-between gap-2 text-[12px]">
               <span className="text-text-tertiary shrink-0">Categories</span>
               <span className="flex flex-wrap gap-1 justify-end">
-                {project.categories.map((c) => (
-                  <span key={c.id} className="text-[10px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-secondary">
-                    {c.name}
+                {/* Normalized labels: dirty backend variants collapse to one chip. */}
+                {groupCategories(project.categories).map((group) => (
+                  <span key={group.label} className="text-[10px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-secondary">
+                    {group.label}
                   </span>
                 ))}
               </span>

@@ -12,6 +12,13 @@ import {
   PublicReadListWithItems,
   ReadListCopyResponse
 } from './types';
+import { decodeLinkPreview } from '../api';
+
+/** Resource link-preview text arrives HTML-encoded; decode it for display. */
+const decodeItemPreview = (item: ReadListItem): ReadListItem => ({
+  ...item,
+  resource: { ...item.resource, linkPreview: decodeLinkPreview(item.resource.linkPreview) },
+});
 
 // Get all user's read lists (private and public) - NOUVEAU: utiliser JWT
 export const getMyReadLists = async (): Promise<{success: boolean, data: ReadList[], message?: string}> => {
@@ -61,7 +68,8 @@ export const getReadListItems = async (
       `/readlists/${listId}/items`,
       params as Record<string, unknown>
     );
-    return response || {success: true, data: []};
+    if (!response) return {success: true, data: []};
+    return { ...response, data: (response.data || []).map(decodeItemPreview) };
   }, 'fetching read list items');
 };
 
@@ -123,7 +131,10 @@ export const getPublicReadListWithItems = async (
   return withErrorHandling(async () => {
     const response = await get<{ success: boolean; data: PublicReadListWithItems }>(`/readlists/${id}`);
     if (!response) throw new Error("Read list not found");
-    return response;
+    return {
+      ...response,
+      data: { ...response.data, items: (response.data.items || []).map(decodeItemPreview) },
+    };
   }, "fetching public read list");
 };
 

@@ -2,14 +2,13 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback, useRef } from "react";
 import { Liquidation } from "@/services/explorer/liquidation";
-import { fetchRecentLiquidations, fetchLiquidationsData } from "@/services/explorer/liquidation/api";
+import { fetchRecentLiquidations, fetchLiquidationsData, fetchLiquidationsHistoricalChart } from "@/services/explorer/liquidation/api";
 import { useLiquidationWSStore } from "@/services/explorer/liquidation/websocket.store";
-import { LiquidationStats, ChartDataBucket, ChartPeriod, LiquidationsPeriodData } from "@/services/explorer/liquidation/types";
+import { LiquidationStats, ChartDataBucket, HistoricalChartBucket, HistoricalChartPeriod, LiquidationsPeriodData } from "@/services/explorer/liquidation/types";
 
-type TimeframePeriod = 2 | 4 | 8 | 12 | 24;
 type PeriodKey = "2h" | "4h" | "8h" | "12h" | "24h";
 
-// Presets de filtre montant minimum
+// Min amount filter presets
 export type MinAmountPreset = 0 | 1000 | 10000 | 100000;
 export const MIN_AMOUNT_PRESETS: { value: MinAmountPreset; label: string }[] = [
   { value: 0, label: "All" },
@@ -18,16 +17,26 @@ export const MIN_AMOUNT_PRESETS: { value: MinAmountPreset; label: string }[] = [
   { value: 100000, label: "$100K+" },
 ];
 
-// Options de période pour le chart (mêmes que stats)
-export const CHART_PERIOD_OPTIONS: { value: ChartPeriod; label: string }[] = [
-  { value: "2h", label: "2h" },
-  { value: "4h", label: "4h" },
-  { value: "8h", label: "8h" },
-  { value: "12h", label: "12h" },
+// Chart period options: the windows accepted by /liquidations/historical/chart
+export const CHART_PERIOD_OPTIONS: { value: HistoricalChartPeriod; label: string }[] = [
   { value: "24h", label: "24h" },
+  { value: "7d", label: "7d" },
+  { value: "14d", label: "14d" },
+  { value: "30d", label: "30d" },
+  { value: "90d", label: "90d" },
 ];
 
-const periodToKey = (period: TimeframePeriod): PeriodKey => `${period}h` as PeriodKey;
+/** Map a /liquidations/historical/chart bucket to the internal chart bucket shape. */
+const mapHistoricalBucket = (bucket: HistoricalChartBucket): ChartDataBucket => ({
+  timestamp: bucket.timestamp,
+  timestampMs: Date.parse(bucket.timestamp),
+  totalVolume: bucket.totalVolume_USD,
+  longVolume: bucket.longVolume_USD,
+  shortVolume: bucket.shortVolume_USD,
+  liquidationsCount: bucket.count,
+  longCount: bucket.longCount,
+  shortCount: bucket.shortCount,
+});
 
 interface LiquidationsContextValue {
   // Liquidations data (initial from API + realtime from WS)
@@ -35,30 +44,27 @@ interface LiquidationsContextValue {
   filteredLiquidations: Liquidation[];
   isLoading: boolean;
   error: Error | null;
-  
+
   // WebSocket status
   isConnected: boolean;
   isSubscribed: boolean;
-  
-  // Period selection for StatsCard
-  selectedPeriod: TimeframePeriod;
-  setSelectedPeriod: (period: TimeframePeriod) => void;
-  
+
   // Min amount filter (Table only)
   minAmount: MinAmountPreset;
   setMinAmount: (amount: MinAmountPreset) => void;
-  
-  // Stats (from unified endpoint, instant switch)
+
+  // Stats from the unified endpoint. The backend returns identical stats for
+  // every window it advertises, so a single 24h snapshot is exposed (no
+  // period selector; see LiquidationsStatsCard).
   stats: LiquidationStats;
   statsLoading: boolean;
-  
-  // Chart data (from unified endpoint, instant switch)
+
+  // Chart data (from /liquidations/historical/chart, fetched per period)
   chartBuckets: ChartDataBucket[];
   chartLoading: boolean;
-  chartInterval: string;
-  chartPeriod: ChartPeriod;
-  setChartPeriod: (period: ChartPeriod) => void;
-  
+  chartPeriod: HistoricalChartPeriod;
+  setChartPeriod: (period: HistoricalChartPeriod) => void;
+
   // Last update info
   lastUpdated: Date | null;
 
@@ -84,20 +90,23 @@ const LiquidationsContext = createContext<LiquidationsContextValue | null>(null)
 const MAX_LIQUIDATIONS = 1000;
 
 export function LiquidationsProvider({ children }: { children: ReactNode }) {
-  const [selectedPeriod, setSelectedPeriod] = useState<TimeframePeriod>(2);
-  const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("2h");
+  const [chartPeriod, setChartPeriod] = useState<HistoricalChartPeriod>("7d");
   const [minAmount, setMinAmount] = useState<MinAmountPreset>(0);
-  
-  // Données initiales chargées via API
+
+  // Initial data loaded from the API
   const [liquidations, setLiquidations] = useState<Liquidation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  
-  // Stats/Chart data
+
+  // Stats data (unified endpoint)
   const [allData, setAllData] = useState<Record<PeriodKey, LiquidationsPeriodData> | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
-  
+
+  // Chart buckets (historical chart endpoint, refetched per period)
+  const [chartBuckets, setChartBuckets] = useState<ChartDataBucket[]>([]);
+  const [chartLoading, setChartLoading] = useState(true);
+
   // Track if initial load is done
   const hasLoadedRef = useRef(false);
   
@@ -176,7 +185,7 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     };
   }, [isLoading, handleNewLiquidation, setOnLiquidation, wsConnect, wsDisconnect]);
 
-  // Periodically refresh stats + chart buckets so the chart stays current
+  // Periodically refresh stats so the panel stays current
   useEffect(() => {
     if (isLoading) return;
 
@@ -189,12 +198,41 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
           setLastUpdated(new Date());
         }
       } catch {
-        // Silent — the initial data remains visible; next tick retries
+        // Silent: the initial data remains visible; next tick retries
       }
     }, REFRESH_INTERVAL);
 
     return () => clearInterval(intervalId);
   }, [isLoading]);
+
+  // Chart buckets from the local DB endpoint (the robust liquidations source).
+  // Fetched on mount and whenever the period changes, then refreshed every
+  // 60s (matches the endpoint cache TTL).
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadChart = async (initial: boolean) => {
+      if (initial) setChartLoading(true);
+      try {
+        const response = await fetchLiquidationsHistoricalChart(chartPeriod);
+        if (!cancelled && response.success) {
+          setChartBuckets(response.data.buckets.map(mapHistoricalBucket));
+        }
+      } catch {
+        // Silent: previous buckets stay visible; next tick retries
+      } finally {
+        if (!cancelled && initial) setChartLoading(false);
+      }
+    };
+
+    loadChart(true);
+    const intervalId = setInterval(() => loadChart(false), 60_000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
+  }, [chartPeriod]);
 
   const refreshData = useCallback(async () => {
     try {
@@ -221,14 +259,9 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     return liquidations.filter(liq => liq.notional_total >= minAmount);
   }, [liquidations, minAmount]);
 
-  // Stats actives basées sur la période sélectionnée (INSTANT - pas de fetch)
-  const periodKey = periodToKey(selectedPeriod);
-  const stats = allData?.[periodKey]?.stats || defaultStats;
-  
-  // Chart data basé sur chartPeriod (INSTANT - pas de fetch)
-  const chartData = allData?.[chartPeriod as PeriodKey];
-  const chartBuckets = chartData?.chart.buckets || [];
-  const chartInterval = chartData?.chart.interval || "5m";
+  // Single 24h stats snapshot. The backend duplicates the same stats across
+  // every window it returns, so exposing a per-window selector would be fake.
+  const stats = allData?.["24h"]?.stats || defaultStats;
 
   const value: LiquidationsContextValue = {
     liquidations,
@@ -237,15 +270,12 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     error,
     isConnected,
     isSubscribed,
-    selectedPeriod,
-    setSelectedPeriod,
     minAmount,
     setMinAmount,
     stats,
     statsLoading: dataLoading,
     chartBuckets,
-    chartLoading: dataLoading,
-    chartInterval,
+    chartLoading,
     chartPeriod,
     setChartPeriod,
     lastUpdated,
@@ -266,14 +296,3 @@ export function useLiquidationsContext() {
   }
   return context;
 }
-
-// Export timeframe options for UI (StatsCard)
-export const TIMEFRAME_OPTIONS: { value: TimeframePeriod; label: string }[] = [
-  { value: 2, label: "2h" },
-  { value: 4, label: "4h" },
-  { value: 8, label: "8h" },
-  { value: 12, label: "12h" },
-  { value: 24, label: "24h" },
-];
-
-export type { TimeframePeriod };

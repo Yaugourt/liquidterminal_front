@@ -4,6 +4,7 @@ import { memo, useMemo } from "react";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { Skeleton } from "@/components/common";
 import { Category } from "@/services/ecosystem/project/types";
+import { groupCategories } from "@/lib/categoryLabels";
 
 interface CategoryTabsProps {
   categories: Category[];
@@ -25,12 +26,14 @@ export const CategoryTabs = memo(function CategoryTabs({
   isLoading = false,
   error = null,
 }: CategoryTabsProps) {
+  // Dirty backend labels ("Socialfi" vs "sociafi") collapse into one tab;
+  // the tab value carries every merged id so filtering still matches all.
   const tabs = useMemo(
     () => [
       { value: "all", label: "All Projects" },
-      ...categories.map((category) => ({
-        value: category.id.toString(),
-        label: category.name,
+      ...groupCategories(categories).map((group) => ({
+        value: group.ids.join(","),
+        label: group.label,
       })),
     ],
     [categories]

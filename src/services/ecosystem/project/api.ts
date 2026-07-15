@@ -45,8 +45,10 @@ export const fetchProject = async (id: number): Promise<Project> => {
 };
 
 /**
- * Récupère les métriques agrégées (multi-source) d'un projet — TVL, volume,
- * fees, token… normalisées par le backend. Champs optionnels selon les sources.
+ * Aggregated multi-source metrics of a project (TVL, volume, fees, token),
+ * normalized by the backend. Optional fields depend on the mapped sources.
+ * PARKED: the route is not deployed on the backend yet (404 for every id);
+ * no page should call this until it ships.
  */
 export const fetchProjectMetrics = async (id: number): Promise<ProjectMetricsResponse> => {
   return withErrorHandling(async () => {
