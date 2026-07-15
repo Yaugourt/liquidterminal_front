@@ -17,9 +17,9 @@ interface AtlasHomeProps {
 }
 
 /**
- * Atlas home (/wiki): search front door, KPI ribbon, curriculum grid with a
- * scaled preview, the "Latest across the wiki" feed with content-type tabs,
- * and a right rail (read lists + most saved).
+ * Atlas home (/wiki): search front door, KPI ribbon, curriculum grid,
+ * the "Latest across the wiki" feed with content-type tabs, and a right
+ * rail (read lists + most saved).
  */
 export function AtlasHome({ refreshToken = 0 }: AtlasHomeProps) {
   const [frontDoor, setFrontDoor] = useState("");
@@ -36,7 +36,7 @@ export function AtlasHome({ refreshToken = 0 }: AtlasHomeProps) {
   const { pagination } = useWikiLibrary({ page: 1, limit: 1, sort: "createdAt", order: "desc" }, { refreshToken });
   const { readLists, pagination: readListsPag, loading: readListsLoading } = usePublicReadLists({ limit: 5 });
 
-  const { chapterTopics } = useMemo(
+  const { chapterTopics, communityCategories } = useMemo(
     () => buildTopics(education?.chapters ?? [], categories),
     [education, categories]
   );
@@ -48,9 +48,11 @@ export function AtlasHome({ refreshToken = 0 }: AtlasHomeProps) {
     () => [
       { key: "resources", label: "Resources", value: totalResources > 0 ? totalResources : "…", sub: "approved" },
       {
+        // Community categories only: the rest of the taxonomy is folded into
+        // the Learn chapters, so this matches what the rails actually list.
         key: "categories",
         label: "Categories",
-        value: categoriesLoading && categories.length === 0 ? "…" : categories.length,
+        value: categoriesLoading && communityCategories.length === 0 ? "…" : communityCategories.length,
         sub: "community",
       },
       {
@@ -61,7 +63,7 @@ export function AtlasHome({ refreshToken = 0 }: AtlasHomeProps) {
       },
       { key: "readlists", label: "Read lists", value: totalReadLists, sub: totalReadLists > 0 ? "community" : "start yours" },
     ],
-    [totalResources, categories.length, categoriesLoading, chapterTopics.length, totalReadLists]
+    [totalResources, communityCategories.length, categoriesLoading, chapterTopics.length, totalReadLists]
   );
 
   const submitFrontDoor = (e: React.FormEvent) => {
@@ -79,7 +81,11 @@ export function AtlasHome({ refreshToken = 0 }: AtlasHomeProps) {
         <RailSearch
           value={frontDoor}
           onChange={setFrontDoor}
-          placeholder={`Search ${totalResources || 194} resources, ${categories.length || 41} categories, chapters and read lists`}
+          placeholder={
+            totalResources > 0 && communityCategories.length > 0
+              ? `Search ${totalResources} resources, ${communityCategories.length} categories, chapters and read lists`
+              : "Search resources, categories, chapters and read lists"
+          }
           size="lg"
           keycap
         />

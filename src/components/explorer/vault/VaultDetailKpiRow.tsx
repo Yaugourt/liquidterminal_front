@@ -75,14 +75,13 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
     limit: 500,
   });
 
-  const { vaults, isLoading: vaultsLoading } = useVaults({ limit: 1000 });
+  const { vaults, isLoading: vaultsLoading } = useVaults({ limit: 1000, sortBy: "tvl" });
   const { details, isLoading: detailsLoading } = useVaultIndexerDetails({ vaultAddress });
 
   const isLoading = parentLoading || snapsLoading || vaultsLoading || detailsLoading;
 
   const kpis = useMemo(() => {
     const latest = snapshots[0];
-    const tvl = latest?.accountValue ?? 0;
     const allTimePnl = latest?.totalRawPnl ?? 0;
     const followers = latest?.followerCount ?? details?.followerCount ?? 0;
 
@@ -90,6 +89,15 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
       (v) => v.summary.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
     );
     const apr = matched ? matched.apr : null;
+
+    // Headline TVL must match the directory: backend /market/vaults mirrors the
+    // official HL vault summaries (includes sub-vault capital for parent vaults
+    // like HLP). Indexer equity snapshots measure standalone vault equity only,
+    // so they are used as a labeled fallback, never silently swapped in.
+    const listedTvl = matched ? parseFloat(matched.summary.tvl) : null;
+    const equity = latest?.accountValue ?? null;
+    const tvl = listedTvl ?? equity ?? 0;
+    const tvlIsEquityFallback = listedTvl === null && equity !== null;
 
     const computeDelta = (windowMs: number): number | null => {
       if (!latest || snapshots.length < 2) return null;
@@ -103,7 +111,17 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
     const sharpe = computeSharpe(snapshots);
     const commission = details?.leaderCommission;
 
-    return { tvl, allTimePnl, apr, followers, delta24h, delta7d, sharpe, commission };
+    return {
+      tvl,
+      tvlIsEquityFallback,
+      allTimePnl,
+      apr,
+      followers,
+      delta24h,
+      delta7d,
+      sharpe,
+      commission,
+    };
   }, [snapshots, vaults, vaultAddress, details]);
 
   const ph = isLoading ? "…" : "—";
@@ -116,7 +134,13 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
   // Commission is intentionally omitted — it already lives in the header meta
   // and the Vault metadata card (no duplicate stats).
   const cells: KpiCell[] = [
-    { label: "TVL", value: isLoading && !kpis.tvl ? ph : compactUsd(kpis.tvl) },
+    {
+      label: "TVL",
+      value: isLoading && !kpis.tvl ? ph : compactUsd(kpis.tvl),
+      // Label the measure when the directory TVL is unavailable and the value
+      // falls back to indexer equity (a narrower metric than listed TVL).
+      sub: kpis.tvlIsEquityFallback ? "vault equity" : undefined,
+    },
     {
       label: "APR",
       value: kpis.apr !== null ? `${kpis.apr >= 0 ? "+" : ""}${kpis.apr.toFixed(2)}%` : ph,

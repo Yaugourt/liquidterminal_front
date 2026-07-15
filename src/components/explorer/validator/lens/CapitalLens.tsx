@@ -22,7 +22,6 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
   useValidators,
-  useValidatorVotes,
   useHoldersStats,
 } from "@/services/explorer/validator/hooks";
 import {
@@ -102,8 +101,6 @@ export function CapitalLens() {
     error: validatorsError,
     refetch: refetchValidators,
   } = useValidators();
-  // Foundation split is single-sourced server-side via the votes stats.
-  const { stats: voteStats } = useValidatorVotes();
   const {
     stats: holdersStats,
     isLoading: holdersLoading,
@@ -123,12 +120,6 @@ export function CapitalLens() {
 
   const [view, setView] = useState<ConcentrationView>("all");
 
-  // ── Foundation split (server-sourced) ──────────────────────────────────
-  const totalStake = voteStats.totalStake;
-  const foundationStake = voteStats.foundationStake;
-  const communityStake = voteStats.communityStake;
-  const foundationSharePct = totalStake > 0 ? (foundationStake / totalStake) * 100 : 0;
-
   // ── Validator partitioning ──────────────────────────────────────────────
   const foundationValidators = useMemo(
     () => validators.filter(isFoundation),
@@ -138,6 +129,21 @@ export function CapitalLens() {
     () => validators.filter((v) => !isFoundation(v)),
     [validators],
   );
+
+  // ── Foundation split ─────────────────────────────────────────────────────
+  // Computed client-side from the validator set (same rule as OperatorLens).
+  // The votes endpoint that used to single-source this split is disabled
+  // (see useValidatorVotes) and only ever returned zeros here.
+  const totalStake = useMemo(
+    () => validators.reduce((sum, v) => sum + v.stake, 0),
+    [validators],
+  );
+  const foundationStake = useMemo(
+    () => foundationValidators.reduce((sum, v) => sum + v.stake, 0),
+    [foundationValidators],
+  );
+  const communityStake = totalStake - foundationStake;
+  const foundationSharePct = totalStake > 0 ? (foundationStake / totalStake) * 100 : 0;
 
   // The set the concentration metrics describe (toggle-driven).
   const activeSet = view === "community" ? communityValidators : validators;

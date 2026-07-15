@@ -32,7 +32,9 @@ export default function VaultDetailPage() {
     limit: 5000,
   });
 
-  const { vaults } = useVaults({ limit: 1000 });
+  // Same params as VaultDetailKpiRow so both share one request; tvl sort keeps
+  // large parent vaults (HLP) inside the window.
+  const { vaults } = useVaults({ limit: 1000, sortBy: "tvl" });
 
   const summaryFallback = useMemo(
     () =>

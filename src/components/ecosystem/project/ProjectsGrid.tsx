@@ -40,11 +40,13 @@ export const ProjectsGrid = memo(function ProjectsGrid({
     };
 
     if (activeTab === 'all') {
-      return baseParams; // Pas de categoryIds = tous les projets
+      return baseParams; // No categoryIds = every project
     } else {
       return {
         ...baseParams,
-        categoryIds: [parseInt(activeTab)] // Avec categoryIds = filtrés
+        // A tab can carry several ids ("10,11") when dirty duplicate
+        // categories were merged into one label by CategoryTabs.
+        categoryIds: activeTab.split(',').map((id) => parseInt(id, 10))
       };
     }
   }, [activeTab, currentPage, rowsPerPage, searchQuery]);

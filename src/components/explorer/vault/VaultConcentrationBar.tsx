@@ -82,21 +82,29 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
           <Layers className="w-4 h-4 text-brand" />
           <h3 className="text-sm font-semibold text-text-primary">Depositor concentration</h3>
         </div>
-        <div className="flex items-center gap-3 text-[11px]">
-          <span className="text-text-tertiary">
-            HHI <span className="mono text-text-primary">{hhi.toFixed(0)}</span>
-          </span>
-          <span className="text-text-tertiary">
-            Top 5 <span className="mono text-text-primary">{topShare.toFixed(1)}%</span>
-          </span>
-          <span className="text-text-tertiary">
-            Level <span className="text-text-primary">{concentrationLabel}</span>
-          </span>
-        </div>
+        {/* Only show the stats when real ledger data backs them: zeroed HHI
+            and a "Low" level on an empty ledger would be fake values. */}
+        {!isLoading && top.length > 0 && (
+          <div className="flex items-center gap-3 text-[11px]">
+            <span className="text-text-tertiary">
+              HHI <span className="mono text-text-primary">{hhi.toFixed(0)}</span>
+            </span>
+            <span className="text-text-tertiary">
+              Top 5 <span className="mono text-text-primary">{topShare.toFixed(1)}%</span>
+            </span>
+            <span className="text-text-tertiary">
+              Level <span className="text-text-primary">{concentrationLabel}</span>
+            </span>
+          </div>
+        )}
       </div>
 
       {isLoading ? (
         <Skeleton className="h-10 rounded" />
+      ) : entries.length === 0 ? (
+        <p className="text-text-tertiary text-sm text-center py-6">
+          Ledger data unavailable for this vault.
+        </p>
       ) : top.length === 0 ? (
         <p className="text-text-tertiary text-sm text-center py-6">
           No net depositor data available.
