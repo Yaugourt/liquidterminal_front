@@ -4,9 +4,11 @@ const BuildersTimeframeSchema = z.enum(["1h", "24h", "7d", "30d"]);
 
 const BuilderListRowSchema = z.object({
   address: z.string(),
-  name: z.string(),
+  // 748/1037 rows in /builders/list ship name:null (unnamed builders) and a
+  // few ship referrerStage:null; rendering falls back to a truncated address.
+  name: z.string().nullable(),
   referredBy: z.string().nullable(),
-  referrerStage: z.string(),
+  referrerStage: z.string().nullable(),
 });
 
 const BuilderStatsMetricsSchema = z.object({

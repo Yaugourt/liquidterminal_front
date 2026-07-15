@@ -16,8 +16,10 @@ import { useHypeMood } from "@/components/hypurr/useHypeMood";
 /**
  * Landing "Command House" (dash-mockups/home-v4-D-command-house.html):
  * Command's arrive-and-search hero on top of Open House's narrative
- * sections. Bot CTAs stay href="#" until the public bot handle ships.
+ * sections. Bot CTAs open the public Telegram bot.
  */
+
+const BOT_URL = "https://t.me/liquidterminalbot";
 
 const NAV_LINKS = [
   { label: "Market", href: "/market" },
@@ -66,7 +68,9 @@ function TopNav() {
         </nav>
         <div className="ml-auto flex items-center gap-2">
           <a
-            href="#"
+            href={BOT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => trackBotCta("landing-nav")}
             className="h-8 px-3 inline-flex items-center rounded-md text-xs font-medium border border-gold/40 text-gold hover:bg-gold/10"
           >
@@ -315,7 +319,7 @@ function DataSources() {
       </div>
 
       <a
-        href="https://hypedexer.com"
+        href="https://app.hypedexer.com"
         target="_blank"
         rel="noopener noreferrer"
         className="group block mt-10 bg-surface border border-brand/30 rounded-lg p-6 hover:border-brand/50 transition-colors"
@@ -465,7 +469,9 @@ function CharterAndBot() {
             </div>
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <a
-                href="#"
+                href={BOT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => trackBotCta("landing-bot-card")}
                 className="h-9 px-4 inline-flex items-center rounded-md text-[12.5px] font-semibold bg-gold/10 border border-gold/40 text-gold hover:bg-gold/20"
               >

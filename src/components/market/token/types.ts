@@ -13,11 +13,11 @@ export interface TokenData {
   // Market index for WebSocket connection
   marketIndex?: number;
 
-  // Change data
-  change24h: number;
+  // Change data: undefined when not available (renders "N/A", never a fake 0)
+  change24h?: number;
 
-  // Volume data
-  volume24h: number;
+  // Volume data: undefined when not available (renders "N/A", never a fake 0)
+  volume24h?: number;
 
   // Market specific fields
   marketCap?: number; // Spot only

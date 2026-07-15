@@ -107,26 +107,21 @@ export function MarketStatsStrip({ market }: MarketStatsStripProps) {
               ? formatNumber(feesStats.dailyFees, format, usdFormat)
               : "—",
           },
-          {
-            label: "24h Trades",
-            value: perpStats
-              ? formatNumber(perpStats.totalTrades24h, format, {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                })
-              : "—",
-          },
         ];
 
   return (
-    <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
+    <div
+      className={`grid grid-cols-2 gap-2 ${
+        items.length === 3 ? "xl:grid-cols-3" : "xl:grid-cols-4"
+      }`}
+    >
       {items.map((item, i) => (
         <motion.div
           key={item.label}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.06, duration: 0.3 }}
-          className="bg-surface border border-border-subtle rounded-lg px-3.5 py-3"
+          className="min-w-0 bg-surface border border-border-subtle rounded-lg px-3.5 py-3"
         >
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary font-medium">
@@ -134,7 +129,8 @@ export function MarketStatsStrip({ market }: MarketStatsStripProps) {
             </span>
             {item.change !== undefined && <DeltaPill change={item.change} />}
           </div>
-          <div className="mono text-[20px] leading-tight font-semibold text-text-primary">
+          {/* Smaller font + break-all so long values wrap instead of clipping on mobile */}
+          <div className="mono text-base sm:text-[20px] leading-tight font-semibold text-text-primary break-all">
             {isLoading ? (
               <span className="text-text-tertiary">…</span>
             ) : (

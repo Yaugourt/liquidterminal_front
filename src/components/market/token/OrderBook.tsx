@@ -5,6 +5,8 @@ import { useTokenWebSocket, marketIndexToCoinId } from "@/services/market/token"
 import { cn } from "@/lib/utils";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { Card } from "@/components/ui/card";
+import { formatAssetTokenAmount } from "@/lib/formatters/numberFormatting";
+import { useNumberFormat } from "@/store/number-format.store";
 
 interface OrderBookProps {
   symbol?: string;
@@ -17,6 +19,7 @@ interface OrderBookProps {
 
 export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpCoinId }: OrderBookProps) {
   const [activeTab, setActiveTab] = useState<'orderbook' | 'trades'>('orderbook');
+  const { format } = useNumberFormat();
 
   // Connect to WebSocket for real-time order book and trades
   // Use perpCoinId directly for perpetuals, or convert marketIndex for spot tokens
@@ -33,9 +36,10 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
     return numPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   };
 
+  // Adaptive precision: small sizes (e.g. 0.0004 BTC) must not collapse to 0.00
   const formatSize = (size: string | number) => {
     const numSize = typeof size === 'string' ? parseFloat(size) : size;
-    return numSize.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 3 });
+    return formatAssetTokenAmount(numSize, format);
   };
 
   // Calculate spread between best bid and best ask
@@ -82,8 +86,8 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
 
   const asksCumulativeMap = calculateAsksCumulative();
 
-  // Extract token name from symbol (e.g., "HYPE/USDC" -> "HYPE")
-  const tokenName = symbol ? symbol.split('/')[0] : 'TOKEN';
+  // Extract token name from symbol (e.g., "HYPE/USDC" -> "HYPE", "BTC-PERP" -> "BTC")
+  const tokenName = symbol ? symbol.split('/')[0].replace('-PERP', '') : 'TOKEN';
 
   return (
     <Card className={`flex flex-col h-full ${className || ''}`}>
@@ -181,7 +185,7 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
             {/* Header */}
             <div className="grid grid-cols-3 gap-2 text-label text-text-secondary border-b border-border-subtle pb-2 flex-shrink-0 mb-2">
               <span>Price</span>
-              <span className="text-right">Size (token)</span>
+              <span className="text-right">Size ({tokenName})</span>
               <span className="text-right">Time</span>
             </div>
 

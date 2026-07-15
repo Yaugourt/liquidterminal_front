@@ -20,11 +20,18 @@ type StatusKey = "live" | "pending" | "settled" | "all";
 interface Hip4MarketGridProps {
   questions: Hip4QuestionWithOutcomesRow[];
   isLoading: boolean;
+  /**
+   * Row count of the settlements feed (the other source of "settled" on the
+   * page). When the questions source carries no settled rows while this feed
+   * does (degraded indexer), the "Settled 0" filter would contradict the
+   * settlements table, so the pill is hidden instead.
+   */
+  settlementsCount?: number;
 }
 
 const PAGE_SIZE = 24;
 
-export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
+export function Hip4MarketGrid({ questions, isLoading, settlementsCount = 0 }: Hip4MarketGridProps) {
   const [category, setCategory] = useState<Hip4Category>("all");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortKey>("volume");
@@ -128,7 +135,9 @@ export function Hip4MarketGrid({ questions, isLoading }: Hip4MarketGridProps) {
       {/* Status filter + category in one row */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-0.5 rounded-md border border-border-subtle bg-surface-2 p-0.5">
-          {(["live", "pending", "settled", "all"] as const).map((s) => {
+          {(["live", "pending", "settled", "all"] as const)
+            .filter((s) => s !== "settled" || statusCounts.settled > 0 || settlementsCount === 0)
+            .map((s) => {
             const isActive = statusFilter === s;
             const label = s === "live" ? "Live" : s === "pending" ? "Pending" : s === "settled" ? "Settled" : "All";
             return (

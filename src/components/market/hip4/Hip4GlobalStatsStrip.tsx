@@ -24,6 +24,9 @@ interface Hip4GlobalStatsStripProps {
 export function Hip4GlobalStatsStrip({ questions, settlements, isLoading, volumesPartial }: Hip4GlobalStatsStripProps) {
   const kpis = useMemo<KpiCell[]>(() => {
     const placeholder = isLoading ? "…" : "—";
+    // Degrade to a dash (not zeros) when the questions source came back empty:
+    // "0 live / $0" next to populated lists below would contradict the page.
+    const hasQuestions = questions.length > 0;
     const liveCount = questions.filter((q) => effectiveStatus(q) === "live").length;
     const pendingCount = questions.filter((q) => effectiveStatus(q) === "expired_unresolved").length;
     const settledCount = questions.filter((q) => effectiveStatus(q) === "settled").length;
@@ -32,20 +35,26 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading, volume
     return [
       {
         label: "Live Markets",
-        value: isLoading && questions.length === 0 ? placeholder : String(liveCount),
+        value: hasQuestions ? String(liveCount) : placeholder,
       },
       {
         label: "Pending Resolution",
-        value: isLoading && questions.length === 0 ? placeholder : String(pendingCount),
+        value: hasQuestions ? String(pendingCount) : placeholder,
       },
       {
         label: "Total Volume",
-        value: isLoading && questions.length === 0 ? placeholder : compactUsd(totalVolume),
+        value: hasQuestions ? compactUsd(totalVolume) : placeholder,
         sub: volumesPartial ? "live vol. unavailable" : undefined,
       },
       {
+        // Questions-derived count first (same universe as the other cells);
+        // the settlements feed fills in when the questions source lacks
+        // settled rows (frequent when the indexer degrades).
         label: "Settled",
-        value: isLoading && settlements.length === 0 ? placeholder : String(settledCount || settlements.length),
+        value:
+          !hasQuestions && settlements.length === 0
+            ? placeholder
+            : String(settledCount || settlements.length),
       },
     ];
   }, [questions, settlements, isLoading, volumesPartial]);

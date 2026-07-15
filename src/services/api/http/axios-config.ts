@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { API_URLS } from '../constants';
 import { RequestOptions, ExtendedAxiosRequestConfig } from '../types';
-import { getPrivyToken, handleLogout } from '../auth/privy.service';
+import { getPrivyToken, handleLogout, isPrivyAuthenticated } from '../auth/privy.service';
 import { formatAuthHeader } from '../auth/jwt.service';
 import { handleTokenRefresh, isTokenRefreshing } from '../auth/token.service';
 import { generateCacheKey, getCache, setCache } from '../cache/cache.service';
@@ -91,6 +91,13 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
     
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      // Anonymous visitors: a 401 just means "not signed in". There is no
+      // Privy session to refresh and nothing to log out, so bail out before
+      // spamming the token/logout endpoints with calls that can only fail.
+      if (!isPrivyAuthenticated()) {
+        return Promise.reject(error);
+      }
+
       // Circuit open: a previous refresh failed recently. Bail out immediately.
       if (isRefreshCircuitOpen()) {
         return Promise.reject(error);

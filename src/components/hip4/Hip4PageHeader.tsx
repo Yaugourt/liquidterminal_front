@@ -51,23 +51,13 @@ export function Hip4PageHeader({
   if (variant === "hub") {
     return (
       <header className={cn("mb-8 space-y-4", className)}>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-inter text-lg font-semibold text-text-primary sm:text-xl">
-              HIP-4 research
-            </h1>
-            <span className="rounded-md border border-brand/30 bg-brand/10 px-2 py-0.5 text-[11px] font-medium text-brand">
-              HyperCore L1 · community doc
-            </span>
-          </div>
-          <Link
-            href="/hip4/HIP4-research-complete.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 text-xs font-medium text-gold underline decoration-gold/40 underline-offset-2 hover:decoration-gold"
-          >
-            Full markdown reference
-          </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="font-inter text-lg font-semibold text-text-primary sm:text-xl">
+            HIP-4 research
+          </h1>
+          <span className="rounded-md border border-brand/30 bg-brand/10 px-2 py-0.5 text-[11px] font-medium text-brand">
+            HyperCore L1 · community doc
+          </span>
         </div>
         <div className="max-w-prose space-y-2 text-xs leading-relaxed text-text-secondary">
           <p>

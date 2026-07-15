@@ -38,12 +38,23 @@ export function formatPriceBinaryTitle(
   return `${underlying} above ${price} on ${formatExpiryDate(expiry)}?`;
 }
 
+/**
+ * True for upstream template names that are not real market titles (recurring
+ * markets ship the literal deployer placeholder "Recurring Named Outcome").
+ * Callers must fall back to an id/ticker-derived label instead of rendering it.
+ */
+export function isPlaceholderMarketName(name: string | null | undefined): boolean {
+  const n = (name ?? "").trim().toLowerCase();
+  return n === "" || n === "recurring named outcome";
+}
+
 export function formatMarketTitle(market: Hip4MarketEnrichedRow): string {
   if (market.class === "priceBinary") {
     const t = formatPriceBinaryTitle(market.underlying, market.target_price, market.expiry);
     if (t) return t;
   }
-  return market.display_name || market.coin || "Unknown market";
+  if (!isPlaceholderMarketName(market.display_name)) return market.display_name;
+  return market.coin || "Unknown market";
 }
 
 export type Hip4EffectiveStatus = "live" | "expired_unresolved" | "settled";

@@ -5,11 +5,15 @@ import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/type
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { StatsCard, Skeleton } from "@/components/common";
+import { ErrorState } from "@/components/ui/error-state";
+import { isBuilderWindowEmpty } from "./builderStatsWindow";
 
 interface BuilderDetailStatsGridProps {
   stats: BuilderDetailStatsPayload | null;
   isLoading: boolean;
   error: Error | null;
+  /** Refetch handler surfaced as a Retry button in the error state. */
+  onRetry?: () => void;
 }
 
 const cardVariants = {
@@ -17,11 +21,19 @@ const cardVariants = {
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.3 } }),
 };
 
-export function BuilderDetailStatsGrid({ stats, isLoading, error }: BuilderDetailStatsGridProps) {
+export function BuilderDetailStatsGrid({ stats, isLoading, error, onRetry }: BuilderDetailStatsGridProps) {
   const { format } = useNumberFormat();
 
   if (error) {
-    return <div className="bg-surface border border-danger/20 rounded-lg p-4 text-danger text-sm">{error.message}</div>;
+    // Clean error state, never the raw error payload (Zod dumps JSON in `message`).
+    return (
+      <ErrorState
+        title="Failed to load builder stats"
+        message="The indexer did not return usable data for this builder."
+        onRetry={onRetry}
+        className="h-auto py-6"
+      />
+    );
   }
 
   if (isLoading && !stats) {
@@ -35,6 +47,18 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error }: BuilderDetai
   }
 
   if (!stats) return null;
+
+  // Empty window (common on 1h/24h upstream): an honest empty state beats $0.
+  if (isBuilderWindowEmpty(stats)) {
+    return (
+      <div className="bg-surface border border-border-subtle rounded-lg p-6 text-center">
+        <p className="text-text-secondary text-sm font-medium">No data for this window</p>
+        <p className="text-text-tertiary text-xs mt-1">
+          The indexer has no recorded activity for {stats.timeframe}. Try a wider window (7d / 30d).
+        </p>
+      </div>
+    );
+  }
 
   const { current, variations } = stats;
 

@@ -10,6 +10,7 @@ import { TradingLayout } from "@/layouts/TradingLayout";
 import { TokenCard, TokenData, OrderBook, RecentTrades } from "@/components/market/token";
 import { ChartSkeleton } from "@/components/common";
 import { getPerpCoinId } from "@/services/market/token/utils";
+import { getPerpMarket } from "@/services/market/perp/api";
 
 // Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
 const TradingViewChart = dynamic(
@@ -17,17 +18,18 @@ const TradingViewChart = dynamic(
   { ssr: false, loading: () => <ChartSkeleton /> }
 );
 
-// Type pour les tokens perp
+// Perp token view model. Stats are optional: when the market is not found in
+// the perp directory they stay undefined and the header shows "N/A" instead
+// of fake zeros.
 interface PerpToken {
   name: string;
   coin: string; // Coin for WebSocket (e.g., "BTC")
   logo: string | null;
-  price: number;
-  change24h: number;
-  volume: number;
-  marketCap: number;
-  openInterest: number;
-  funding: number;
+  price?: number;
+  change24h?: number;
+  volume?: number;
+  openInterest?: number;
+  funding?: number;
   maxLeverage: number;
   onlyIsolated: boolean;
 }
@@ -42,27 +44,30 @@ export default function PerpTokenPage() {
 
   useEffect(() => {
     if (!tokenParam) return;
+    let cancelled = false;
 
-    const loadData = () => {
+    const loadData = async () => {
       setLoading(true);
 
       // Parse token from URL (e.g., "BTC" or "BTC-PERP")
       const coinId = getPerpCoinId(tokenParam.toUpperCase());
 
-      // For now, create token data from URL param
-      // TODO: Replace with real API call to get perpetual metadata
+      // Pull the real market stats (change/volume/OI/funding) from the perp
+      // directory endpoint, the same source that feeds the perp table.
+      const market = await getPerpMarket(coinId);
+      if (cancelled) return;
+
       const perpToken: PerpToken = {
         name: `${coinId}-PERP`,
         coin: coinId,
-        logo: null,
-        price: 0, // Will be filled by WebSocket
-        change24h: 0,
-        volume: 0,
-        marketCap: 0,
-        openInterest: 0,
-        funding: 0,
-        maxLeverage: 100,
-        onlyIsolated: false,
+        logo: market?.logo ?? null,
+        price: market?.price, // Refined in real time by the WebSocket
+        change24h: market?.change24h,
+        volume: market?.volume,
+        openInterest: market?.openInterest,
+        funding: market?.funding,
+        maxLeverage: market?.maxLeverage ?? 100,
+        onlyIsolated: market?.onlyIsolated ?? false,
       };
 
       setToken(perpToken);
@@ -70,6 +75,9 @@ export default function PerpTokenPage() {
     };
 
     loadData();
+    return () => {
+      cancelled = true;
+    };
   }, [tokenParam]);
 
   if (loading) {
@@ -101,7 +109,8 @@ export default function PerpTokenPage() {
     price: token.price,
     change24h: token.change24h,
     volume24h: token.volume,
-    marketCap: token.marketCap,
+    openInterest: token.openInterest,
+    fundingRate: token.funding,
     logo: token.logo,
   };
 

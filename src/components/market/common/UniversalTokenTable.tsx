@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatNumber, formatMetricValue, formatPrice, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
@@ -27,6 +27,9 @@ interface UniversalTokenTableProps {
 
 type TokenRow = SpotToken & PerpToken & SpotTokenService & PerpMarketData;
 
+/** Full-directory fetch size used while a search query is active. */
+const SEARCH_FETCH_LIMIT = 1000;
+
 export function UniversalTokenTable({
     market,
     mode = 'full',
@@ -43,16 +46,31 @@ export function UniversalTokenTable({
     const [pageSize, setPageSize] = useState(mode === 'compact' ? 5 : 10);
     const [page, setPage] = useState(1);
 
+    const trimmedSearch = searchQuery.trim().toLowerCase();
+    const hasSearch = trimmedSearch.length > 0;
+
     useEffect(() => {
         if (mode === 'compact') {
             setPageSize(5);
         }
     }, [mode]);
 
+    // The sort state is isolated per market type: the spot fetch must never
+    // receive perp-only fields (e.g. openInterest → backend 400 loop).
+    const spotSortBy: SpotSortableFields =
+        market === 'spot' ? (sortField as SpotSortableFields) : 'volume';
+    const perpSortBy: PerpSortableFields =
+        market === 'perp' ? (sortField as PerpSortableFields) : 'volume';
+
+    // While searching, fetch the whole directory once and filter/paginate
+    // client-side so the query matches the FULL dataset, not just one page.
+    const spotSearching = market === 'spot' && mode === 'full' && hasSearch;
     const spotResult = useSpotTokens({
-        limit: pageSize,
-        page: mode === 'compact' ? 1 : page,
-        sortBy: sortField as SpotSortableFields,
+        limit: spotSearching ? SEARCH_FETCH_LIMIT : pageSize,
+        // Local page state only drives the spot fetch when it actually
+        // paginates server-side (full spot mode without an active search).
+        page: market === 'spot' && mode === 'full' && !hasSearch ? page : 1,
+        sortBy: spotSortBy,
         sortOrder,
         strict: market === 'spot' ? strict : false
     });
@@ -60,54 +78,83 @@ export function UniversalTokenTable({
     const perpResult = usePerpMarkets({
         limit: pageSize,
         defaultParams: {
-            sortBy: sortField as PerpSortableFields,
+            sortBy: perpSortBy,
             sortOrder: sortOrder,
         }
     });
+    const updatePerpParams = perpResult.updateParams;
+
+    // Reset pagination to page 1 whenever the search query changes, and swap
+    // the perp fetch between server pagination and full-directory mode.
+    const prevSearchRef = useRef(trimmedSearch);
+    useEffect(() => {
+        if (prevSearchRef.current === trimmedSearch) return;
+        const wasSearching = prevSearchRef.current.length > 0;
+        prevSearchRef.current = trimmedSearch;
+        setPage(1);
+        if (market === 'perp' && mode === 'full' && wasSearching !== hasSearch) {
+            updatePerpParams(
+                hasSearch
+                    ? { limit: SEARCH_FETCH_LIMIT, page: 1 }
+                    : { limit: pageSize, page: 1 }
+            );
+        }
+    }, [trimmedSearch, hasSearch, market, mode, pageSize, updatePerpParams]);
+
+    // Strict/All mode switch always restarts from the first page.
+    useEffect(() => {
+        setPage(1);
+    }, [strict]);
 
     const rawTokens = market === 'spot' ? spotResult.data : perpResult.data;
-    const total = market === 'spot' ? spotResult.total : perpResult.total;
+    const serverTotal = market === 'spot' ? spotResult.total : perpResult.total;
     const isLoading = market === 'spot' ? spotResult.isLoading : perpResult.isLoading;
     const error = market === 'spot' ? spotResult.error : perpResult.error;
-    const currentPage = market === 'spot' ? page : perpResult.page;
+    const serverPage = market === 'spot' ? page : perpResult.page;
 
-    const tokens = (rawTokens as TokenRow[]).filter(token =>
-        !searchQuery || token.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Search filters the full fetched dataset; pagination is then client-side.
+    const filteredTokens = hasSearch
+        ? (rawTokens as TokenRow[]).filter((token) =>
+            token.name.toLowerCase().includes(trimmedSearch)
+        )
+        : (rawTokens as TokenRow[]);
+    const tokens = hasSearch && mode === 'full'
+        ? filteredTokens.slice((page - 1) * pageSize, page * pageSize)
+        : filteredTokens;
+    const total = hasSearch ? filteredTokens.length : serverTotal;
+    const currentPage = hasSearch ? page : serverPage;
 
     const handlePageChange = useCallback((newPage: number) => {
         if (mode === 'compact') return;
-        if (market === 'spot') {
+        if (hasSearch || market === 'spot') {
             setPage(newPage + 1);
-        } else if (perpResult.updateParams) {
-            perpResult.updateParams({ page: newPage + 1 });
+        } else if (updatePerpParams) {
+            updatePerpParams({ page: newPage + 1 });
         }
-    }, [mode, market, perpResult]);
+    }, [mode, market, hasSearch, updatePerpParams]);
 
     const handleRowsPerPageChange = useCallback((newRowsPerPage: number) => {
         if (mode === 'compact') return;
         setPageSize(newRowsPerPage);
-        if (market === 'spot') {
-            setPage(1);
-        } else if (perpResult.updateParams) {
-            perpResult.updateParams({ page: 1, limit: newRowsPerPage });
+        setPage(1);
+        if (market === 'perp' && !hasSearch && updatePerpParams) {
+            updatePerpParams({ page: 1, limit: newRowsPerPage });
         }
-    }, [mode, market, perpResult]);
+    }, [mode, market, hasSearch, updatePerpParams]);
 
     const handleSortChange = useCallback((field: string, direction: SortDirection) => {
         const typedField = field as SpotSortableFields | PerpSortableFields;
         setSortField(typedField);
         setSortOrder(direction);
-        if (market === 'spot') {
-            setPage(1);
-        } else if (perpResult.updateParams) {
-            perpResult.updateParams({
+        setPage(1);
+        if (market === 'perp' && updatePerpParams) {
+            updatePerpParams({
                 sortBy: typedField as PerpSortableFields,
                 sortOrder: direction,
                 page: 1
             });
         }
-    }, [market, perpResult]);
+    }, [market, updatePerpParams]);
 
     const handleTokenClick = useCallback((tokenName: string) => {
         const basePath = market === 'spot' ? '/market/spot' : '/market/perp';
@@ -181,7 +228,7 @@ export function UniversalTokenTable({
     // Build columns array per mode × market
     let columns: Column<TokenRow>[];
 
-    // Largeurs en % qui totalisent 100 % — table-fixed (fixedLayout) → colonnes régulières.
+    // Percentage widths (summing to 100%) act as distribution hints under auto layout.
     if (mode === 'compact') {
         if (market === 'spot') {
             // Compact spot: Name, Price, Volume, 24h
@@ -272,10 +319,12 @@ export function UniversalTokenTable({
             }}
             isLoading={isLoading && !tokens.length}
             error={error ?? null}
-            emptyMessage="Aucun token disponible"
-            emptyDescription="Vérifiez plus tard"
+            emptyMessage="No tokens available"
+            emptyDescription="Check back later"
             className={mode === 'compact' ? 'h-full flex flex-col' : undefined}
-            fixedLayout
+            // No fixedLayout: auto layout lets the table exceed the viewport
+            // and scroll horizontally on mobile (same treatment as the spot
+            // directory table) instead of squeezing columns into overlap.
             // Server-sort
             onSortChange={handleSortChange}
             sortField={sortField}

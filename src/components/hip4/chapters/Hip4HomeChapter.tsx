@@ -188,13 +188,8 @@ export function Hip4HomeChapter() {
 
       <p className="text-center text-[11px] text-text-tertiary">
         Full narrative:{" "}
-        <Link
-          href="/hip4/HIP4-research-complete.md"
-          className="text-brand underline hover:text-gold"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          HIP4-research-complete.md
+        <Link href="/hip4/research" className="text-brand underline hover:text-gold">
+          Research timeline
         </Link>
       </p>
     </Hip4ChapterShell>

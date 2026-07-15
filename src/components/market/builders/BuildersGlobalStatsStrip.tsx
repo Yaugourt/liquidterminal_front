@@ -28,9 +28,11 @@ export function BuildersGlobalStatsStrip({ stats, isLoading, error }: BuildersGl
   const { format } = useNumberFormat();
 
   if (error) {
+    // Never surface the raw error payload (Zod dumps JSON in `message`).
     return (
-      <div className="bg-surface border border-danger/30 rounded-lg p-3 text-center text-danger text-sm">
-        {error.message}
+      <div className="bg-surface border border-danger/30 rounded-lg p-3 text-center text-sm">
+        <span className="text-danger font-medium">Builder stats unavailable.</span>{" "}
+        <span className="text-text-tertiary">The indexer did not return usable data, it refreshes automatically.</span>
       </div>
     );
   }

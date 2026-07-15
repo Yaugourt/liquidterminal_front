@@ -21,7 +21,7 @@ let inflight: Promise<SearchResult[]> | null = null;
 
 /** Curated static destinations, always available even if every API is down. */
 export const PAGE_RESULTS: SearchResult[] = [
-  { id: "page-market", kind: "page", label: "Market overview", sublabel: "/market", href: "/market" },
+  { id: "page-market", kind: "page", label: "Market overview", sublabel: "/market/spot", href: "/market/spot" },
   { id: "page-spot", kind: "page", label: "Spot markets", sublabel: "/market/spot", href: "/market/spot" },
   { id: "page-perp", kind: "page", label: "Perpetuals", sublabel: "/market/perp", href: "/market/perp" },
   { id: "page-spot-auctions", kind: "page", label: "Spot auctions", sublabel: "/market/spot/auction", href: "/market/spot/auction" },

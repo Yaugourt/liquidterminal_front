@@ -23,7 +23,9 @@ const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 
 export default function MarketBuildersPage() {
   const { setTitle } = usePageTitle();
-  const [tf, setTf] = useState<BuildersTimeframe>("24h");
+  // Default to 7d: HypeDexer's builders ingestion currently lags on short
+  // windows (1h/24h return zeros), so landing on 24h shows an empty page.
+  const [tf, setTf] = useState<BuildersTimeframe>("7d");
 
   const allTf = useBuildersStatsAllTimeframes();
   const top = useBuildersTop({ timeframe: tf, sort: "volume", limit: 100 });
@@ -110,6 +112,7 @@ export default function MarketBuildersPage() {
               rows={top.data?.builders ?? []}
               isLoading={top.isLoading}
               error={top.error}
+              onRetry={top.refetch}
             />
           </TabsContent>
           <TabsContent value="all" className="mt-0">
@@ -117,6 +120,7 @@ export default function MarketBuildersPage() {
               builders={list.builders}
               isLoading={list.isLoading}
               error={list.error}
+              onRetry={list.refetch}
             />
           </TabsContent>
         </div>

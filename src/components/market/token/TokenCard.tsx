@@ -36,8 +36,17 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   };
 
   const formatPercentage = (value: number) => {
-    const sign = value >= 0 ? '+' : '';
+    const sign = value >= 0 ? '+' : '-';
     return `${sign}${formatNumber(Math.abs(value), format, { maximumFractionDigits: 2 })}%`;
+  };
+
+  // Funding rates are tiny percentages: 2 decimals would flatten them to 0.00%
+  const formatFundingRate = (value: number) => {
+    const sign = value >= 0 ? '+' : '-';
+    return `${sign}${formatNumber(Math.abs(value), format, {
+      minimumFractionDigits: 6,
+      maximumFractionDigits: 6,
+    })}%`;
   };
 
   const copyToClipboard = (text: string) => {
@@ -94,22 +103,28 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             </div>
           )}
 
-          {/* 24h Change */}
+          {/* 24h Change: "N/A" when the stat is not available (no fake 0%) */}
           <div className="flex flex-col">
             <span className="text-stat-label">24h Change</span>
-            <span className={cn(
-              "text-sm font-medium px-2 py-0.5 rounded-md w-fit",
-              token.change24h >= 0 ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
-            )}>
-              {formatPercentage(token.change24h)}
-            </span>
+            {token.change24h != null ? (
+              <span className={cn(
+                "text-sm font-medium px-2 py-0.5 rounded-md w-fit",
+                token.change24h >= 0 ? "bg-success/10 text-success" : "bg-danger/10 text-danger"
+              )}>
+                {formatPercentage(token.change24h)}
+              </span>
+            ) : (
+              <span className="text-text-tertiary text-sm font-medium">N/A</span>
+            )}
           </div>
 
-          {/* 24h Volume */}
+          {/* 24h Volume: "N/A" when the stat is not available (no fake $0) */}
           <div className="flex flex-col">
             <span className="text-stat-label">24h Volume</span>
             <span className="text-text-primary text-sm font-medium">
-              {formatVolumeValue(token.volume24h)}
+              {token.volume24h != null ? formatVolumeValue(token.volume24h) : (
+                <span className="text-text-tertiary">N/A</span>
+              )}
             </span>
           </div>
 
@@ -156,13 +171,15 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
                 Funding / Countdown
               </span>
               <div className="flex flex-col">
-                {token.fundingRate && (
+                {token.fundingRate != null ? (
                   <span className={cn(
                     "text-sm font-medium",
                     token.fundingRate >= 0 ? "text-success" : "text-danger"
                   )}>
-                    {formatPercentage(token.fundingRate)}
+                    {formatFundingRate(token.fundingRate)}
                   </span>
+                ) : (
+                  <span className="text-text-tertiary text-sm font-medium">N/A</span>
                 )}
                 {token.countdown && (
                   <span className="text-text-secondary text-xs">

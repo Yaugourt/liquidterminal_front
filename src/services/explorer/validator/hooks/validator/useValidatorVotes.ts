@@ -1,6 +1,4 @@
-import { fetchValidatorVotes } from '../../votes';
-import { UseValidatorVotesResult, ValidatorVote, ValidatorVotesStats } from '../../types/votes';
-import { useDataFetching } from '@/hooks/useDataFetching';
+import { UseValidatorVotesResult, ValidatorVotesStats } from '../../types/votes';
 
 const EMPTY_STATS: ValidatorVotesStats = {
   totalValidators: 0,
@@ -11,26 +9,22 @@ const EMPTY_STATS: ValidatorVotesStats = {
   lastUpdate: 0
 };
 
-/**
- * Pending L1 governance votes (validatorL1Votes joined to validators).
- * Mirrors useValidators; additionally surfaces `dataUpdatedAt` so the V4 header
- * can render "updated Xs ago" via DataFreshness. Empty snapshot → empty list.
- */
-export const useValidatorVotes = (): UseValidatorVotesResult => {
-  const { data, isLoading, error, refetch, dataUpdatedAt } = useDataFetching<{
-    votes: ValidatorVote[];
-    stats: ValidatorVotesStats;
-  }>({
-    fetchFn: fetchValidatorVotes,
-    refreshInterval: 30000 // 30 seconds
-  });
-
-  return {
-    votes: data?.votes || [],
-    stats: data?.stats || EMPTY_STATS,
-    isLoading,
-    error,
-    refetch,
-    dataUpdatedAt
-  };
+// Stable identity so consumers' useMemo dependencies do not churn.
+const UNAVAILABLE_RESULT: UseValidatorVotesResult = {
+  votes: [],
+  stats: EMPTY_STATS,
+  isLoading: false,
+  error: null,
+  refetch: async () => {},
+  dataUpdatedAt: null
 };
+
+/**
+ * Pending L1 governance votes.
+ *
+ * DISABLED: the backend does not expose GET /staking/validators/votes, so
+ * fetching it only produced 404 noise. The hook keeps its public shape and
+ * serves a static empty snapshot; restore the useDataFetching call on
+ * `fetchValidatorVotes` (see ../../votes.ts) once the endpoint ships.
+ */
+export const useValidatorVotes = (): UseValidatorVotesResult => UNAVAILABLE_RESULT;

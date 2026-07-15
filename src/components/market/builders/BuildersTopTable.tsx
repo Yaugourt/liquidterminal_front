@@ -12,6 +12,8 @@ interface BuildersTopTableProps {
   rows: BuilderTopRow[];
   isLoading: boolean;
   error: Error | null;
+  /** Refetch handler surfaced as a Retry button in the error state. */
+  onRetry?: () => void;
 }
 
 const PAGE_SIZE = 25;
@@ -121,7 +123,7 @@ function buildColumns(format: NumberFormatType): Column<BuilderTopRow>[] {
   ];
 }
 
-export function BuildersTopTable({ rows, isLoading, error }: BuildersTopTableProps) {
+export function BuildersTopTable({ rows, isLoading, error, onRetry }: BuildersTopTableProps) {
   const router = useRouter();
   const { format } = useNumberFormat();
 
@@ -132,6 +134,7 @@ export function BuildersTopTable({ rows, isLoading, error }: BuildersTopTablePro
       getRowKey={(row) => row.builder}
       isLoading={isLoading && rows.length === 0}
       error={error}
+      onErrorRetry={onRetry}
       errorTitle="Failed to load top builders"
       emptyMessage="No builders"
       emptyDescription="No builder data for this window."

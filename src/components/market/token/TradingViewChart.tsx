@@ -5,6 +5,7 @@ import {
   createChart,
   IChartApi,
   ISeriesApi,
+  AutoscaleInfo,
   CandlestickData,
   CandlestickSeries,
   HistogramData,
@@ -134,11 +135,21 @@ export function TradingViewChart({
   const { price: currentPrice, isLoading: wsLoading } = useTokenWebSocket(coinId || "");
 
   // ── Derived stats over the loaded candle history ─────────────────────
+  // Stats window follows the selected timeframe: intraday intervals keep a
+  // 24h window; daily-and-above intervals widen to one full candle span so
+  // the toolbar High/Low label stays truthful (e.g. "7d" on the 1w chart).
+  const statsWindow = useMemo(() => {
+    const dayMs = 24 * 60 * 60 * 1000;
+    const intervalMs = getIntervalSeconds(selectedTimeframe) * 1000;
+    if (intervalMs <= dayMs) return { ms: dayMs, label: "24h" };
+    return { ms: intervalMs, label: `${Math.round(intervalMs / dayMs)}d` };
+  }, [selectedTimeframe]);
+
   const stats = useMemo(() => {
     if (!candles || candles.length === 0) return null;
     const now = Date.now();
-    const dayAgo = now - 24 * 60 * 60 * 1000;
-    const recent = candles.filter((c) => c.t >= dayAgo);
+    const windowStart = now - statsWindow.ms;
+    const recent = candles.filter((c) => c.t >= windowStart);
     const scope = recent.length > 0 ? recent : candles;
     let high = -Infinity;
     let low = Infinity;
@@ -158,7 +169,7 @@ export function TradingViewChart({
     const delta = close - open;
     const deltaPct = open > 0 ? (delta / open) * 100 : 0;
     return { high, low, vol, delta, deltaPct, isUp: delta >= 0 };
-  }, [candles]);
+  }, [candles, statsWindow]);
 
   const liveLabelPrice = currentPrice ?? (stats ? parseFloat(candles[candles.length - 1]?.c ?? "0") : null);
   const isConnected = !wsLoading && currentPrice !== null;
@@ -240,6 +251,18 @@ export function TradingViewChart({
       priceLineWidth: 1,
       priceLineStyle: LineStyle.Dashed,
       lastValueVisible: true,
+      // Prices are never negative: clamp the autoscaled Y-axis at zero.
+      autoscaleInfoProvider: (original: () => AutoscaleInfo | null): AutoscaleInfo | null => {
+        const info = original();
+        const range = info?.priceRange;
+        if (info && range && range.minValue < 0) {
+          return {
+            ...info,
+            priceRange: { minValue: 0, maxValue: range.maxValue },
+          };
+        }
+        return info;
+      },
     });
 
     const volume = chart.addSeries(HistogramSeries, {
@@ -631,8 +654,16 @@ export function TradingViewChart({
         {/* 24h stats — always visible, wraps to next row on narrow screens */}
         {stats && !hover && (
           <div className="ml-auto flex items-stretch gap-1.5">
-            <ToolbarStat label="24h High" value={formatPrice(stats.high)} tone="emerald" />
-            <ToolbarStat label="24h Low" value={formatPrice(stats.low)} tone="rose" />
+            <ToolbarStat
+              label={`${statsWindow.label} High`}
+              value={formatPrice(stats.high)}
+              tone="emerald"
+            />
+            <ToolbarStat
+              label={`${statsWindow.label} Low`}
+              value={formatPrice(stats.low)}
+              tone="rose"
+            />
           </div>
         )}
       </div>

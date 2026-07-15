@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePageTitle } from "@/store/use-page-title";
+import { useAuthContext } from "@/contexts/auth.context";
 import { usePublicReadLists } from "@/services/wiki/readList/hooks/usePublicReadLists";
 import { PublicReadListCard } from "@/components/wiki/readList/PublicReadListCard";
 import { PublicReadListDetails } from "@/components/wiki/readList/PublicReadListDetails";
@@ -20,6 +21,7 @@ import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { PublicReadList } from "@/services/wiki/readList/types";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 const SORT_OPTIONS = [
   { value: "updatedAt", label: "Recently Updated" },
@@ -29,6 +31,7 @@ const SORT_OPTIONS = [
 
 export default function PublicReadListsPage() {
   const { setTitle } = usePageTitle();
+  const { isAuthenticated, login } = useAuthContext();
   const [selectedReadList, setSelectedReadList] = useState<PublicReadList | null>(null);
   const [searchInput, setSearchInput] = useState("");
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -66,8 +69,15 @@ export default function PublicReadListsPage() {
   }, [updateParams]);
 
   const handleCopyReadList = useCallback(async (readListId: number) => {
+    // Copying requires an account: prompt Privy login for anonymous visitors
+    // instead of surfacing an opaque token refresh error toast.
+    if (!isAuthenticated) {
+      toast.info("Sign in to copy this list to your account");
+      login();
+      return;
+    }
     await copyReadList(readListId);
-  }, [copyReadList]);
+  }, [copyReadList, isAuthenticated, login]);
 
   const handleSelectReadList = useCallback((readList: PublicReadList) => {
     setSelectedReadList(readList);

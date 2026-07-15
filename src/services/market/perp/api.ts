@@ -12,6 +12,22 @@ export async function fetchPerpMarkets(params: PerpMarketParams): Promise<Pagina
 }
 
 /**
+ * Find a single perp market by coin name (e.g. "BTC"). The backend has no
+ * single-market endpoint, so the full directory is fetched once and searched.
+ */
+export const getPerpMarket = async (coinName: string): Promise<PerpMarketData | null> => {
+  try {
+    const response = await fetchPerpMarkets({ limit: 1000, page: 1 });
+    return (
+      response.data.find((m) => m.name.toLowerCase() === coinName.toLowerCase()) ?? null
+    );
+  } catch {
+    // Silent error handling: the caller falls back to placeholder values
+    return null;
+  }
+};
+
+/**
  * Récupère les statistiques globales du marché perp
  */
 export const fetchPerpGlobalStats = async (): Promise<PerpGlobalStats> => {

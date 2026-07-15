@@ -31,6 +31,14 @@ export interface SpotMarketResponse {
   hasPrevious: boolean;
 }
 
+/** Per-market metadata derived from HL `spotMetaAndAssetCtxs`. */
+export interface SpotPairMeta {
+  /** Actual quote asset of the pair (USDC, USDT0, USDH, ...). */
+  quote: string;
+  /** On-HL circulating supply of the base token (null when unavailable). */
+  circulatingSupply: number | null;
+}
+
 export interface TokenHoldersResponse {
   token: string;
   lastUpdate: number;
