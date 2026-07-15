@@ -55,7 +55,11 @@ function flowAlignClass(align: FlowGridAlign | undefined): string {
 }
 
 function widthValue(width: number | string): string {
-  return typeof width === "number" ? `${width}px` : width;
+  if (typeof width === "number") return `${width}px`;
+  // Bare fr units mean minmax(auto, Xfr): the cell's content (e.g. a FlowBar
+  // label) sets a min width and overflows the card on narrow viewports.
+  if (/^[\d.]+fr$/.test(width)) return `minmax(0, ${width})`;
+  return width;
 }
 
 export function FlowGrid<T>({
