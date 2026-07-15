@@ -6,6 +6,7 @@ import { StatsCard, Skeleton } from "@/components/common";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
+import { isBuilderWindowEmpty } from "./builderStatsWindow";
 
 interface BuilderIntelligenceKpisProps {
   stats: BuilderDetailStatsPayload | null;
@@ -26,6 +27,18 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
   }
 
   if (!stats) return null;
+
+  // Empty window (common on 1h/24h upstream): an honest empty state beats $0.
+  if (isBuilderWindowEmpty(stats)) {
+    return (
+      <div className="bg-surface border border-border-subtle rounded-lg p-6 text-center">
+        <p className="text-text-secondary text-sm font-medium">No data for this window</p>
+        <p className="text-text-tertiary text-xs mt-1">
+          The indexer has no recorded activity for {stats.timeframe}. Try a wider window (7d / 30d).
+        </p>
+      </div>
+    );
+  }
 
   const c = stats.current;
   const avgFeesPerUser = c.uniqueUsers > 0 ? c.totalBuilderFees / c.uniqueUsers : 0;

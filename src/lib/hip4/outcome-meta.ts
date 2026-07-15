@@ -17,7 +17,7 @@ import type {
   Hip4MarketEnrichedRow,
   Hip4LiveMarketData,
 } from "@/services/indexer/hip4";
-import { formatPriceBinaryTitle } from "./market-formatter";
+import { formatPriceBinaryTitle, isPlaceholderMarketName } from "./market-formatter";
 
 interface ParsedOutcomeDesc {
   cls: string | null;
@@ -111,13 +111,14 @@ export function buildLiveMarkets(
     const classNormalized = isYesNo ? "binary" : "custom";
 
     // Structured price markets get the canonical title; everything else uses the
-    // outcome's own name (NBA/Fed/CPI carry a human title there).
+    // outcome's own name (NBA/Fed/CPI carry a human title there). Deployer
+    // placeholder names ("Recurring Named Outcome") fall through to the id.
     const title =
       (parsed.cls === "priceBinary"
         ? formatPriceBinaryTitle(parsed.underlying, parsed.targetPrice, parsed.expiry)
         : null) ||
-      o.name ||
-      `Outcome ${o.outcome}`;
+      (isPlaceholderMarketName(o.name) ? null : o.name) ||
+      `Outcome #${o.outcome}`;
 
     const outcomes: Hip4QuestionOutcome[] = sides.map((s, side) => {
       const enc = o.outcome * 10 + side;

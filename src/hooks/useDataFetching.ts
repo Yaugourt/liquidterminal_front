@@ -42,7 +42,6 @@ export function useDataFetching<T>({
   const [isInitialLoading, setIsInitialLoading] = useState(true); // NEW: Only true for first load
   const [isRefreshing, setIsRefreshing] = useState(false); // NEW: True during background refresh
   const [error, setError] = useState<Error | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
   /** Epoch ms of the most recent successful fetch — null until first success.
    * Use to drive staleness indicators in the UI. */
   const [dataUpdatedAt, setDataUpdatedAt] = useState<number | null>(null);
@@ -73,16 +72,25 @@ export function useDataFetching<T>({
     };
   }, []);
 
-  // Main fetch function with retry logic
-  const fetchData = useCallback(async (isRetry = false, isPolling = false) => {
+  // Main fetch function with retry logic.
+  // `attempt` is threaded through the recursive retry calls instead of being read
+  // from state: the setTimeout closure captures a stale `retryCount` (always the
+  // value at schedule time), which made `retryCount < maxRetries` always true and
+  // caused an infinite retry loop (~1 req/1.2s) on any persistent failure (QA audit 15/07).
+  const fetchData = useCallback(async (isRetry = false, isPolling = false, attempt = 0) => {
     if (!mountedRef.current) return;
 
     // A missing route stays missing: don't re-poll it every interval.
     if (isPolling && permanentErrorRef.current) return;
     if (!isRetry && !isPolling) permanentErrorRef.current = false;
 
-    // Abort the previous in-flight request before starting a new one.
+    // Abort the previous in-flight request (and any pending retry from a
+    // previous cycle) before starting a new one.
     if (!isRetry) {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+        retryTimeoutRef.current = null;
+      }
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -101,7 +109,6 @@ export function useDataFetching<T>({
           setIsInitialLoading(true);
         }
         setError(null);
-        setRetryCount(0);
       }
 
       const result = await fetchFn(signal);
@@ -109,7 +116,6 @@ export function useDataFetching<T>({
       if (mountedRef.current && !signal?.aborted) {
         setData(result);
         setError(null);
-        setRetryCount(0);
         setDataUpdatedAt(Date.now());
         hasInitialDataRef.current = true; // Mark that we have data now
       }
@@ -121,14 +127,12 @@ export function useDataFetching<T>({
       if (isPermanentClientError(err)) {
         permanentErrorRef.current = true;
         setError(error);
-        setRetryCount(0);
         return;
       }
 
-      if (retryCount < maxRetries) {
-        const nextRetryCount = retryCount + 1;
-        setRetryCount(nextRetryCount);
-        const retryDelayWithBackoff = retryDelay * Math.pow(2, nextRetryCount - 1);
+      if (attempt < maxRetries) {
+        const nextAttempt = attempt + 1;
+        const retryDelayWithBackoff = retryDelay * Math.pow(2, nextAttempt - 1);
 
         if (retryTimeoutRef.current) {
           clearTimeout(retryTimeoutRef.current);
@@ -136,14 +140,13 @@ export function useDataFetching<T>({
 
         retryTimeoutRef.current = setTimeout(() => {
           if (mountedRef.current) {
-            fetchData(true, isPolling);
+            fetchData(true, isPolling, nextAttempt);
           }
         }, retryDelayWithBackoff);
 
-        setError(new Error(`Retry attempt ${nextRetryCount} of ${maxRetries}: ${error.message}`));
+        setError(new Error(`Retry attempt ${nextAttempt} of ${maxRetries}: ${error.message}`));
       } else {
         setError(error);
-        setRetryCount(0);
       }
     } finally {
       if (mountedRef.current && !isRetry && !signal?.aborted) {
@@ -152,7 +155,7 @@ export function useDataFetching<T>({
         setIsRefreshing(false);
       }
     }
-  }, [fetchFn, retryCount, maxRetries, retryDelay]);
+  }, [fetchFn, maxRetries, retryDelay]);
 
   // Stabilize dependencies to prevent infinite loops
   const stableDependencies = useMemo(() => dependencies, [dependencies]);

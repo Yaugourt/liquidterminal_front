@@ -19,6 +19,8 @@ import {
   removeWalletFromList
 } from "../services/market/tracker/walletlist.service";
 import { handleApiError } from './utils';
+import { isPrivyAuthenticated } from '../services/api/auth/privy.service';
+import { toast } from 'sonner';
 
 // Action creators for better state management
 const createActionCreators = (set: (fn: (state: WalletListsState) => Partial<WalletListsState>) => void) => ({
@@ -147,6 +149,12 @@ export const useWalletLists = create<WalletListsState>()(
         },
         
         copyList: async (id: number): Promise<WalletList> => {
+          // Anonymous visitors have no account to copy into: surface a
+          // sign-in prompt instead of failing silently on a token error.
+          if (!isPrivyAuthenticated()) {
+            toast.info('Sign in to copy this list to your account');
+            throw new Error('Sign in required to copy lists');
+          }
           try {
             actions.setLoading(true);
             const copiedList = await copyWalletList(id);

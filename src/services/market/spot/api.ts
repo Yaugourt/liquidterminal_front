@@ -1,8 +1,8 @@
-import { SpotGlobalStats, SpotToken, TokenHoldersResponse } from './types';
-import { get, getExternal } from '../../api/axios-config';
+import { SpotGlobalStats, SpotToken, SpotPairMeta, TokenHoldersResponse } from './types';
+import { get, getExternal, postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse, buildQueryParams } from '../../common';
-import { buildHypurrscanUrl } from '../../api/constants';
+import { API_URLS, buildHypurrscanUrl } from '../../api/constants';
 
 /**
  * Récupère les statistiques globales du marché spot
@@ -43,6 +43,57 @@ export const getToken = async (tokenName: string): Promise<SpotToken | null> => 
     // Silent error handling
     return null;
   }
+};
+
+interface SpotMetaTokenRaw {
+  name: string;
+  index: number;
+}
+
+interface SpotMetaPairRaw {
+  name: string;
+  /** [base token index, quote token index] */
+  tokens: [number, number];
+  index: number;
+}
+
+interface SpotAssetCtxRaw {
+  coin: string;
+  circulatingSupply?: string;
+}
+
+/**
+ * Per-market metadata from HL `spotMetaAndAssetCtxs`, keyed by market index:
+ * the real quote asset symbol (USDC / USDT0 / USDH ...) and the on-HL
+ * circulating supply of the base token. The backend spot payload has neither,
+ * so pair labels and market caps are corrected with this map.
+ */
+export const fetchSpotPairMeta = async (): Promise<Record<number, SpotPairMeta>> => {
+  return withErrorHandling(async () => {
+    const res = await postExternal<
+      [{ tokens: SpotMetaTokenRaw[]; universe: SpotMetaPairRaw[] }, SpotAssetCtxRaw[]]
+    >(`${API_URLS.HYPERLIQUID_API}/info`, { type: 'spotMetaAndAssetCtxs' });
+
+    const meta = res?.[0];
+    const ctxs = res?.[1] ?? [];
+    if (!meta) return {};
+
+    const tokenNameByIndex = new Map<number, string>(
+      meta.tokens.map((t) => [t.index, t.name])
+    );
+
+    const map: Record<number, SpotPairMeta> = {};
+    meta.universe.forEach((pair, i) => {
+      // ctxs is aligned with the universe array order
+      const rawSupply = ctxs[i]?.circulatingSupply;
+      const circulating = rawSupply ? parseFloat(rawSupply) : NaN;
+      map[pair.index] = {
+        quote: tokenNameByIndex.get(pair.tokens[1]) ?? 'USDC',
+        circulatingSupply: Number.isFinite(circulating) ? circulating : null,
+      };
+    });
+    return map;
+  }, 'fetching spot pair metadata');
 };
 
 /**

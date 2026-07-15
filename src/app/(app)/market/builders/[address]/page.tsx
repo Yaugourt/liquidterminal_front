@@ -17,6 +17,7 @@ import {
   BuilderDetailStatsGrid,
   BuilderUsersTable,
   formatBuilderDisplayName,
+  isBuilderWindowEmpty,
 } from "@/components/market/builders";
 import { KpiRibbon, Skeleton, TimeframeTabs } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -62,6 +63,9 @@ export default function BuilderDetailPage() {
   }
 
   const isFirstLoad = stats.isLoading && !stats.stats;
+  // All-zero window (frequent upstream on 1h/24h): hide the $0 header stats,
+  // the stats grid below renders the explicit empty state.
+  const windowEmpty = stats.stats != null && isBuilderWindowEmpty(stats.stats);
 
   return (
     <motion.div className="space-y-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
@@ -109,7 +113,7 @@ export default function BuilderDetailPage() {
               </div>
               <AddressDisplay address={address} truncate showExternalLink={false} className="text-sm mt-1" />
             </div>
-            {stats.stats && (
+            {stats.stats && !windowEmpty && (
               <div className="flex gap-6 shrink-0">
                 <div className="text-center">
                   <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Volume</p>
@@ -140,7 +144,12 @@ export default function BuilderDetailPage() {
         <h2 className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider px-1">
           Performance ({tf})
         </h2>
-        <BuilderDetailStatsGrid stats={stats.stats} isLoading={stats.isLoading} error={stats.error} />
+        <BuilderDetailStatsGrid
+          stats={stats.stats}
+          isLoading={stats.isLoading}
+          error={stats.error}
+          onRetry={stats.refetch}
+        />
       </section>
 
       {/* Coin breakdown */}

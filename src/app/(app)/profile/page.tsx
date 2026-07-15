@@ -34,8 +34,8 @@ function ProfileTabs() {
 }
 
 function ProfileContent({ initialTab }: { initialTab: string }) {
-    const { user: privyUser } = usePrivy();
-    const { user: currentUser } = useAuthContext();
+    const { user: privyUser, ready, authenticated } = usePrivy();
+    const { user: currentUser, login } = useAuthContext();
     const { wallets } = useWallets();
     const { readLists } = useReadLists();
     const { data: walletLists } = useUserWalletLists({ enabled: !!currentUser });
@@ -127,6 +127,30 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
         if (!url) return undefined;
         return url.replace('_normal', '');
     };
+
+    // Anonymous visitors get an explicit sign-in prompt instead of an
+    // endless loading state (the backend user only exists after login).
+    if (ready && !authenticated) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <Card padding="lg" interactive={false} className="max-w-md w-full mx-4 text-center space-y-4">
+                    <div className="w-16 h-16 bg-brand/10 rounded-lg flex items-center justify-center mx-auto">
+                        <Users className="h-8 w-8 text-brand" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-text-primary">Sign in to view your profile</h2>
+                    <p className="text-text-secondary text-sm">
+                        Track your XP, missions, referrals and activity across Liquid Terminal.
+                    </p>
+                    <Button
+                        onClick={() => login()}
+                        className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold"
+                    >
+                        Sign In
+                    </Button>
+                </Card>
+            </div>
+        );
+    }
 
     if (!currentUser) return (
         <div className="flex items-center justify-center min-h-[50vh]">

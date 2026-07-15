@@ -30,7 +30,7 @@ import { ChartSkeleton } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
-import { effectiveStatus, isYesNoSides } from "@/lib/hip4/market-formatter";
+import { effectiveStatus, isPlaceholderMarketName, isYesNoSides } from "@/lib/hip4/market-formatter";
 import { rawOutcomeId } from "@/lib/hip4/outcome-meta";
 import { buildMergedQuestions, findMergedQuestionByCoin } from "@/lib/hip4/merge-questions";
 import { resolveHip4Layout, type Hip4ChartMode } from "@/lib/hip4/detail-layout";
@@ -293,7 +293,12 @@ export default function Hip4MarketDetailPage() {
         <>
           <Hip4MarketDetailHeader
             market={market}
-            title={parentQuestion?.title || undefined}
+            // Placeholder names fall through to formatMarketTitle (ticker fallback).
+            title={
+              parentQuestion?.title && !isPlaceholderMarketName(parentQuestion.title)
+                ? parentQuestion.title
+                : undefined
+            }
             typeLabel={layout.typeLabel}
             status={detailStatus}
           />
@@ -350,7 +355,11 @@ export default function Hip4MarketDetailPage() {
               />
             ) : seriesDefs.length > 0 ? (
               <Hip4ProbabilityChart
-                title={parentQuestion?.title || market?.display_name || "Implied probability"}
+                title={
+                  [parentQuestion?.title, market?.display_name].find(
+                    (n) => n && !isPlaceholderMarketName(n)
+                  ) ?? "Implied probability"
+                }
                 defs={seriesDefs}
                 fillsByCoin={probability.fillsByCoin}
                 candlesByCoin={candles.candlesByCoin}

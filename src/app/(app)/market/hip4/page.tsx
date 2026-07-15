@@ -20,6 +20,7 @@ import {
 } from "@/components/market/hip4";
 import { PageHeader } from "@/components/common";
 import { buildMergedQuestions } from "@/lib/hip4/merge-questions";
+import { isPlaceholderMarketName } from "@/lib/hip4/market-formatter";
 
 export default function MarketHip4Page() {
   const { setTitle } = usePageTitle();
@@ -41,8 +42,12 @@ export default function MarketHip4Page() {
     const add = (m: { coin: string | null; short_name: string; display_name: string; side_name: string | null; side: number | null; parsed_sides: { name: string }[] | null }) => {
       if (!m.coin || idx[m.coin]) return;
       const isBinary = (m.parsed_sides?.length ?? 0) === 2;
+      // Skip upstream placeholder names ("Recurring Named Outcome"); the coin
+      // ticker is a more honest label.
+      const name =
+        [m.short_name, m.display_name].find((n) => !isPlaceholderMarketName(n)) ?? m.coin;
       idx[m.coin] = {
-        name: m.short_name || m.display_name,
+        name,
         sideName: m.side_name ?? (isBinary && m.side != null ? m.parsed_sides?.[m.side]?.name ?? null : null),
         isBinary,
       };
@@ -74,7 +79,10 @@ export default function MarketHip4Page() {
     const idx: Record<number, string> = {};
     for (const m of enriched.markets) {
       if (m.outcome_id == null) continue;
-      idx[m.outcome_id] = m.display_name || m.short_name || m.coin || `#${m.outcome_id}`;
+      idx[m.outcome_id] =
+        [m.display_name, m.short_name].find((n) => !isPlaceholderMarketName(n)) ??
+        m.coin ??
+        `#${m.outcome_id}`;
     }
     return idx;
   }, [enriched.markets]);
@@ -112,6 +120,7 @@ export default function MarketHip4Page() {
       <Hip4MarketGrid
         questions={mergedQuestions}
         isLoading={questions.isLoading && live.isLoading}
+        settlementsCount={settlements.settlements.length}
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">

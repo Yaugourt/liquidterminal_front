@@ -265,10 +265,12 @@ export function GovernanceLens() {
   }
 
   if (votes.length === 0) {
+    // Also covers the current state where the votes endpoint is not served
+    // by the backend (useValidatorVotes is disabled and returns no data).
     return (
       <EmptyState
-        title="No pending votes"
-        description="Showing pending votes only. Historical votes are not available."
+        title="Governance data unavailable"
+        description="Governance votes are not served by the backend yet. This tab will populate once the endpoint ships."
       />
     );
   }

@@ -6,7 +6,12 @@ import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
 import { Hip4OutcomeBar } from "./Hip4OutcomeBar";
-import { effectiveStatus, formatExpiryCountdown, isBinaryQuestion } from "@/lib/hip4/market-formatter";
+import {
+  effectiveStatus,
+  formatExpiryCountdown,
+  isBinaryQuestion,
+  isPlaceholderMarketName,
+} from "@/lib/hip4/market-formatter";
 
 interface Hip4QuestionCardProps {
   question: Hip4QuestionWithOutcomesRow;
@@ -63,7 +68,14 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
   const eff = effectiveStatus(question);
   const settled = eff === "settled";
   const expiredUnresolved = eff === "expired_unresolved";
-  const title = question.title || "Untitled market";
+  // Never render the upstream placeholder name; fall back to an id/ticker label.
+  const title = question.title && !isPlaceholderMarketName(question.title)
+    ? question.title
+    : question.primary_coin
+      ? `Market ${question.primary_coin}`
+      : question.question_id != null
+        ? `Question #${question.question_id}`
+        : "Untitled market";
   const badge = categoryBadge(question.class, question.underlying);
   const binary = isBinaryQuestion(question);
 

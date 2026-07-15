@@ -15,6 +15,7 @@ import {
   BuilderIntelligenceKpis,
   BuilderIntelligenceUsersTable,
   BuilderIntelligenceSecondaryStats,
+  isBuilderWindowEmpty,
 } from "@/components/market/builders";
 import { PageHeader, TimeframeTabs } from "@/components/common";
 
@@ -78,7 +79,8 @@ export default function BuildersIntelligencePage() {
         <BuilderIntelligenceUsersTable users={userRows} isLoading={users.isLoading} />
       </div>
 
-      {stats.stats && (
+      {/* Hidden for all-zero windows: the KPI block above already explains the empty window. */}
+      {stats.stats && !isBuilderWindowEmpty(stats.stats) && (
         <BuilderIntelligenceSecondaryStats stats={stats.stats} />
       )}
     </motion.div>

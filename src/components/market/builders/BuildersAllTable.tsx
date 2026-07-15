@@ -11,6 +11,8 @@ interface BuildersAllTableProps {
   builders: BuilderListRow[];
   isLoading: boolean;
   error: Error | null;
+  /** Refetch handler surfaced as a Retry button in the error state. */
+  onRetry?: () => void;
 }
 
 const PAGE_SIZE = 25;
@@ -79,7 +81,7 @@ const COLUMNS: Column<BuilderListRow>[] = [
   },
 ];
 
-export function BuildersAllTable({ builders, isLoading, error }: BuildersAllTableProps) {
+export function BuildersAllTable({ builders, isLoading, error, onRetry }: BuildersAllTableProps) {
   const router = useRouter();
   const [q, setQ] = useState("");
 
@@ -104,6 +106,7 @@ export function BuildersAllTable({ builders, isLoading, error }: BuildersAllTabl
       getRowKey={(row) => row.address}
       isLoading={isLoading && builders.length === 0}
       error={error}
+      onErrorRetry={onRetry}
       errorTitle="Failed to load builders"
       emptyMessage="No builders"
       emptyDescription={q ? `No results for "${q}"` : "No builder data available."}

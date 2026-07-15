@@ -7,6 +7,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
     async redirects() {
         return [
+            // /market has no page of its own but is linked from the landing
+            // header/footer and the Cmd+K palette: land on the spot overview.
+            { source: '/market', destination: '/market/spot', permanent: true },
             { source: '/docs/hip4', destination: '/hip4/home', permanent: true },
             { source: '/docs/hip4/:path*', destination: '/hip4/:path*', permanent: true },
         ];

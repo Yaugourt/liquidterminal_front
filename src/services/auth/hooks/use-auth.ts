@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { authService, User, AuthError, LoginCredentials } from "../index";
-import { registerPrivyAccessTokenGetter, registerPrivyLogout } from "../../api/privy.service";
+import { registerPrivyAccessTokenGetter, registerPrivyLogout, setPrivyAuthenticated } from "../../api/privy.service";
 
 export function useAuth() {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -25,6 +25,13 @@ export function useAuth() {
       registerPrivyLogout(null);
     };
   }, [getAccessToken, privyLogout]);
+
+  // Mirror Privy's authenticated flag so non-React modules (axios
+  // interceptors, stores) can tell anonymous visitors from expired sessions.
+  useEffect(() => {
+    setPrivyAuthenticated(authenticated);
+    return () => setPrivyAuthenticated(false);
+  }, [authenticated]);
 
   const ensureUserInitialized = useCallback(async () => {
     if (!authenticated || !privyUser) return false;

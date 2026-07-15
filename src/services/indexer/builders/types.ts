@@ -3,9 +3,9 @@ export type BuildersTimeframe = "1h" | "24h" | "7d" | "30d";
 
 export interface BuilderListRow {
   address: string;
-  name: string;
+  name: string | null;
   referredBy: string | null;
-  referrerStage: string;
+  referrerStage: string | null;
 }
 
 interface BuilderStatsMetrics {

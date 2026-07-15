@@ -13,14 +13,26 @@ import {
 } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import type { NumberFormatType } from "@/store/number-format.store";
-import type { SpotToken } from "@/services/market/spot/types";
+import type { SpotToken, SpotPairMeta } from "@/services/market/spot/types";
 import type {
   UseSpotDirectoryResult,
   SpotDirectoryTab,
 } from "@/services/market/spot/hooks/useSpotDirectory";
+import { useSpotPairMeta } from "@/services/market/spot/hooks/useSpotPairMeta";
 import { isBridged } from "@/services/market/spot/bridged";
 
-function buildColumns(format: NumberFormatType): Column<SpotToken>[] {
+function buildColumns(
+  format: NumberFormatType,
+  pairMeta: Record<number, SpotPairMeta> | null
+): Column<SpotToken>[] {
+  // Market cap from the on-HL CIRCULATING supply when available; the backend
+  // value is price × max supply, which produces absurd caps for pre-mint
+  // tokens (e.g. XAUT0 in the hundreds of trillions).
+  const marketCapOf = (t: SpotToken): number => {
+    const circulating = pairMeta?.[t.marketIndex]?.circulatingSupply;
+    return circulating != null && circulating > 0 ? t.price * circulating : t.marketCap;
+  };
+
   return [
     {
       key: "rank",
@@ -44,7 +56,9 @@ function buildColumns(format: NumberFormatType): Column<SpotToken>[] {
               {t.name}
             </div>
             <div className="mono text-[10px] text-text-tertiary truncate">
-              {t.name}/USDC{isBridged(t.name) ? " · bridged" : ""}
+              {/* Real quote asset (USDC / USDT0 / USDH ...) from HL spot meta */}
+              {t.name}/{pairMeta?.[t.marketIndex]?.quote ?? "USDC"}
+              {isBridged(t.name) ? " · bridged" : ""}
             </div>
           </div>
         </div>
@@ -79,11 +93,11 @@ function buildColumns(format: NumberFormatType): Column<SpotToken>[] {
       header: "Market cap",
       type: "numeric",
       sortable: true,
-      getSortValue: (t) => (isBridged(t.name) ? -1 : t.marketCap),
+      getSortValue: (t) => (isBridged(t.name) ? -1 : marketCapOf(t)),
       accessor: (t) =>
         isBridged(t.name)
           ? "—"
-          : `$${formatNumber(t.marketCap, format, { maximumFractionDigits: 0 })}`,
+          : `$${formatNumber(marketCapOf(t), format, { maximumFractionDigits: 0 })}`,
     },
     {
       key: "supply",
@@ -109,6 +123,8 @@ interface SpotDirectoryTableProps {
 export function SpotDirectoryTable({ directory }: SpotDirectoryTableProps) {
   const router = useRouter();
   const { format } = useNumberFormat();
+  // Real quote assets + circulating supplies (HL spotMetaAndAssetCtxs)
+  const { pairMeta } = useSpotPairMeta();
 
   const {
     rows,
@@ -159,8 +175,10 @@ export function SpotDirectoryTable({ directory }: SpotDirectoryTableProps) {
   return (
     <div className="min-w-0 bg-surface border border-border-subtle rounded-lg">
       <TypedDataTable<SpotToken>
+        // Remount on tab switch so local pagination resets to page 1
+        key={tab}
         data={rows}
-        columns={buildColumns(format)}
+        columns={buildColumns(format, pairMeta)}
         // marketIndex, not tokenId — the list is one row per MARKET and a
         // token can back several pairs (HYPE appears 4×, same tokenId).
         getRowKey={(t) => String(t.marketIndex)}

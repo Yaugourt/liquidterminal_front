@@ -11,6 +11,7 @@ type AccessTokenGetter = () => Promise<string | null>;
 
 let accessTokenGetter: AccessTokenGetter | null = null;
 let privyLogout: (() => void) | null = null;
+let privyAuthenticated = false;
 
 export const registerPrivyAccessTokenGetter = (getter: AccessTokenGetter | null): void => {
   accessTokenGetter = getter;
@@ -19,6 +20,18 @@ export const registerPrivyAccessTokenGetter = (getter: AccessTokenGetter | null)
 export const registerPrivyLogout = (logout: (() => void) | null): void => {
   privyLogout = logout;
 };
+
+/** Bridge for Privy's `authenticated` flag, kept in sync by AuthProvider. */
+export const setPrivyAuthenticated = (value: boolean): void => {
+  privyAuthenticated = value;
+};
+
+/**
+ * Whether a Privy session is currently active. Lets non-React modules
+ * (axios interceptors, stores) distinguish anonymous visitors from
+ * expired sessions before attempting refresh or logout calls.
+ */
+export const isPrivyAuthenticated = (): boolean => privyAuthenticated;
 
 /**
  * Get Privy access token via the registered SDK getter.
@@ -63,6 +76,10 @@ export const handleLogout = async (): Promise<void> => {
   clearAuthTokens();
 
   if (typeof window === 'undefined') return;
+
+  // Anonymous visitors have no Privy session: calling the SDK logout would
+  // only fire a failing network call, and no "session expired" toast applies.
+  if (!privyAuthenticated) return;
 
   try {
     if (privyLogout) {

@@ -4,7 +4,10 @@ import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, ArrowLeft } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { LoadingState } from "@/components/ui/loading-state";
+import { usePrivy } from "@privy-io/react-auth";
+import { Plus, ArrowLeft, LogIn } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
@@ -33,6 +36,7 @@ export default function MySubmissionsPage() {
   const [projectToEdit, setProjectToEdit] = useState<PublicGood | null>(null);
   const [projectToDelete, setProjectToDelete] = useState<PublicGood | null>(null);
   const { user, login } = useAuthContext();
+  const { ready, authenticated } = usePrivy();
 
   // Fetch user's projects from API
   const { myPublicGoods, isLoading, refetch } = useMyPublicGoods({ limit: 50 });
@@ -116,10 +120,33 @@ export default function MySubmissionsPage() {
     }
   };
 
-  // Redirect if not logged in
   if (!user) {
+    // Anonymous visitors: explicit sign-in prompt instead of a blank page.
+    if (ready && !authenticated) {
+      return (
+        <div className="flex items-center justify-center min-h-[50vh]">
+          <Card padding="lg" interactive={false} className="max-w-md w-full mx-4 text-center space-y-4">
+            <div className="w-16 h-16 bg-brand/10 rounded-lg flex items-center justify-center mx-auto">
+              <LogIn className="h-8 w-8 text-brand" />
+            </div>
+            <h2 className="text-xl font-semibold text-text-primary">Sign in to view your submissions</h2>
+            <p className="text-text-secondary text-sm">
+              Your submitted public goods projects are tied to your account.
+            </p>
+            <Button
+              onClick={() => login()}
+              className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold"
+            >
+              Sign In
+            </Button>
+          </Card>
+        </div>
+      );
+    }
+    // Privy still initializing or backend login in flight.
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
+        <LoadingState size="md" withCard={false} />
       </div>
     );
   }

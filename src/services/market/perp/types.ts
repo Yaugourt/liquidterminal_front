@@ -14,13 +14,12 @@ export interface PerpMarketData {
 // Types de tri supportés par l'API
 export type PerpSortableFields = "volume" | "openInterest" | "change24h" | "price" | "name"; 
 
-// Interface pour les statistiques globales des perp
+// Global perp market stats. NOTE: the backend globalstats payload has no
+// trades field, so no trades count is exposed here.
 export interface PerpGlobalStats {
   totalVolume24h: number;
-  totalTrades24h: number;
   totalOpenInterest: number;
   hlpTvl: number;
-  // Ajoutez d'autres champs selon votre API
 }
 
 // Paramètres pour les requêtes de marché perp
