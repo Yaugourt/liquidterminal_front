@@ -1,6 +1,19 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { getErrorMessage } from '@/services/common/utils';
 
+/**
+ * A 4xx (except timeout/rate-limit) will not heal by asking again: the
+ * route is missing, the params are wrong or the caller is not allowed.
+ * Retrying or re-polling those only hammers the backend (QA audit 15/07:
+ * dead endpoints were re-fetched forever at ~1 req/s from every consumer).
+ */
+function isPermanentClientError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false;
+  const maybe = err as { status?: unknown; response?: { status?: unknown } };
+  const status = typeof maybe.status === 'number' ? maybe.status : maybe.response?.status;
+  return typeof status === 'number' && status >= 400 && status < 500 && status !== 408 && status !== 429;
+}
+
 interface UseDataFetchingOptions<T> {
   /**
    * Fetch function. Accepts an optional `AbortSignal` — if supplied by the consumer,
@@ -40,6 +53,8 @@ export function useDataFetching<T>({
   const mountedRef = useRef(true);
   const hasInitialDataRef = useRef(false); // NEW: Track if we've loaded data before
   const abortControllerRef = useRef<AbortController | null>(null);
+  /** Set on a permanent 4xx: polling cycles skip until deps change or manual refetch. */
+  const permanentErrorRef = useRef(false);
 
   // Cleanup effect
   useEffect(() => {
@@ -61,6 +76,10 @@ export function useDataFetching<T>({
   // Main fetch function with retry logic
   const fetchData = useCallback(async (isRetry = false, isPolling = false) => {
     if (!mountedRef.current) return;
+
+    // A missing route stays missing: don't re-poll it every interval.
+    if (isPolling && permanentErrorRef.current) return;
+    if (!isRetry && !isPolling) permanentErrorRef.current = false;
 
     // Abort the previous in-flight request before starting a new one.
     if (!isRetry) {
@@ -98,6 +117,13 @@ export function useDataFetching<T>({
       if (!mountedRef.current || signal?.aborted) return;
 
       const error = new Error(getErrorMessage(err));
+
+      if (isPermanentClientError(err)) {
+        permanentErrorRef.current = true;
+        setError(error);
+        setRetryCount(0);
+        return;
+      }
 
       if (retryCount < maxRetries) {
         const nextRetryCount = retryCount + 1;
