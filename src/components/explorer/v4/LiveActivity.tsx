@@ -1,10 +1,8 @@
 "use client";
 
 import { memo, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import {
   Boxes,
-  ArrowRight,
   Activity,
   Pause,
   Play,
@@ -173,13 +171,6 @@ function BlocksCard({
             onPrev={() => setPage((p) => Math.max(0, p - 1))}
             onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
           />
-          <Link
-            href="/explorer"
-            className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-          >
-            View all
-            <ArrowRight size={12} />
-          </Link>
         </div>
       </div>
 
@@ -200,6 +191,7 @@ function BlocksCard({
           {rows.map((b) => (
             <ModuleTableRow
               key={b.height}
+              href={`/explorer/block/${b.height}`}
               cells={[
                 <span key="block" className="mono font-semibold text-brand">
                   {b.height.toLocaleString()}
@@ -270,13 +262,6 @@ function TxCard({
             onPrev={() => setPage((p) => Math.max(0, p - 1))}
             onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
           />
-          <Link
-            href="/explorer"
-            className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-          >
-            View all
-            <ArrowRight size={12} />
-          </Link>
         </div>
       </div>
 
@@ -297,6 +282,7 @@ function TxCard({
           {rows.map((t) => (
             <ModuleTableRow
               key={t.hash}
+              href={`/explorer/transaction/${t.hash}`}
               cells={[
                 <span key="age" className="mono text-text-tertiary">
                   {timeAgo(t.time)}

@@ -15,10 +15,35 @@ import {
   ApproveResourceInput,
   RejectResourceInput,
   PendingCountResponse,
-  PopularResourcesResponse
+  PopularResourcesResponse,
+  EducationalResource,
+  WikiLinkPreview
 } from './types';
 import { apiClient } from '../api/axios-config';
 import { buildQueryParams } from '../common';
+import { decodeHtmlEntities } from '@/lib/formatters/textFormatting';
+
+/**
+ * Link-preview text arrives HTML-encoded from the backend scraper
+ * ("Q&amp;A"); decode it once at the service edge so every consumer
+ * renders "&" and friends correctly.
+ */
+export const decodeLinkPreview = (
+  preview: WikiLinkPreview | null | undefined
+): WikiLinkPreview | null | undefined => {
+  if (!preview) return preview;
+  return {
+    ...preview,
+    title: preview.title ? decodeHtmlEntities(preview.title) : preview.title,
+    description: preview.description ? decodeHtmlEntities(preview.description) : preview.description,
+    siteName: preview.siteName ? decodeHtmlEntities(preview.siteName) : preview.siteName,
+  };
+};
+
+const decodeResourcePreview = (resource: EducationalResource): EducationalResource => ({
+  ...resource,
+  linkPreview: decodeLinkPreview(resource.linkPreview),
+});
 
 /**
  * Récupère toutes les catégories éducatives
@@ -66,7 +91,8 @@ export const fetchWikiResources = async (params?: WikiResourcesParams): Promise<
     };
 
     const queryParams = buildQueryParams(apiParams);
-    return await get<ResourcesResponse>(`/educational/resources?${queryParams.toString()}`);
+    const response = await get<ResourcesResponse>(`/educational/resources?${queryParams.toString()}`);
+    return { ...response, data: (response.data || []).map(decodeResourcePreview) };
   }, 'fetching wiki resources');
 };
 
@@ -99,7 +125,8 @@ export const fetchAllWikiResources = async (params?: WikiResourcesParams): Promi
  */
 export const fetchPopularWikiResources = async (limit = 5): Promise<PopularResourcesResponse> => {
   return withErrorHandling(async () => {
-    return await get<PopularResourcesResponse>(`/educational/resources/popular?limit=${limit}`);
+    const response = await get<PopularResourcesResponse>(`/educational/resources/popular?limit=${limit}`);
+    return { ...response, data: (response.data || []).map(decodeResourcePreview) };
   }, 'fetching popular wiki resources');
 };
 
@@ -179,7 +206,8 @@ export const submitResource = async (data: CreateResourceInput): Promise<SubmitR
  */
 export const fetchMySubmissions = async (): Promise<ResourcesResponse> => {
   return withErrorHandling(async () => {
-    return await get<ResourcesResponse>('/educational/resources/my-submissions');
+    const response = await get<ResourcesResponse>('/educational/resources/my-submissions');
+    return { ...response, data: (response.data || []).map(decodeResourcePreview) };
   }, 'fetching my submissions');
 };
 
@@ -201,7 +229,8 @@ export const reportResource = async (resourceId: number, data: ReportResourceInp
  */
 export const fetchPendingResources = async (page = 1, limit = 20): Promise<ResourcesResponse> => {
   return withErrorHandling(async () => {
-    return await get<ResourcesResponse>(`/educational/resources/moderation/pending?page=${page}&limit=${limit}`);
+    const response = await get<ResourcesResponse>(`/educational/resources/moderation/pending?page=${page}&limit=${limit}`);
+    return { ...response, data: (response.data || []).map(decodeResourcePreview) };
   }, 'fetching pending resources');
 };
 

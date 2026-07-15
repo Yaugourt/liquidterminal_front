@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/loading-state";
-import { useProject, useProjectMetrics } from "@/services/ecosystem/project";
+import { useProject } from "@/services/ecosystem/project";
 import { ProjectDetailHeader, ProjectMetricsPanel, ProjectInfoRail } from "@/components/ecosystem/project/detail";
 
 interface ProjectDetailPageProps {
@@ -18,7 +18,9 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const router = useRouter();
 
   const { project, isLoading } = useProject(projectId);
-  const { metrics, isLoading: metricsLoading } = useProjectMetrics(projectId);
+  // Metrics fetch parked: GET /project/:id/metrics is not deployed on the
+  // backend (404 for every id), so calling it only produced a retry loop.
+  // Re-enable useProjectMetrics once the route ships.
 
   if (isLoading) {
     return (
@@ -51,11 +53,11 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
         <span className="text-text-secondary">{project.title}</span>
       </nav>
 
-      <ProjectDetailHeader project={project} updatedAt={metrics?.updatedAt} />
+      <ProjectDetailHeader project={project} />
 
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
-        <ProjectMetricsPanel metrics={metrics?.metrics} isLoading={metricsLoading} />
-        <ProjectInfoRail project={project} sources={metrics?.sources} updatedAt={metrics?.updatedAt} />
+        <ProjectMetricsPanel metrics={undefined} isLoading={false} />
+        <ProjectInfoRail project={project} />
       </div>
     </div>
   );

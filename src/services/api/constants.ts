@@ -77,6 +77,7 @@ export const ENDPOINTS = {
   LIQUIDATIONS_STATS_ALL: '/liquidations/stats/all',
   LIQUIDATIONS_CHART_DATA: '/liquidations/chart-data',
   LIQUIDATIONS_DATA: '/liquidations/data',
+  LIQUIDATIONS_HISTORICAL_CHART: '/liquidations/historical/chart',
   LIQUIDATIONS_ANALYTICS_STATS: '/liquidations/analytics/stats',
 
   // Indexer vault endpoints (HypeDexer proxy)

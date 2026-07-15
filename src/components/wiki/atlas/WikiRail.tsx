@@ -23,7 +23,7 @@ interface WikiRailProps {
 /**
  * Shared wiki navigation rail (topic views): a RailSearch filter, then
  * FUNDAMENTALS (the Learn chapters, active chapter expands its HIP-1/2/3
- * sub-rows) and COMMUNITY (top categories + a terminal "All 41 categories"
+ * sub-rows) and COMMUNITY (top categories + a terminal "All N categories"
  * link to /wiki/topics). No "Show N more" toggle: the tail is typed.
  */
 export function WikiRail({
@@ -133,7 +133,9 @@ export function WikiRail({
             href="/wiki/topics"
             className="flex items-center gap-1 rounded-lg px-3 py-2 text-[12px] text-text-tertiary transition-colors hover:text-text-primary"
           >
-            All {categories.length || 41} categories <ArrowRight className="h-3 w-3" />
+            {/* Count what the topics page actually lists: community categories. */}
+            All {communityCategories.length > 0 ? `${communityCategories.length} ` : ""}categories{" "}
+            <ArrowRight className="h-3 w-3" />
           </Link>
         )}
       </div>

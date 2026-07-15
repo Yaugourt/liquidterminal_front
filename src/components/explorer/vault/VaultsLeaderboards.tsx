@@ -6,6 +6,7 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  Skeleton,
 } from "@/components/common";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { useVaultsLeaderboards } from "@/services/explorer/vault/hooks/useVaultsLeaderboards";
@@ -46,7 +47,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
     [rows]
   );
 
-  const { followersGained, outflows } = useVaultsLeaderboards({
+  const { followersGained, outflows, isLoading: leaderboardsLoading } = useVaultsLeaderboards({
     window: "24h",
     followersLimit: 6,
     outflowsLimit: 4,
@@ -98,6 +99,11 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
       </OverviewModule>
 
       <OverviewModule title="Followers gained · 24h" tag="sampled 50" tagVariant="plain">
+        {leaderboardsLoading ? (
+          <ModuleSkeleton />
+        ) : followersRows.length === 0 ? (
+          <ModuleEmpty>No follower data for this window.</ModuleEmpty>
+        ) : (
         <ModuleTable
           columns={[{ header: "Vault" }, { header: "Total", width: 72 }, { header: "Δ 24h", width: 64 }]}
         >
@@ -117,9 +123,15 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
             />
           ))}
         </ModuleTable>
+        )}
       </OverviewModule>
 
       <OverviewModule title="Largest outflows · 24h" tag="24h" tagVariant="plain">
+        {leaderboardsLoading ? (
+          <ModuleSkeleton />
+        ) : outflowsRows.length === 0 ? (
+          <ModuleEmpty>No outflow data for this window.</ModuleEmpty>
+        ) : (
         <ModuleTable
           columns={[{ header: "Vault" }, { header: "% TVL", width: 64 }, { header: "Out", width: 84 }]}
         >
@@ -139,7 +151,27 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
             />
           ))}
         </ModuleTable>
+        )}
       </OverviewModule>
+    </div>
+  );
+}
+
+/** Explicit empty state for a leaderboard module: the /indexer leaderboards
+ * legitimately return no rows for quiet windows, and must not render a bare
+ * header-only table. */
+function ModuleEmpty({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="px-3.5 py-5 text-xs text-text-tertiary text-center">{children}</p>
+  );
+}
+
+function ModuleSkeleton() {
+  return (
+    <div className="px-3.5 py-3 space-y-2">
+      <Skeleton className="h-6 rounded" />
+      <Skeleton className="h-6 rounded" />
+      <Skeleton className="h-6 rounded" />
     </div>
   );
 }
