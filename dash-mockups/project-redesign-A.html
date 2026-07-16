@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Project page redesign — Agent A (Data Maximalist)</title>
+<!--
+  Mockup composed ONLY from dash-mockups/kit.html blocks (same Tailwind config header).
+  Two stacked states: T2 · Kinetiq (rich, real DefiLlama data) / T0 · HyperHyper (no slug).
+  Blocks used: PageHeader, KpiRibbon (plain), Card + card-head, PillTabs text,
+  OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset, ModuleRow,
+  StackedShareBar, StatusBadge, Page layout (main + 280px sticky rail).
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root — keep in sync. (copied from kit.html)
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .state-label { font: 600 11px/1.4 "JetBrains Mono", monospace; color: #6B7280; letter-spacing: 0.08em; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="max-w-[1400px] mx-auto px-6 py-10 space-y-6">
+
+  <!-- ════════════════════════ STATE 1 · T2 · KINETIQ (rich) ════════════════════════ -->
+  <div class="state-label uppercase">State 1 · T2 · Kinetiq — full data (series + profile + context)</div>
+
+  <!-- Breadcrumb (mirrors page.tsx nav) -->
+  <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+    <span class="hover:text-text-secondary">Ecosystem</span><span>/</span>
+    <span class="hover:text-text-secondary">Projects</span><span>/</span>
+    <span class="text-text-secondary">Kinetiq</span>
+  </nav>
+
+  <!-- ProjectDetailHeader — kit: PageHeader (no stats in header, pills only) -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="flex items-start gap-4 min-w-0">
+      <span class="w-12 h-12 shrink-0 rounded-lg grid place-items-center text-[15px] font-semibold bg-surface-2 text-text-secondary border border-border-subtle">KQ</span>
+      <div class="space-y-1.5 min-w-0">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Kinetiq</h1>
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium">Liquid Staking</span>
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>DeFiLlama linked</span>
+        </div>
+        <p class="text-sm text-text-secondary max-w-2xl">Non-custodial liquid staking on Hyperliquid : stake HYPE, receive kHYPE. <span class="mono text-text-tertiary">updated 32s ago</span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- KpiRibbon (plain · canonical) — subs = REAL change_1d / context, no fabricated deltas -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">TVL</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$1.06B</div>
+      <div class="text-[10.5px] text-text-tertiary mt-1.5">#2 / 127 on Hyperliquid · ~7.5% of HL TVL</div>
+    </div>
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Fees 24h</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">$62.4K</div>
+      <div class="text-[10.5px] text-text-tertiary mt-1.5">+7.4% vs prev day · $33.2M all-time</div>
+    </div>
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Revenue 24h</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$7.5K</div>
+      <div class="text-[10.5px] text-text-tertiary mt-1.5">$4.55M all-time</div>
+    </div>
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">KNTQ Price</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$0.121</div>
+      <div class="text-[10.5px] text-danger mt-1.5">-2.0% 24h</div>
+    </div>
+  </div>
+
+  <!-- Page layout — main + 280px sticky rail (kit block) -->
+  <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+    <!-- ══ MAIN COLUMN ══ -->
+    <div class="min-w-0 space-y-4">
+
+      <!-- MetricChartCard · TVL (Card + card-head + PillTabs text) -->
+      <!-- MISSING PRIMITIVE (kit block): AuroraAreaChart / MetricChartCard — no kit block yet; SVG placeholder on chartPalette tokens -->
+      <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Total Value Locked</h3>
+          <span class="mono text-[11px] text-text-tertiary">$1.06B</span>
+          <div class="ml-auto flex items-center gap-3 text-xs">
+            <button class="text-text-tertiary hover:text-text-primary">7D</button>
+            <button class="text-text-tertiary hover:text-text-primary">30D</button>
+            <button class="text-text-tertiary hover:text-text-primary">90D</button>
+            <button class="text-text-tertiary hover:text-text-primary">1Y</button>
+            <button class="text-brand font-medium">All</button>
+          </div>
+        </div>
+        <div class="px-3 pt-4 pb-2">
+          <!-- placeholder: real series = 366 daily pts from /protocol/kinetiq (uptrend $458M → $1.06B) -->
+          <svg viewBox="0 0 600 160" preserveAspectRatio="none" class="w-full" style="height:230px">
+            <defs>
+              <linearGradient id="tvlFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#83E9FF" stop-opacity="0.22"/>
+                <stop offset="100%" stop-color="#83E9FF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <g stroke="#1E2535" stroke-width="1"><line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="80" x2="600" y2="80"/><line x1="0" y1="120" x2="600" y2="120"/></g>
+            <path d="M0,128 L30,124 L60,126 L90,114 L120,106 L150,110 L180,97 L210,90 L240,95 L270,82 L300,73 L330,78 L360,63 L390,57 L420,62 L450,47 L480,39 L510,44 L540,29 L570,23 L600,16 L600,160 L0,160 Z" fill="url(#tvlFill)"/>
+            <path d="M0,128 L30,124 L60,126 L90,114 L120,106 L150,110 L180,97 L210,90 L240,95 L270,82 L300,73 L330,78 L360,63 L390,57 L420,62 L450,47 L480,39 L510,44 L540,29 L570,23 L600,16" fill="none" stroke="#83E9FF" stroke-width="1.5"/>
+          </svg>
+          <div class="flex justify-between px-1 pt-1.5 text-[10px] mono text-text-tertiary">
+            <span>Jul '25</span><span>Oct '25</span><span>Jan '26</span><span>Apr '26</span><span>Jul '26</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fees + Revenue duo (MetricChartCard ×2) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+            <h3 class="text-[13px] font-medium text-text-primary">Fees</h3>
+            <span class="mono text-[11px] text-text-tertiary">$62.4K · 24h</span>
+            <span class="ml-auto mono text-[10.5px] text-text-tertiary">7d $432.7K · 30d $1.94M · All $33.2M</span>
+          </div>
+          <div class="px-3 pt-3">
+            <!-- placeholder: real series = 364 daily pts from /summary/fees/kinetiq -->
+            <svg viewBox="0 0 600 140" preserveAspectRatio="none" class="w-full" style="height:130px">
+              <defs><linearGradient id="feeFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F9E370" stop-opacity="0.2"/><stop offset="100%" stop-color="#F9E370" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,124 L20,108 L40,118 L60,98 L80,112 L100,88 L120,104 L140,82 L160,96 L180,74 L200,90 L220,68 L240,86 L260,62 L280,78 L300,56 L320,74 L340,52 L360,68 L380,58 L400,74 L420,48 L440,64 L460,42 L480,58 L500,38 L520,52 L540,34 L560,48 L580,30 L600,42 L600,140 L0,140 Z" fill="url(#feeFill)"/>
+              <path d="M0,124 L20,108 L40,118 L60,98 L80,112 L100,88 L120,104 L140,82 L160,96 L180,74 L200,90 L220,68 L240,86 L260,62 L280,78 L300,56 L320,74 L340,52 L360,68 L380,58 L400,74 L420,48 L440,64 L460,42 L480,58 L500,38 L520,52 L540,34 L560,48 L580,30 L600,42" fill="none" stroke="#F9E370" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <!-- StackedShareBar — REAL per-product fee breakdown (totalDataChartBreakdown) -->
+          <div class="px-4 pt-2 pb-3 mt-auto space-y-1.5">
+            <div class="flex items-center gap-3 text-[10.5px]">
+              <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full" style="background:#F9E370"></span><span class="text-text-secondary">kHYPE</span><span class="mono text-text-tertiary">$55.0K</span></span>
+              <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full" style="background:#83E9FF"></span><span class="text-text-secondary">Earn</span><span class="mono text-text-tertiary">$3.6K</span></span>
+              <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full" style="background:#A78BFA"></span><span class="text-text-secondary">Launch</span><span class="mono text-text-tertiary">$207</span></span>
+            </div>
+            <div class="flex w-full overflow-hidden rounded-full bg-surface-2" style="height:8px">
+              <div class="h-full" style="width:93.5%;background:#F9E370"></div>
+              <div class="h-full" style="width:6.1%;background:#83E9FF"></div>
+              <div class="h-full" style="width:0.4%;background:#A78BFA"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+            <h3 class="text-[13px] font-medium text-text-primary">Revenue</h3>
+            <span class="mono text-[11px] text-text-tertiary">$7.5K · 24h</span>
+            <span class="ml-auto mono text-[10.5px] text-text-tertiary">All-time $4.55M</span>
+          </div>
+          <div class="px-3 pt-3 pb-3">
+            <!-- placeholder: real series = 364 daily pts, dataType=dailyRevenue -->
+            <svg viewBox="0 0 600 140" preserveAspectRatio="none" class="w-full" style="height:158px">
+              <defs><linearGradient id="revFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A78BFA" stop-opacity="0.2"/><stop offset="100%" stop-color="#A78BFA" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,120 L30,112 L60,118 L90,104 L120,110 L150,96 L180,104 L210,88 L240,98 L270,82 L300,90 L330,74 L360,84 L390,68 L420,78 L450,60 L480,70 L510,54 L540,62 L570,46 L600,54 L600,140 L0,140 Z" fill="url(#revFill)"/>
+              <path d="M0,120 L30,112 L60,118 L90,104 L120,110 L150,96 L180,104 L210,88 L240,98 L270,82 L300,90 L330,74 L360,84 L390,68 L420,78 L450,60 L480,70 L510,54 L540,62 L570,46 L600,54" fill="none" stroke="#A78BFA" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Token · price chart (coins.llama.fi /chart, 232 real daily pts) -->
+      <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Token · KNTQ</h3>
+          <span class="mono text-[11px] text-text-tertiary">$0.121</span>
+          <span class="mono text-[11px] font-medium text-danger">-47% · 30d</span>
+          <div class="ml-auto flex items-center gap-3 text-xs">
+            <button class="text-brand font-medium">30D</button>
+            <button class="text-text-tertiary hover:text-text-primary">90D</button>
+            <button class="text-text-tertiary hover:text-text-primary">1Y</button>
+          </div>
+        </div>
+        <div class="px-3 pt-4 pb-2">
+          <svg viewBox="0 0 600 150" preserveAspectRatio="none" class="w-full" style="height:170px">
+            <defs><linearGradient id="pxFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FB7185" stop-opacity="0.18"/><stop offset="100%" stop-color="#FB7185" stop-opacity="0"/></linearGradient></defs>
+            <g stroke="#1E2535" stroke-width="1"><line x1="0" y1="50" x2="600" y2="50"/><line x1="0" y1="100" x2="600" y2="100"/></g>
+            <path d="M0,28 L40,24 L80,36 L120,30 L160,44 L200,40 L240,56 L280,50 L320,68 L360,64 L400,84 L440,92 L480,104 L520,116 L560,126 L600,132 L600,150 L0,150 Z" fill="url(#pxFill)"/>
+            <path d="M0,28 L40,24 L80,36 L120,30 L160,44 L200,40 L240,56 L280,50 L320,68 L360,64 L400,84 L440,92 L480,104 L520,116 L560,126 L600,132" fill="none" stroke="#FB7185" stroke-width="1.5"/>
+          </svg>
+          <div class="flex justify-between px-1 pt-1.5 text-[10px] mono text-text-tertiary">
+            <span>Jun 15</span><span>Jun 25</span><span>Jul 5</span><span>Jul 15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ RIGHT RAIL · 280px sticky ══ -->
+    <aside class="space-y-4">
+
+      <!-- About (existing rail card, + listedAt + methodology from /profile) -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">About</h3>
+        </div>
+        <div class="px-4 py-3 space-y-3">
+          <p class="text-[12.5px] leading-relaxed text-text-secondary">Kinetiq is a non-custodial liquid staking protocol: stake HYPE on Hyperliquid L1, receive kHYPE and keep composability across HyperEVM DeFi.</p>
+          <!-- MISSING PRIMITIVE (kit block): key-value rail row — mirrors ProjectInfoRail's flex-between rows -->
+          <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">Listed on DeFiLlama</span><span class="mono text-text-secondary">Jul 2025</span></div>
+          <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">Category</span><span class="inline-flex text-[10px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-secondary">Liquid Staking</span></div>
+        </div>
+      </div>
+
+      <!-- Position on Hyperliquid (NEW · /context endpoint) -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Position on Hyperliquid</h3>
+        </div>
+        <div class="px-4 py-3 space-y-2.5">
+          <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">TVL rank</span><span class="mono text-[12.5px] font-medium text-brand">#2 / 127</span></div>
+          <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">Liquid Staking rank</span><span class="mono text-[12.5px] font-medium text-text-primary">#1 / 8</span></div>
+          <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">Share of HL TVL</span><span class="mono text-[12.5px] text-text-primary">~7.5%</span></div>
+          <div class="flex items-center justify-between text-[12px]"><span class="text-text-tertiary">HL chain TVL</span><span class="mono text-[12.5px] text-text-secondary">$1.375B</span></div>
+        </div>
+      </div>
+
+      <!-- Fundraising (NEW · raises[] from /protocol) -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Fundraising</h3>
+          <span class="ml-auto shrink-0 mono text-[11px] text-text-tertiary">$1.75M total</span>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2.5">
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium">Seed</span>
+          <div class="min-w-0"><div class="mono text-[12.5px] font-medium text-text-primary">$1.75M</div><div class="text-[10px] text-text-tertiary">Oct 2025 · via DeFiLlama raises</div></div>
+        </div>
+      </div>
+
+      <!-- Products (NEW · otherProtocols[]) — ModuleRow dense list -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Products</h3>
+          <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">5</span>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+          <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">KH</div>
+          <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">kHYPE</div><div class="mono text-[10px] text-text-tertiary truncate">$55.0K fees · 24h</div></div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+          <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">EA</div>
+          <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">Earn</div><div class="mono text-[10px] text-text-tertiary truncate">$3.6K fees · 24h</div></div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+          <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">KM</div>
+          <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">kmHYPE</div></div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+          <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">LA</div>
+          <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">Launch</div><div class="mono text-[10px] text-text-tertiary truncate">$207 fees · 24h</div></div>
+        </div>
+        <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2/60 transition-colors">
+          <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">MK</div>
+          <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">Markets</div></div>
+        </div>
+      </div>
+
+      <!-- Links (existing rail card + github from /profile) -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Links</h3>
+        </div>
+        <div class="px-2 py-2">
+          <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary transition-colors">Website<span class="ml-auto text-text-tertiary">↗</span></a>
+          <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary transition-colors">X / Twitter<span class="ml-auto text-text-tertiary">↗</span></a>
+          <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary transition-colors">DeFiLlama<span class="ml-auto text-text-tertiary">↗</span></a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ════════════════════════ STATE 2 · T0 · HYPERHYPER (no slug — the 135 case) ════════════════════════ -->
+  <div class="state-label uppercase pt-10 border-t border-dashed border-border-default">State 2 · T0 · HyperHyper — no data source (editorial-first, no EmptyState)</div>
+
+  <nav class="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
+    <span class="hover:text-text-secondary">Ecosystem</span><span>/</span>
+    <span class="hover:text-text-secondary">Projects</span><span>/</span>
+    <span class="text-text-secondary">HyperHyper</span>
+  </nav>
+
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="flex items-start gap-4 min-w-0">
+      <span class="w-12 h-12 shrink-0 rounded-lg grid place-items-center text-[15px] font-semibold bg-surface-2 text-text-secondary border border-border-subtle">HH</span>
+      <div class="space-y-1.5 min-w-0">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">HyperHyper</h1>
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium">DEFI</span>
+        </div>
+        <p class="text-sm text-text-secondary max-w-2xl">The hyper-speculation application coming on Hyperliquid.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+
+    <!-- MAIN — editorial takes the primary column (no 300px EmptyState) -->
+    <div class="min-w-0 space-y-4">
+
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">About</h3>
+        </div>
+        <div class="px-4 py-4 space-y-3">
+          <p class="text-[13px] leading-relaxed text-text-secondary max-w-3xl">The hyper-speculation application coming on Hyperliquid. HyperHyper has been curated into the LiquidTerminal ecosystem directory. On-chain metrics will light up automatically once the project is tracked by a data source.</p>
+          <div class="flex items-center gap-2">
+            <span class="text-[12px] text-text-tertiary">Categories</span>
+            <button class="text-[10px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-secondary hover:text-brand hover:border-border-default">DEFI →</button>
+          </div>
+          <div class="flex items-center justify-between text-[12px] max-w-xs"><span class="text-text-tertiary">Added</span><span class="mono text-text-secondary">Jul 2026</span></div>
+        </div>
+      </div>
+
+      <!-- More in DEFI — OverviewModule + ModuleTable (real peers from our DB, sorted by HL TVL) -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">More in DEFI</h3>
+          <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">All projects →</a>
+        </div>
+        <table class="w-full border-collapse table-fixed">
+          <colgroup><col><col style="width:120px"><col style="width:110px"></colgroup>
+          <thead><tr>
+            <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Project</th>
+            <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">TVL · HL</th>
+            <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">HL Rank</th>
+          </tr></thead>
+          <tbody>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+              <td class="px-3 py-2 text-left"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HL</div><div class="min-w-0 text-[12.5px] font-medium text-text-primary truncate">HyperLend</div></div></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-text-secondary">$441.0M</span></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-[11.5px] text-text-tertiary">#3</span></td>
+            </tr>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+              <td class="px-3 py-2 text-left"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">VA</div><div class="min-w-0 text-[12.5px] font-medium text-text-primary truncate">Valantis</div></div></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-text-secondary">$199.1M</span></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-[11.5px] text-text-tertiary">#5</span></td>
+            </tr>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+              <td class="px-3 py-2 text-left"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">FX</div><div class="min-w-0 text-[12.5px] font-medium text-text-primary truncate">Felix</div></div></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-text-secondary">$117.7M</span></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-[11.5px] text-text-tertiary">#6</span></td>
+            </tr>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+              <td class="px-3 py-2 text-left"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HB</div><div class="min-w-0 text-[12.5px] font-medium text-text-primary truncate">Hyperbeat</div></div></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-text-secondary">$38.8M</span></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-[11.5px] text-text-tertiary">#10</span></td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors">
+              <td class="px-3 py-2 text-left"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">UP</div><div class="min-w-0 text-[12.5px] font-medium text-text-primary truncate">Upshift</div></div></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-text-secondary">$6.8M</span></td>
+              <td class="px-3 py-2 text-right"><span class="mono text-[11.5px] text-text-tertiary">#19</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RAIL -->
+    <aside class="space-y-4">
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Data</h3>
+        </div>
+        <div class="px-4 py-3 space-y-2.5">
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Not linked to a data source yet</span>
+          <p class="text-[11px] leading-relaxed text-text-tertiary">TVL, fees and token metrics appear automatically once the project is tracked.</p>
+          <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Suggest a source</button>
+        </div>
+      </div>
+
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Links</h3>
+        </div>
+        <div class="px-2 py-2">
+          <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary transition-colors">Website<span class="ml-auto text-text-tertiary">↗</span></a>
+          <a class="flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary transition-colors">X / Twitter<span class="ml-auto text-text-tertiary">↗</span></a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+</div>
+</body>
+</html>

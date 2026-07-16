@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Projects list — Agent B (chain ribbon + tiered cards)</title>
+<!--
+  Mockup composed from dash-mockups/kit.html blocks (same Tailwind config header).
+  /ecosystem/project directory page, consolidated list ideas from the debate:
+    • Agent C's chain ribbon (KpiRibbon, independent of projects, source DefiLlama)
+    • Existing CategoryTabs (PillTabs) + SearchBar, unchanged
+    • New sort control "A–Z | TVL on HL" (TimeframeTabs-style, PillTabs)
+    • ProjectCard with CONDITIONAL metric footer — degradation = today's clean card, never a broken state
+
+  SORT BEHAVIOR (TVL on HL active):
+    1. Linked projects first, ordered by their HYPERLIQUID-CHAIN TVL desc (currentChainTvls["Hyperliquid L1"],
+       never the global tvl — Upshift is $226M global but only $6.7M on HL and sorts on $6.7M).
+    2. Projects with no TVL but a fees rank inside the top-30 threshold follow (Phantom #9 by fees).
+    3. Everything else (unlinked, or linked below threshold like Wallet V at $10 fees/24h) lists after
+       a discreet separator, alphabetically — identical to today's card, no chip, no placeholder.
+    Default sort stays A–Z so the 135 unlinked projects are never buried by default.
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root — keep in sync. (copied from kit.html)
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .kit-label { font: 600 11px/1.4 "JetBrains Mono", monospace; color: #6B7280; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="max-w-[1280px] mx-auto px-6 py-10 space-y-8">
+
+  <!-- PageHeader (kit block) — no stats in the header, per DS rule -->
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="space-y-1.5 min-w-0">
+      <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Ecosystem</h1>
+      <p class="text-sm text-text-secondary max-w-2xl">Projects building on HyperLiquid: browse, filter by category, and discover what's shipping.</p>
+    </div>
+  </div>
+
+  <!-- Chain ribbon (Agent C) — KpiRibbon variant="plain" (kit block). Lives independently of the
+       project rows: it is chain-level context, so it renders identically whatever the filter shows. -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">TVL Hyperliquid</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$1.37B</div>
+      <div class="text-[10.5px] text-text-tertiary mt-1.5">DefiLlama</div>
+    </div>
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Fees 24h</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">$3.98M</div>
+      <div class="text-[10.5px] text-text-tertiary mt-1.5">DefiLlama</div>
+    </div>
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Volume DEX 24h</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$251M</div>
+      <div class="text-[10.5px] text-text-tertiary mt-1.5">DefiLlama</div>
+    </div>
+    <div class="px-5 py-4 flex flex-col">
+      <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Protocols tracked</div>
+      <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">177</div>
+      <div class="text-[10.5px] text-text-tertiary mt-1.5">DefiLlama</div>
+    </div>
+  </div>
+
+  <!-- Toolbar row: CategoryTabs (existing) · sort · search — mirrors ProjectsGrid.tsx layout -->
+  <!-- MISSING PRIMITIVE: PillTabs boxed track has no kit block (kit only shows variant="text");
+       classes below mirror src/components/ui/pill-tabs.tsx (boxed track + brand active pill). -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 w-full min-w-0">
+    <div class="flex items-center gap-1 p-1 rounded-lg bg-surface-2 border border-border-subtle w-fit max-w-full overflow-x-auto">
+      <button class="px-3 h-7 rounded-md text-xs font-medium bg-surface-3 text-brand whitespace-nowrap">All Projects</button>
+      <button class="px-3 h-7 rounded-md text-xs font-medium text-text-tertiary hover:text-text-primary whitespace-nowrap">DEFI</button>
+      <button class="px-3 h-7 rounded-md text-xs font-medium text-text-tertiary hover:text-text-primary whitespace-nowrap">Tools</button>
+      <button class="px-3 h-7 rounded-md text-xs font-medium text-text-tertiary hover:text-text-primary whitespace-nowrap">Infrastructure</button>
+      <button class="px-3 h-7 rounded-md text-xs font-medium text-text-tertiary hover:text-text-primary whitespace-nowrap">Meme</button>
+      <button class="px-3 h-7 rounded-md text-xs font-medium text-text-tertiary hover:text-text-primary whitespace-nowrap">AI</button>
+    </div>
+    <div class="flex shrink-0 items-center gap-3">
+      <!-- NEW sort control — TimeframeTabs-style (PillTabs), discreet -->
+      <div class="flex items-center gap-1 p-1 rounded-lg bg-surface-2 border border-border-subtle">
+        <button class="px-3 h-7 rounded-md text-xs font-medium text-text-tertiary hover:text-text-primary whitespace-nowrap">A–Z</button>
+        <button class="px-3 h-7 rounded-md text-xs font-medium bg-surface-3 text-brand whitespace-nowrap">TVL on HL</button>
+      </div>
+      <div class="relative min-w-[220px]">
+        <input placeholder="Search projects..." class="w-full px-3 h-9 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+      </div>
+    </div>
+  </div>
+
+  <!-- MISSING PRIMITIVE: ProjectCard has no kit block (component exists at
+       src/components/ecosystem/project/ProjectCard.tsx); classes mirrored 1:1 from the component,
+       plus the NEW conditional metric footer (border-t row, mono values, only when data exists). -->
+
+  <!-- ── Linked tier · sorted by Hyperliquid-chain TVL desc ── -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Kinetiq — TVL + rank chip -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative flex flex-col">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">K</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">Kinetiq</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">DEFI</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Liquid staking on Hyperliquid: stake HYPE, receive kHYPE, keep earning across the ecosystem.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 pt-2.5 border-t border-border-subtle flex items-center gap-2 text-[11px]">
+        <span class="mono font-medium text-text-primary">$1.04B</span>
+        <span class="text-text-tertiary">TVL</span>
+        <span class="mono ml-auto text-brand">#2 on HL</span>
+      </div>
+    </div>
+
+    <!-- HyperLend -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative flex flex-col">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">H</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">HyperLend</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">DEFI</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Native lending market on Hyperliquid: supply, borrow and loop HL-native assets.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 pt-2.5 border-t border-border-subtle flex items-center gap-2 text-[11px]">
+        <span class="mono font-medium text-text-primary">$975M</span>
+        <span class="text-text-tertiary">TVL</span>
+        <span class="mono ml-auto text-brand">#1 Lending</span>
+      </div>
+    </div>
+
+    <!-- Valantis -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative flex flex-col">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">V</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">Valantis</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">DEFI</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Modular DEX infrastructure: sovereign pools powering custom liquidity on HyperEVM.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 pt-2.5 border-t border-border-subtle flex items-center gap-2 text-[11px]">
+        <span class="mono font-medium text-text-primary">$199M</span>
+        <span class="text-text-tertiary">TVL</span>
+      </div>
+    </div>
+
+    <!-- Upshift — the multi-chain case: sorts on and LEADS with its HL-chain TVL ($6.7M),
+         global figure stays visible but explicitly labelled. Never "TVL $226M" alone on an HL sort. -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative flex flex-col">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">U</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">Upshift</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">DEFI</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Onchain capital allocator: institutional yield vaults deployed across 13 chains.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 pt-2.5 border-t border-border-subtle flex items-center gap-2 text-[11px]">
+        <span class="mono font-medium text-text-primary">$6.7M</span>
+        <span class="text-text-tertiary">TVL on HL</span>
+        <span class="mono ml-auto text-text-tertiary">$226M all chains</span>
+      </div>
+    </div>
+
+    <!-- Phantom — no TVL: the footer shows the fees rank instead (top-30 threshold cleared) -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative flex flex-col">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">P</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">Phantom</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">Tools</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Multichain wallet with integrated Hyperliquid perps trading.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-3 pt-2.5 border-t border-border-subtle flex items-center gap-2 text-[11px]">
+        <span class="mono font-medium text-gold">$211.3K</span>
+        <span class="text-text-tertiary">fees 24h</span>
+        <span class="mono ml-auto text-brand">#9 by fees</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Discreet separator: everything below has no displayable metric — cards render exactly as today -->
+  <div class="flex items-center gap-3 pt-2">
+    <span class="text-[11px] text-text-tertiary whitespace-nowrap">Not ranked · A–Z</span>
+    <div class="flex-1 border-t border-border-subtle"></div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- dotHYPE — unlinked: today's card, unchanged, no footer -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">D</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">dotHYPE</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">Infrastructure</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Naming service for the Hyperliquid ecosystem: claim your .hype identity.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HyperHyper — unlinked -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">H</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">HyperHyper</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">DEFI</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">The hyper-speculation application coming on Hyperliquid.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transak — unlinked -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">T</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">Transak</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">Tools</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Fiat on-ramp: buy HYPE and HL-ecosystem assets with card or bank transfer.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallet V — LINKED but below display threshold (fees $10/24h, no TVL):
+         renders exactly like an unlinked card. Thresholds keep weak signals from becoming anti-signals. -->
+    <div class="bg-surface border border-border-subtle rounded-lg p-3.5 hover:border-border-default group relative">
+      <div class="flex items-start gap-4">
+        <div class="relative w-12 h-12 flex-shrink-0 rounded-lg bg-brand/10 flex items-center justify-center"><span class="text-brand text-lg font-bold">W</span></div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <a class="text-base text-text-primary font-semibold truncate hover:text-brand transition-colors cursor-pointer">Wallet V</a>
+            <span class="text-[11px] text-brand bg-brand/10 px-2 py-1 rounded-md whitespace-nowrap">Tools</span>
+          </div>
+          <p class="text-sm text-text-secondary mb-3 clamp2">Mobile-first wallet and trading interface for Hyperliquid.</p>
+          <div class="flex items-center gap-3">
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a>
+            <a class="text-text-tertiary hover:text-brand transition-colors cursor-pointer"><svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
