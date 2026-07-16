@@ -9,6 +9,7 @@ import {
   FlowBar,
   AuroraHistogramChart,
   chartPalette,
+  HypeMark,
 } from "@/components/common";
 import { compactUsd, compactHype } from "@/lib/formatters/numberFormatting";
 import { useAuctionTiming } from "@/services/market/auction/hooks/useAuctionTiming";
@@ -105,7 +106,7 @@ export function SpotAuctionBand() {
         <div className="px-4 py-3.5 flex flex-col flex-1">
           <div className="mono text-[26px] font-medium tracking-[-0.01em] leading-none text-text-primary">
             {compactHype(auctionState.currentPrice)}{" "}
-            <span className="text-[14px] text-text-tertiary">HYPE</span>
+            <HypeMark size="sm" className="text-[14px] text-text-tertiary" />
           </div>
           <div className="text-[10.5px] text-text-tertiary mt-1.5">
             ≈ <span className="mono">{compactUsd(auctionState.currentPriceUSD)}</span> ·{" "}

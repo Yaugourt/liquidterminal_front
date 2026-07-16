@@ -9,7 +9,18 @@ import {
 } from "@/services/market/auction";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber, compactUsd } from "@/lib/formatters/numberFormatting";
+import { HypeMark } from "@/components/common";
 import type { AuctionState } from "@/services/market/auction";
+
+/** Unit suffix — the official HYPE mark when the unit is HYPE, plain text otherwise. */
+function PriceUnit({ unit, className }: { unit: string; className?: string }) {
+  if (!unit) return null;
+  return unit === "HYPE" ? (
+    <HypeMark size="xs" className={className} />
+  ) : (
+    <span className={className}>{unit}</span>
+  );
+}
 
 interface AuctionLiveBlockProps {
   name: string;
@@ -69,9 +80,7 @@ function AuctionLiveBlock({
           </div>
           <div className="mono text-[16px] font-semibold tracking-[-0.02em] leading-none text-text-primary truncate">
             {formatNumber(auctionState.currentPrice, format, price2)}{" "}
-            <span className="text-[10px] text-text-tertiary font-normal">
-              {priceUnit}
-            </span>
+            <PriceUnit unit={priceUnit} className="text-[10px] text-text-tertiary font-normal" />
           </div>
         </div>
         <div className="mono text-[10px] text-text-tertiary shrink-0">
@@ -162,7 +171,7 @@ function AuctionStat({
       >
         {value}
         {unit && (
-          <span className="text-[9px] text-text-tertiary font-normal ml-1">{unit}</span>
+          <PriceUnit unit={unit} className="text-[9px] text-text-tertiary font-normal ml-1" />
         )}
       </div>
     </div>
@@ -195,7 +204,8 @@ function AuctionNextRow({ name, tag, auctionState, priceUnit }: AuctionNextRowPr
         <div className="text-[10px] text-text-tertiary">
           Start{" "}
           <span className="mono">
-            {formatNumber(auctionState.currentPrice, format, price2)} {priceUnit}
+            {formatNumber(auctionState.currentPrice, format, price2)}{" "}
+            <PriceUnit unit={priceUnit} />
           </span>
         </div>
       </div>

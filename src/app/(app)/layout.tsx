@@ -6,16 +6,30 @@ import { Sidebar } from "@/components/Sidebar";
 import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
 import { SidebarToggle, LegalFooter } from "@/components/common";
 import { useWindowSize } from "@/hooks/use-window-size";
+import { useSidebarUi } from "@/store/use-sidebar-ui";
+import { OnboardingGate } from "@/components/onboarding";
+import { MissionsGate } from "@/components/missions";
+import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { width } = useWindowSize();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { collapsed } = useSidebarUi();
+    const [hasMounted, setHasMounted] = useState(false);
+
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
 
     useEffect(() => {
         if (width && width >= 1024) {
             setIsSidebarOpen(false);
         }
     }, [width]);
+
+    // Content offset follows the sidebar width (64px rail / 232px panel).
+    // Gated on hasMounted so SSR markup matches the first client render.
+    const isCollapsed = hasMounted && collapsed;
 
     return (
         <div className="min-h-screen bg-base text-text-primary font-inter">
@@ -26,7 +40,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
-            <div className="relative z-10 lg:pl-[232px]">
+            <div className={cn(
+                "relative z-10 transition-[padding] duration-300 ease-in-out",
+                isCollapsed ? "lg:pl-16" : "lg:pl-[232px]"
+            )}>
                 <Header />
 
                 {/* Mobile SearchBar */}
@@ -40,6 +57,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
                 <LegalFooter />
             </div>
+
+            <OnboardingGate />
+            <MissionsGate />
         </div>
     );
 }

@@ -1,27 +1,19 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useSidebar } from "@/hooks/use-sidebar";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { AuthProvider } from "@/contexts/auth.context";
 import { Toaster } from "@/components/ui/sonner";
-import { usePathname } from "next/navigation";
 import { env } from "@/lib/env";
 import { XpNotificationProvider } from "@/components/xp";
 import { XpProvider } from "@/services/xp";
 import { chartPalette } from "@/components/common";
 
-// Lazy load Sidebar - it's a heavy component (22KB) not needed immediately
-const Sidebar = dynamic(
-  () => import("@/components/Sidebar").then(mod => ({ default: mod.Sidebar })),
-  { ssr: false }
-);
+// NOTE: the app Sidebar is mounted by `src/app/(app)/layout.tsx` (single
+// source of truth). It used to be duplicated here, which stacked two fixed
+// sidebars on every page and leaked one onto routes without the app shell.
 
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const { isOpen, setIsOpen } = useSidebar();
-  const pathname = usePathname();
-  const isLandingPage = pathname === '/';
   const privyAppId = env.NEXT_PUBLIC_PRIVY_AUDIENCE;
 
   return (
@@ -46,7 +38,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <AuthProvider>
         <XpProvider>
           <XpNotificationProvider>
-            {!isLandingPage && <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />}
             {children}
             <Toaster />
           </XpNotificationProvider>

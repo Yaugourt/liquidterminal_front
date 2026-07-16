@@ -6,6 +6,7 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Card } from "@/components/ui/card";
 import { LoadingState } from "@/components/ui/loading-state";
+import { HypeMark } from "@/components/common";
 
 interface AuctionCardProps {
   marketType: "spot" | "perp";
@@ -78,7 +79,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 <div className="flex items-baseline gap-2">
                   <span className="text-lg font-bold text-text-primary tracking-tight">
                     {formatNumber(auctionState.currentPrice, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    <span className="text-xs font-medium text-text-secondary ml-1">HYPE</span>
+                    <HypeMark size="xs" className="text-xs font-medium text-text-secondary ml-1" />
                   </span>
                 </div>
                 <p className="text-label text-text-tertiary mt-0.5">
