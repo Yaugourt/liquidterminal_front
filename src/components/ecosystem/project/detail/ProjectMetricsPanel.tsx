@@ -172,7 +172,9 @@ export function ProjectMetricsPanel({ metrics, isLoading }: ProjectMetricsPanelP
         <section className="space-y-2.5">
           <div className="flex items-baseline gap-2">
             <h2 className="text-[13px] font-semibold text-text-primary">Token</h2>
-            <span className="text-[11px] text-text-tertiary">via HL Spot</span>
+            {metrics?.price?.source && (
+              <span className="text-[11px] text-text-tertiary">via {metrics.price.source}</span>
+            )}
           </div>
           <KpiRibbon variant="plain" cells={token} columns={cols(token.length)} />
         </section>
