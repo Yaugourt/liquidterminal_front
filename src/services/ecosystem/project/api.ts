@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import { get, post, apiClient } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import {
@@ -11,7 +12,9 @@ import {
   ProjectResponse,
   CategoryResponse,
   ProjectCsvUploadApiResponse,
-  ProjectMetricsResponse,
+  ProjectDefiLlamaOverview,
+  ProjectDefiLlamaResponse,
+  NormalizedMetrics,
 } from './types';
 import { buildQueryParams } from '../../common';
 
@@ -44,16 +47,40 @@ export const fetchProject = async (id: number): Promise<Project> => {
   }, 'fetching project');
 };
 
+/** Map the backend DefiLlama aggregate onto the source-agnostic metrics bundle. */
+function toNormalizedMetrics(overview: ProjectDefiLlamaOverview): NormalizedMetrics {
+  const asOf = Date.now();
+  const metric = (value: number | null | undefined) =>
+    typeof value === 'number' ? { value, source: 'DefiLlama', asOf } : undefined;
+
+  return {
+    tvl: metric(overview.tvl),
+    volume24h: metric(overview.volume?.total24h),
+    fees24h: metric(overview.fees?.total24h),
+    revenue24h: metric(overview.revenue?.total24h),
+    marketCap: metric(overview.mcap),
+    price: overview.price
+      ? { value: overview.price.price, source: 'DefiLlama', asOf: overview.price.timestamp * 1000 }
+      : undefined,
+  };
+}
+
 /**
- * Aggregated multi-source metrics of a project (TVL, volume, fees, token),
- * normalized by the backend. Optional fields depend on the mapped sources.
- * PARKED: the route is not deployed on the backend yet (404 for every id);
- * no page should call this until it ships.
+ * DefiLlama metrics of a project (TVL, DEX volume, fees, revenue, token price),
+ * aggregated by the backend from the project's `defillamaSlug`.
+ * Returns `null` when the project isn't linked to DefiLlama (backend 404
+ * `DEFILLAMA_SLUG_NOT_SET`) so callers can render an empty state without retrying.
  */
-export const fetchProjectMetrics = async (id: number): Promise<ProjectMetricsResponse> => {
+export const fetchProjectDefillamaMetrics = async (id: number): Promise<NormalizedMetrics | null> => {
   return withErrorHandling(async () => {
-    return await get<ProjectMetricsResponse>(`/project/${id}/metrics`);
-  }, 'fetching project metrics');
+    try {
+      const response = await get<ProjectDefiLlamaResponse>(`/project/${id}/defillama`);
+      return toNormalizedMetrics(response.data);
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.status === 404) return null;
+      throw error;
+    }
+  }, 'fetching project DefiLlama metrics');
 };
 
 /**

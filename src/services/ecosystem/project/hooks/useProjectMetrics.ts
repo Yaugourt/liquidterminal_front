@@ -1,23 +1,24 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchProjectMetrics } from '../api';
-import { ProjectMetricsResponse, UseProjectMetricsResult } from '../types';
+import { fetchProjectDefillamaMetrics } from '../api';
+import { NormalizedMetrics, UseProjectMetricsResult } from '../types';
 
 /**
- * Fetches the aggregated, source-agnostic metrics for a project
- * (TVL, volume, fees, token snapshot, historical series).
- * PARKED: GET /project/:id/metrics is not deployed on the backend yet
- * (404 for every id). Keep this hook unused until the route ships.
+ * Fetches the project's DefiLlama metrics (TVL, volume, fees, revenue, price)
+ * via GET /project/:id/defillama. Projects without a `defillamaSlug` resolve
+ * to `undefined` metrics (the fetch returns null, not an error), so the panel
+ * shows its empty state without any retry loop.
  */
 export const useProjectMetrics = (id: number): UseProjectMetricsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<ProjectMetricsResponse>({
-    fetchFn: () => fetchProjectMetrics(id),
-    refreshInterval: 60000,
+  const { data, isLoading, error, refetch } = useDataFetching<NormalizedMetrics | null>({
+    fetchFn: () => fetchProjectDefillamaMetrics(id),
+    // Backend caches the aggregate for 5 min; refresh in step with it.
+    refreshInterval: 120000,
     dependencies: [id],
     maxRetries: 2,
   });
 
   return {
-    metrics: data?.data,
+    metrics: data ?? undefined,
     isLoading,
     error,
     refetch,
