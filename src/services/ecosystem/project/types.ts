@@ -9,6 +9,8 @@ export interface Project {
   telegram?: string;
   website?: string;
   token?: string;
+  /** DefiLlama protocol slug when the project is tracked there (drives metrics). */
+  defillamaSlug?: string | null;
   createdAt: string;
   updatedAt: string;
   categories?: Category[];
@@ -127,13 +129,50 @@ export interface ProjectMetrics {
   updatedAt: number; // epoch ms
 }
 
-export interface ProjectMetricsResponse {
+// ==================== DEFILLAMA OVERVIEW (GET /project/:id/defillama) ====================
+
+/** Compact volume/fees/revenue block from the backend DefiLlama aggregate. */
+export interface DefiLlamaMoneyBlock {
+  total24h: number | null;
+  total7d: number | null;
+  total30d: number | null;
+  totalAllTime: number | null;
+  change_1d: number | null;
+}
+
+/** Current token price entry (from coins.llama.fi, proxied by the backend). */
+export interface DefiLlamaCoinPrice {
+  price: number;
+  symbol: string;
+  timestamp: number; // epoch seconds
+  confidence: number;
+}
+
+/** Backend payload of GET /project/:id/defillama — every enrichment is nullable. */
+export interface ProjectDefiLlamaOverview {
+  slug: string;
+  name: string;
+  logo: string | null;
+  category: string | null;
+  chains: string[];
+  gecko_id: string | null;
+  tvl: number | null;
+  mcap: number | null;
+  currentChainTvls: Record<string, number> | null;
+  price: DefiLlamaCoinPrice | null;
+  volume: DefiLlamaMoneyBlock | null;
+  fees: DefiLlamaMoneyBlock | null;
+  revenue: DefiLlamaMoneyBlock | null;
+}
+
+export interface ProjectDefiLlamaResponse {
   success: boolean;
-  data: ProjectMetrics;
+  data: ProjectDefiLlamaOverview;
 }
 
 export interface UseProjectMetricsResult {
-  metrics: ProjectMetrics | undefined;
+  /** Normalized metrics, `undefined` while loading or when the project isn't linked to DefiLlama. */
+  metrics: NormalizedMetrics | undefined;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
