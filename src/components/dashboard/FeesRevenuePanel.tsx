@@ -9,6 +9,7 @@ import {
   ChartLoading,
 } from "@/components/common";
 import { fullUsd } from "@/lib/formatters/numberFormatting";
+import { HypeMark } from "@/components/common";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import type { RevenueWindow } from "@/services/market/revenue";
 import { RevenueChart } from "./RevenueChart";
@@ -106,6 +107,7 @@ export const FeesRevenuePanel = memo(function FeesRevenuePanel() {
           <>
             <span className="opacity-50">·</span>
             <span title="HYPE→USD conversion for HIP-3 auction proceeds.">
+              <HypeMark logoOnly size="xs" className="mr-1" />
               HYPE @ ${breakdown.meta.hypeUsd.toFixed(2)}
             </span>
           </>

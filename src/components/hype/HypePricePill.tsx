@@ -4,6 +4,7 @@ import { memo } from "react";
 import { useHypePrice, useHypeSupply } from "@/services/market/hype";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
+import { HypeMark } from "@/components/common";
 import { fmtSignedPct } from "./format";
 
 /**
@@ -33,7 +34,7 @@ export const HypePricePill = memo(function HypePricePill() {
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
       </span>
-      <span className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">HYPE</span>
+      <HypeMark size="xs" className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary" />
       <span className={`mono text-[15px] font-semibold tabular-nums transition-colors ${tickColor}`}>
         {price != null ? formatPrice(price, format) : "—"}
       </span>

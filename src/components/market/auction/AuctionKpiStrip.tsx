@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { KpiRibbon, Sparkline, chartPalette, type KpiCell } from "@/components/common";
+import { KpiRibbon, Sparkline, chartPalette, HypeMark, type KpiCell } from "@/components/common";
 import { compactUsd, compactHype, compactCount } from "@/lib/formatters/numberFormatting";
 import { useAuctionTiming } from "@/services/market/auction/hooks/useAuctionTiming";
 import type { UseAuctionHistoryResult } from "@/services/market/auction/hooks/useAuctionHistory";
@@ -43,7 +43,7 @@ export function AuctionKpiStrip({ history }: AuctionKpiStripProps) {
       ) : (
         <>
           {compactHype(auctionState.currentPrice)}{" "}
-          <span className="text-[12px] text-text-tertiary">HYPE</span>
+          <HypeMark size="xs" className="text-[12px] text-text-tertiary" />
         </>
       ),
       sub: timingLoading ? (
@@ -79,7 +79,7 @@ export function AuctionKpiStrip({ history }: AuctionKpiStripProps) {
       value: stats.hypeCount ? (
         <>
           {compactHype(stats.hypeGasSum)}{" "}
-          <span className="text-[12px] text-text-tertiary">HYPE</span>
+          <HypeMark size="xs" className="text-[12px] text-text-tertiary" />
         </>
       ) : (
         ph

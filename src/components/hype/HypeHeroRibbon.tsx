@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { KpiRibbon } from "@/components/common";
+import { KpiRibbon, HypeMark } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHypeOverview, useHypePrice, useHypeVolume } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
@@ -64,14 +64,26 @@ export const HypeHeroRibbon = memo(function HypeHeroRibbon() {
     {
       key: "circ",
       label: "Circulating",
-      value: overview ? `${compactHype(overview.circulatingSupply)} HYPE` : "—",
+      value: overview ? (
+        <span className="inline-flex items-center gap-1">
+          {compactHype(overview.circulatingSupply)}
+          <HypeMark size="xs" />
+        </span>
+      ) : (
+        "—"
+      ),
       sub: overview ? `${fmtPct(overview.pctCirculating)} of total` : undefined,
     },
     {
       key: "af",
       label: "Assistance Fund",
       value: fmtUsd(overview?.af?.hypeValueUsd),
-      sub: overview?.af ? `${compactHype(overview.af.hypeBalance)} HYPE` : undefined,
+      sub: overview?.af ? (
+        <span className="inline-flex items-center gap-1">
+          {compactHype(overview.af.hypeBalance)}
+          <HypeMark size="xs" />
+        </span>
+      ) : undefined,
     },
     {
       key: "rev",

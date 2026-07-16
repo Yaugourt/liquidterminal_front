@@ -4,22 +4,23 @@ import {
   Heart,
   ClipboardList,
   Clock,
-  Building2,
   Network,
   Vault,
-  Search,
   Infinity,
   Wallet,
   Globe,
   BookOpen,
-  AppWindow,
   Home,
   CandlestickChart,
   Zap,
   Sparkles,
-  Users,
   ArrowRightLeft,
-  Flame,
+  Blocks,
+  Fuel,
+  Layers,
+  Hammer,
+  Boxes,
+  Library,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -31,6 +32,8 @@ export interface NavigationItem {
   href: string;
   icon?: string | null;
   IconComponent?: ComponentType<{ className?: string }>;
+  /** HL CDN token logo (e.g. "HYPE") rendered via TokenAvatar instead of a lucide icon. */
+  tokenIcon?: string;
   children?: NavigationItem[];
 }
 
@@ -74,7 +77,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'HYPE',
         href: '/hype',
         icon: null,
-        IconComponent: Flame
+        tokenIcon: 'HYPE'
       },
     ]
   },
@@ -85,7 +88,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Dashboard',
         href: '/explorer',
         icon: null,
-        IconComponent: Search
+        IconComponent: Blocks
       },
       {
         name: 'Validator',
@@ -109,7 +112,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Priority Fees',
         href: '/explorer/priority-fees',
         icon: null,
-        IconComponent: Sparkles
+        IconComponent: Fuel
       },
     ]
   },
@@ -160,13 +163,13 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'PerpDexs (HIP-3)',
         href: '/market/perpdex',
         icon: null,
-        IconComponent: Building2
+        IconComponent: Layers
       },
       {
         name: 'Builders',
         href: '/market/builders',
         icon: null,
-        IconComponent: Users
+        IconComponent: Hammer
       },
       {
         name: 'USDH Swap',
@@ -209,7 +212,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'Project',
         href: '/ecosystem/project',
         icon: null,
-        IconComponent: Search
+        IconComponent: Boxes
       },
       {
         name: 'Public Goods',
@@ -246,7 +249,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         name: 'App',
         href: '/wiki',
         icon: null,
-        IconComponent: AppWindow,
+        IconComponent: Library,
       },
       {
         name: 'Read List',

@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { formatLargeNumber, formatNumber } from '@/lib/formatters/numberFormatting';
 import { useNumberFormat } from '@/store/number-format.store';
 import { ChartPeriod, PeriodSelector, ChartLoading, ChartEmpty, ChartError, chartPalette } from '@/components/common';
-import { AuroraAreaChart } from "@/components/common";
+import { AuroraAreaChart, HypeMark } from "@/components/common";
 import { Card } from '@/components/ui/card';
 
 interface AuctionDataPoint {
@@ -120,7 +120,7 @@ export const AuctionChart = ({
                         : "text-text-secondary hover:text-text-primary"
                     }`}
                   >
-                    {c}
+                    {c === "HYPE" ? <HypeMark size="xs" /> : c}
                   </button>
                 ))}
               </div>

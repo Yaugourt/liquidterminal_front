@@ -3,7 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { Check, Copy } from "lucide-react";
-import { OverviewModule, StackedShareBar } from "@/components/common";
+import { OverviewModule, StackedShareBar, HypeMark } from "@/components/common";
 import {
   compactUsd,
   compactHype,
@@ -266,9 +266,14 @@ export function TokenDetailsBand({
                   "…"
                 ) : auctionInfo && parseFloat(auctionInfo.deployGas) > 0 ? (
                   <span className="font-medium text-gold">
-                    {auctionInfo.currency === "HYPE"
-                      ? `${compactHype(parseFloat(auctionInfo.deployGas))} HYPE`
-                      : compactUsd(parseFloat(auctionInfo.deployGas))}
+                    {auctionInfo.currency === "HYPE" ? (
+                      <span className="inline-flex items-center gap-1">
+                        {compactHype(parseFloat(auctionInfo.deployGas))}
+                        <HypeMark size="xs" />
+                      </span>
+                    ) : (
+                      compactUsd(parseFloat(auctionInfo.deployGas))
+                    )}
                   </span>
                 ) : (
                   <>

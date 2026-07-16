@@ -5,7 +5,7 @@ import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { KpiRibbon, type KpiCell } from "@/components/common";
+import { KpiRibbon, HypeMark, type KpiCell } from "@/components/common";
 import { Hypurr } from "@/components/hypurr/Hypurr";
 import { useHypeMood } from "@/components/hypurr/useHypeMood";
 
@@ -41,7 +41,12 @@ export const PulseBar = memo(function PulseBar() {
       value: statsLoading && !stats ? loadingPlaceholder : compactUsd(stats?.vaultsTvl),
     },
     {
-      label: "HYPE Staked",
+      label: (
+        <span className="inline-flex items-center gap-1">
+          <HypeMark logoOnly size="xs" />
+          HYPE Staked
+        </span>
+      ),
       value: statsLoading && !stats ? loadingPlaceholder : formatCount(stats?.totalHypeStake),
     },
   ];

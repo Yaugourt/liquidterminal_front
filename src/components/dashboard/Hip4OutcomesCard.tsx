@@ -59,7 +59,7 @@ function OutcomeRow({ question }: { question: Hip4QuestionWithOutcomesRow }) {
         {outcomes.map((o, i) => {
           const isYesLike = o.display_name === "Yes" || (o.display_name !== "No" && i === 0);
           return (
-            <span key={o.outcome_id} className="flex items-center gap-1">
+            <span key={`${o.outcome_id}-${i}`} className="flex items-center gap-1">
               <span
                 className={`w-1.5 h-1.5 rounded-full inline-block ${
                   isYesLike ? "bg-success" : "bg-danger"
@@ -130,8 +130,8 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
             No active outcome markets
           </div>
         ) : (
-          questions.map((q) => (
-            <OutcomeRow key={q.question_id ?? q.title} question={q} />
+          questions.map((q, i) => (
+            <OutcomeRow key={`${q.question_id ?? q.title}-${i}`} question={q} />
           ))
         )}
       </div>

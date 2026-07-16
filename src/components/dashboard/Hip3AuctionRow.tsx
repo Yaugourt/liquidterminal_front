@@ -7,6 +7,7 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  HypeMark,
 } from "@/components/common";
 import {
   usePastAuctionsPerp,
@@ -46,7 +47,7 @@ export const Hip3PastAuctionsCard = memo(function Hip3PastAuctionsCard() {
     <OverviewModule
       title="Past HIP-3 Auctions"
       icon={<Gavel size={13} className="text-brand" />}
-      tag="HYPE"
+      tag={<HypeMark size="xs" />}
       viewAllLabel="View all"
       href="/market/perp/auction"
     >
