@@ -61,7 +61,7 @@ export function ProjectPeersModule({ title, tag, peers, showShare }: ProjectPeer
   const columns = [
     { header: "#", width: 36, align: "left" as const },
     { header: showShare ? "Protocol" : "Project", align: "left" as const },
-    ...(showShare ? [{ header: "Share", width: 90 }] : []),
+    ...(showShare ? [{ header: "Share", width: 150, align: "left" as const }] : []),
     { header: "7d", width: 80 },
     { header: "TVL on HL", width: 110 },
   ];
@@ -75,6 +75,8 @@ export function ProjectPeersModule({ title, tag, peers, showShare }: ProjectPeer
       viewAllLabel="All projects"
       href="/ecosystem/project"
     >
+      <div className="overflow-x-auto">
+      <div className={showShare ? "min-w-[560px]" : "min-w-[420px]"}>
       <ModuleTable columns={columns}>
         {peers.map((peer) => {
           const nameCell = (
@@ -97,9 +99,21 @@ export function ProjectPeersModule({ title, tag, peers, showShare }: ProjectPeer
             nameCell,
             ...(showShare
               ? [
-                  <span key="share" className="mono text-[11.5px] text-text-secondary">
-                    {peer.shareOfCategoryPct != null ? `${peer.shareOfCategoryPct.toFixed(1)}%` : ""}
-                  </span>,
+                  peer.shareOfCategoryPct != null ? (
+                    <span key="share" className="flex items-center gap-2">
+                      <span className="flex-1 h-1.5 rounded-full bg-surface-2 overflow-hidden min-w-[40px]">
+                        <span
+                          className={`block h-full ${peer.isCurrent ? "bg-brand" : "bg-brand/50"}`}
+                          style={{ width: `${Math.max(1, Math.min(100, peer.shareOfCategoryPct))}%` }}
+                        />
+                      </span>
+                      <span className="mono text-[11px] text-text-secondary w-11 text-right shrink-0">
+                        {peer.shareOfCategoryPct.toFixed(1)}%
+                      </span>
+                    </span>
+                  ) : (
+                    <span key="share" />
+                  ),
                 ]
               : []),
             changeCell(peer.change7d),
@@ -117,6 +131,8 @@ export function ProjectPeersModule({ title, tag, peers, showShare }: ProjectPeer
           );
         })}
       </ModuleTable>
+      </div>
+      </div>
     </OverviewModule>
   );
 }

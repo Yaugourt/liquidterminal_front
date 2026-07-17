@@ -1,15 +1,16 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchProjectDefillamaMetrics } from '../api';
-import { NormalizedMetrics, UseProjectMetricsResult } from '../types';
+import { ProjectFundamentals, UseProjectMetricsResult } from '../types';
 
 /**
- * Fetches the project's DefiLlama metrics (TVL, volume, fees, revenue, price)
- * via GET /project/:id/defillama. Projects without a `defillamaSlug` resolve
- * to `undefined` metrics (the fetch returns null, not an error), so the panel
- * shows its empty state without any retry loop.
+ * Fetches the project's DefiLlama fundamentals (normalized metrics + the
+ * multi-period fees/revenue blocks + token symbol) via GET /project/:id/defillama.
+ * Projects without a `defillamaSlug` resolve to `undefined` metrics (the fetch
+ * returns null, not an error), so pages render their listing-only state
+ * without any retry loop.
  */
 export const useProjectMetrics = (id: number): UseProjectMetricsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<NormalizedMetrics | null>({
+  const { data, isLoading, error, refetch } = useDataFetching<ProjectFundamentals | null>({
     fetchFn: () => fetchProjectDefillamaMetrics(id),
     // Backend caches the aggregate for 5 min; refresh in step with it.
     refreshInterval: 120000,
@@ -18,7 +19,10 @@ export const useProjectMetrics = (id: number): UseProjectMetricsResult => {
   });
 
   return {
-    metrics: data ?? undefined,
+    metrics: data?.metrics ?? undefined,
+    fees: data?.fees ?? null,
+    revenue: data?.revenue ?? null,
+    tokenSymbol: data?.tokenSymbol ?? null,
     isLoading,
     error,
     refetch,
