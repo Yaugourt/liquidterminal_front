@@ -14,6 +14,7 @@ import {
   ProjectCsvUploadApiResponse,
   ProjectDefiLlamaOverview,
   ProjectDefiLlamaResponse,
+  ProjectFundamentals,
   NormalizedMetrics,
   ProjectContext,
   ProjectTvlHistory,
@@ -48,7 +49,10 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
 export const fetchAllProjects = async (
   params?: Pick<ProjectQueryParams, 'search' | 'categoryIds'>
 ): Promise<Project[]> => {
-  const pageParams = { ...params, limit: 100 };
+  // Sort by title: it is unique in the DB, so page boundaries are stable.
+  // The default createdAt ordering has ties, which duplicates some rows
+  // across pages AND silently drops others (199 of 208 came back).
+  const pageParams = { ...params, limit: 100, sort: 'title' as const, order: 'asc' as const };
   const first = await fetchProjects({ ...pageParams, page: 1 });
   const out = [...first.data];
   const totalPages = Math.min(first.pagination?.totalPages ?? 1, 10);
@@ -91,16 +95,23 @@ function toNormalizedMetrics(overview: ProjectDefiLlamaOverview): NormalizedMetr
 }
 
 /**
- * DefiLlama metrics of a project (TVL, DEX volume, fees, revenue, token price),
- * aggregated by the backend from the project's `defillamaSlug`.
+ * DefiLlama fundamentals of a project: normalized metrics plus the raw
+ * multi-period fees/revenue blocks and the token symbol, aggregated by the
+ * backend from the project's `defillamaSlug`.
  * Returns `null` when the project isn't linked to DefiLlama (backend 404
  * `DEFILLAMA_SLUG_NOT_SET`) so callers can render an empty state without retrying.
  */
-export const fetchProjectDefillamaMetrics = async (id: number): Promise<NormalizedMetrics | null> => {
+export const fetchProjectDefillamaMetrics = async (id: number): Promise<ProjectFundamentals | null> => {
   return withErrorHandling(async () => {
     try {
       const response = await get<ProjectDefiLlamaResponse>(`/project/${id}/defillama`);
-      return toNormalizedMetrics(response.data);
+      const overview = response.data;
+      return {
+        metrics: toNormalizedMetrics(overview),
+        fees: overview.fees ?? null,
+        revenue: overview.revenue ?? null,
+        tokenSymbol: overview.price?.symbol ?? null,
+      };
     } catch (error) {
       if (isAxiosError(error) && error.response?.status === 404) return null;
       throw error;

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/loading-state";
-import { KpiRibbon, KpiCell, chartPalette } from "@/components/common";
-import { compactUsd, formatMetricValue } from "@/lib/formatters/numberFormatting";
+import { chartPalette } from "@/components/common";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import {
   useProject,
   useProjectMetrics,
@@ -15,15 +15,16 @@ import {
 } from "@/services/ecosystem/project";
 import {
   ProjectDetailHeader,
-  ProjectInfoRail,
   MetricChartCard,
   ProjectContextKpis,
-  ProjectPositionStrip,
   ProjectPeersModule,
+  FeesRevenueTable,
+  PositionRailCard,
+  ProjectLinksCard,
   OnHyperliquidCard,
-  ProjectDataNote,
+  AboutMetaCard,
+  ListingNotice,
 } from "@/components/ecosystem/project/detail";
-import { EcosystemBanner } from "@/components/ecosystem/project/EcosystemBanner";
 
 interface ProjectDetailPageProps {
   params: Promise<{ id: string }>;
@@ -35,7 +36,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const router = useRouter();
 
   const { project, isLoading } = useProject(projectId);
-  const { metrics } = useProjectMetrics(projectId);
+  const { metrics, fees, revenue, tokenSymbol } = useProjectMetrics(projectId);
   const { context } = useProjectContext(projectId);
   const { history } = useTvlHistory(project?.defillamaSlug ?? null);
 
@@ -43,47 +44,28 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const peers = context?.peers ?? [];
   const isLinked = Boolean(project?.defillamaSlug);
 
-  // "Situer d'abord": the header badge carries the rank when there is one.
+  // The header badge says the position once — it is not repeated below.
   const headerBadge = useMemo(() => {
-    if (position?.categoryRank != null && position.category) {
-      const isTop = position.categoryRank === 1;
+    if (position?.categoryRank != null && position.categorySize != null && position.category) {
       return (
-        <span
-          className={`text-[11px] px-2 py-0.5 rounded-md border font-medium ${
-            isTop ? "bg-success/10 border-success/25 text-success" : "bg-brand/10 border-brand/25 text-brand"
-          }`}
-        >
-          #{position.categoryRank} {position.category} on Hyperliquid
+        <span className="text-[11px] px-2 py-0.5 rounded-md border font-medium bg-brand/10 border-brand/25 text-brand">
+          #{position.categoryRank} of {position.categorySize} · {position.category} on Hyperliquid
+        </span>
+      );
+    }
+    if (project && !project.defillamaSlug) {
+      return (
+        <span className="text-[11px] px-2 py-0.5 rounded-md border bg-surface-2 border-border-subtle text-text-tertiary">
+          Listing only
         </span>
       );
     }
     return null;
-  }, [position]);
+  }, [position, project]);
 
   // TVL chart: HL series preferred; global fallback is labeled honestly.
   const tvlSeries = history?.hl ?? history?.global ?? null;
   const tvlScope = history?.hl ? "Hyperliquid L1" : "all chains";
-
-  const tokenCells = useMemo<KpiCell[]>(() => {
-    const out: KpiCell[] = [];
-    if (metrics?.price) {
-      out.push({
-        key: "price",
-        label: "Price",
-        value: formatMetricValue(metrics.price.value, {
-          prefix: "$",
-          format: "US",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: metrics.price.value < 1 ? 5 : 2,
-        }),
-        sub: metrics.price.source ? `via ${metrics.price.source}` : undefined,
-      });
-    }
-    if (metrics?.marketCap) {
-      out.push({ key: "mcap", label: "Market cap", value: compactUsd(metrics.marketCap.value) });
-    }
-    return out;
-  }, [metrics]);
 
   if (isLoading) {
     return (
@@ -107,17 +89,19 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
     context?.peersScope === "defillama-category" && position?.category
       ? `${position.category} on Hyperliquid`
       : dbCategoryName
-        ? `More in ${dbCategoryName} on LiquidTerminal`
+        ? `${dbCategoryName} on Hyperliquid`
         : "More on LiquidTerminal";
   const peersTag =
     context?.peersScope === "defillama-category" &&
     position?.categorySize != null &&
     position.categoryTvl != null
       ? `${position.categorySize} protocols · ${compactUsd(position.categoryTvl)}`
-      : undefined;
+      : context?.peersScope === "db-category"
+        ? "top by TVL"
+        : undefined;
 
   return (
-    <div className="space-y-7 max-w-[1400px] mx-auto">
+    <div className="space-y-5 max-w-[1400px] mx-auto">
       <nav className="flex items-center gap-1.5 text-[11.5px] text-text-tertiary">
         <Link href="/ecosystem/project" className="hover:text-text-secondary">
           Ecosystem
@@ -130,18 +114,23 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
         <span className="text-text-secondary">{project.title}</span>
       </nav>
 
-      <ProjectDetailHeader project={project} badge={headerBadge} />
+      <ProjectDetailHeader
+        project={project}
+        badge={headerBadge}
+        metaSuffix={`Listed ${new Date(project.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" })}${isLinked ? " · data via DefiLlama" : ""}`}
+      />
 
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+      {/* Listing-only: one honest full-width line, then the category as next destination. */}
+      {!isLinked && <ListingNotice />}
+
+      {/* Single fundamentals ribbon — the token price is a cell, not a card. */}
+      {isLinked && <ProjectContextKpis position={position} metrics={metrics} tokenSymbol={tokenSymbol} />}
+
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
         <div className="min-w-0 space-y-4">
-          {/* Fundamentals, HL-scoped when positioned; global (labeled) otherwise. */}
-          <ProjectContextKpis position={position} metrics={metrics} />
-
-          {position && <ProjectPositionStrip position={position} chainTvl={context?.chain.tvl ?? null} />}
-
           {tvlSeries && tvlSeries.length > 1 && (
             <MetricChartCard
-              title={`Total Value Locked · ${tvlScope}`}
+              title={`TVL on ${tvlScope === "Hyperliquid L1" ? "Hyperliquid" : "all chains"}`}
               series={tvlSeries}
               currentValue={compactUsd(tvlSeries[tvlSeries.length - 1].v)}
               color={chartPalette.accent}
@@ -150,8 +139,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
             />
           )}
 
-          {/* Unlinked pages still situate the project in its chain. */}
-          {!isLinked && <EcosystemBanner stats={context?.chain} helper="the chain this project builds on" />}
+          {isLinked && <FeesRevenueTable fees={fees} revenue={revenue} />}
 
           <ProjectPeersModule
             title={peersTitle}
@@ -159,18 +147,13 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
             peers={peers}
             showShare={context?.peersScope === "defillama-category"}
           />
-
-          {tokenCells.length > 0 && (
-            <KpiRibbon header={{ label: "Token", helper: project.token ? `$${project.token}` : undefined }} cells={tokenCells} />
-          )}
         </div>
 
         <aside className="xl:sticky xl:top-6 space-y-4">
-          {context && (isLinked || position) ? (
-            <OnHyperliquidCard chain={context.chain} position={position} />
-          ) : null}
-          {!isLinked && <ProjectDataNote />}
-          <ProjectInfoRail project={project} sources={isLinked ? ["DEFILLAMA"] : undefined} />
+          {position && <PositionRailCard position={position} />}
+          <ProjectLinksCard project={project} />
+          {!isLinked && <AboutMetaCard project={project} />}
+          {isLinked && context && <OnHyperliquidCard chain={context.chain} position={position} />}
         </aside>
       </div>
     </div>

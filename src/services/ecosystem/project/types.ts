@@ -170,9 +170,27 @@ export interface ProjectDefiLlamaResponse {
   data: ProjectDefiLlamaOverview;
 }
 
+/**
+ * Full DefiLlama fundamentals of a project: the normalized snapshot plus the
+ * multi-period fees/revenue blocks (24h/7d/30d/all-time) and the token symbol,
+ * which the verdict design surfaces (Fees & revenue table, price KPI cell).
+ */
+export interface ProjectFundamentals {
+  metrics: NormalizedMetrics;
+  fees: DefiLlamaMoneyBlock | null;
+  revenue: DefiLlamaMoneyBlock | null;
+  tokenSymbol: string | null;
+}
+
 export interface UseProjectMetricsResult {
   /** Normalized metrics, `undefined` while loading or when the project isn't linked to DefiLlama. */
   metrics: NormalizedMetrics | undefined;
+  /** Multi-period fees block (24h/7d/30d/all-time + Δ1d), when the protocol has a fees module. */
+  fees: DefiLlamaMoneyBlock | null;
+  /** Multi-period revenue block, when available. */
+  revenue: DefiLlamaMoneyBlock | null;
+  /** Token symbol from the price feed (e.g. "HPL"), when the project has a token. */
+  tokenSymbol: string | null;
   isLoading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;

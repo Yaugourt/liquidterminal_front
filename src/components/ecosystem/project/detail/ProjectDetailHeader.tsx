@@ -16,9 +16,11 @@ interface ProjectDetailHeaderProps {
   updatedAt?: number;
   /** Context badge next to the title (e.g. "#1 Lending on Hyperliquid"). */
   badge?: ReactNode;
+  /** Small meta text after the category pills (e.g. "Listed Aug 2025 · data via DefiLlama"). */
+  metaSuffix?: string;
 }
 
-export function ProjectDetailHeader({ project, updatedAt, badge }: ProjectDetailHeaderProps) {
+export function ProjectDetailHeader({ project, updatedAt, badge, metaSuffix }: ProjectDetailHeaderProps) {
   const [imageError, setImageError] = useState(false);
 
   const socialLinks = [
@@ -71,6 +73,7 @@ export function ProjectDetailHeader({ project, updatedAt, badge }: ProjectDetail
                 {category.name}
               </span>
             ))}
+            {metaSuffix && <span className="text-[11px] text-text-tertiary">{metaSuffix}</span>}
             {updatedLabel && <span className="text-[11px] text-text-tertiary ml-1">{updatedLabel}</span>}
           </div>
         </div>
