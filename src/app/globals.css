@@ -381,3 +381,10 @@ html {
     transform: translateY(0);
   }
 }
+
+/* Suppress sidebar collapse/expand transitions on the very first paint so a
+   persisted collapsed state doesn't replay its animation on every page load. */
+.sidebar-no-anim,
+.sidebar-no-anim * {
+  transition: none !important;
+}
