@@ -16,9 +16,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { collapsed } = useSidebarUi();
     const [hasMounted, setHasMounted] = useState(false);
+    // Transitions stay disabled on first paint so a persisted collapsed
+    // state doesn't replay the collapse animation on every page load.
+    const [animReady, setAnimReady] = useState(false);
 
     useEffect(() => {
         setHasMounted(true);
+        const t = setTimeout(() => setAnimReady(true), 150);
+        return () => clearTimeout(t);
     }, []);
 
     useEffect(() => {
@@ -27,7 +32,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         }
     }, [width]);
 
-    // Content offset follows the sidebar width (64px rail / 232px panel).
+    // Content offset follows the sidebar width (56px rail / 232px panel).
     // Gated on hasMounted so SSR markup matches the first client render.
     const isCollapsed = hasMounted && collapsed;
 
@@ -41,8 +46,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
             <div className={cn(
-                "relative z-10 transition-[padding] duration-300 ease-in-out",
-                isCollapsed ? "lg:pl-16" : "lg:pl-[232px]"
+                "relative z-10 transition-[padding] duration-200 ease-out",
+                !animReady && "sidebar-no-anim",
+                isCollapsed ? "lg:pl-14" : "lg:pl-[232px]"
             )}>
                 <Header />
 
