@@ -178,6 +178,82 @@ export interface UseProjectMetricsResult {
   refetch: () => Promise<void>;
 }
 
+// ==================== HYPERLIQUID CONTEXT (GET /project/:id/context) ====================
+// Mirrors the backend defillama-context.types.ts. All figures are chain-scoped
+// ("on Hyperliquid L1"); global numbers live in the overview payload above.
+
+export interface DefiLlamaChainStats {
+  tvl: number | null;
+  fees24h: number | null;
+  volumeDex24h: number | null;
+  protocolsTracked: number;
+}
+
+export interface ProjectPeer {
+  rank: number;
+  name: string;
+  slug: string;
+  hlTvl: number;
+  shareOfCategoryPct: number | null;
+  change7d: number | null;
+  projectId: number | null;
+  logo: string | null;
+  isCurrent: boolean;
+}
+
+export interface ProjectPosition {
+  slug: string;
+  hlTvl: number;
+  hlBorrowed: number | null;
+  shareOfChainPct: number | null;
+  category: string | null;
+  categoryRank: number | null;
+  categorySize: number | null;
+  categoryTvl: number | null;
+  shareOfCategoryPct: number | null;
+  change7d: number | null;
+  monoChain: boolean;
+  fees24h: number | null;
+  feesRank24h: number | null;
+  feesRankCount: number | null;
+  volume24h: number | null;
+  volumeRank24h: number | null;
+  volumeRankCount: number | null;
+}
+
+export interface ProjectContext {
+  chain: DefiLlamaChainStats;
+  position: ProjectPosition | null;
+  peers: ProjectPeer[];
+  peersScope: 'defillama-category' | 'db-category' | 'none';
+}
+
+/** Backend payload of GET /defillama/tvl-history/:slug. */
+export interface ProjectTvlHistory {
+  slug: string;
+  hl: SeriesPoint[] | null;
+  global: SeriesPoint[] | null;
+}
+
+export interface UseProjectContextResult {
+  context: ProjectContext | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
+
+export interface UseTvlHistoryResult {
+  history: ProjectTvlHistory | undefined;
+  isLoading: boolean;
+  error: Error | null;
+}
+
+export interface UseChainStatsResult {
+  stats: DefiLlamaChainStats | undefined;
+  isLoading: boolean;
+  error: Error | null;
+}
+
 // Types pour les mutations
 export interface CreateProjectInput {
   title: string;

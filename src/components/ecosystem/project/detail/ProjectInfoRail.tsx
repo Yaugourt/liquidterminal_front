@@ -27,7 +27,8 @@ export function ProjectInfoRail({ project, sources, updatedAt }: ProjectInfoRail
   ].filter((l) => l.url);
 
   return (
-    <aside className="xl:sticky xl:top-6 space-y-4">
+    // The page owns the <aside>/sticky wrapper; this is just the card stack.
+    <div className="space-y-4">
       {/* About */}
       <div className="bg-surface border border-border-subtle rounded-lg">
         <div className="px-4 py-3 border-b border-border-subtle">
@@ -107,6 +108,6 @@ export function ProjectInfoRail({ project, sources, updatedAt }: ProjectInfoRail
           </div>
         </div>
       )}
-    </aside>
+    </div>
   );
 }

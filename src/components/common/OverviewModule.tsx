@@ -287,13 +287,18 @@ export function ModuleTable({
 export function ModuleTableRow({
   cells,
   href,
+  className,
 }: {
   /** Cell content — alignment is owned by `columns[].align` on the parent table. */
   cells: ReactNode[];
   href?: string;
+  /** Extra row classes (e.g. `bg-brand/5` to highlight the current entity). */
+  className?: string;
 }) {
   return (
-    <tr className="border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
+    <tr
+      className={`border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors ${className ?? ""}`}
+    >
       {cells.map((cell, i) => (
         <ModuleCell key={i} href={href} index={i}>
           {cell}
