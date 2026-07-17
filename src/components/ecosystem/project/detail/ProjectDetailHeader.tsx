@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import Image from "next/image";
 import { Globe, MessageCircle, Send } from "lucide-react";
 import { Project } from "@/services/ecosystem/project/types";
@@ -14,9 +14,11 @@ const XIcon = () => (
 interface ProjectDetailHeaderProps {
   project: Project;
   updatedAt?: number;
+  /** Context badge next to the title (e.g. "#1 Lending on Hyperliquid"). */
+  badge?: ReactNode;
 }
 
-export function ProjectDetailHeader({ project, updatedAt }: ProjectDetailHeaderProps) {
+export function ProjectDetailHeader({ project, updatedAt, badge }: ProjectDetailHeaderProps) {
   const [imageError, setImageError] = useState(false);
 
   const socialLinks = [
@@ -57,6 +59,7 @@ export function ProjectDetailHeader({ project, updatedAt }: ProjectDetailHeaderP
               {project.title}
             </h1>
             {project.token && <span className="mono text-[12px] text-text-tertiary">${project.token}</span>}
+            {badge}
           </div>
           <p className="text-sm text-text-secondary max-w-xl">{project.desc}</p>
           <div className="flex items-center gap-2 pt-0.5 flex-wrap">

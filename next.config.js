@@ -76,6 +76,12 @@ const nextConfig = {
                 hostname: 'pub-097cebbc75d04a3fbd5d0e416820c1a5.r2.dev',
                 pathname: '/**',
             },
+            // DefiLlama protocol logos (project page peers module).
+            {
+                protocol: 'https',
+                hostname: 'icons.llamao.fi',
+                pathname: '/icons/**',
+            },
             // localhost is allowed ONLY in dev — in production it would turn the
             // image optimizer into a loopback SSRF / port-probe primitive.
             ...(process.env.NODE_ENV === 'development'

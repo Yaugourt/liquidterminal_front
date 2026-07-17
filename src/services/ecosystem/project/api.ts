@@ -15,6 +15,9 @@ import {
   ProjectDefiLlamaOverview,
   ProjectDefiLlamaResponse,
   NormalizedMetrics,
+  ProjectContext,
+  ProjectTvlHistory,
+  DefiLlamaChainStats,
 } from './types';
 import { buildQueryParams } from '../../common';
 
@@ -81,6 +84,53 @@ export const fetchProjectDefillamaMetrics = async (id: number): Promise<Normaliz
       throw error;
     }
   }, 'fetching project DefiLlama metrics');
+};
+
+interface ProjectContextResponse {
+  success: boolean;
+  data: ProjectContext;
+}
+
+interface TvlHistoryResponse {
+  success: boolean;
+  data: ProjectTvlHistory;
+}
+
+interface ChainStatsResponse {
+  success: boolean;
+  data: DefiLlamaChainStats;
+}
+
+/**
+ * Hyperliquid context of a project: chain banner figures, position (rank,
+ * share, fees rank) and peers. Works for unlinked projects too (position
+ * null, peers from the DB category).
+ */
+export const fetchProjectContext = async (id: number): Promise<ProjectContext> => {
+  return withErrorHandling(async () => {
+    const response = await get<ProjectContextResponse>(`/project/${id}/context`);
+    return response.data;
+  }, 'fetching project context');
+};
+
+/**
+ * Daily TVL series (Hyperliquid L1 + all-chains) for a DefiLlama slug.
+ */
+export const fetchProjectTvlHistory = async (slug: string): Promise<ProjectTvlHistory> => {
+  return withErrorHandling(async () => {
+    const response = await get<TvlHistoryResponse>(`/defillama/tvl-history/${encodeURIComponent(slug)}`);
+    return response.data;
+  }, 'fetching project TVL history');
+};
+
+/**
+ * Hyperliquid chain banner figures (TVL, fees 24h, DEX volume 24h, protocols tracked).
+ */
+export const fetchChainStats = async (): Promise<DefiLlamaChainStats> => {
+  return withErrorHandling(async () => {
+    const response = await get<ChainStatsResponse>('/defillama/chain-stats');
+    return response.data;
+  }, 'fetching Hyperliquid chain stats');
 };
 
 /**

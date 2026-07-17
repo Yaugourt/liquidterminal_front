@@ -264,7 +264,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 >
                     <Link
                         href="/dashboard"
-                        className="flex flex-1 items-center gap-2.5 overflow-hidden hover:opacity-80 transition-opacity"
+                        className="flex flex-1 items-center gap-2 overflow-hidden hover:opacity-80 transition-opacity"
                         onClick={() => setIsOpen(false)}
                         aria-label="Liquid Terminal — Dashboard"
                     >
@@ -273,7 +273,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <div className="text-[14px] font-semibold leading-none text-text-primary">
                                 Liquid Terminal
                             </div>
-                            <div className="text-[9px] uppercase tracking-[0.12em] text-text-tertiary mt-[3px]">
+                            {/* tracking kept under 0.12em: the trailing letter-space made the
+                                wordmark overflow the 208px mobile drawer by 4px. */}
+                            <div className="text-[9px] uppercase tracking-[0.1em] text-text-tertiary mt-[3px]">
                                 Hyperliquid Data
                             </div>
                         </div>

@@ -1,6 +1,9 @@
 export { useProjects } from './useProjects';
 export { useProject } from './useProject';
 export { useProjectMetrics } from './useProjectMetrics';
+export { useProjectContext } from './useProjectContext';
+export { useTvlHistory } from './useTvlHistory';
+export { useChainStats } from './useChainStats';
 export { useCategories } from './useCategories';
 export { useCreateProject } from './useCreateProject';
 export { useCreateCategory } from './useCreateCategory';
