@@ -5,14 +5,71 @@ import { Trash2, Globe, MessageCircle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
-import { Project } from "@/services/ecosystem/project/types";
+import { Project, ProjectListMetric } from "@/services/ecosystem/project/types";
 import { ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { safeHref } from "@/lib/safeUrl";
 import { groupCategories } from "@/lib/categoryLabels";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
+
+/** Fees rank worth bragging about; below that a rank is an anti-signal. */
+const FEES_RANK_DISPLAY_THRESHOLD = 30;
+
+/**
+ * Conditional metric footer. Degradation = today's card, never "TVL —".
+ * Multi-chain honesty: when the global TVL dwarfs the HL one (Upshift case),
+ * the all-chains figure is shown as tertiary context, never as the headline.
+ */
+function CardMetricFooter({ metric }: { metric: ProjectListMetric }) {
+  const hasHlTvl = metric.hlTvl != null && metric.hlTvl > 0;
+  const feesRanked =
+    metric.feesRank24h != null &&
+    metric.feesRank24h <= FEES_RANK_DISPLAY_THRESHOLD &&
+    metric.fees24h != null &&
+    metric.fees24h > 0;
+
+  if (!hasHlTvl && !feesRanked) return null;
+
+  const showGlobal =
+    hasHlTvl && metric.globalTvl != null && metric.globalTvl > (metric.hlTvl as number) * 5;
+
+  return (
+    <div className="flex items-center justify-between gap-2 mt-3 pt-2.5 border-t border-border-subtle text-[11px]">
+      {hasHlTvl ? (
+        <>
+          <span className="min-w-0 truncate">
+            <span className="mono text-text-primary">{compactUsd(metric.hlTvl as number)}</span>
+            <span className="text-text-tertiary"> TVL on HL</span>
+          </span>
+          {showGlobal ? (
+            <span className="mono text-text-tertiary shrink-0">
+              {compactUsd(metric.globalTvl as number)} all chains
+            </span>
+          ) : metric.categoryRank != null && metric.category ? (
+            <span className="mono text-brand shrink-0">
+              #{metric.categoryRank} {metric.category}
+            </span>
+          ) : metric.hlRank != null ? (
+            <span className="mono text-brand shrink-0">#{metric.hlRank} on HL</span>
+          ) : null}
+        </>
+      ) : (
+        <>
+          <span className="min-w-0 truncate">
+            <span className="mono text-gold">{compactUsd(metric.fees24h as number)}</span>
+            <span className="text-text-tertiary"> fees 24h</span>
+          </span>
+          <span className="mono text-brand shrink-0">#{metric.feesRank24h} by fees</span>
+        </>
+      )}
+    </div>
+  );
+}
 
 interface ProjectCardProps {
   project: Project;
+  /** Hyperliquid metrics row from the batch map (linked projects only). */
+  metric?: ProjectListMetric;
   onDelete?: (projectId: number) => void;
   isDeleting?: boolean;
   isSelected?: boolean;
@@ -22,6 +79,7 @@ interface ProjectCardProps {
 
 export const ProjectCard = memo(function ProjectCard({
   project,
+  metric,
   onDelete,
   isDeleting = false,
   isSelected = false,
@@ -148,6 +206,8 @@ export const ProjectCard = memo(function ProjectCard({
               ))}
             </div>
           )}
+
+          {metric && <CardMetricFooter metric={metric} />}
         </div>
       </div>
     </Card>

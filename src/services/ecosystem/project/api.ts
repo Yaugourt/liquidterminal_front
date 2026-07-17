@@ -18,6 +18,7 @@ import {
   ProjectContext,
   ProjectTvlHistory,
   DefiLlamaChainStats,
+  ProjectListMetric,
 } from './types';
 import { buildQueryParams } from '../../common';
 
@@ -38,6 +39,27 @@ export const fetchProjects = async (params?: ProjectQueryParams): Promise<Projec
     const endpoint = `/project?${queryParams.toString()}`;
     return await get<ProjectsResponse>(endpoint);
   }, 'fetching projects');
+};
+
+/**
+ * Fetches the whole catalog by walking pages (the backend caps `limit` at 100,
+ * anything above answers 500). Used by the client-side "TVL on HL" sort.
+ */
+export const fetchAllProjects = async (
+  params?: Pick<ProjectQueryParams, 'search' | 'categoryIds'>
+): Promise<Project[]> => {
+  const pageParams = { ...params, limit: 100 };
+  const first = await fetchProjects({ ...pageParams, page: 1 });
+  const out = [...first.data];
+  const totalPages = Math.min(first.pagination?.totalPages ?? 1, 10);
+  for (let page = 2; page <= totalPages; page++) {
+    const next = await fetchProjects({ ...pageParams, page });
+    out.push(...next.data);
+  }
+  // The backend's default ordering is not unique (createdAt ties), so rows can
+  // repeat across page boundaries — dedupe by id.
+  const seen = new Set<number>();
+  return out.filter((p) => (seen.has(p.id) ? false : (seen.add(p.id), true)));
 };
 
 /**
@@ -131,6 +153,22 @@ export const fetchChainStats = async (): Promise<DefiLlamaChainStats> => {
     const response = await get<ChainStatsResponse>('/defillama/chain-stats');
     return response.data;
   }, 'fetching Hyperliquid chain stats');
+};
+
+interface ProjectsMapResponse {
+  success: boolean;
+  data: ProjectListMetric[];
+}
+
+/**
+ * Batch metrics for every linked project (HL TVL, ranks, fees rank) — one
+ * request decorates all cards of the list page and powers the TVL sort.
+ */
+export const fetchProjectsMetricsMap = async (): Promise<ProjectListMetric[]> => {
+  return withErrorHandling(async () => {
+    const response = await get<ProjectsMapResponse>('/defillama/projects-map');
+    return response.data;
+  }, 'fetching projects metrics map');
 };
 
 /**

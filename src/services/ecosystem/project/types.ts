@@ -228,6 +228,27 @@ export interface ProjectContext {
   peersScope: 'defillama-category' | 'db-category' | 'none';
 }
 
+/** One row of GET /defillama/projects-map — card decoration + TVL sort. */
+export interface ProjectListMetric {
+  projectId: number;
+  slug: string;
+  hlTvl: number | null;
+  globalTvl: number | null;
+  hlRank: number | null;
+  category: string | null;
+  categoryRank: number | null;
+  fees24h: number | null;
+  feesRank24h: number | null;
+  change7d: number | null;
+}
+
+export interface UseProjectsMetricsMapResult {
+  /** Map keyed by projectId; empty while loading or when nothing is linked. */
+  metricsById: Map<number, ProjectListMetric>;
+  isLoading: boolean;
+  error: Error | null;
+}
+
 /** Backend payload of GET /defillama/tvl-history/:slug. */
 export interface ProjectTvlHistory {
   slug: string;
