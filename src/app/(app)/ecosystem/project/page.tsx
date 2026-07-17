@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import { PageHeader } from "@/components/common";
 import { ProjectsGrid } from "@/components/ecosystem/project";
+import { EcosystemBanner } from "@/components/ecosystem/project/EcosystemBanner";
+import { useChainStats } from "@/services/ecosystem/project";
 
 export default function L1ProjectPage() {
   const { setTitle } = usePageTitle();
   const [activeTab, setActiveTab] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const { stats } = useChainStats();
 
   useEffect(() => {
     setTitle("Ecosystem Projects");
@@ -29,6 +32,7 @@ export default function L1ProjectPage() {
         title="Ecosystem"
         description="Projects building on HyperLiquid — browse, filter by category, and discover what's shipping."
       />
+      <EcosystemBanner stats={stats} />
       <ProjectsGrid
         activeTab={activeTab}
         currentPage={currentPage}
