@@ -33,14 +33,22 @@ ${chapters}
 
 These pages are client-rendered dashboards; the numbers below them come from public APIs.
 
-- [Markets](${base}/market): Hyperliquid spot & perp market stats
-- [Spot](${base}/market/spot): tokens, prices, volumes
-- [Perpetuals](${base}/market/perp): funding, open interest
-- [Auctions](${base}/market/spot/auction): ticker auction prices and history
-- [Vaults](${base}/explorer/vaults): vault TVL and performance
-- [Validators](${base}/explorer/validator): staking and validator stats
+- [Market overview](${base}/market): every venue on one page — volume, fees, open interest, stablecoins
+- [Spot market](${base}/market/spot): HIP-1 tokens, prices, 24h volume, marketcaps. Per-token pages at /market/spot/{TICKER}
+- [Perpetuals](${base}/market/perp): funding rates, open interest, volume. Per-market pages at /market/perp/{COIN}
+- [Perp DEXs (HIP-3)](${base}/market/perpdex): builder-deployed perp venues, their markets and open interest
+- [Prediction markets (HIP-4)](${base}/market/hip4): outcome markets, probabilities, settlements
+- [Builder codes](${base}/market/builders): order flow and fees per builder
+- [Wallet tracker](${base}/market/tracker): wallets, PnL, public lists, top traders
+- [Ticker auctions (HIP-1)](${base}/market/spot/auction): live spot ticker auction and full history
+- [Deploy auctions (HIP-3)](${base}/market/perp/auction): perp DEX deploy auction and past deployments
+- [HYPE](${base}/hype): supply, staking, buybacks, burn and protocol revenue
+- [Vaults](${base}/explorer/vaults): vault TVL, APR and performance. Per-vault pages at /explorer/vaults/{address}
+- [Validators](${base}/explorer/validator): staking, stake distribution and validator stats
+- [Liquidations](${base}/explorer/liquidations): live liquidation feed and history
+- [Priority fees](${base}/explorer/priority-fees): priority gas on fills and leaderboards
 - [Explorer](${base}/explorer): HyperCore transactions, blocks, addresses
-- [Ecosystem](${base}/ecosystem): directory of Hyperliquid projects
+- [Ecosystem projects](${base}/ecosystem/project): directory of projects building on Hyperliquid, with TVL and fees
 - [HIP-4 docs](${base}/hip4): reverse-engineered prediction-markets documentation
 
 ## Optional
