@@ -8,3 +8,10 @@ export interface OverviewStat24h {
   value: number;
   variationPct: number;
 }
+
+/** Shape of `/indexer/overview/total-fees-24h` (split by venue, no variation). */
+export interface OverviewFees24h {
+  feesSpot: number;
+  feesPerpUsdc: number;
+  totalFees: number;
+}

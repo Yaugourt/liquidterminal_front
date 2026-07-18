@@ -1,12 +1,10 @@
 import { ComponentType } from "react";
 import {
-  Gavel,
   Heart,
   ClipboardList,
   Clock,
   Network,
   Vault,
-  Infinity,
   Wallet,
   Globe,
   BookOpen,
@@ -14,7 +12,6 @@ import {
   CandlestickChart,
   Zap,
   Sparkles,
-  ArrowRightLeft,
   Blocks,
   Fuel,
   Layers,
@@ -118,46 +115,14 @@ export const defaultNavigationGroups: NavigationGroup[] = [
   },
   {
     groupName: 'Liquid Market',
+    // Verdict IA: Spot/Perpetual entered via the /market hub + MarketScopeBar,
+    // USDH Swap dropped. 7 entries + 3 submenus became 5 entries.
     items: [
       {
-        name: 'Spot',
-        href: '/market/spot',
+        name: 'Market',
+        href: '/market',
         icon: null,
-        IconComponent: CandlestickChart,
-        children: [
-          {
-            name: 'Market',
-            href: '/market/spot',
-            icon: null,
-            IconComponent: CandlestickChart
-          },
-          {
-            name: 'Auction',
-            href: '/market/spot/auction',
-            icon: null,
-            IconComponent: Gavel
-          }
-        ]
-      },
-      {
-        name: 'Perpetual',
-        href: '/market/perp',
-        icon: null,
-        IconComponent: Infinity,
-        children: [
-          {
-            name: 'Market',
-            href: '/market/perp',
-            icon: null,
-            IconComponent: Infinity
-          },
-          {
-            name: 'Auction',
-            href: '/market/perp/auction',
-            icon: null,
-            IconComponent: Gavel
-          }
-        ]
+        IconComponent: CandlestickChart
       },
       {
         name: 'PerpDexs (HIP-3)',
@@ -170,12 +135,6 @@ export const defaultNavigationGroups: NavigationGroup[] = [
         href: '/market/builders',
         icon: null,
         IconComponent: Hammer
-      },
-      {
-        name: 'USDH Swap',
-        href: '/usdh',
-        icon: null,
-        IconComponent: ArrowRightLeft
       },
       {
         name: 'HIP-4',

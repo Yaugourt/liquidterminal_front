@@ -19,6 +19,8 @@ export type PerpSortableFields = "volume" | "openInterest" | "change24h" | "pric
 export interface PerpGlobalStats {
   totalVolume24h: number;
   totalOpenInterest: number;
+  /** Number of listed perp markets (served by the API, was missing from the type). */
+  totalPairs: number;
   hlpTvl: number;
 }
 
