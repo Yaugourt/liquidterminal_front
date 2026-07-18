@@ -321,9 +321,14 @@ export const ArticleCard = memo(function ArticleCard({
         rel="noopener noreferrer"
         className="flex h-full flex-col"
       >
-        {/* Hero: preview image, or favicon / domain-initial fallback */}
-        <div className="relative w-full shrink-0 overflow-hidden border-b border-border-subtle bg-gradient-to-br from-surface-2 to-base" style={{ aspectRatio: "16/9" }}>
-          {showHeroImage ? (
+        {/* Hero only when a real preview image exists. An empty 16/9 tile with a
+            tiny favicon in the middle reads as a broken card, so image-less
+            resources go text-forward instead of showing a void. */}
+        {showHeroImage && (
+          <div
+            className="relative w-full shrink-0 overflow-hidden border-b border-border-subtle bg-gradient-to-br from-surface-2 to-base"
+            style={{ aspectRatio: "16/9" }}
+          >
             <Image
               src={preview!.image!}
               alt={title}
@@ -332,40 +337,46 @@ export const ArticleCard = memo(function ArticleCard({
               onError={() => setImageError(true)}
               unoptimized
             />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
+          </div>
+        )}
+
+        {/* Body */}
+        <div className="flex flex-1 flex-col gap-2 p-4">
+          {!showHeroImage && (
+            <div className="flex items-center gap-1.5 text-[11px] text-text-tertiary">
               {preview?.favicon && !faviconError ? (
                 <Image
                   src={preview.favicon}
                   alt={hostname}
-                  width={40}
-                  height={40}
-                  className="rounded-md opacity-80"
+                  width={14}
+                  height={14}
+                  className="rounded-sm opacity-80"
                   onError={() => setFaviconError(true)}
                   unoptimized
                 />
               ) : (
-                <span className="select-none text-4xl font-bold uppercase text-brand/25">
+                <span className="select-none text-[11px] font-bold uppercase text-brand/50">
                   {hostname.charAt(0)}
                 </span>
               )}
+              <span className="truncate">{preview?.siteName || hostname}</span>
             </div>
           )}
 
-          {/* Hover actions */}
-          <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-            {hoverActions}
-          </div>
-        </div>
-
-        {/* Body */}
-        <div className="flex flex-1 flex-col gap-2 p-4">
-          <h3 className="text-[15px] font-semibold leading-snug text-text-primary line-clamp-2 transition-colors group-hover:text-brand">
+          <h3
+            className={`text-[15px] font-semibold leading-snug text-text-primary transition-colors group-hover:text-brand ${
+              showHeroImage ? "line-clamp-2" : "line-clamp-3"
+            }`}
+          >
             {title}
           </h3>
 
           {preview?.description && (
-            <p className="text-[13px] leading-relaxed text-text-secondary line-clamp-2">
+            <p
+              className={`text-[13px] leading-relaxed text-text-secondary ${
+                showHeroImage ? "line-clamp-2" : "line-clamp-4"
+              }`}
+            >
               {preview.description}
             </p>
           )}
@@ -401,6 +412,12 @@ export const ArticleCard = memo(function ArticleCard({
           </div>
         </div>
       </a>
+
+      {/* Hover actions sit on the card, not the hero: image-less cards have no
+          hero to anchor them to. */}
+      <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+        {hoverActions}
+      </div>
 
       {modals}
     </Card>
