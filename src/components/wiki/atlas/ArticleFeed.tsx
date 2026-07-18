@@ -7,7 +7,7 @@ import { PillTabs } from "@/components/ui/pill-tabs";
 import { useWikiLibrary } from "@/services/wiki";
 import type { EducationalResource } from "@/services/wiki/types";
 import { CONTENT_TYPE_META, CONTENT_TYPE_ORDER, detectContentType, type ContentType } from "../primitives";
-import { AtlasArticleCard } from "./AtlasArticleCard";
+import { ArticleCard } from "../library/ArticleCard";
 import { AtlasArticleTable } from "./AtlasArticleTable";
 
 const PAGE_SIZE = 24;
@@ -144,11 +144,10 @@ export function ArticleFeed({
       ) : view === "table" ? (
         <AtlasArticleTable resources={shown} isLoading={isLoading} showCategory={showCategory} />
       ) : (
-        <div className="grid grid-cols-1 gap-px bg-border-subtle lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 p-3.5 sm:grid-cols-2 2xl:grid-cols-3">
           {shown.map((r) => (
-            <AtlasArticleCard key={r.id} resource={r} />
+            <ArticleCard key={r.id} resource={r} variant="grid" />
           ))}
-          {shown.length % 2 === 1 && <div className="hidden bg-surface lg:block" />}
         </div>
       )}
 
