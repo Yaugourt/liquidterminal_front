@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePageTitle } from "@/store/use-page-title";
 import { PageHeader, ProtectedAction } from "@/components/common";
-import { AtlasHome } from "@/components/wiki/atlas/AtlasHome";
+import { ChapterView } from "@/components/wiki/atlas/ChapterView";
 import { EducationModal } from "@/components/wiki/EducationModal";
 import { UserSubmissionModal } from "@/components/wiki/UserSubmissionModal";
 import { useAuthContext } from "@/contexts/auth.context";
@@ -44,7 +44,7 @@ export default function WikiPage() {
         }
       />
 
-      <AtlasHome refreshToken={refreshToken} />
+      <ChapterView key={refreshToken} chapterSlug="introduction" />
     </div>
   );
 }
