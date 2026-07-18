@@ -36,6 +36,7 @@ export default async function Hip4CoinLayout({
           { name, path: `/market/hip4/${encodeURIComponent(name)}` },
         ])}
       />
+      <h1 className="sr-only">{name} prediction market on Hyperliquid (HIP-4)</h1>
       {children}
     </>
   );

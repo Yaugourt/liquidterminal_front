@@ -36,6 +36,11 @@ export default async function SpotTokenLayout({
           { name, path: `/market/spot/${encodeURIComponent(name)}` },
         ])}
       />
+      {/* The trading layout below is built client-side and renders no heading
+          at all, so the page shipped with an empty document outline. This h1
+          comes from the route itself: server-rendered, and the only heading a
+          screen reader (or a crawler that runs no JS) can anchor on. */}
+      <h1 className="sr-only">{name} spot market on Hyperliquid</h1>
       {children}
     </>
   );

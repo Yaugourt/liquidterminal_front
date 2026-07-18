@@ -36,6 +36,7 @@ export default async function BuilderDetailLayout({
           { name: builder, path: `/market/builders/${encodeURIComponent(builder)}` },
         ])}
       />
+      <h1 className="sr-only">Hyperliquid builder {builder}</h1>
       {children}
     </>
   );

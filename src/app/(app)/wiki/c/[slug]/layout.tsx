@@ -24,6 +24,20 @@ export async function generateMetadata({
   });
 }
 
-export default function CategoryLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default async function CategoryLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  return (
+    <>
+      {/* The category view builds its header client-side from the API, so the
+          served HTML had no heading to anchor the outline on. */}
+      <h1 className="sr-only">{humanize(slug)} resources for Hyperliquid</h1>
+      {children}
+    </>
+  );
 }
