@@ -65,6 +65,8 @@ export type { DominanceSegment, DominanceBarProps } from './DominanceBar';
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
 export { PageHeader } from './PageHeader';
+export { PageFaq } from './PageFaq';
+export type { FaqItem } from './PageFaq';
 export { PageSection } from './PageSection';
 export { TimeframeTabs } from './TimeframeTabs';
 export { LegalFooter } from './LegalFooter';

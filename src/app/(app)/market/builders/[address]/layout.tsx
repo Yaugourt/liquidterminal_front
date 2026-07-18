@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { generateMetadata as buildMetadata, decodeEntityParam } from "@/lib/seo";
+import { JsonLd, breadcrumbSchema } from "@/components/JsonLd";
 
 export async function generateMetadata({
   params,
@@ -16,10 +17,26 @@ export async function generateMetadata({
   });
 }
 
-export default function BuilderDetailLayout({
+export default async function BuilderDetailLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ address: string }>;
 }) {
-  return children;
+  const { address } = await params;
+  const builder = decodeEntityParam(address);
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Liquid Terminal", path: "" },
+          { name: "Market", path: "/market" },
+          { name: "Builders", path: "/market/builders" },
+          { name: builder, path: `/market/builders/${encodeURIComponent(builder)}` },
+        ])}
+      />
+      {children}
+    </>
+  );
 }

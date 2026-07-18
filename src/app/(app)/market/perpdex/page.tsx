@@ -11,7 +11,8 @@ import {
   PastAuctionsPerpTable,
 } from "@/components/market/perpDex";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
+import { PERPDEX_FAQ } from "@/lib/page-faqs";
 
 export default function PerpDexsPage() {
   const { setTitle } = usePageTitle();
@@ -30,6 +31,7 @@ export default function PerpDexsPage() {
       {/* Page header */}
       <PageHeader
         title="Perp DEX"
+        titleQualifier="· HIP-3 builder markets"
         description="Builder-deployed perp DEXs on Hyperliquid — ecosystem stats, top venues, HIP-3 markets, and auction pairs."
       />
 
@@ -72,6 +74,7 @@ export default function PerpDexsPage() {
           </TabsContent>
         </div>
       </Tabs>
+      <PageFaq items={PERPDEX_FAQ} />
     </motion.div>
   );
 }

@@ -42,19 +42,26 @@ export const softwareApplicationSchema = {
   },
 };
 
-// Schema for WebSite with SearchAction
+// Schema for WebSite. No SearchAction on purpose: /explorer does not consume
+// a ?q= parameter, and a search template that 404s is worse than none.
 export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Liquid Terminal",
   url: SITE_CONFIG.url,
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: `${SITE_CONFIG.url}/explorer?q={search_term_string}`,
-    },
-    "query-input": "required name=search_term_string",
-  },
 };
+
+/** BreadcrumbList JSON-LD for entity pages (Home > Section > Entity). */
+export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: `${SITE_CONFIG.url}${item.path}`,
+    })),
+  };
+}
 

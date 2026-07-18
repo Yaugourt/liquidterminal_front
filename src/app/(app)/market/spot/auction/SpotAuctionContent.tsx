@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import { ExternalLink } from "lucide-react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
+import { SPOT_AUCTION_FAQ } from "@/lib/page-faqs";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
   AuctionKpiStrip,
@@ -29,7 +30,8 @@ export function SpotAuctionContent() {
   return (
     <div className="space-y-8">
       <PageHeader
-        title="Deploy auctions"
+        title="Ticker auctions"
+        titleQualifier="· HIP-1 spot deploys"
         description="Every spot ticker sold through the HIP-1 dutch auction since genesis — live state, gas history & full record."
         actions={
           <a
@@ -67,6 +69,7 @@ export function SpotAuctionContent() {
         />
         <AuctionHistoryTable history={history} />
       </section>
+      <PageFaq items={SPOT_AUCTION_FAQ} />
     </div>
   );
 }

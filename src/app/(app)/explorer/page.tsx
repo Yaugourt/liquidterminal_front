@@ -34,6 +34,7 @@ export default function Explorer() {
     <div className="space-y-8">
       <PageHeader
         title="Explorer"
+        titleQualifier="· Hyperliquid on-chain data"
         description="Hyperliquid on-chain explorer — HyperCore (L1) state, cross-chain capital, and live network activity."
       />
 

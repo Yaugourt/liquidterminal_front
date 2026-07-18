@@ -4,6 +4,12 @@ import { cn } from "@/lib/utils";
 interface PageHeaderProps {
   /** Titre de page (h1). */
   title: ReactNode;
+  /**
+   * Suite du h1, en plus petit et atténué ("Spot" + "market on Hyperliquid").
+   * Le h1 seul ne dit souvent qu'un mot ("Spot", "Vaults") : le qualificatif
+   * complète la phrase pour les moteurs sans alourdir le titre à l'écran.
+   */
+  titleQualifier?: ReactNode;
   /** Sous-titre descriptif sous le titre. */
   description?: ReactNode;
   /** Slot aligné à droite du titre (boutons, sélecteurs). */
@@ -21,6 +27,7 @@ interface PageHeaderProps {
  */
 export function PageHeader({
   title,
+  titleQualifier,
   description,
   actions,
   children,
@@ -34,6 +41,17 @@ export function PageHeader({
         <div className="space-y-1.5 min-w-0">
           <h1 className="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">
             {title}
+            {titleQualifier && (
+              <>
+                {/* Real space, not a margin: the h1 text content is what
+                    crawlers read, and "Vaults" + "on Hyperliquid" glued
+                    together reads as one broken word. */}
+                {" "}
+                <span className="text-base sm:text-lg font-normal text-text-tertiary tracking-normal">
+                  {titleQualifier}
+                </span>
+              </>
+            )}
           </h1>
           {description && (
             <p className="text-sm text-text-secondary max-w-2xl">{description}</p>

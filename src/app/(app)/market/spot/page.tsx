@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
   SpotKpiStrip,
@@ -15,6 +15,7 @@ import { useSpotDirectory } from "@/services/market/spot/hooks/useSpotDirectory"
 import { useSpotStablecoins } from "@/services/market/stablecoins/hooks/useSpotStablecoins";
 import { useFeesHistory } from "@/services/market/fees/hooks/useFeesHistory";
 import { useTokenCandles } from "@/services/market/token/hooks/useTokenCandles";
+import { SPOT_FAQ } from "@/lib/page-faqs";
 
 const NINETY_DAYS_MS = 90 * 86_400_000;
 
@@ -47,6 +48,7 @@ export default function SpotPage() {
     <div className="space-y-8">
       <PageHeader
         title="Spot"
+        titleQualifier="market on Hyperliquid"
         description="Hyperliquid spot markets — volume, stablecoin liquidity, fees & deploy auctions."
       />
 
@@ -97,6 +99,7 @@ export default function SpotPage() {
           <SpotLeaderboards directory={directory} stables={stables} />
         </div>
       </section>
+      <PageFaq items={SPOT_FAQ} />
     </div>
   );
 }

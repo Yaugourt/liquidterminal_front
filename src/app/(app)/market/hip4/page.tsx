@@ -18,9 +18,10 @@ import {
   Hip4SettlementsTable,
   Hip4StalenessChip,
 } from "@/components/market/hip4";
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
 import { buildMergedQuestions } from "@/lib/hip4/merge-questions";
 import { isPlaceholderMarketName } from "@/lib/hip4/market-formatter";
+import { HIP4_FAQ } from "@/lib/page-faqs";
 
 export default function MarketHip4Page() {
   const { setTitle } = usePageTitle();
@@ -96,6 +97,7 @@ export default function MarketHip4Page() {
     >
       <PageHeader
         title="HIP-4 Prediction Markets"
+        titleQualifier="on Hyperliquid"
         description="Live prediction markets on Hyperliquid — outcome probabilities grouped by question, volume, open interest, and settlements."
         actions={
           <div className="flex items-center gap-2">
@@ -135,6 +137,7 @@ export default function MarketHip4Page() {
           titleIndex={settlementTitleIndex}
         />
       </div>
+      <PageFaq items={HIP4_FAQ} />
     </motion.div>
   );
 }

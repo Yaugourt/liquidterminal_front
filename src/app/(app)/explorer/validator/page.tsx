@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { OperatorLens } from "@/components/explorer/validator/lens/OperatorLens";
 import { CapitalLens } from "@/components/explorer/validator/lens/CapitalLens";
 import { GovernanceLens } from "@/components/explorer/validator/lens/GovernanceLens";
+import { VALIDATORS_FAQ } from "@/lib/page-faqs";
 
 type Lens = "operator" | "capital" | "governance";
 
@@ -27,7 +28,11 @@ export default function ValidatorPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Validators" description={LENS_DESCRIPTION[lens]}>
+      <PageHeader
+        title="Validators"
+        titleQualifier="· Hyperliquid staking"
+        description={LENS_DESCRIPTION[lens]}
+      >
         <PillTabs
           tabs={LENS_TABS}
           activeTab={lens}
@@ -39,6 +44,7 @@ export default function ValidatorPage() {
       {lens === "operator" && <OperatorLens />}
       {lens === "capital" && <CapitalLens />}
       {lens === "governance" && <GovernanceLens />}
+      <PageFaq items={VALIDATORS_FAQ} />
     </div>
   );
 }

@@ -8,6 +8,8 @@ import {
   VaultsLeaderboards,
 } from "@/components/explorer/vault";
 import { SectionHead } from "@/components/dashboard/SectionHead";
+import { PageFaq } from "@/components/common";
+import { VAULTS_FAQ } from "@/lib/page-faqs";
 import { useVaultsDirectory } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 
 /**
@@ -46,6 +48,7 @@ export default function VaultsPage() {
           <VaultsLeaderboards directory={directory} />
         </div>
       </section>
+      <PageFaq items={VAULTS_FAQ} />
     </div>
   );
 }

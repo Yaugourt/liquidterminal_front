@@ -92,6 +92,7 @@ export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
   return (
     <PageHeader
       title="Vaults"
+      titleQualifier="on Hyperliquid"
       description={description}
       actions={
         <>
