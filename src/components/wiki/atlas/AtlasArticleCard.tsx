@@ -7,6 +7,7 @@ import { timeAgo } from "@/lib/formatters/dateFormatting";
 import type { EducationalResource } from "@/services/wiki/types";
 import { trackResourceOpened } from "@/lib/analytics";
 import { TypeBadge, SaveToListButton, detectContentType } from "../primitives";
+import { FaviconTile } from "../library/FaviconTile";
 
 interface AtlasArticleCardProps {
   resource: EducationalResource;
@@ -20,6 +21,21 @@ function hostnameOf(url: string): string {
   }
 }
 
+/** The @handle of an X/Twitter post URL, for an author-avatar fallback visual. */
+function xHandleOf(url: string): string | null {
+  try {
+    const { hostname, pathname } = new URL(url);
+    if (!/(^|\.)(x|twitter)\.com$/.test(hostname)) return null;
+    const seg = pathname.split("/").filter(Boolean)[0];
+    if (!seg || ["i", "intent", "home", "search", "hashtag", "explore"].includes(seg.toLowerCase())) {
+      return null;
+    }
+    return seg;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Atlas article card: TypeBadge (no monogram tile), title, one-line
  * description, "domain · age" meta, and a persistent SaveToListButton with
@@ -30,6 +46,9 @@ export const AtlasArticleCard = memo(function AtlasArticleCard({ resource }: Atl
   const hostname = hostnameOf(resource.url);
   const title = preview?.title || hostname;
   const [imgOk, setImgOk] = useState(true);
+  const [avatarOk, setAvatarOk] = useState(true);
+  const xHandle = xHandleOf(resource.url);
+  const avatarSrc = xHandle ? `https://unavatar.io/twitter/${xHandle}` : null;
 
   return (
     <div className="group relative flex flex-col gap-2 bg-surface p-3.5 transition-colors hover:bg-surface-2/60">
@@ -49,7 +68,7 @@ export const AtlasArticleCard = memo(function AtlasArticleCard({ resource }: Atl
         onClick={() => trackResourceOpened(detectContentType(resource.url))}
         className="flex min-w-0 flex-col gap-1.5"
       >
-        {preview?.image && imgOk && (
+        {preview?.image && imgOk ? (
           <span className="relative mb-0.5 block aspect-[16/9] w-full overflow-hidden rounded-md border border-border-subtle bg-surface-2">
             <Image
               src={preview.image}
@@ -60,6 +79,22 @@ export const AtlasArticleCard = memo(function AtlasArticleCard({ resource }: Atl
               onError={() => setImgOk(false)}
               unoptimized
             />
+          </span>
+        ) : (
+          <span className="relative mb-0.5 flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-md border border-border-subtle bg-surface-2">
+            {avatarSrc && avatarOk ? (
+              <Image
+                src={avatarSrc}
+                alt=""
+                width={52}
+                height={52}
+                className="rounded-full object-cover"
+                onError={() => setAvatarOk(false)}
+                unoptimized
+              />
+            ) : (
+              <FaviconTile favicon={preview?.favicon} hostname={hostname} size={44} />
+            )}
           </span>
         )}
         <h3 className="text-[13px] font-semibold leading-snug text-text-primary transition-colors group-hover:text-brand">
