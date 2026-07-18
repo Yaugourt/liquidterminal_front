@@ -9,7 +9,8 @@ import {
   ActiveUsersPreview,
   TrackerStatsBar
 } from "@/components/market/tracker/home";
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
+import { TRACKER_FAQ } from "@/lib/page-faqs";
 
 /**
  * Home page du Tracker - Accessible publiquement
@@ -26,6 +27,7 @@ export default function TrackerHome() {
     <div className="space-y-8">
       <PageHeader
         title="Wallet Tracker"
+        titleQualifier="for Hyperliquid"
         description="Track wallets across Hyperliquid — top traders, public lists, most active users, and your personal watchlist."
       />
 
@@ -43,6 +45,7 @@ export default function TrackerHome() {
         <PublicListsPreview />
         <TrackedWalletsPreview />
       </div>
+      <PageFaq items={TRACKER_FAQ} />
     </div>
   );
 }

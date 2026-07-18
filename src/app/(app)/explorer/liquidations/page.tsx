@@ -1,13 +1,15 @@
 import React from "react";
 import { LiquidationsStatsCard, LiquidationsSection, LiquidationsChartSection, LiquidationsProvider } from "@/components/explorer/liquidation";
 import { Card } from "@/components/ui/card";
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
+import { LIQUIDATIONS_FAQ } from "@/lib/page-faqs";
 
 export default function LiquidationsPage() {
   return (
     <LiquidationsProvider>
       <PageHeader
         title="Liquidations"
+        titleQualifier="on Hyperliquid"
         description="Liquidation events on Hyperliquid — aggregate stats, charts, and a real-time feed of forced position closures."
       />
 
@@ -23,6 +25,7 @@ export default function LiquidationsPage() {
       <Card>
         <LiquidationsSection />
       </Card>
+      <PageFaq items={LIQUIDATIONS_FAQ} />
     </LiquidationsProvider>
   );
 }

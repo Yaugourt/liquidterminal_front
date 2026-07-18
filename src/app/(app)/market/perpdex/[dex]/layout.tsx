@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { generateMetadata as buildMetadata, decodeEntityParam } from "@/lib/seo";
+import { JsonLd, breadcrumbSchema } from "@/components/JsonLd";
 
 export async function generateMetadata({
   params,
@@ -16,10 +17,26 @@ export async function generateMetadata({
   });
 }
 
-export default function PerpDexDetailLayout({
+export default async function PerpDexDetailLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ dex: string }>;
 }) {
-  return children;
+  const { dex } = await params;
+  const name = decodeEntityParam(dex);
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Liquid Terminal", path: "" },
+          { name: "Market", path: "/market" },
+          { name: "Perp DEXs", path: "/market/perpdex" },
+          { name, path: `/market/perpdex/${encodeURIComponent(name)}` },
+        ])}
+      />
+      {children}
+    </>
+  );
 }

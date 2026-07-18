@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { generateMetadata as buildMetadata } from "@/lib/seo";
 import { env } from "@/lib/env";
+import { JsonLd, breadcrumbSchema } from "@/components/JsonLd";
 
 interface ApiProject {
   title?: string;
@@ -55,10 +56,26 @@ export async function generateMetadata({
   });
 }
 
-export default function ProjectDetailLayout({
+export default async function ProjectDetailLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ id: string }>;
 }) {
-  return children;
+  const { id } = await params;
+  // Same URL as generateMetadata: Next dedupes the fetch within the render.
+  const project = /^\d+$/.test(id) ? await fetchProjectMeta(id) : null;
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Liquid Terminal", path: "" },
+          { name: "Ecosystem projects", path: "/ecosystem/project" },
+          { name: project?.title ?? `Project ${id}`, path: `/ecosystem/project/${id}` },
+        ])}
+      />
+      {children}
+    </>
+  );
 }

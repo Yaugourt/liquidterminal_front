@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader } from "@/components/common";
+import { PageHeader, PageFaq } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
   HypePricePill,
@@ -13,6 +13,7 @@ import {
   BurnCard,
   HypeStakingCard,
 } from "@/components/hype";
+import { HYPE_FAQ } from "@/lib/page-faqs";
 
 /**
  * HYPE — everything about Hyperliquid's native asset on one page.
@@ -32,6 +33,7 @@ export default function HypePage() {
     <div className="space-y-8">
       <PageHeader
         title="HYPE"
+        titleQualifier="· the Hyperliquid token"
         description="The native asset of Hyperliquid — supply and scarcity, the Assistance Fund buyback flywheel, protocol revenue, burn and staking."
         actions={<HypePricePill />}
       />
@@ -81,6 +83,7 @@ export default function HypePage() {
         <SectionHead title="Staking &amp; Security" subtitle="HYPE locked in proof-of-stake" />
         <HypeStakingCard />
       </section>
+      <PageFaq items={HYPE_FAQ} />
     </div>
   );
 }

@@ -29,6 +29,47 @@ const NAV_LINKS = [
   { label: "Wiki", href: "/wiki" },
 ] as const;
 
+/**
+ * Footer sitemap. The landing is the most linked page of the site, so every
+ * section gets a crawlable link from it — several pages (perps, auctions,
+ * predictions) had no inbound link at all once they left the sidebar.
+ */
+const FOOTER_COLUMNS = [
+  {
+    title: "Markets",
+    links: [
+      { label: "Market overview", href: "/market" },
+      { label: "Spot market", href: "/market/spot" },
+      { label: "Perpetuals", href: "/market/perp" },
+      { label: "Perp DEXs (HIP-3)", href: "/market/perpdex" },
+      { label: "Prediction markets", href: "/market/hip4" },
+      { label: "Builder codes", href: "/market/builders" },
+    ],
+  },
+  {
+    title: "Explorer",
+    links: [
+      { label: "Chain explorer", href: "/explorer" },
+      { label: "Vaults", href: "/explorer/vaults" },
+      { label: "Validators", href: "/explorer/validator" },
+      { label: "Liquidations", href: "/explorer/liquidations" },
+      { label: "Priority fees", href: "/explorer/priority-fees" },
+      { label: "Wallet tracker", href: "/market/tracker" },
+    ],
+  },
+  {
+    title: "Learn & build",
+    links: [
+      { label: "Wiki", href: "/wiki" },
+      { label: "HYPE token", href: "/hype" },
+      { label: "Ticker auctions", href: "/market/spot/auction" },
+      { label: "Deploy auctions", href: "/market/perp/auction" },
+      { label: "Ecosystem projects", href: "/ecosystem/project" },
+      { label: "Public goods", href: "/ecosystem/publicgoods" },
+    ],
+  },
+] as const;
+
 const SEARCH_CHIPS = [
   { label: "Token", href: "/market/spot" },
   { label: "Wallet", href: "/market/tracker" },
@@ -489,8 +530,8 @@ function CharterAndBot() {
 function Footer() {
   return (
     <footer className="border-t border-border-subtle">
-      <div className="max-w-[1280px] mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-3 gap-8">
-        <div className="space-y-3">
+      <div className="max-w-[1280px] mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="space-y-3 lg:col-span-1">
           <div className="flex items-center gap-2">
             <LogoMark size={16} />
             <span className="font-inter text-[13px] font-semibold tracking-tight">Liquid Terminal</span>
@@ -500,16 +541,18 @@ function Footer() {
             Open source. Free API. Built for Hyperliquid.
           </p>
         </div>
-        <div className="space-y-2.5">
-          <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Terminal</div>
-          <div className="flex flex-col gap-2 text-[12px] text-text-secondary">
-            {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} className="inline-block py-1 hover:text-text-primary">
-                {link.label}
-              </Link>
-            ))}
+        {FOOTER_COLUMNS.map((column) => (
+          <div key={column.title} className="space-y-2.5">
+            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">{column.title}</div>
+            <div className="flex flex-col gap-2 text-[12px] text-text-secondary">
+              {column.links.map((link) => (
+                <Link key={link.href} href={link.href} className="inline-block py-1 hover:text-text-primary">
+                  {link.label}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
         <div className="space-y-2.5">
           <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Open</div>
           <div className="flex flex-col gap-2 text-[12px] text-text-secondary">

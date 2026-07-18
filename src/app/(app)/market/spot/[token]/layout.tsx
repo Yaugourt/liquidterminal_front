@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { generateMetadata as buildMetadata, decodeEntityParam } from "@/lib/seo";
+import { JsonLd, breadcrumbSchema } from "@/components/JsonLd";
 
 export async function generateMetadata({
   params,
@@ -16,10 +17,26 @@ export async function generateMetadata({
   });
 }
 
-export default function SpotTokenLayout({
+export default async function SpotTokenLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ token: string }>;
 }) {
-  return children;
+  const { token } = await params;
+  const name = decodeEntityParam(token);
+  return (
+    <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Liquid Terminal", path: "" },
+          { name: "Market", path: "/market" },
+          { name: "Spot", path: "/market/spot" },
+          { name, path: `/market/spot/${encodeURIComponent(name)}` },
+        ])}
+      />
+      {children}
+    </>
+  );
 }

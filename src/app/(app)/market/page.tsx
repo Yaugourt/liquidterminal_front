@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo } from "react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader, KpiRibbon, KpiCell } from "@/components/common";
+import { PageHeader, KpiRibbon, KpiCell, PageFaq } from "@/components/common";
+import { MARKET_FAQ } from "@/lib/page-faqs";
 import { compactUsd, compactCount, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
@@ -116,6 +117,7 @@ export default function MarketHubPage() {
     <div className="space-y-4">
       <PageHeader
         title="Market"
+        titleQualifier="· everything traded on Hyperliquid"
         description="Everything traded on Hyperliquid — spot, perps, builder DEXs and predictions, one door in."
       />
 
@@ -148,6 +150,8 @@ export default function MarketHubPage() {
           <FundingWatchCard markets={perpMarkets} />
         </aside>
       </div>
+
+      <PageFaq items={MARKET_FAQ} />
     </div>
   );
 }
