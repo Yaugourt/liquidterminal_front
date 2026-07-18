@@ -148,7 +148,7 @@ export default function PendingReviewPage() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-brand">•</span>
-              Verify the project integrates with HyperLiquid
+              Verify the project integrates with Hyperliquid
             </li>
             <li className="flex items-start gap-2">
               <span className="text-brand">•</span>
@@ -156,7 +156,7 @@ export default function PendingReviewPage() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-brand">•</span>
-              Confirm the project benefits the HyperLiquid ecosystem
+              Confirm the project benefits the Hyperliquid ecosystem
             </li>
             <li className="flex items-start gap-2">
               <span className="text-brand">•</span>

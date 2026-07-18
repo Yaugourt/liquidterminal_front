@@ -10,6 +10,9 @@ const nextConfig = {
             // /market has no page of its own but is linked from the landing
             // header/footer and the Cmd+K palette: land on the spot overview.
             // /market is a real page now (the Market hub) — no redirect.
+            // /ecosystem has no page of its own; it was the (404) canonical
+            // target of the project directory for months, so keep a redirect.
+            { source: '/ecosystem', destination: '/ecosystem/project', permanent: true },
             { source: '/docs/hip4', destination: '/hip4/home', permanent: true },
             { source: '/docs/hip4/:path*', destination: '/hip4/:path*', permanent: true },
             // The wiki landing IS the introduction chapter now; keep the old

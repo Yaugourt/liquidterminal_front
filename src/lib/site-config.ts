@@ -4,7 +4,7 @@
 export const SITE_CONFIG = {
   url: "https://liquidterminal.xyz",
   name: "Liquid Terminal",
-  description: "Comprehensive data processing platform for the HyperLiquid ecosystem",
+  description: "Comprehensive data processing platform for the Hyperliquid ecosystem",
   twitter: "@liquidterminal",
   github: "https://github.com/Liquid-Terminal",
   discord: "#", // TODO: Add real Discord link

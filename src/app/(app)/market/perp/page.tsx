@@ -23,7 +23,7 @@ export default function MarketPerp() {
     >
       <PageHeader
         title="Perpetuals"
-        description="Perpetual markets on HyperLiquid — global stats, open interest, funding rates, and the full perp directory."
+        description="Perpetual markets on Hyperliquid — global stats, open interest, funding rates, and the full perp directory."
       />
 
       {/* KPI strip */}

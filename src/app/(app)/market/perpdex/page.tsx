@@ -30,7 +30,7 @@ export default function PerpDexsPage() {
       {/* Page header */}
       <PageHeader
         title="Perp DEX"
-        description="Builder-deployed perp DEXs on HyperLiquid — ecosystem stats, top venues, HIP-3 markets, and auction pairs."
+        description="Builder-deployed perp DEXs on Hyperliquid — ecosystem stats, top venues, HIP-3 markets, and auction pairs."
       />
 
       {/* Stats strip */}

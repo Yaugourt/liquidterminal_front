@@ -52,7 +52,7 @@ export default function MarketBuildersPage() {
       {/* Page header */}
       <PageHeader
         title="Builders"
-        description="Referral builders on HyperLiquid — global activity, top builders by volume, and the full directory."
+        description="Referral builders on Hyperliquid — global activity, top builders by volume, and the full directory."
         actions={
           <TimeframeTabs
             options={TIMEFRAMES}

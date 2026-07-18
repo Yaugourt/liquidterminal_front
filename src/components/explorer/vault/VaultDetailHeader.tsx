@@ -102,7 +102,7 @@ export function VaultDetailHeader({
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-brand transition-colors"
-                  title="Open on HyperLiquid"
+                  title="Open on Hyperliquid"
                 >
                   <ExternalLink className="w-3 h-3" />
                 </a>
@@ -147,7 +147,7 @@ export function VaultDetailHeader({
                   "noopener,noreferrer"
                 )
               }
-              title="Withdraw on HyperLiquid"
+              title="Withdraw on Hyperliquid"
             >
               <ArrowUpFromLine className="h-3 w-3" />
               Withdraw
@@ -164,7 +164,7 @@ export function VaultDetailHeader({
                   "noopener,noreferrer"
                 )
               }
-              title={isClosed ? "Vault is closed" : "Deposit on HyperLiquid"}
+              title={isClosed ? "Vault is closed" : "Deposit on Hyperliquid"}
             >
               <ArrowDownToLine className="h-3 w-3" />
               Deposit

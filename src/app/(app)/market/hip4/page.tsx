@@ -96,7 +96,7 @@ export default function MarketHip4Page() {
     >
       <PageHeader
         title="HIP-4 Prediction Markets"
-        description="Live prediction markets on HyperLiquid — outcome probabilities grouped by question, volume, open interest, and settlements."
+        description="Live prediction markets on Hyperliquid — outcome probabilities grouped by question, volume, open interest, and settlements."
         actions={
           <div className="flex items-center gap-2">
             <Hip4StalenessChip updatedAt={questions.dataUpdatedAt} />

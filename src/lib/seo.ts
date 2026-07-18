@@ -3,6 +3,15 @@ import { SITE_CONFIG } from "@/lib/site-config";
 
 const siteUrl = SITE_CONFIG.url;
 
+/** Decode a dynamic route param for titles/canonicals (defensive length cap). */
+export function decodeEntityParam(raw: string): string {
+  try {
+    return decodeURIComponent(raw).slice(0, 48).trim();
+  } catch {
+    return raw.slice(0, 48).trim();
+  }
+}
+
 interface SEOProps {
   title: string;
   description: string;
@@ -24,7 +33,10 @@ export function generateMetadata({
   const fullTitle = `${title} | Liquid Terminal`;
 
   return {
-    title,
+    // Absolute on purpose: the root layout's `%s | Liquid Terminal` template
+    // does not reach grandchildren of a layout that sets a string title (the
+    // whole /market section rendered brandless, /market itself doubled).
+    title: { absolute: fullTitle },
     description,
     keywords,
     alternates: {
@@ -66,8 +78,8 @@ export function generateMetadata({
 // Metadata presets pour chaque section
 export const seoConfig = {
   home: {
-    title: "Liquid Terminal - Complete HyperLiquid Explorer & Analytics Platform",
-    description: "Explore HyperLiquid ecosystem with the most comprehensive free terminal. Track on-chain data, market analytics, validators, vaults & DeFi activity on HyperCore & HyperEVM.",
+    title: "Hyperliquid Analytics, Explorer & Wiki",
+    description: "Explore Hyperliquid ecosystem with the most comprehensive free terminal. Track on-chain data, market analytics, validators, vaults & DeFi activity on HyperCore & HyperEVM.",
     keywords: [
       "hyperliquid explorer",
       "hyperliquid analytics", 
@@ -81,8 +93,8 @@ export const seoConfig = {
   },
   
   explorer: {
-    title: "HyperLiquid Explorer - Complete On-Chain Data Analysis | Liquid Terminal",
-    description: "Explore HyperLiquid blockchain data: transactions, blocks, addresses, validators & vaults. Real-time on-chain analytics for HyperCore with HyperEVM coming soon.",
+    title: "Hyperliquid Explorer - Complete On-Chain Data Analysis",
+    description: "Explore Hyperliquid blockchain data: transactions, blocks, addresses, validators & vaults. Real-time on-chain analytics for HyperCore with HyperEVM coming soon.",
     keywords: [
       "hyperliquid explorer",
       "hyperliquid blockchain",
@@ -97,8 +109,8 @@ export const seoConfig = {
   },
   
   market: {
-    title: "HyperLiquid Market Analytics - Spot, Perpetuals & DeFi Data | Liquid Terminal",
-    description: "Comprehensive HyperLiquid market analytics: spot trading, perpetual futures, auction data, trader tracking & DeFi metrics. Free real-time dashboard.",
+    title: "Hyperliquid Market Analytics - Spot, Perpetuals & DeFi Data",
+    description: "Comprehensive Hyperliquid market analytics: spot trading, perpetual futures, auction data, trader tracking & DeFi metrics. Free real-time dashboard.",
     keywords: [
       "hyperliquid market data",
       "hyperliquid analytics",
@@ -113,25 +125,27 @@ export const seoConfig = {
   },
   
   ecosystem: {
-    title: "Liquid Ecosystem - HyperLiquid Projects Directory",
-    description: "Comprehensive directory of HyperLiquid ecosystem projects. Discover dApps, tools, and services built on HyperCore and HyperEVM.",
-    keywords: ["HyperLiquid ecosystem", "dApps", "crypto projects", "DeFi tools", "blockchain apps"],
-    path: "/ecosystem",
+    title: "Liquid Ecosystem - Hyperliquid Projects Directory",
+    description: "Comprehensive directory of Hyperliquid ecosystem projects. Discover dApps, tools, and services built on HyperCore and HyperEVM.",
+    keywords: ["Hyperliquid ecosystem", "dApps", "crypto projects", "DeFi tools", "blockchain apps"],
+    // The bare /ecosystem route does not exist (404): the directory lives at
+    // /ecosystem/project, and the canonical must say so.
+    path: "/ecosystem/project",
     image: "/og/ecosystem.png",
   },
   
   publicGoods: {
-    title: "Public Goods Initiative - Support Open Source on HyperLiquid",
-    description: "Discover and support open-source projects building public goods for the HyperLiquid ecosystem. Funded by validator fees without community donations. Curated by Ryzed, Imad, and Kirby.",
-    keywords: ["public goods", "open source", "grants", "HyperLiquid funding", "crypto grants", "validator funding"],
-    path: "/ecosystem/public-goods",
+    title: "Public Goods Initiative - Support Open Source on Hyperliquid",
+    description: "Discover and support open-source projects building public goods for the Hyperliquid ecosystem. Funded by validator fees without community donations. Curated by Ryzed, Imad, and Kirby.",
+    keywords: ["public goods", "open source", "grants", "Hyperliquid funding", "crypto grants", "validator funding"],
+    path: "/ecosystem/publicgoods",
     image: "/og/ecosystem.png",
   },
   
   wiki: {
-    title: "Liquid Wiki - HyperLiquid Knowledge Base",
-    description: "Complete knowledge base for HyperLiquid ecosystem. Guides, tutorials, documentation, and curated resources for builders and users.",
-    keywords: ["HyperLiquid wiki", "crypto guides", "blockchain tutorials", "documentation", "learning resources"],
+    title: "Liquid Wiki - Hyperliquid Knowledge Base",
+    description: "Complete knowledge base for Hyperliquid ecosystem. Guides, tutorials, documentation, and curated resources for builders and users.",
+    keywords: ["Hyperliquid wiki", "crypto guides", "blockchain tutorials", "documentation", "learning resources"],
     path: "/wiki",
     image: "/og/wiki.png",
   },
@@ -153,61 +167,61 @@ export const seoConfig = {
   
   tracker: {
     title: "Liquid Tracker - Wallet & Portfolio Tracker",
-    description: "Track your HyperLiquid wallets and portfolios in real-time. Organize wallets in lists, import via CSV, monitor performance. Free and premium tiers.",
-    keywords: ["wallet tracker", "portfolio tracker", "crypto wallet", "multi-wallet", "HyperLiquid tracker"],
+    description: "Track your Hyperliquid wallets and portfolios in real-time. Organize wallets in lists, import via CSV, monitor performance. Free and premium tiers.",
+    keywords: ["wallet tracker", "portfolio tracker", "crypto wallet", "multi-wallet", "Hyperliquid tracker"],
     path: "/market/tracker",
     image: "/og/market.png",
   },
   
   api: {
-    title: "Liquid API - HyperLiquid Data API",
-    description: "Access HyperLiquid data via REST API. Free tier available. Real-time market data, blockchain info, and ecosystem metrics for developers.",
-    keywords: ["crypto API", "blockchain API", "HyperLiquid API", "market data API", "REST API"],
+    title: "Liquid API - Hyperliquid Data API",
+    description: "Access Hyperliquid data via REST API. Free tier available. Real-time market data, blockchain info, and ecosystem metrics for developers.",
+    keywords: ["crypto API", "blockchain API", "Hyperliquid API", "market data API", "REST API"],
     path: "/products/api",
   },
   
   rpc: {
-    title: "Liquid RPC - HyperLiquid RPC Node Service",
-    description: "Fast and reliable RPC nodes for HyperLiquid. Connect your dApps and tools with low latency and high availability. Free and paid tiers.",
-    keywords: ["RPC node", "blockchain node", "HyperLiquid RPC", "crypto infrastructure", "web3 node"],
+    title: "Liquid RPC - Hyperliquid RPC Node Service",
+    description: "Fast and reliable RPC nodes for Hyperliquid. Connect your dApps and tools with low latency and high availability. Free and paid tiers.",
+    keywords: ["RPC node", "blockchain node", "Hyperliquid RPC", "crypto infrastructure", "web3 node"],
     path: "/products/rpc",
   },
   
   publicLists: {
     title: "Public Wallet Lists - Community Curated Lists",
-    description: "Browse and copy public wallet lists shared by the HyperLiquid community. Discover interesting addresses and follow top traders.",
+    description: "Browse and copy public wallet lists shared by the Hyperliquid community. Discover interesting addresses and follow top traders.",
     keywords: ["wallet lists", "public lists", "trader lists", "crypto addresses", "portfolio sharing"],
     path: "/market/tracker/public-lists",
     image: "/og/market.png",
   },
 
   spot: {
-    title: "Spot Market - HyperLiquid Token Trading",
-    description: "Real-time spot trading data for HyperLiquid tokens. Track prices, volume, liquidity, and market metrics.",
-    keywords: ["spot trading", "token prices", "HyperLiquid tokens", "crypto market", "trading volume"],
+    title: "Hyperliquid Spot Market - Live Token Prices & Volume",
+    description: "Real-time Hyperliquid spot market data: token prices, 24h volume, stablecoin liquidity, marketcaps and deploy auctions. Free, no account needed.",
+    keywords: ["hyperliquid spot market", "spot trading", "token prices", "Hyperliquid tokens", "trading volume"],
     path: "/market/spot",
     image: "/og/market.png",
   },
 
   perp: {
-    title: "Perpetuals - HyperLiquid Futures Trading",
-    description: "Track HyperLiquid perpetual futures markets. Real-time funding rates, open interest, liquidations, and trading volumes.",
-    keywords: ["perpetual futures", "perps", "funding rates", "open interest", "crypto derivatives"],
+    title: "Hyperliquid Perpetuals - Funding Rates, Open Interest & Volume",
+    description: "Track every Hyperliquid perpetual market: real-time funding rates, open interest, liquidations, and trading volumes across 170+ pairs.",
+    keywords: ["hyperliquid perpetuals", "perpetual futures", "funding rates", "open interest", "crypto derivatives"],
     path: "/market/perp",
     image: "/og/market.png",
   },
 
   spotAuction: {
-    title: "Spot Auctions - HyperLiquid Token Auctions",
-    description: "Monitor ongoing and upcoming spot token auctions on HyperLiquid. Participate in fair launches and token distributions.",
-    keywords: ["token auctions", "fair launch", "HyperLiquid auctions", "token distribution", "IDO", "spot auction"],
+    title: "Spot Auctions - Hyperliquid Token Auctions",
+    description: "Monitor ongoing and upcoming spot token auctions on Hyperliquid. Participate in fair launches and token distributions.",
+    keywords: ["token auctions", "fair launch", "Hyperliquid auctions", "token distribution", "IDO", "spot auction"],
     path: "/market/spot/auction",
     image: "/og/market.png",
   },
   perpAuction: {
-    title: "Perpetual Auctions - HyperLiquid DEXs",
-    description: "Monitor HyperLiquid Perpetual DEX auctions. Track new perpetual listings and participate in the ecosystem.",
-    keywords: ["perp auctions", "HyperLiquid perps", "new listings", "DEX auctions"],
+    title: "Perpetual Auctions - Hyperliquid DEXs",
+    description: "Monitor Hyperliquid Perpetual DEX auctions. Track new perpetual listings and participate in the ecosystem.",
+    keywords: ["perp auctions", "Hyperliquid perps", "new listings", "DEX auctions"],
     path: "/market/perp/auction",
     image: "/og/market.png",
   },
@@ -215,8 +229,8 @@ export const seoConfig = {
   marketBuilders: {
     title: "Builders - Referral & Fee Stats",
     description:
-      "Explore HyperLiquid referral builders: global volume and fee stats, top builders by activity, and per-builder detail with top users.",
-    keywords: ["HyperLiquid builders", "referral fees", "builder fees", "DEX builders", "indexer"],
+      "Explore Hyperliquid referral builders: global volume and fee stats, top builders by activity, and per-builder detail with top users.",
+    keywords: ["Hyperliquid builders", "referral fees", "builder fees", "DEX builders", "indexer"],
     path: "/market/builders",
     image: "/og/market.png",
   },
@@ -224,42 +238,42 @@ export const seoConfig = {
   marketHip4: {
     title: "HIP-4 - Prediction Markets",
     description:
-      "Live HIP-4 prediction markets on HyperLiquid — outcome probabilities, trading volume, open interest, fills, and market resolutions.",
-    keywords: ["HIP-4", "prediction markets", "HyperLiquid outcomes", "binary markets", "DEX predictions"],
+      "Live HIP-4 prediction markets on Hyperliquid — outcome probabilities, trading volume, open interest, fills, and market resolutions.",
+    keywords: ["HIP-4", "prediction markets", "Hyperliquid outcomes", "binary markets", "DEX predictions"],
     path: "/market/hip4",
     image: "/og/market.png",
   },
 
   dashboard: {
-    title: "Dashboard - Your HyperLiquid Overview",
-    description: "Personalized dashboard for your HyperLiquid activity. Track your portfolio, positions, transactions, and more.",
-    keywords: ["crypto dashboard", "portfolio overview", "trading dashboard", "HyperLiquid account"],
+    title: "Dashboard - Your Hyperliquid Overview",
+    description: "Personalized dashboard for your Hyperliquid activity. Track your portfolio, positions, transactions, and more.",
+    keywords: ["crypto dashboard", "portfolio overview", "trading dashboard", "Hyperliquid account"],
     path: "/dashboard",
   },
 
   publicGoodsPage: {
-    title: "Public Goods - Open Source Projects on HyperLiquid",
-    description: "Browse open-source public goods projects building on HyperLiquid. Funded by validator fees through EnigmaValidator. Curated by Ryzed (Hyperswap), Imad (Enigma), and Kirby (HypurrCo).",
-    keywords: ["public goods", "open source", "HyperLiquid grants", "validator funding", "community projects", "EnigmaValidator"],
+    title: "Public Goods - Open Source Projects on Hyperliquid",
+    description: "Browse open-source public goods projects building on Hyperliquid. Funded by validator fees through EnigmaValidator. Curated by Ryzed (Hyperswap), Imad (Enigma), and Kirby (HypurrCo).",
+    keywords: ["public goods", "open source", "Hyperliquid grants", "validator funding", "community projects", "EnigmaValidator"],
     path: "/ecosystem/publicgoods",
     image: "/og/ecosystem.png",
   },
 
   vaults: {
-    title: "Vaults Explorer - HyperLiquid Vaults",
-    description: "Explore HyperLiquid vaults and their performance. Track TVL, returns, strategies, and vault metrics.",
-    keywords: ["crypto vaults", "HyperLiquid vaults", "TVL", "vault strategies", "DeFi vaults"],
+    title: "Vaults Explorer - Hyperliquid Vaults",
+    description: "Explore Hyperliquid vaults and their performance. Track TVL, returns, strategies, and vault metrics.",
+    keywords: ["crypto vaults", "Hyperliquid vaults", "TVL", "vault strategies", "DeFi vaults"],
     path: "/explorer/vaults",
     image: "/og/explorer.png",
   },
 
   priorityFees: {
-    title: "Priority Fees - HyperLiquid Explorer",
+    title: "Priority Fees - Hyperliquid Explorer",
     description:
-      "Track HyperLiquid priority gas fees, HIP-3 gossip auction slots, leaderboards, and recent fills with priority gas.",
+      "Track Hyperliquid priority gas fees, HIP-3 gossip auction slots, leaderboards, and recent fills with priority gas.",
     keywords: [
       "priority fees",
-      "HyperLiquid",
+      "Hyperliquid",
       "priority gas",
       "HIP-3",
       "gossip auctions",
@@ -270,17 +284,17 @@ export const seoConfig = {
   },
 
   validators: {
-    title: "Validators - HyperLiquid Network Validators",
-    description: "Monitor HyperLiquid validators, staking stats, commission rates, and network security metrics.",
-    keywords: ["validators", "staking", "HyperLiquid validators", "proof of stake", "network security"],
+    title: "Validators - Hyperliquid Network Validators",
+    description: "Monitor Hyperliquid validators, staking stats, commission rates, and network security metrics.",
+    keywords: ["validators", "staking", "Hyperliquid validators", "proof of stake", "network security"],
     path: "/explorer/validator",
     image: "/og/explorer.png",
   },
 
   liquidations: {
-    title: "Liquidations - HyperLiquid Liquidation Events",
-    description: "Track HyperLiquid liquidation events in real-time. Monitor size, notional value, and market impact of liquidations.",
-    keywords: ["liquidations", "HyperLiquid liquidations", "trading liquidations", "perp liquidations", "market data"],
+    title: "Liquidations - Hyperliquid Liquidation Events",
+    description: "Track Hyperliquid liquidation events in real-time. Monitor size, notional value, and market impact of liquidations.",
+    keywords: ["liquidations", "Hyperliquid liquidations", "trading liquidations", "perp liquidations", "market data"],
     path: "/explorer/liquidations",
     image: "/og/explorer.png",
   },
