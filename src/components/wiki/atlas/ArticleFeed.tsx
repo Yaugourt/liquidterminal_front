@@ -7,7 +7,7 @@ import { PillTabs } from "@/components/ui/pill-tabs";
 import { useWikiLibrary } from "@/services/wiki";
 import type { EducationalResource } from "@/services/wiki/types";
 import { CONTENT_TYPE_META, CONTENT_TYPE_ORDER, detectContentType, type ContentType } from "../primitives";
-import { ArticleCard } from "../library/ArticleCard";
+import { ArticleCard, xHandleOf } from "../library/ArticleCard";
 import { AtlasArticleTable } from "./AtlasArticleTable";
 
 const PAGE_SIZE = 24;
@@ -149,7 +149,9 @@ export function ArticleFeed({
             <ArticleCard
               key={r.id}
               resource={r}
-              variant={detectContentType(r.url) === "thread" ? "tweet" : "grid"}
+              // Only real tweets (author handle in the URL) get the tweet card:
+              // x.com/i/spaces/… are recorded episodes, not posts.
+              variant={xHandleOf(r.url) ? "tweet" : "grid"}
             />
           ))}
         </div>
