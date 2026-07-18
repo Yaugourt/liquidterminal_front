@@ -146,7 +146,11 @@ export function ArticleFeed({
       ) : (
         <div className="grid grid-cols-1 gap-3 p-3.5 sm:grid-cols-2 2xl:grid-cols-3">
           {shown.map((r) => (
-            <ArticleCard key={r.id} resource={r} variant="grid" />
+            <ArticleCard
+              key={r.id}
+              resource={r}
+              variant={detectContentType(r.url) === "thread" ? "tweet" : "grid"}
+            />
           ))}
         </div>
       )}

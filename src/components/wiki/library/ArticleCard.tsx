@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Flag, Plus, Trash2 } from "lucide-react";
+import { ExternalLink, Flag, MessageSquare, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { memo, useCallback, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -22,8 +22,9 @@ interface ArticleCardProps {
   /**
    * "grid": vertical card with a 16/9 hero (read list pages).
    * "compact": horizontal row with a 64px thumb (library Cards view).
+   * "tweet": X/Twitter posts rendered author-avatar + text (no hero image).
    */
-  variant?: "grid" | "compact";
+  variant?: "grid" | "compact" | "tweet";
 }
 
 /** Readable hostname for fallbacks: strips protocol and www. */
@@ -32,6 +33,21 @@ function hostnameOf(url: string): string {
     return new URL(url).hostname.replace(/^www\./, "");
   } catch {
     return url;
+  }
+}
+
+/** The @handle of an X/Twitter post URL, for tweet-style cards. */
+function xHandleOf(url: string): string | null {
+  try {
+    const { hostname, pathname } = new URL(url);
+    if (!/(^|\.)(x|twitter|nitter)\.(com|net)$/.test(hostname)) return null;
+    const seg = pathname.split("/").filter(Boolean)[0];
+    if (!seg || ["i", "intent", "home", "search", "hashtag", "explore"].includes(seg.toLowerCase())) {
+      return null;
+    }
+    return seg;
+  } catch {
+    return null;
   }
 }
 
@@ -48,6 +64,7 @@ export const ArticleCard = memo(function ArticleCard({
 }: ArticleCardProps) {
   const [imageError, setImageError] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const [showReadLists, setShowReadLists] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [listSearch, setListSearch] = useState("");
@@ -62,6 +79,14 @@ export const ArticleCard = memo(function ArticleCard({
   const title = preview?.title || hostname;
   const showHeroImage = !!preview?.image && !imageError;
   const primaryCategory = resource.categories[0]?.category.name;
+
+  // Tweet-style card: X/Twitter posts show the author avatar + text (no hero).
+  const xHandle = xHandleOf(resource.url);
+  const avatarSrc = xHandle ? `https://unavatar.io/twitter/${xHandle}` : null;
+  const hasColon = !!preview?.title && preview.title.includes(": ");
+  const authorName = hasColon ? preview!.title!.split(": ")[0].slice(0, 48) : xHandle ? `@${xHandle}` : title;
+  const tweetText =
+    preview?.description || (hasColon ? preview!.title!.split(": ").slice(1).join(": ") : preview?.title) || "";
 
   const handleAddToReadList = useCallback(async (readListId: number) => {
     try {
@@ -147,6 +172,69 @@ export const ArticleCard = memo(function ArticleCard({
       />
     </>
   );
+
+  if (variant === "tweet") {
+    return (
+      <Card interactive className="group relative flex h-full flex-col p-3.5">
+        <a
+          href={safeHref(resource.url)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-full flex-col gap-2.5"
+        >
+          <div className="flex items-center gap-2">
+            <span className="relative h-9 w-9 shrink-0 overflow-hidden rounded-full border border-border-subtle bg-surface-2">
+              {avatarSrc && !avatarError ? (
+                <Image
+                  src={avatarSrc}
+                  alt={authorName}
+                  fill
+                  className="object-cover"
+                  onError={() => setAvatarError(true)}
+                  unoptimized
+                />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center text-sm font-bold uppercase text-brand/40">
+                  {hostname.charAt(0)}
+                </span>
+              )}
+            </span>
+            <div className="flex min-w-0 flex-col">
+              <span className="truncate text-[13px] font-semibold leading-tight text-text-primary transition-colors group-hover:text-brand">
+                {authorName}
+              </span>
+              {xHandle && (
+                <span className="truncate text-[11px] leading-tight text-text-tertiary">@{xHandle}</span>
+              )}
+            </div>
+          </div>
+
+          {tweetText && (
+            <p className="line-clamp-5 whitespace-pre-line text-[13px] leading-relaxed text-text-secondary">
+              {tweetText}
+            </p>
+          )}
+
+          <div className="mt-auto flex items-center gap-1.5 border-t border-border-subtle pt-2.5 text-[11px] text-text-tertiary">
+            <MessageSquare className="h-3 w-3 text-brand" />
+            <span>X post</span>
+            {resource.createdAt && (
+              <>
+                <span>·</span>
+                <span className="mono">{timeAgo(resource.createdAt)}</span>
+              </>
+            )}
+          </div>
+        </a>
+
+        <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          {hoverActions}
+        </div>
+
+        {modals}
+      </Card>
+    );
+  }
 
   if (variant === "compact") {
     return (
