@@ -41,6 +41,9 @@ export default async function VaultDetailLayout({
           { name: `Vault ${address.slice(0, 8)}…`, path: `/explorer/vaults/${address}` },
         ])}
       />
+      {/* The visible h1 lives in VaultDetailHeader, which only renders once
+          the vault data has loaded client-side; the initial HTML had none. */}
+      <h1 className="sr-only">Hyperliquid vault {address}</h1>
       {children}
     </>
   );

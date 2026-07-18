@@ -75,6 +75,11 @@ export default async function ProjectDetailLayout({
           { name: project?.title ?? `Project ${id}`, path: `/ecosystem/project/${id}` },
         ])}
       />
+      {project?.title && (
+        // The visible header renders client-side once the project loads, so
+        // the served HTML carried no heading at all.
+        <h1 className="sr-only">{project.title} on Hyperliquid</h1>
+      )}
       {children}
     </>
   );

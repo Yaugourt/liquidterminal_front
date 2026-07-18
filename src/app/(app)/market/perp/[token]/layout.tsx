@@ -36,6 +36,9 @@ export default async function PerpMarketLayout({
           { name, path: `/market/perp/${encodeURIComponent(name)}` },
         ])}
       />
+      {/* See the spot token layout: the client trading view renders no
+          heading, so this is the page's only document outline anchor. */}
+      <h1 className="sr-only">{name} perpetual market on Hyperliquid</h1>
       {children}
     </>
   );

@@ -36,6 +36,7 @@ export default async function PerpDexDetailLayout({
           { name, path: `/market/perpdex/${encodeURIComponent(name)}` },
         ])}
       />
+      <h1 className="sr-only">{name} perp DEX on Hyperliquid (HIP-3)</h1>
       {children}
     </>
   );
