@@ -12,6 +12,9 @@ const nextConfig = {
             // /market is a real page now (the Market hub) — no redirect.
             { source: '/docs/hip4', destination: '/hip4/home', permanent: true },
             { source: '/docs/hip4/:path*', destination: '/hip4/:path*', permanent: true },
+            // The wiki landing IS the introduction chapter now; keep the old
+            // deep-link canonical by folding it back onto /wiki.
+            { source: '/wiki/learn/introduction', destination: '/wiki', permanent: true },
         ];
     },
     typescript: {
