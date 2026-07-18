@@ -89,7 +89,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
               ? `You have reached the limit of 25 wallets. Remove an existing wallet to add a new one.`
               : walletListName 
                 ? `Enter a wallet address to add it directly to the "${walletListName}" list.`
-                : `Enter your HyperLiquid wallet address and an optional name. (${wallets.length}/25 wallets)`
+                : `Enter your Hyperliquid wallet address and an optional name. (${wallets.length}/25 wallets)`
             }
           </DialogDescription>
         </DialogHeader>

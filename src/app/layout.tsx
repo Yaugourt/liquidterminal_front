@@ -24,6 +24,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_CONFIG.url),
+  // "./" resolves per-page: every route without its own generateMetadata gets
+  // a self-canonical (the home page had none at all before this).
+  alternates: { canonical: "./" },
   title: {
     default: "Liquid Terminal - Hyperliquid Analytics, Explorer & Wiki",
     template: "%s | Liquid Terminal"

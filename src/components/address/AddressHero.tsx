@@ -18,7 +18,7 @@ import { truncateAddress } from "@/lib/formatters/numberFormatting";
 
 interface AddressHeroProps {
   address: string;
-  /** External explorer URL (defaults to HyperLiquid address explorer). */
+  /** External explorer URL (defaults to Hyperliquid address explorer). */
   externalUrl?: string;
 }
 

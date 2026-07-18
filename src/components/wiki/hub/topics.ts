@@ -9,7 +9,7 @@ import type { EducationalCategory } from "@/services/wiki/types";
  * an unmatched name simply contributes no articles, it never breaks the page.
  */
 export const CHAPTER_CATEGORY_MAP: Record<string, string[]> = {
-  Introduction: ["HyperLiquid"],
+  Introduction: ["Hyperliquid"],
   HyperBFT: ["Validator"],
   HyperCore: ["HyperCore", "Order Book", "HyperCore Oracle", "Oracles"],
   HyperEVM: ["HyperEVM", "HyperEVM Block"],
@@ -19,7 +19,7 @@ export const CHAPTER_CATEGORY_MAP: Record<string, string[]> = {
     "HIP-1: Native token standard",
     "HIP-2: Hyperliquidity",
     "HIP-3: Builder-Deployed Perpetuals",
-    "HIP (HyperLiquid improvement proposal)",
+    "HIP (Hyperliquid improvement proposal)",
   ],
 };
 

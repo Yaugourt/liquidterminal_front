@@ -11,7 +11,7 @@ interface VaultsKpiStripProps {
 /**
  * KPI ribbon for the Vaults page (§7.b via <KpiRibbon>).
  *
- * Only metrics with a real source are shown. HyperLiquid's vault feed exposes
+ * Only metrics with a real source are shown. Hyperliquid's vault feed exposes
  * no closed vaults, no global depositor count and no net-flow history, so those
  * are deliberately omitted rather than faked (DS "no fake data" rule). Follower
  * counts come from the HypeDexer top-tracked set — labelled accordingly.

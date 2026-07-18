@@ -12,9 +12,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { address } = await params;
   return buildMetadata({
-    title: `Vault ${address.slice(0, 8)}… — HyperLiquid Vaults`,
-    description: `Detailed analytics for HyperLiquid vault ${address}. TVL history, equity snapshots, ledger, and sub-vault breakdown.`,
-    keywords: ["HyperLiquid vault", "vault analytics", "DeFi vault", "TVL", "vault detail"],
+    title: `Vault ${address.slice(0, 8)}… - Hyperliquid Vaults`,
+    description: `Detailed analytics for Hyperliquid vault ${address}. TVL history, equity snapshots, ledger, and sub-vault breakdown.`,
+    keywords: ["Hyperliquid vault", "vault analytics", "DeFi vault", "TVL", "vault detail"],
     path: `/explorer/vaults/${address}`,
   });
 }

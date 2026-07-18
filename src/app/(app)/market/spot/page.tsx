@@ -47,13 +47,13 @@ export default function SpotPage() {
     <div className="space-y-8">
       <PageHeader
         title="Spot"
-        description="HyperLiquid spot markets — volume, stablecoin liquidity, fees & deploy auctions."
+        description="Hyperliquid spot markets — volume, stablecoin liquidity, fees & deploy auctions."
       />
 
       <section className="space-y-2.5">
         <SectionHead
           title="Overview"
-          subtitle="volume, fees, stablecoin depth & HIP-2 across HyperLiquid spot"
+          subtitle="volume, fees, stablecoin depth & HIP-2 across Hyperliquid spot"
         />
         <SpotKpiStrip
           directory={directory}

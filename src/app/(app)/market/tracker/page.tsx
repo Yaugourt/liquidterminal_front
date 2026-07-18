@@ -26,7 +26,7 @@ export default function TrackerHome() {
     <div className="space-y-8">
       <PageHeader
         title="Wallet Tracker"
-        description="Track wallets across HyperLiquid — top traders, public lists, most active users, and your personal watchlist."
+        description="Track wallets across Hyperliquid — top traders, public lists, most active users, and your personal watchlist."
       />
 
       {/* Stats Bar */}
