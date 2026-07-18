@@ -9,17 +9,24 @@ import type { EducationalCategory } from "@/services/wiki/types";
  * an unmatched name simply contributes no articles, it never breaks the page.
  */
 export const CHAPTER_CATEGORY_MAP: Record<string, string[]> = {
-  Introduction: ["Hyperliquid"],
+  // Names must match the live category names EXACTLY (see buildTopics): the
+  // taxonomy casing is "HyperLiquid", not "Hyperliquid".
+  Introduction: ["HyperLiquid"],
   HyperBFT: ["Validator"],
   HyperCore: ["HyperCore", "Order Book", "HyperCore Oracle", "Oracles"],
   HyperEVM: ["HyperEVM", "HyperEVM Block"],
   "HyperCore ↔ HyperEVM": ["CoreWriter", "Read precompiles", "Precompiles"],
-  $HYPE: ["HYPE", "Governance"],
+  "Trading & Risk": ["Perpetual", "Trading", "Market maker", "Builder codes"],
+  "Vaults & HLP": ["Vaults", "HLP"],
+  "Spot & Unit": ["Auction", "DEX", "Liquidity"],
+  "Stablecoins & USDH": ["Stablecoin", "USDH", "Lending"],
+  $HYPE: ["HYPE", "Governance", "Farming"],
   "HIP Framework": [
     "HIP-1: Native token standard",
     "HIP-2: Hyperliquidity",
     "HIP-3: Builder-Deployed Perpetuals",
-    "HIP (Hyperliquid improvement proposal)",
+    "HIP-4: Outcome markets",
+    "HIP (HyperLiquid improvement proposal)",
   ],
 };
 
@@ -28,6 +35,19 @@ export const SUBCHAPTER_CATEGORY_MAP: Record<string, string[]> = {
   "hip-1": ["HIP-1: Native token standard"],
   "hip-2": ["HIP-2: Hyperliquidity"],
   "hip-3": ["HIP-3: Builder-Deployed Perpetuals"],
+  "hip-4": ["HIP-4: Outcome markets"],
+  "order-types": ["Order Book"],
+  "margin-modes": ["Perpetual"],
+  "liquidations-adl": ["HLP"],
+  "funding-and-fees": ["Builder codes"],
+  hlp: ["HLP"],
+  "user-vaults": ["Vaults"],
+  "spot-and-auctions": ["Auction"],
+  usdh: ["USDH"],
+  "aligned-quote-assets": ["Stablecoin"],
+  distribution: ["HYPE"],
+  "assistance-fund": ["HYPE"],
+  "staking-and-lsts": ["Validator", "Farming"],
 };
 
 /** Kebab-case slug for URL segments (chapter titles, category names). */
