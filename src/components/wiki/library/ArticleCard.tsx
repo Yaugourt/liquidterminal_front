@@ -36,8 +36,12 @@ function hostnameOf(url: string): string {
   }
 }
 
-/** The @handle of an X/Twitter post URL, for tweet-style cards. */
-function xHandleOf(url: string): string | null {
+/**
+ * The @handle of an X/Twitter *post* URL, for tweet-style cards. Returns null
+ * for /i/spaces/… (recorded Spaces are episodes, not tweets) and for any URL
+ * with no author segment, which is also how callers decide the card variant.
+ */
+export function xHandleOf(url: string): string | null {
   try {
     const { hostname, pathname } = new URL(url);
     if (!/(^|\.)(x|twitter|nitter)\.(com|net)$/.test(hostname)) return null;
@@ -83,10 +87,13 @@ export const ArticleCard = memo(function ArticleCard({
   // Tweet-style card: X/Twitter posts show the author avatar + text (no hero).
   const xHandle = xHandleOf(resource.url);
   const avatarSrc = xHandle ? `https://unavatar.io/twitter/${xHandle}` : null;
-  const hasColon = !!preview?.title && preview.title.includes(": ");
-  const authorName = hasColon ? preview!.title!.split(": ")[0].slice(0, 48) : xHandle ? `@${xHandle}` : title;
-  const tweetText =
-    preview?.description || (hasColon ? preview!.title!.split(": ").slice(1).join(": ") : preview?.title) || "";
+  // X link previews store "Author: tweet text" in the title and "@handle" in
+  // the description — so the tweet body comes from the title, not the
+  // description (which would render as a bare "@handle").
+  const colonAt = preview?.title ? preview.title.indexOf(": ") : -1;
+  const authorName =
+    colonAt > 0 ? preview!.title!.slice(0, colonAt).slice(0, 48) : xHandle ? `@${xHandle}` : title;
+  const tweetText = colonAt > 0 ? preview!.title!.slice(colonAt + 2) : preview?.description || "";
 
   const handleAddToReadList = useCallback(async (readListId: number) => {
     try {
