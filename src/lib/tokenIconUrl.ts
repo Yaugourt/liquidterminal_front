@@ -34,8 +34,9 @@ export function getTokenIconUrl(
   const trimmed = assetName.trim();
   if (!trimmed) return "";
 
-  // HIP-3 — always preserve the `xyz:` prefix as-is.
-  if (trimmed.startsWith("xyz:")) {
+  // HIP-3 — preserve the `<dex>:` prefix as-is. Not just `xyz:`: the CDN keys
+  // on the full prefixed coin, and `flx:`, `vntl:`, `hyna:`… are just as valid.
+  if (/^[a-z0-9]+:/i.test(trimmed)) {
     return `${HL_CDN_BASE}/${trimmed}.svg`;
   }
 
@@ -62,7 +63,7 @@ export function getTokenIconUrl(
  */
 export function getTokenInitials(assetName: string): string {
   const ticker = assetName
-    .replace(/^xyz:/, "")
+    .replace(/^[a-z0-9]+:/i, "")
     .replace(/_(spot|USDC)$/i, "")
     .trim();
   return ticker.slice(0, 2).toUpperCase();

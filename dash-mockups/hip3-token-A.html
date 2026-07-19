@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HIP-3 token page — /market/perpdex/[dex]/[asset]</title>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  HIP-3 TOKEN PAGE — maquette (base propal A + greffes propal B)
+
+  Route : /market/perpdex/xyz/CL
+  Blocs : uniquement du vocabulaire de dash-mockups/kit.html
+          (KpiRibbon plain · OverviewModule+ModuleTable · TypedDataTable ·
+           StatusBadge · StackedShareBar · PillTabs text · layout rail)
+
+  TOUTES LES VALEURS SONT RÉELLES, relevées en prod le 2026-07-19 sur
+  api.hyperliquid.xyz (public) et liquidterminal.up.railway.app/indexer/hip3/*.
+  Les chandelles du chart sont 49 vraies bougies 1h de xyz:CL.
+  Aucun chiffre inventé — c'est le point de l'exercice.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .note { font: 400 11px/1.5 "JetBrains Mono", monospace; color: #6B7280; }
+  .note b { color: #83E9FF; font-weight: 500; }
+  .sec { border-top: 1px dashed #2C354A; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="max-w-[1600px] mx-auto px-6 py-8 space-y-6">
+
+  <!-- ════ annotation maquette ════ -->
+  <div class="rounded-lg border border-border-subtle bg-surface px-4 py-3">
+    <div class="text-[13px] font-medium text-text-primary">Maquette — page token HIP-3 · <span class="mono text-brand">/market/perpdex/xyz/CL</span></div>
+    <p class="note mt-1.5">
+      Base <b>propal A</b> (continuité de terminal : TradingLayout + TokenCard + chart + book réutilisés tels quels)
+      · greffes <b>propal B</b> (carte des pouvoirs de la venue, gardes data, retry sur les modules HypeDexer).<br>
+      Données réelles relevées le 19/07/2026. Chandelles = 49 vraies bougies 1h. Deux états plus bas : <b>LIVE</b> et <b>HALTED</b> (51 % des assets HIP-3).
+    </p>
+  </div>
+
+  <!-- ════ MarketScopeBar (existe déjà, gratuit) ════ -->
+  <div class="flex items-center gap-4 text-xs border-b border-border-subtle pb-3 overflow-x-auto">
+    <span class="text-text-tertiary hover:text-text-primary shrink-0">Overview</span>
+    <span class="text-text-tertiary hover:text-text-primary shrink-0">Spot <span class="mono">412</span></span>
+    <span class="text-text-tertiary hover:text-text-primary shrink-0">Perpetual <span class="mono">177</span></span>
+    <span class="text-brand font-medium shrink-0">PerpDexs <span class="mono text-text-tertiary">9</span></span>
+    <span class="text-text-tertiary hover:text-text-primary shrink-0">HIP-4</span>
+    <span class="text-text-tertiary hover:text-text-primary shrink-0">Builders</span>
+    <span class="ml-auto note shrink-0">MarketScopeBar reste actif : <b>pathname.startsWith('/market/perpdex/')</b></span>
+  </div>
+
+  <!-- ════ breadcrumb ════ -->
+  <div class="flex items-center gap-1.5 text-[11px] text-text-tertiary">
+    <span class="hover:text-text-primary">Market</span><span>/</span>
+    <span class="hover:text-text-primary">Perp DEXs</span><span>/</span>
+    <span class="hover:text-text-primary">XYZ</span><span>/</span>
+    <span class="text-text-secondary">CL</span>
+  </div>
+
+  <!-- ══════════════════════════ ÉTAT LIVE ══════════════════════════ -->
+
+  <!-- ① Asset header — React: <TokenCard type="hip3"> -->
+  <div class="bg-surface border border-border-subtle rounded-lg px-5 py-4">
+    <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
+      <div class="flex items-center gap-3 min-w-0">
+        <span class="w-10 h-10 shrink-0 rounded-lg grid place-items-center text-[12px] font-semibold bg-surface-2 text-text-secondary">CL</span>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span class="text-[17px] font-semibold text-text-primary tracking-tight">CL / USDC</span>
+            <span class="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-brand/10 border border-brand/25 text-brand font-medium">HIP-3</span>
+          </div>
+          <div class="text-[11.5px] text-text-tertiary mt-0.5">Crude Oil · deployed by <span class="text-text-secondary hover:text-brand">XYZ ↗</span></div>
+        </div>
+      </div>
+
+      <div class="flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Mark</div>
+        <div class="mono text-[22px] font-medium leading-none mt-2 text-text-primary">83.829</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">mid <span class="mono">83.856</span></div>
+      </div>
+      <div class="flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Oracle</div>
+        <div class="mono text-[22px] font-medium leading-none mt-2 text-text-primary">83.782</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">operator-run</div>
+      </div>
+      <div class="flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Δ mark−oracle</div>
+        <div class="mono text-[22px] font-medium leading-none mt-2 text-text-primary">+5.6 <span class="text-[13px] text-text-tertiary">bps</span></div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">impact spread <span class="mono">1.4 bps</span></div>
+      </div>
+      <div class="flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">24h change</div>
+        <div class="mono text-[22px] font-medium leading-none mt-2 text-success">+1.52%</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">prev <span class="mono">82.571</span></div>
+      </div>
+      <div class="flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">24h volume</div>
+        <div class="mono text-[22px] font-medium leading-none mt-2 text-text-primary">$98.84M</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5"><span class="mono">177,412</span> trades</div>
+      </div>
+      <div class="flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Funding · 1h</div>
+        <div class="mono text-[22px] font-medium leading-none mt-2 text-text-primary">+0.000625%</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">premium <span class="mono">8.7 bps</span></div>
+      </div>
+
+      <div class="ml-auto flex items-center gap-2 shrink-0">
+        <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Live</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② KpiRibbon — React: <KpiRibbon variant="plain" cells={7} /> -->
+  <div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 border border-border-subtle rounded-lg divide-x divide-y xl:divide-y-0 divide-border-subtle overflow-hidden">
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">OI / operator cap</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">17.81%</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5"><span class="mono">$178.1M</span> / <span class="mono">$1.00B</span></div>
+        <div class="flex w-full overflow-hidden rounded-full bg-surface-2 mt-2" style="height:4px">
+          <div class="h-full bg-brand" style="width:17.81%"></div>
+        </div>
+      </div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Max leverage</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">20×</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">from Hyperliquid</div>
+      </div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Fee share</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">1.00%</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">to XYZ</div>
+      </div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Collateral</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">USDC</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">growth mode on</div>
+      </div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">24h fees</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">$14.41K</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">HypeDexer</div>
+      </div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Volume since listing</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$8.38B</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">cumulative</div>
+      </div>
+      <div class="px-5 py-4 flex flex-col">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Fees since listing</div>
+        <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">$328.8K</div>
+        <div class="text-[10.5px] text-text-tertiary mt-1.5">cumulative</div>
+      </div>
+    </div>
+    <p class="note mt-2">
+      ⚠ <b>OI / cap</b> = <b>2,124,352 contrats × $83.829 = $178.1M</b>, pas $2.1M. L'<b>open_interest</b> est en unités de base :
+      le lire comme des dollars donnait <b>0.21 %</b> au lieu de 17.81 % — <b>facteur 84</b> (garde de la propal B).
+      · <b>Max leverage</b> vient de Hyperliquid : HypeDexer renvoie <b>5 partout</b>, c'est faux.
+      · Aucune sparkline : aucune de ces métriques n'a d'historique par asset exploitable.
+    </p>
+  </div>
+
+  <!-- ③ chart + book — React: <TradingLayout chartSlot orderBookSlot /> -->
+  <div class="grid grid-cols-1 xl:grid-cols-10 gap-4 items-stretch">
+    <div class="xl:col-span-7 min-w-0 bg-surface border border-border-subtle rounded-lg flex flex-col">
+      <div class="flex items-center gap-3 px-4 py-3 border-b border-border-subtle">
+        <span class="mono text-[12.5px] text-text-primary">xyz:CL</span>
+        <div class="flex items-center gap-2.5 text-[11px]">
+          <span class="text-text-tertiary hover:text-text-primary">5m</span>
+          <span class="text-text-tertiary hover:text-text-primary">15m</span>
+          <span class="text-brand font-medium">1h</span>
+          <span class="text-text-tertiary hover:text-text-primary">4h</span>
+          <span class="text-text-tertiary hover:text-text-primary">1d</span>
+        </div>
+        <span class="ml-auto inline-flex items-center gap-1.5 text-[10.5px] text-text-tertiary"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>live</span>
+      </div>
+      <div class="px-2 py-2 flex-1">
+        <svg viewBox="0 0 980 366" class="w-full" style="height:366px" xmlns="http://www.w3.org/2000/svg">
+<line x1="10.0" y1="208.5" x2="10.0" y2="270.3" stroke="#E53E3E" stroke-width="1"/>
+<rect x="4.0" y="215.0" width="12.0" height="53.7" fill="#E53E3E"/>
+<rect x="4.0" y="322.9" width="12.0" height="37.1" fill="#E53E3E" opacity="0.28"/>
+<line x1="30.0" y1="232.2" x2="30.0" y2="292.0" stroke="#1FB58E" stroke-width="1"/>
+<rect x="24.0" y="242.2" width="12.0" height="26.4" fill="#1FB58E"/>
+<rect x="24.0" y="317.1" width="12.0" height="42.9" fill="#1FB58E" opacity="0.28"/>
+<line x1="50.0" y1="185.9" x2="50.0" y2="245.1" stroke="#1FB58E" stroke-width="1"/>
+<rect x="44.0" y="194.9" width="12.0" height="46.1" fill="#1FB58E"/>
+<rect x="44.0" y="314.0" width="12.0" height="46.0" fill="#1FB58E" opacity="0.28"/>
+<line x1="70.0" y1="170.4" x2="70.0" y2="204.8" stroke="#1FB58E" stroke-width="1"/>
+<rect x="64.0" y="176.2" width="12.0" height="19.4" fill="#1FB58E"/>
+<rect x="64.0" y="327.8" width="12.0" height="32.2" fill="#1FB58E" opacity="0.28"/>
+<line x1="90.0" y1="159.1" x2="90.0" y2="200.1" stroke="#E53E3E" stroke-width="1"/>
+<rect x="84.0" y="177.0" width="12.0" height="19.9" fill="#E53E3E"/>
+<rect x="84.0" y="340.0" width="12.0" height="20.0" fill="#E53E3E" opacity="0.28"/>
+<line x1="110.0" y1="192.0" x2="110.0" y2="216.8" stroke="#1FB58E" stroke-width="1"/>
+<rect x="104.0" y="195.3" width="12.0" height="1.0" fill="#1FB58E"/>
+<rect x="104.0" y="348.9" width="12.0" height="11.1" fill="#1FB58E" opacity="0.28"/>
+<line x1="130.0" y1="172.1" x2="130.0" y2="201.4" stroke="#1FB58E" stroke-width="1"/>
+<rect x="124.0" y="174.6" width="12.0" height="20.6" fill="#1FB58E"/>
+<rect x="124.0" y="345.9" width="12.0" height="14.1" fill="#1FB58E" opacity="0.28"/>
+<line x1="150.0" y1="159.6" x2="150.0" y2="176.4" stroke="#1FB58E" stroke-width="1"/>
+<rect x="144.0" y="172.9" width="12.0" height="2.6" fill="#1FB58E"/>
+<rect x="144.0" y="353.8" width="12.0" height="6.2" fill="#1FB58E" opacity="0.28"/>
+<line x1="170.0" y1="140.6" x2="170.0" y2="181.4" stroke="#1FB58E" stroke-width="1"/>
+<rect x="164.0" y="141.8" width="12.0" height="31.1" fill="#1FB58E"/>
+<rect x="164.0" y="348.5" width="12.0" height="11.5" fill="#1FB58E" opacity="0.28"/>
+<line x1="190.0" y1="137.9" x2="190.0" y2="158.3" stroke="#E53E3E" stroke-width="1"/>
+<rect x="184.0" y="141.6" width="12.0" height="9.6" fill="#E53E3E"/>
+<rect x="184.0" y="353.6" width="12.0" height="6.4" fill="#E53E3E" opacity="0.28"/>
+<line x1="210.0" y1="141.0" x2="210.0" y2="185.2" stroke="#E53E3E" stroke-width="1"/>
+<rect x="204.0" y="151.7" width="12.0" height="10.5" fill="#E53E3E"/>
+<rect x="204.0" y="352.8" width="12.0" height="7.2" fill="#E53E3E" opacity="0.28"/>
+<line x1="230.0" y1="156.5" x2="230.0" y2="174.5" stroke="#1FB58E" stroke-width="1"/>
+<rect x="224.0" y="156.7" width="12.0" height="4.8" fill="#1FB58E"/>
+<rect x="224.0" y="356.7" width="12.0" height="3.3" fill="#1FB58E" opacity="0.28"/>
+<line x1="250.0" y1="148.7" x2="250.0" y2="166.6" stroke="#E53E3E" stroke-width="1"/>
+<rect x="244.0" y="156.6" width="12.0" height="1.0" fill="#E53E3E"/>
+<rect x="244.0" y="355.8" width="12.0" height="4.2" fill="#E53E3E" opacity="0.28"/>
+<line x1="270.0" y1="153.9" x2="270.0" y2="182.1" stroke="#E53E3E" stroke-width="1"/>
+<rect x="264.0" y="156.8" width="12.0" height="17.2" fill="#E53E3E"/>
+<rect x="264.0" y="356.2" width="12.0" height="3.8" fill="#E53E3E" opacity="0.28"/>
+<line x1="290.0" y1="173.6" x2="290.0" y2="191.7" stroke="#E53E3E" stroke-width="1"/>
+<rect x="284.0" y="173.9" width="12.0" height="17.1" fill="#E53E3E"/>
+<rect x="284.0" y="356.8" width="12.0" height="3.2" fill="#E53E3E" opacity="0.28"/>
+<line x1="310.0" y1="184.7" x2="310.0" y2="194.6" stroke="#E53E3E" stroke-width="1"/>
+<rect x="304.0" y="190.6" width="12.0" height="2.0" fill="#E53E3E"/>
+<rect x="304.0" y="357.5" width="12.0" height="2.5" fill="#E53E3E" opacity="0.28"/>
+<line x1="330.0" y1="177.7" x2="330.0" y2="200.9" stroke="#1FB58E" stroke-width="1"/>
+<rect x="324.0" y="177.7" width="12.0" height="14.7" fill="#1FB58E"/>
+<rect x="324.0" y="356.8" width="12.0" height="3.2" fill="#1FB58E" opacity="0.28"/>
+<line x1="350.0" y1="160.3" x2="350.0" y2="178.0" stroke="#1FB58E" stroke-width="1"/>
+<rect x="344.0" y="167.9" width="12.0" height="9.9" fill="#1FB58E"/>
+<rect x="344.0" y="356.4" width="12.0" height="3.6" fill="#1FB58E" opacity="0.28"/>
+<line x1="370.0" y1="159.3" x2="370.0" y2="169.0" stroke="#1FB58E" stroke-width="1"/>
+<rect x="364.0" y="159.3" width="12.0" height="8.4" fill="#1FB58E"/>
+<rect x="364.0" y="358.1" width="12.0" height="1.9" fill="#1FB58E" opacity="0.28"/>
+<line x1="390.0" y1="150.5" x2="390.0" y2="162.9" stroke="#1FB58E" stroke-width="1"/>
+<rect x="384.0" y="153.1" width="12.0" height="6.3" fill="#1FB58E"/>
+<rect x="384.0" y="358.5" width="12.0" height="1.5" fill="#1FB58E" opacity="0.28"/>
+<line x1="410.0" y1="107.0" x2="410.0" y2="154.4" stroke="#1FB58E" stroke-width="1"/>
+<rect x="404.0" y="128.2" width="12.0" height="24.4" fill="#1FB58E"/>
+<rect x="404.0" y="348.7" width="12.0" height="11.3" fill="#1FB58E" opacity="0.28"/>
+<line x1="430.0" y1="109.7" x2="430.0" y2="131.8" stroke="#1FB58E" stroke-width="1"/>
+<rect x="424.0" y="120.2" width="12.0" height="7.9" fill="#1FB58E"/>
+<rect x="424.0" y="357.8" width="12.0" height="2.2" fill="#1FB58E" opacity="0.28"/>
+<line x1="450.0" y1="112.5" x2="450.0" y2="124.3" stroke="#1FB58E" stroke-width="1"/>
+<rect x="444.0" y="113.3" width="12.0" height="7.2" fill="#1FB58E"/>
+<rect x="444.0" y="355.6" width="12.0" height="4.4" fill="#1FB58E" opacity="0.28"/>
+<line x1="470.0" y1="113.5" x2="470.0" y2="130.0" stroke="#E53E3E" stroke-width="1"/>
+<rect x="464.0" y="113.7" width="12.0" height="11.3" fill="#E53E3E"/>
+<rect x="464.0" y="356.1" width="12.0" height="3.9" fill="#E53E3E" opacity="0.28"/>
+<line x1="490.0" y1="117.7" x2="490.0" y2="135.6" stroke="#E53E3E" stroke-width="1"/>
+<rect x="484.0" y="125.0" width="12.0" height="5.7" fill="#E53E3E"/>
+<rect x="484.0" y="354.4" width="12.0" height="5.6" fill="#E53E3E" opacity="0.28"/>
+<line x1="510.0" y1="108.8" x2="510.0" y2="135.0" stroke="#1FB58E" stroke-width="1"/>
+<rect x="504.0" y="125.2" width="12.0" height="5.5" fill="#1FB58E"/>
+<rect x="504.0" y="353.4" width="12.0" height="6.6" fill="#1FB58E" opacity="0.28"/>
+<line x1="530.0" y1="109.0" x2="530.0" y2="125.7" stroke="#1FB58E" stroke-width="1"/>
+<rect x="524.0" y="116.0" width="12.0" height="9.2" fill="#1FB58E"/>
+<rect x="524.0" y="356.1" width="12.0" height="3.9" fill="#1FB58E" opacity="0.28"/>
+<line x1="550.0" y1="85.4" x2="550.0" y2="116.4" stroke="#1FB58E" stroke-width="1"/>
+<rect x="544.0" y="95.8" width="12.0" height="20.2" fill="#1FB58E"/>
+<rect x="544.0" y="349.7" width="12.0" height="10.3" fill="#1FB58E" opacity="0.28"/>
+<line x1="570.0" y1="8.0" x2="570.0" y2="95.9" stroke="#1FB58E" stroke-width="1"/>
+<rect x="564.0" y="43.1" width="12.0" height="52.8" fill="#1FB58E"/>
+<rect x="564.0" y="326.7" width="12.0" height="33.3" fill="#1FB58E" opacity="0.28"/>
+<line x1="590.0" y1="37.1" x2="590.0" y2="85.7" stroke="#E53E3E" stroke-width="1"/>
+<rect x="584.0" y="42.6" width="12.0" height="25.8" fill="#E53E3E"/>
+<rect x="584.0" y="350.0" width="12.0" height="10.0" fill="#E53E3E" opacity="0.28"/>
+<line x1="610.0" y1="47.0" x2="610.0" y2="80.6" stroke="#1FB58E" stroke-width="1"/>
+<rect x="604.0" y="61.5" width="12.0" height="7.4" fill="#1FB58E"/>
+<rect x="604.0" y="352.8" width="12.0" height="7.2" fill="#1FB58E" opacity="0.28"/>
+<line x1="630.0" y1="49.2" x2="630.0" y2="100.8" stroke="#E53E3E" stroke-width="1"/>
+<rect x="624.0" y="61.3" width="12.0" height="2.9" fill="#E53E3E"/>
+<rect x="624.0" y="347.7" width="12.0" height="12.3" fill="#E53E3E" opacity="0.28"/>
+<line x1="650.0" y1="37.0" x2="650.0" y2="64.2" stroke="#1FB58E" stroke-width="1"/>
+<rect x="644.0" y="45.0" width="12.0" height="19.2" fill="#1FB58E"/>
+<rect x="644.0" y="352.1" width="12.0" height="7.9" fill="#1FB58E" opacity="0.28"/>
+<line x1="670.0" y1="31.3" x2="670.0" y2="74.5" stroke="#E53E3E" stroke-width="1"/>
+<rect x="664.0" y="45.7" width="12.0" height="19.0" fill="#E53E3E"/>
+<rect x="664.0" y="351.1" width="12.0" height="8.9" fill="#E53E3E" opacity="0.28"/>
+<line x1="690.0" y1="50.3" x2="690.0" y2="67.5" stroke="#1FB58E" stroke-width="1"/>
+<rect x="684.0" y="58.5" width="12.0" height="6.1" fill="#1FB58E"/>
+<rect x="684.0" y="358.5" width="12.0" height="1.5" fill="#1FB58E" opacity="0.28"/>
+<line x1="710.0" y1="55.3" x2="710.0" y2="76.5" stroke="#E53E3E" stroke-width="1"/>
+<rect x="704.0" y="58.6" width="12.0" height="15.9" fill="#E53E3E"/>
+<rect x="704.0" y="357.1" width="12.0" height="2.9" fill="#E53E3E" opacity="0.28"/>
+<line x1="730.0" y1="60.6" x2="730.0" y2="90.9" stroke="#E53E3E" stroke-width="1"/>
+<rect x="724.0" y="74.8" width="12.0" height="1.8" fill="#E53E3E"/>
+<rect x="724.0" y="356.6" width="12.0" height="3.4" fill="#E53E3E" opacity="0.28"/>
+<line x1="750.0" y1="54.3" x2="750.0" y2="76.9" stroke="#1FB58E" stroke-width="1"/>
+<rect x="744.0" y="69.8" width="12.0" height="7.2" fill="#1FB58E"/>
+<rect x="744.0" y="355.8" width="12.0" height="4.2" fill="#1FB58E" opacity="0.28"/>
+<line x1="770.0" y1="57.8" x2="770.0" y2="75.5" stroke="#1FB58E" stroke-width="1"/>
+<rect x="764.0" y="67.4" width="12.0" height="2.4" fill="#1FB58E"/>
+<rect x="764.0" y="353.2" width="12.0" height="6.8" fill="#1FB58E" opacity="0.28"/>
+<line x1="790.0" y1="65.2" x2="790.0" y2="74.9" stroke="#E53E3E" stroke-width="1"/>
+<rect x="784.0" y="67.5" width="12.0" height="6.6" fill="#E53E3E"/>
+<rect x="784.0" y="358.5" width="12.0" height="1.5" fill="#E53E3E" opacity="0.28"/>
+<line x1="810.0" y1="47.5" x2="810.0" y2="81.1" stroke="#1FB58E" stroke-width="1"/>
+<rect x="804.0" y="48.3" width="12.0" height="25.9" fill="#1FB58E"/>
+<rect x="804.0" y="357.2" width="12.0" height="2.8" fill="#1FB58E" opacity="0.28"/>
+<line x1="830.0" y1="45.5" x2="830.0" y2="70.2" stroke="#E53E3E" stroke-width="1"/>
+<rect x="824.0" y="48.2" width="12.0" height="12.3" fill="#E53E3E"/>
+<rect x="824.0" y="357.1" width="12.0" height="2.9" fill="#E53E3E" opacity="0.28"/>
+<line x1="850.0" y1="49.9" x2="850.0" y2="64.7" stroke="#1FB58E" stroke-width="1"/>
+<rect x="844.0" y="51.3" width="12.0" height="9.2" fill="#1FB58E"/>
+<rect x="844.0" y="358.4" width="12.0" height="1.6" fill="#1FB58E" opacity="0.28"/>
+<line x1="870.0" y1="45.9" x2="870.0" y2="58.4" stroke="#E53E3E" stroke-width="1"/>
+<rect x="864.0" y="51.7" width="12.0" height="2.1" fill="#E53E3E"/>
+<rect x="864.0" y="357.3" width="12.0" height="2.7" fill="#E53E3E" opacity="0.28"/>
+<line x1="890.0" y1="53.8" x2="890.0" y2="60.6" stroke="#E53E3E" stroke-width="1"/>
+<rect x="884.0" y="54.0" width="12.0" height="5.8" fill="#E53E3E"/>
+<rect x="884.0" y="359.0" width="12.0" height="1.0" fill="#E53E3E" opacity="0.28"/>
+<line x1="910.0" y1="55.0" x2="910.0" y2="76.1" stroke="#E53E3E" stroke-width="1"/>
+<rect x="904.0" y="59.8" width="12.0" height="4.9" fill="#E53E3E"/>
+<rect x="904.0" y="355.8" width="12.0" height="4.2" fill="#E53E3E" opacity="0.28"/>
+<line x1="930.0" y1="49.9" x2="930.0" y2="67.5" stroke="#1FB58E" stroke-width="1"/>
+<rect x="924.0" y="53.1" width="12.0" height="11.5" fill="#1FB58E"/>
+<rect x="924.0" y="358.4" width="12.0" height="1.6" fill="#1FB58E" opacity="0.28"/>
+<line x1="950.0" y1="52.4" x2="950.0" y2="66.6" stroke="#E53E3E" stroke-width="1"/>
+<rect x="944.0" y="53.1" width="12.0" height="6.5" fill="#E53E3E"/>
+<rect x="944.0" y="357.4" width="12.0" height="2.6" fill="#E53E3E" opacity="0.28"/>
+<line x1="970.0" y1="53.7" x2="970.0" y2="64.2" stroke="#1FB58E" stroke-width="1"/>
+<rect x="964.0" y="53.7" width="12.0" height="5.6" fill="#1FB58E"/>
+<rect x="964.0" y="358.6" width="12.0" height="1.4" fill="#1FB58E" opacity="0.28"/>
+<line x1="0" y1="53.7" x2="980" y2="53.7" stroke="#83E9FF" stroke-width="1" stroke-dasharray="3 3" opacity="0.7"/>
+</svg>
+
+      </div>
+      <div class="px-4 py-2 border-t border-border-subtle note">
+        49 vraies bougies 1h de <b>xyz:CL</b> · source <b>HL candleSnapshot</b> (l'OHLCV HypeDexer est empoisonné : high constant à 175 000, volume 0)
+      </div>
+    </div>
+
+    <div class="xl:col-span-3 min-w-0 bg-surface border border-border-subtle rounded-lg flex flex-col">
+      <div class="flex items-center gap-3 px-4 py-3 border-b border-border-subtle text-xs">
+        <span class="text-brand font-medium">Order book</span>
+        <span class="text-text-tertiary hover:text-text-primary">Trades</span>
+        <span class="ml-auto note">L2 · HL WS</span>
+      </div>
+      <div class="px-3 py-2 space-y-[3px] text-[11.5px]">
+        <div class="flex justify-between text-[10px] uppercase tracking-[0.08em] text-text-tertiary px-1 pb-1"><span>Price</span><span>Size</span><span>Total</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-danger/10" style="width:46%"></div><span class="mono text-danger relative">83.879</span><span class="mono text-text-secondary relative">18.42</span><span class="mono text-text-tertiary relative">92.10</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-danger/10" style="width:34%"></div><span class="mono text-danger relative">83.871</span><span class="mono text-text-secondary relative">27.16</span><span class="mono text-text-tertiary relative">73.68</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-danger/10" style="width:22%"></div><span class="mono text-danger relative">83.865</span><span class="mono text-text-secondary relative">33.09</span><span class="mono text-text-tertiary relative">46.52</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-danger/10" style="width:11%"></div><span class="mono text-danger relative">83.861</span><span class="mono text-text-secondary relative">13.43</span><span class="mono text-text-tertiary relative">13.43</span></div>
+        <div class="flex items-center justify-between px-1 py-2 my-1 border-y border-border-subtle">
+          <span class="mono text-[13px] font-medium text-text-primary">83.856</span>
+          <span class="note">spread <b>1.4 bps</b></span>
+        </div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-success/10" style="width:14%"></div><span class="mono text-success relative">83.849</span><span class="mono text-text-secondary relative">16.90</span><span class="mono text-text-tertiary relative">16.90</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-success/10" style="width:29%"></div><span class="mono text-success relative">83.841</span><span class="mono text-text-secondary relative">18.11</span><span class="mono text-text-tertiary relative">35.01</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-success/10" style="width:52%"></div><span class="mono text-success relative">83.836</span><span class="mono text-text-secondary relative">27.74</span><span class="mono text-text-tertiary relative">62.75</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-success/10" style="width:71%"></div><span class="mono text-success relative">83.828</span><span class="mono text-text-secondary relative">22.19</span><span class="mono text-text-tertiary relative">84.94</span></div>
+        <div class="relative flex justify-between px-1 py-[3px]"><div class="absolute inset-y-0 right-0 bg-success/10" style="width:88%"></div><span class="mono text-success relative">83.819</span><span class="mono text-text-secondary relative">20.55</span><span class="mono text-text-tertiary relative">105.49</span></div>
+      </div>
+      <div class="mt-auto px-4 py-2 border-t border-border-subtle note">
+        Phase 2 : onglet <b>L4</b> ici — bloqué backend (WS-only chez HypeDexer, clé serveur, <b>/indexer/live/* = 404</b>)
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ bas de page : tape + traders | rail venue -->
+  <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-4 items-start">
+
+    <div class="min-w-0 space-y-4">
+      <!-- tape — React: <TypedDataTable density="compact" toolbar={…} /> -->
+      <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Large fills</h3>
+          <div class="flex items-center gap-3 text-xs">
+            <button class="text-text-tertiary hover:text-text-primary">$10K</button>
+            <button class="text-brand font-medium">$25K</button>
+            <button class="text-text-tertiary hover:text-text-primary">$100K</button>
+          </div>
+          <button class="text-[11px] text-text-tertiary hover:text-text-primary">☐ Liquidations only</button>
+          <span class="ml-auto note">server-side <b>min_notional</b> · 10s</span>
+        </div>
+        <table class="w-full border-collapse">
+          <thead><tr>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Time</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Side</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Price</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Size</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Notional</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Fee</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Trader</th>
+          </tr></thead>
+          <tbody>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 mono text-[12px] text-text-tertiary">13:53:44</td>
+              <td class="px-4 py-3"><span class="text-[11.5px] font-medium text-danger">SELL</span></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">83.673</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">337.487</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$28,239</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$0.085</td>
+              <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0xce9756…7e78</span></td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 mono text-[12px] text-text-tertiary">13:53:44</td>
+              <td class="px-4 py-3"><span class="text-[11.5px] font-medium text-success">BUY</span></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">83.673</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">337.487</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$28,239</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$2.440</td>
+              <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x76b12c…0d41</span></td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 mono text-[12px] text-text-tertiary">13:47:19</td>
+              <td class="px-4 py-3"><span class="text-[11.5px] font-medium text-success">BUY</span></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">83.700</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">519.571</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$43,488</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$1.357</td>
+              <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x46921f…164f</span></td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 mono text-[12px] text-text-tertiary">13:47:19</td>
+              <td class="px-4 py-3"><span class="text-[11.5px] font-medium text-danger">SELL</span></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">83.700</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">519.571</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$43,488</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$1.252</td>
+              <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x159d14…8a2b</span></td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors">
+              <td class="px-4 py-3 mono text-[12px] text-text-tertiary">13:47:19</td>
+              <td class="px-4 py-3"><span class="text-[11.5px] font-medium text-danger">SELL</span></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">83.700</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">359.829</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$30,118</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$0.867</td>
+              <td class="px-4 py-3"><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x159d14…8a2b</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="px-4 py-2 border-t border-border-subtle note">
+          Pas un doublon du book : la tape WS de HL n'a <b>ni adresse, ni flag de liquidation, ni fee</b>. Book = micro-structure sub-seconde · tape = qui fait quoi.
+        </div>
+      </div>
+
+      <!-- top traders — React: <TypedDataTable /> + <StackedShareBar /> -->
+      <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Top traders on this market</h3>
+          <span class="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-brand/10 border border-brand/25 text-brand font-medium">HypeDexer only</span>
+          <span class="ml-auto note">updated <b>14:49</b></span>
+          <button class="h-7 px-2.5 text-[11px] font-medium inline-flex items-center rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Retry</button>
+        </div>
+        <div class="px-4 py-3 border-b border-border-subtle space-y-2">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-text-secondary">Top 5 · <span class="mono">$1.00B</span> of <span class="mono">$8.38B</span> cumulative</span>
+            <span class="mono font-semibold text-text-primary">11.9%</span>
+          </div>
+          <div class="flex w-full overflow-hidden rounded-full bg-surface-2" style="height:8px">
+            <div class="h-full bg-brand" style="width:3.8%"></div>
+            <div class="h-full bg-brand/80" style="width:3.4%"></div>
+            <div class="h-full bg-brand/60" style="width:1.8%"></div>
+            <div class="h-full bg-brand/45" style="width:1.5%"></div>
+            <div class="h-full bg-brand/30" style="width:1.4%"></div>
+          </div>
+        </div>
+        <table class="w-full border-collapse">
+          <thead><tr>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">#</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Trader</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Volume</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Trades</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Fees</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Realised PnL</th>
+          </tr></thead>
+          <tbody>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 text-right mono text-[11px] text-text-tertiary">1</td>
+              <td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md bg-surface-2"></span><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0xce9756…7e78</span></div></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$319.81M</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">124,868</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$6,466</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-success">+$2.01M</td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 text-right mono text-[11px] text-text-tertiary">2</td>
+              <td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md bg-surface-2"></span><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x257736…4897</span></div></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$282.67M</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">149,181</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$9,763</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-danger">−$268.8K</td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 text-right mono text-[11px] text-text-tertiary">3</td>
+              <td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md bg-surface-2"></span><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x0dd5db…f6ee</span></div></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$149.60M</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">27,158</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$598</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-success">+$245.4K</td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle">
+              <td class="px-4 py-3 text-right mono text-[11px] text-text-tertiary">4</td>
+              <td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md bg-surface-2"></span><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x4d4ec0…eacd</span></div></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$128.99M</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">38,639</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$268</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-danger">−$522.9K</td>
+            </tr>
+            <tr class="hover:bg-surface-2/60 transition-colors">
+              <td class="px-4 py-3 text-right mono text-[11px] text-text-tertiary">5</td>
+              <td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md bg-surface-2"></span><span class="mono text-[11.5px] text-text-secondary hover:text-brand">0x2f0ce3…9520</span></div></td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">$119.38M</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">44,743</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] text-gold">$729</td>
+              <td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-danger">−$119.8K</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="px-4 py-2 border-t border-border-subtle note">
+          Gardes propal B : <b>adresse zéro filtrée</b> (elle sort #1 sur vntl:OPENAI) · PnL masqué si <b>trades &lt; 5</b> ou <b>|pnl| &gt; volume × 0.5</b> · <b>Retry</b> car un 402 coupe le polling définitivement.
+        </div>
+      </div>
+    </div>
+
+    <!-- rail droit : venue + siblings -->
+    <aside class="space-y-4">
+      <!-- venue trust card (greffe propal B) -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Venue · XYZ</h3>
+          <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">87 live / 102 →</a>
+        </div>
+        <div class="px-4 py-3 space-y-2 text-[11.5px] border-b border-border-subtle">
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Deployer</span><span class="mono text-text-secondary hover:text-brand">0x88806a…0888</span></div>
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Fee recipient</span><span class="mono text-text-secondary hover:text-brand">0x9cd0a6…e5fe</span></div>
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Oracle updater</span><span class="mono text-text-secondary hover:text-brand">0x123456…acec</span></div>
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Collateral</span><span class="mono text-text-secondary">USDC</span></div>
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Fee scale</span><span class="mono text-text-secondary">1.0</span></div>
+        </div>
+        <div class="px-4 py-3">
+          <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary mb-2">Who can do what</div>
+          <div class="space-y-1.5 text-[11.5px]">
+            <div class="flex items-center justify-between gap-3"><span class="text-text-secondary">Halt trading</span><span class="mono text-text-tertiary">2 addr</span></div>
+            <div class="flex items-center justify-between gap-3"><span class="text-text-secondary">Set oracle</span><span class="mono text-text-tertiary">1 addr</span></div>
+            <div class="flex items-center justify-between gap-3"><span class="text-text-secondary">Set OI caps</span><span class="mono text-text-tertiary">2 addr</span></div>
+            <div class="flex items-center justify-between gap-3"><span class="text-text-secondary">Set funding multipliers</span><span class="mono text-text-tertiary">2 addr</span></div>
+            <div class="flex items-center justify-between gap-3"><span class="text-text-secondary">Register asset</span><span class="mono text-text-tertiary">2 addr</span></div>
+            <button class="text-[11px] text-text-tertiary hover:text-text-primary pt-1">▾ 6 more permissions</button>
+          </div>
+        </div>
+        <div class="px-4 py-2 border-t border-border-subtle note">
+          Source <b>HL perpDexs.subDeployers</b> → survit à un 402 HypeDexer.<br>
+          <b>oracleUpdater</b> est <b>null</b> sur XYZ → fallback sur <b>setOracle</b>, sinon la carte serait vide sur la moitié de l'écosystème.<br>
+          Exclus : <b>active_since</b> (= heure d'ingestion, identique sur 5 DEX) et <b>total_staked_hype</b> (= 0 partout).
+        </div>
+      </div>
+
+      <!-- siblings — React: <OverviewModule> + <ModuleTable> -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Other markets on XYZ</h3>
+          <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">All →</a>
+        </div>
+        <table class="w-full border-collapse table-fixed">
+          <colgroup><col><col style="width:80px"><col style="width:78px"></colgroup>
+          <thead><tr>
+            <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Market</th>
+            <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Mark</th>
+            <th class="px-3 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">24h vol</th>
+          </tr></thead>
+          <tbody>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-3 py-2"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">SK</div><span class="text-[12.5px] font-medium text-text-primary truncate">SKHX</span></div></td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">1,182.6</td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">$97.2M</td></tr>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-3 py-2"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">BR</div><span class="text-[12.5px] font-medium text-text-primary truncate">BRENTOIL</span></div></td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">88.327</td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">$58.9M</td></tr>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-3 py-2"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">SP</div><span class="text-[12.5px] font-medium text-text-primary truncate">SP500</span></div></td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">7,442.5</td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">$53.0M</td></tr>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-3 py-2"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">MU</div><span class="text-[12.5px] font-medium text-text-primary truncate">MU</span></div></td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">850.69</td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">$32.8M</td></tr>
+            <tr class="border-b border-border-subtle hover:bg-surface-2/60 transition-colors"><td class="px-3 py-2"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">XY</div><span class="text-[12.5px] font-medium text-text-primary truncate">XYZ100</span></div></td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">28,538</td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">$27.9M</td></tr>
+            <tr class="hover:bg-surface-2/60 transition-colors"><td class="px-3 py-2"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">SP</div><span class="text-[12.5px] font-medium text-text-primary truncate">SPCX</span></div></td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">127.65</td><td class="px-3 py-2 text-right mono text-[12.5px] text-text-secondary">$27.2M</td></tr>
+          </tbody>
+        </table>
+        <div class="px-4 py-2 border-t border-border-subtle note"><b>Zéro requête</b> : déjà chargé pour l'en-tête. Filtré <b>!isDelisted</b>.</div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ══════════════════ COUPLAGE FMP — LE SOUS-JACENT RÉEL ══════════════════ -->
+  <div class="sec pt-8 space-y-4">
+    <div>
+      <h2 class="font-inter text-xl font-semibold tracking-tight">Couplage Financial Modeling Prep — le sous-jacent réel</h2>
+      <p class="note mt-1.5">
+        <b>81 des 102 assets xyz (79 %)</b> ont un sous-jacent identifiable chez FMP — 54 actions, 10 matières premières,
+        7 ETF, 6 indices, 4 paires FX. <b>75 sur le tier Starter</b>, 6 seulement (Tokyo/Séoul) demandent Ultimate.
+        Les 21 restants sont du privé/pré-IPO (SpaceX, Zhipu, MiniMax, CXMT) ou des paniers maison (XYZ100) : <b>pas de sous-jacent, on n'affiche rien</b>.
+      </p>
+    </div>
+
+    <!-- exemple sur une action : xyz:NVDA -->
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] gap-4 items-start">
+
+      <div class="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
+        <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary">Basis — synthétique vs sous-jacent réel</h3>
+          <span class="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-gold/10 border border-gold/25 text-gold font-medium">FMP</span>
+          <span class="ml-auto note">mesuré en live · dimanche, actions US fermées</span>
+        </div>
+        <table class="w-full border-collapse">
+          <thead><tr>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Marché HIP-3</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Mark synthétique</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Sous-jacent réel</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Basis</th>
+            <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">Gap lundi implicite</th>
+          </tr></thead>
+          <tbody>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle"><td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">NV</span><span class="text-[12.5px] font-medium text-text-primary">xyz:NVDA</span></div></td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">202.91</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">202.81</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">+4.9 bps</td><td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-success">+0.05%</td></tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle"><td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">TS</span><span class="text-[12.5px] font-medium text-text-primary">xyz:TSLA</span></div></td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">382.08</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">380.84</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">+32.6 bps</td><td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-success">+0.33%</td></tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle"><td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">MS</span><span class="text-[12.5px] font-medium text-text-primary">xyz:MSFT</span></div></td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">396.43</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">393.82</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">+66.3 bps</td><td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-success">+0.66%</td></tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle"><td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">ME</span><span class="text-[12.5px] font-medium text-text-primary">xyz:META</span></div></td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">640.31</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">646.01</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">−88.2 bps</td><td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-danger">−0.88%</td></tr>
+            <tr class="hover:bg-surface-2/60 transition-colors border-b border-border-subtle"><td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">GO</span><span class="text-[12.5px] font-medium text-text-primary">xyz:GOLD</span></div></td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">4,012.4</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">4,018.8</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">−15.9 bps</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">—</td></tr>
+            <tr class="hover:bg-surface-2/60 transition-colors"><td class="px-4 py-3"><div class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">CL</span><span class="text-[12.5px] font-medium text-text-primary">xyz:CL</span></div></td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-primary">83.864</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-secondary">81.78</td><td class="px-4 py-3 text-right mono text-[12.5px] font-medium text-gold">+254.8 bps</td><td class="px-4 py-3 text-right mono text-[12.5px] text-text-tertiary">—</td></tr>
+          </tbody>
+        </table>
+        <div class="px-4 py-2.5 border-t border-border-subtle note">
+          Valeurs <b>réellement mesurées</b> le 19/07/2026 (marks HIP-3 live × sous-jacents live). Basis médian <b>38 bps</b>.<br>
+          ⚠ <b>xyz:CL à +255 bps n'est pas une anomalie de marché</b> : le contrat HIP-3 ne suit pas le même mois d'échéance que le front-month WTI.
+          Pour les matières premières, la table de correspondance doit <b>fixer la convention d'échéance</b>, sinon on affiche un faux mispricing de 2,5 %.
+        </div>
+      </div>
+
+      <!-- carte sous-jacent, exemple action -->
+      <aside class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+          <h3 class="text-[13px] font-medium text-text-primary truncate">Underlying · NVDA</h3>
+          <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">NASDAQ ↗</span>
+        </div>
+        <div class="px-4 py-3 border-b border-border-subtle">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Market closed</span>
+            <span class="note">rouvre lundi 15:30 CET</span>
+          </div>
+          <div class="grid grid-cols-2 gap-y-3">
+            <div><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Dernière clôture</div><div class="mono text-[18px] font-medium leading-none mt-1.5 text-text-primary">$202.81</div></div>
+            <div><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Séance vendredi</div><div class="mono text-[18px] font-medium leading-none mt-1.5 text-danger">−2.21%</div></div>
+            <div><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Mark synthétique</div><div class="mono text-[18px] font-medium leading-none mt-1.5 text-text-primary">202.91</div></div>
+            <div><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Basis</div><div class="mono text-[18px] font-medium leading-none mt-1.5 text-text-secondary">+4.9 bps</div></div>
+          </div>
+        </div>
+        <div class="px-4 py-3 space-y-2 text-[11.5px] border-b border-border-subtle">
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Prochains résultats</span><span class="mono text-text-secondary">à venir · FMP earnings</span></div>
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Capitalisation</span><span class="mono text-text-secondary">FMP profile</span></div>
+          <div class="flex items-center justify-between gap-3"><span class="text-text-tertiary">Secteur</span><span class="mono text-text-secondary">FMP profile</span></div>
+        </div>
+        <div class="px-4 py-2.5 note">
+          Ces trois lignes nécessitent la <b>clé FMP</b> — non renseignées ici plutôt qu'inventées.<br>
+          La <b>date de résultats</b> est le vrai bonus : un événement de volatilité programmé sur un perp qui trade 24/7.
+        </div>
+      </aside>
+    </div>
+
+    <div class="rounded-lg border border-brand/25 bg-brand/5 px-4 py-3">
+      <div class="text-[12.5px] font-medium text-brand">Ce que le couplage débloque, et qui n'existe nulle part ailleurs</div>
+      <ul class="mt-2 space-y-1.5 text-[12px] text-text-secondary">
+        <li>· <b class="text-text-primary">Audit indépendant de l'oracle</b> — l'opérateur fixe son propre oracle ; FMP est un tiers neutre. C'est la vérification que la donnée HypeDexer ne permettait pas (séries temporelles empoisonnées par <span class="mono">asset_id=0</span>).</li>
+        <li>· <b class="text-text-primary">Gap de réouverture</b> — le synthétique trade 24/7, le NYSE non. Le basis un dimanche <em>est</em> le gap de lundi que le marché price. Personne ne l'affiche.</li>
+        <li>· <b class="text-text-primary">Risque de week-end</b> — un long <span class="mono">xyz:TSLA</span> porté sur le week-end est exposé au gap : ici <b>+0,33 %</b> déjà pricé.</li>
+        <li>· <b class="text-text-primary">Calendrier de résultats</b> — une date d'earnings sur un perp 24/7 = un événement de volatilité connu à l'avance.</li>
+      </ul>
+    </div>
+
+    <div class="rounded-lg border border-gold/25 bg-gold/5 px-4 py-3">
+      <div class="text-[12.5px] font-medium text-gold">Deux contraintes à trancher avant de coder</div>
+      <ul class="mt-2 space-y-1.5 text-[12px] text-text-secondary">
+        <li>· <b class="text-text-primary">La clé ne peut pas vivre dans le front.</b> Une <span class="mono">NEXT_PUBLIC_*</span> est publique — la clé FMP serait pillée en heures. Il faut une route de proxy backend (<span class="mono">/market/underlying/*</span>), avec cache 30-60 s et appels <b>batch</b> : ~60 symboles en 1 requête, soit ~1 500 appels/jour, très loin des 300 req/min du tier Starter.</li>
+        <li>· <b class="text-text-primary">Le tier gratuit ne suffit pas.</b> 250 appels/jour en EOD seulement — c'est un bac à sable, pas un produit. Starter couvre 75 des 81 assets en temps réel ; Ultimate n'est nécessaire que pour 6 titres asiatiques (SoftBank, Ibiden, Kioxia, Hyundai, SK Hynix, Samsung).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ ÉTAT HALTED ══════════════════════════ -->
+  <div class="sec pt-8 space-y-4">
+    <div>
+      <h2 class="font-inter text-xl font-semibold tracking-tight">État HALTED — <span class="mono text-brand text-base">/market/perpdex/flx/CRCL</span></h2>
+      <p class="note mt-1.5">
+        <b>51 % des assets HIP-3 sont délistés</b> (117 sur 231) et <b>5 DEX sur 9 n'ont plus un seul marché vivant</b> : flx, vntl, km, cash, abcd.
+        <b>candleSnapshot renvoie []</b>, aucune donnée WS. Sans ce mode, la page est cassée une fois sur deux.
+        HypeDexer garde les cumuls et la bande historique → la page dégrade en <b>fiche d'archive</b>, pas en page vide.
+      </p>
+    </div>
+
+    <div class="rounded-lg border border-gold/25 bg-gold/5 px-4 py-3 flex items-start gap-3">
+      <span class="text-gold text-[13px] leading-none mt-0.5">⚠</span>
+      <div class="min-w-0">
+        <div class="text-[12.5px] font-medium text-gold">This market is halted.</div>
+        <div class="text-[11.5px] text-text-secondary mt-0.5">Trading stopped on Felix Exchange. Figures below are the last recorded state, not live prices. Last fill <span class="mono">2026-06-20</span>.</div>
+      </div>
+    </div>
+
+    <div class="bg-surface border border-border-subtle rounded-lg px-5 py-4">
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-4">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-10 h-10 shrink-0 rounded-lg grid place-items-center text-[12px] font-semibold bg-surface-2 text-text-tertiary">CR</span>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-[17px] font-semibold text-text-secondary tracking-tight">CRCL / USDC</span>
+              <span class="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-brand/10 border border-brand/25 text-brand font-medium">HIP-3</span>
+              <span class="inline-flex items-center gap-1.5 text-[10px] px-1.5 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Halted</span>
+            </div>
+            <div class="text-[11.5px] text-text-tertiary mt-0.5">deployed by <span class="text-text-secondary hover:text-brand">Felix Exchange ↗</span></div>
+          </div>
+        </div>
+        <div class="flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Last mark</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-secondary">80.037</div></div>
+        <div class="flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Last oracle</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-secondary">80.282</div></div>
+        <div class="flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">24h change</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-tertiary">—</div></div>
+        <div class="flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">24h volume</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-tertiary">—</div></div>
+        <div class="flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Open interest</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-tertiary">$0</div></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 border border-border-subtle rounded-lg divide-x divide-y sm:divide-y-0 divide-border-subtle overflow-hidden">
+      <div class="px-5 py-4 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">OI / cap</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-tertiary">0.00%</div><div class="text-[10.5px] text-text-tertiary mt-1.5">cap <span class="mono">$5.00M</span></div></div>
+      <div class="px-5 py-4 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Max leverage</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-secondary">5×</div></div>
+      <div class="px-5 py-4 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Volume since listing</div><div class="mono text-[22px] font-medium leading-none mt-2 text-text-secondary">$127.1K</div><div class="text-[10.5px] text-text-tertiary mt-1.5">cumulative</div></div>
+      <div class="px-5 py-4 flex flex-col"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Fees since listing</div><div class="mono text-[22px] font-medium leading-none mt-2 text-gold">$0.13</div><div class="text-[10.5px] text-text-tertiary mt-1.5">cumulative</div></div>
+    </div>
+
+    <div class="bg-surface border border-border-subtle rounded-lg px-4 py-10 grid place-items-center">
+      <div class="text-center space-y-1.5">
+        <div class="text-[13px] text-text-secondary">Chart unavailable</div>
+        <div class="note">no candle history for a halted HIP-3 market — <b>candleSnapshot renvoie []</b>, jamais un spinner infini</div>
+      </div>
+    </div>
+    <p class="note">Order book masqué : un book vide vaut moins que pas de book. La tape historique, les top traders et la carte venue restent pleinement utiles.</p>
+  </div>
+
+  <footer class="sec pt-8 note">
+    Blocs repris de <b>dash-mockups/kit.html</b> · aucune classe inventée, aucun primitif manquant.
+    Pour shipper : chaque bloc devient son <b>&lt;Primitive&gt;</b> (KpiRibbon, TypedDataTable, OverviewModule, StatusBadge, StackedShareBar) et on branche la donnée.
+  </footer>
+
+</div>
+</body>
+</html>
