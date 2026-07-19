@@ -5,3 +5,4 @@ export { Hip3SiblingMarkets } from './Hip3SiblingMarkets';
 export { Hip3VenueCard } from './Hip3VenueCard';
 export { Hip3MarketTape } from './Hip3MarketTape';
 export { Hip3TopTraders } from './Hip3TopTraders';
+export { Hip3UnderlyingCard } from './Hip3UnderlyingCard';
