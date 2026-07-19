@@ -17,6 +17,7 @@ import {
   Hip3SiblingMarkets,
   Hip3StatusBanner,
   Hip3TopTraders,
+  Hip3UnderlyingCard,
   Hip3VenueCard,
 } from "@/components/market/hip3";
 import { useHip3AssetView } from "@/services/market/hip3";
@@ -80,13 +81,16 @@ export default function Hip3AssetPage() {
   const venueName = venue?.fullName || venue?.name || dexId.toUpperCase();
   const isLive = status === "live";
 
-  const venueCard = (
-    <Hip3VenueCard
-      venue={venue}
-      oracleUpdater={view.oracleUpdater}
-      liveCount={view.liveCount}
-      totalCount={view.totalCount}
-    />
+  const rightRail = (
+    <div className="space-y-4">
+      <Hip3UnderlyingCard coin={coin} markPx={asset.markPx} ticker={ticker} />
+      <Hip3VenueCard
+        venue={venue}
+        oracleUpdater={view.oracleUpdater}
+        liveCount={view.liveCount}
+        totalCount={view.totalCount}
+      />
+    </div>
   );
 
   // A venue whose markets are all delisted has no siblings to show. Keeping the
@@ -96,10 +100,10 @@ export default function Hip3AssetPage() {
       <div className="min-w-0">
         <Hip3SiblingMarkets siblings={view.siblings} dexId={dexId} venueName={venueName} />
       </div>
-      {venueCard}
+      {rightRail}
     </div>
   ) : (
-    <div className="max-w-md">{venueCard}</div>
+    <div className="max-w-md">{rightRail}</div>
   );
 
   const headerBlock = (
