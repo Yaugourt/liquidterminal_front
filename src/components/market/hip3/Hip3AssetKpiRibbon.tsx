@@ -65,12 +65,14 @@ export function Hip3AssetKpiRibbon({
     key: "oi",
     label: "OI / cap",
     value: oiUtilisation === null ? "N/A" : `${(oiUtilisation * 100).toFixed(2)}%`,
+    // Zero decimals here on purpose: two full `$147.95M`-style figures plus a
+    // separator overflow the cell and wrap, which stretches the whole ribbon.
     sub:
       oiNotionalUsd === null
         ? undefined
         : oiCapUsd
-          ? `${compactUsd(oiNotionalUsd)} / ${compactUsd(oiCapUsd)}`
-          : `${compactUsd(oiNotionalUsd)} open`,
+          ? `${compactUsd(oiNotionalUsd, { decimals: 0 })} of ${compactUsd(oiCapUsd, { decimals: 0 })}`
+          : `${compactUsd(oiNotionalUsd, { decimals: 0 })} open`,
   });
 
   cells.push({
