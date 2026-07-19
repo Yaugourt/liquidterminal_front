@@ -58,6 +58,23 @@ function parseArgs(argv) {
 /** Runs in the page. Finds elements that silently clip their content. */
 function collectClips() {
   const findings = [];
+
+  /**
+   * Ambient glows, gradient washes and blur blobs are *meant* to bleed past
+   * their card and be cut by overflow-hidden (the Aurora look: an empty
+   * absolutely-positioned, non-interactive div offset outside the box).
+   * They are not clipped content, so they must not fail the gate. Anything
+   * carrying text or accepting a pointer stays in scope.
+   */
+  const isDecorativeBleed = (node) => {
+    const s = getComputedStyle(node);
+    return (
+      s.pointerEvents === "none" &&
+      (s.position === "absolute" || s.position === "fixed") &&
+      node.textContent.trim() === ""
+    );
+  };
+
   for (const el of document.querySelectorAll("body *")) {
     const style = getComputedStyle(el);
     const ox = style.overflowX;
@@ -68,8 +85,26 @@ function collectClips() {
     if (over <= 2) continue;
     const rect = el.getBoundingClientRect();
     if (rect.width < 40 || rect.height < 8) continue; // ignore slivers / off-screen
+
+    // Re-measure the overflow using real content only, so a decorative bleed
+    // cannot mask (or invent) a clip. The reported number is what a user
+    // actually loses.
+    let contentOver = 0;
+    for (const node of el.querySelectorAll("*")) {
+      if (isDecorativeBleed(node)) continue;
+      const r = node.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+      contentOver = Math.max(contentOver, r.right - rect.right, rect.left - r.left);
+    }
+    if (contentOver <= 2) continue;
+
     const cls = typeof el.className === "string" ? el.className.slice(0, 70) : "";
-    findings.push({ tag: el.tagName.toLowerCase(), cls, over, w: Math.round(rect.width) });
+    findings.push({
+      tag: el.tagName.toLowerCase(),
+      cls,
+      over: Math.round(contentOver),
+      w: Math.round(rect.width),
+    });
   }
   // De-dupe identical signatures, keep worst overflow.
   const byKey = new Map();
