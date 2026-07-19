@@ -18,6 +18,9 @@ const nextConfig = {
             // The wiki landing IS the introduction chapter now; keep the old
             // deep-link canonical by folding it back onto /wiki.
             { source: '/wiki/learn/introduction', destination: '/wiki', permanent: true },
+            // /wiki/learn only ever existed as a path prefix (/wiki/learn/:chapter),
+            // so the bare segment 404'd even though it reads like a real page.
+            { source: '/wiki/learn', destination: '/wiki', permanent: true },
         ];
     },
     typescript: {

@@ -21,6 +21,9 @@ import { useHypeMood } from "@/components/hypurr/useHypeMood";
 
 const BOT_URL = "https://t.me/liquidterminalbot";
 
+/** App home — same target as the in-app sidebar logo, so both agree on "home". */
+const APP_HOME = "/dashboard";
+
 const NAV_LINKS = [
   { label: "Market", href: "/market" },
   { label: "Explorer", href: "/explorer" },
@@ -117,15 +120,43 @@ function TopNav() {
           >
             Bot
           </a>
+          {/*
+           * Entry point into the app. This never connected a wallet — the real
+           * Privy login lives in the app header (UserAccountCompact), so the old
+           * "Connect" label promised something this button does not do. The
+           * analytics event is kept as-is: it still marks the same funnel step
+           * (landing → app), and renaming it would orphan the existing funnel.
+           */}
           <Link
-            href="/dashboard"
+            href={APP_HOME}
             onClick={() => trackConnectStarted("landing-nav")}
-            className="h-8 px-3 inline-flex items-center rounded-md text-xs font-semibold bg-brand text-brand-text-on hover:bg-brand/90"
+            className="h-8 px-3 inline-flex items-center gap-1.5 rounded-md text-xs font-semibold bg-brand text-brand-text-on hover:bg-brand/90"
           >
-            Connect
+            Access app
+            <span aria-hidden="true">→</span>
           </Link>
         </div>
       </div>
+
+      {/*
+       * The nav above is md-only, which left every viewport under 768px with no
+       * link into Market / Explorer / Vaults / HYPE / Wiki at all — the landing
+       * dead-ended on mobile. Scroll strip keeps all of them reachable without
+       * introducing a burger menu.
+       */}
+      <nav className="md:hidden border-t border-border-subtle">
+        <div className="flex items-center gap-1 overflow-x-auto px-6 py-2 text-[12.5px] text-text-tertiary [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="shrink-0 rounded-md px-2.5 py-1 hover:bg-surface-2 hover:text-text-primary"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </nav>
     </header>
   );
 }
