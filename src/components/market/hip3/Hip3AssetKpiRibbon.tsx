@@ -3,6 +3,7 @@
 import { KpiRibbon, KpiCell } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { Hip3AssetView } from "@/services/market/hip3";
+import type { Hip3Snapshot } from "@/services/indexer/hip3";
 
 /**
  * The six figures that separate a HIP-3 perp from a native one: how much of the
@@ -13,7 +14,14 @@ import { Hip3AssetView } from "@/services/market/hip3";
  * history (HypeDexer's OHLCV and oracle series are collapsed by an upstream
  * `asset_id = 0`), and the DS forbids inventing one.
  */
-export function Hip3AssetKpiRibbon({ view }: { view: Hip3AssetView }) {
+export function Hip3AssetKpiRibbon({
+  view,
+  snapshot,
+}: {
+  view: Hip3AssetView;
+  /** HypeDexer totals. Null when the proxy is down — the ribbon just shortens. */
+  snapshot?: Hip3Snapshot | null;
+}) {
   const { asset, venue, oiNotionalUsd, oiCapUsd, oiUtilisation } = view;
   if (!asset) return null;
 
@@ -24,7 +32,7 @@ export function Hip3AssetKpiRibbon({ view }: { view: Hip3AssetView }) {
   // utilisation by the asset price (a factor of ~84 on xyz:CL).
   cells.push({
     key: "oi",
-    label: "OI / operator cap",
+    label: "OI / cap",
     value: oiUtilisation === null ? "N/A" : `${(oiUtilisation * 100).toFixed(2)}%`,
     sub:
       oiNotionalUsd === null
@@ -68,10 +76,29 @@ export function Hip3AssetKpiRibbon({ view }: { view: Hip3AssetView }) {
 
   cells.push({
     key: "markets",
-    label: "Markets on venue",
+    label: "Markets",
     value: `${view.liveCount}`,
     sub: `of ${view.totalCount} listed`,
   });
+
+  // Cumulative totals are the only history this market exposes — the per-asset
+  // time series upstream is unusable. Appended, not interleaved, so the ribbon
+  // keeps its shape when the proxy answers 402.
+  if (snapshot) {
+    cells.push({
+      key: "vol-cumulative",
+      label: "Total volume",
+      value: compactUsd(snapshot.total_volume_cumulative),
+      sub: "cumulative",
+    });
+    cells.push({
+      key: "fees-cumulative",
+      label: "Total fees",
+      value: compactUsd(snapshot.total_fees_cumulative),
+      sub: `${compactUsd(snapshot.fees_24h)} in 24h`,
+      tone: "gold",
+    });
+  }
 
   return <KpiRibbon variant="plain" cells={cells} />;
 }
