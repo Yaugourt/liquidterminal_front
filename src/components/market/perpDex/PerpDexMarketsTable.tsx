@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { TypedDataTable, type Column, TokenAvatar } from "@/components/common";
+import { hip3AssetHref } from "@/lib/hip3/coin";
 import { formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import type { PerpDexAssetWithMarketData } from "@/services/market/perpDex/types";
@@ -159,6 +161,7 @@ export function PerpDexMarketsTable({
   onSort,
 }: PerpDexMarketsTableProps) {
   const { format } = useNumberFormat();
+  const router = useRouter();
 
   // Bridge: TypedDataTable onSortChange receives (field, dir) — but only
   // sortable columns (priceChange24h, dayNtlVlm, openInterest) will fire it.
@@ -179,7 +182,12 @@ export function PerpDexMarketsTable({
         columns={buildColumns(format)}
         getRowKey={(row) => row.name}
         emptyMessage="No markets available"
-        rowClassName={(row) => (row.isDelisted ? "opacity-50" : "")}
+        // Each market now has a page of its own — this table was the natural
+        // entry point to it and had no destination until now.
+        onRowClick={(row) => router.push(hip3AssetHref(row.name))}
+        rowClassName={(row) =>
+          `cursor-pointer ${row.isDelisted ? "opacity-50" : ""}`.trim()
+        }
         onSortChange={handleSortChange}
         sortField={sortField}
         sortDirection={sortOrder}

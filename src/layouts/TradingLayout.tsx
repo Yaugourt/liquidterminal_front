@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 
 interface TradingLayoutProps {
-    marketType: 'spot' | 'perp';
+    marketType: 'spot' | 'perp' | 'hip3';
     tokenName: string;
     tokenInfoSlot: ReactNode;
     chartSlot: ReactNode;

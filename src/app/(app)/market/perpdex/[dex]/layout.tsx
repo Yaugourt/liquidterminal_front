@@ -1,7 +1,11 @@
 import { Metadata } from "next";
 import { generateMetadata as buildMetadata, decodeEntityParam } from "@/lib/seo";
-import { JsonLd, breadcrumbSchema } from "@/components/JsonLd";
 
+/**
+ * Shared metadata for the venue subtree. The heading and breadcrumb live in
+ * `(overview)/layout.tsx` so they apply to the venue page alone — `[asset]`
+ * publishes its own, deeper breadcrumb and its own `<h1>`.
+ */
 export async function generateMetadata({
   params,
 }: {
@@ -17,27 +21,6 @@ export async function generateMetadata({
   });
 }
 
-export default async function PerpDexDetailLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ dex: string }>;
-}) {
-  const { dex } = await params;
-  const name = decodeEntityParam(dex);
-  return (
-    <>
-      <JsonLd
-        data={breadcrumbSchema([
-          { name: "Liquid Terminal", path: "" },
-          { name: "Market", path: "/market" },
-          { name: "Perp DEXs", path: "/market/perpdex" },
-          { name, path: `/market/perpdex/${encodeURIComponent(name)}` },
-        ])}
-      />
-      <h1 className="sr-only">{name} perp DEX on Hyperliquid (HIP-3)</h1>
-      {children}
-    </>
-  );
+export default function PerpDexDetailLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
