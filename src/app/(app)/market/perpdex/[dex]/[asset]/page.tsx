@@ -13,11 +13,14 @@ import { OrderBook } from "@/components/market/token";
 import {
   Hip3AssetHeader,
   Hip3AssetKpiRibbon,
+  Hip3MarketTape,
   Hip3SiblingMarkets,
   Hip3StatusBanner,
+  Hip3TopTraders,
   Hip3VenueCard,
 } from "@/components/market/hip3";
 import { useHip3AssetView } from "@/services/market/hip3";
+import { useHip3Snapshot } from "@/services/indexer/hip3";
 import { usePageTitle } from "@/store/use-page-title";
 
 // lightweight-charts needs the DOM — same treatment as the spot/perp pages.
@@ -36,6 +39,11 @@ export default function Hip3AssetPage() {
 
   const view = useHip3AssetView(dexParam, assetParam);
   const { asset, venue, status, isLoading, error, notFound, coin, ticker, dexId } = view;
+
+  // HypeDexer enrichment. Kept separate from `view` on purpose: this proxy
+  // answers 402 when the subscription lapses, and nothing it feeds is allowed
+  // to take down the identity, price, chart or book above it.
+  const { snapshot } = useHip3Snapshot(asset ? coin : null);
 
   const { setTitle } = usePageTitle();
   useEffect(() => {
@@ -98,7 +106,17 @@ export default function Hip3AssetPage() {
     <div className="space-y-4">
       <Hip3StatusBanner status={status} venueName={venueName} />
       <Hip3AssetHeader view={view} />
-      <Hip3AssetKpiRibbon view={view} />
+      <Hip3AssetKpiRibbon view={view} snapshot={snapshot} />
+    </div>
+  );
+
+  const activityBlock = (
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
+      <Hip3MarketTape coin={coin} />
+      <Hip3TopTraders
+        coin={coin}
+        cumulativeVolume={snapshot?.total_volume_cumulative ?? null}
+      />
     </div>
   );
 
@@ -117,6 +135,9 @@ export default function Hip3AssetPage() {
             </div>
           </div>
         </Card>
+        {/* A halted market still has a tape and trader history worth reading —
+            that is what turns this from an empty page into an archive. */}
+        {activityBlock}
         {bottomSection}
       </div>
     );
@@ -137,7 +158,12 @@ export default function Hip3AssetPage() {
           />
         }
         orderBookSlot={<OrderBook symbol={coin} perpCoinId={coin} tokenNameProp={ticker} />}
-        bottomSectionSlot={bottomSection}
+        bottomSectionSlot={
+          <div className="space-y-4">
+            {activityBlock}
+            {bottomSection}
+          </div>
+        }
       />
     </div>
   );
