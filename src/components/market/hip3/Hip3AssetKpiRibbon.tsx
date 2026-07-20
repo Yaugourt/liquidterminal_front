@@ -1,8 +1,7 @@
 "use client";
 
 import { KpiRibbon, KpiCell } from "@/components/common";
-import { compactUsd, formatFunding, formatPrice } from "@/lib/formatters/numberFormatting";
-import { useNumberFormat } from "@/store/number-format.store";
+import { compactUsd, formatFunding } from "@/lib/formatters/numberFormatting";
 import { Hip3AssetView } from "@/services/market/hip3";
 import type { Hip3Snapshot } from "@/services/indexer/hip3";
 
@@ -14,9 +13,10 @@ import type { Hip3Snapshot } from "@/services/indexer/hip3";
  * the only horizontal stat strip, so everything measurable lives here and the
  * header keeps only identity plus the headline price.
  *
- * Three fields are intentionally absent because they are already on screen:
- * collateral is in the pair name (`CL / USDC`), the venue's market count is in
- * the venue card header, and executable spread is in the order book.
+ * Deliberately holds only the ordinary market metrics. The three facts that
+ * are specific to HIP-3 — oracle deviation, cap utilisation, who operates the
+ * venue — were equal-weight tiles here and now have cards of their own above:
+ * eight identical tiles ranked nothing.
  *
  * No sparkline on any cell — no metric here has a usable per-asset history
  * (HypeDexer's OHLCV and oracle series are collapsed by an upstream
@@ -30,23 +30,10 @@ export function Hip3AssetKpiRibbon({
   /** HypeDexer totals. Null when the proxy is down — the ribbon just shortens. */
   snapshot?: Hip3Snapshot | null;
 }) {
-  const { format } = useNumberFormat();
-  const { asset, venue, oiNotionalUsd, oiCapUsd, oiUtilisation, oracleDeviationBps } = view;
+  const { asset } = view;
   if (!asset) return null;
 
   const cells: KpiCell[] = [];
-
-  // On HIP-3 the oracle is run by the venue operator, not by Hyperliquid, so
-  // its gap to the mark is the market's trust signal. Point-in-time only.
-  cells.push({
-    key: "oracle",
-    label: "Δ mark−oracle",
-    value:
-      oracleDeviationBps === null
-        ? "N/A"
-        : `${oracleDeviationBps >= 0 ? "+" : ""}${oracleDeviationBps.toFixed(1)} bps`,
-    sub: `oracle ${formatPrice(asset.oraclePx, format)}`,
-  });
 
   cells.push({
     key: "funding",
@@ -56,23 +43,6 @@ export function Hip3AssetKpiRibbon({
       asset.premium === null
         ? undefined
         : `premium ${(asset.premium * 10_000).toFixed(1)} bps`,
-  });
-
-  // OI is compared against the cap in USD on BOTH sides — the raw
-  // `openInterest` field is in contracts, and mixing the two understates
-  // utilisation by the asset price (a factor of ~84 on xyz:CL).
-  cells.push({
-    key: "oi",
-    label: "OI / cap",
-    value: oiUtilisation === null ? "N/A" : `${(oiUtilisation * 100).toFixed(2)}%`,
-    // Zero decimals here on purpose: two full `$147.95M`-style figures plus a
-    // separator overflow the cell and wrap, which stretches the whole ribbon.
-    sub:
-      oiNotionalUsd === null
-        ? undefined
-        : oiCapUsd
-          ? `${compactUsd(oiNotionalUsd, { decimals: 0 })} of ${compactUsd(oiCapUsd, { decimals: 0 })}`
-          : `${compactUsd(oiNotionalUsd, { decimals: 0 })} open`,
   });
 
   cells.push({
@@ -90,16 +60,6 @@ export function Hip3AssetKpiRibbon({
     value: `${asset.maxLeverage}x`,
     sub: asset.growthMode === "enabled" ? "growth mode on" : undefined,
   });
-
-  if (venue) {
-    cells.push({
-      key: "fee-share",
-      label: "Fee share",
-      value: venue.deployerFeeScale.toFixed(2),
-      sub: `to ${venue.fullName || venue.name}`,
-      tone: "gold",
-    });
-  }
 
   // Cumulative totals are the only history this market exposes. Appended, not
   // interleaved, so the ribbon keeps its shape when the proxy answers 402.

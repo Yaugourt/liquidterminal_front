@@ -15,9 +15,21 @@ interface OrderBookProps {
   className?: string;
   /** Direct coinId for perpetual WebSocket (e.g., "BTC") */
   perpCoinId?: string;
+  /**
+   * Tab styling. Defaults to the legacy boxed pills so the spot and perp pages
+   * are untouched; the HIP-3 page passes "text", the minimal DS variant.
+   */
+  tabsVariant?: "pill" | "text";
 }
 
-export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpCoinId }: OrderBookProps) {
+export function OrderBook({
+  symbol,
+  marketIndex,
+  tokenNameProp,
+  className,
+  perpCoinId,
+  tabsVariant = "pill",
+}: OrderBookProps) {
   const [activeTab, setActiveTab] = useState<'orderbook' | 'trades'>('orderbook');
   const { format } = useNumberFormat();
 
@@ -101,7 +113,8 @@ export function OrderBook({ symbol, marketIndex, tokenNameProp, className, perpC
             ]}
             activeTab={activeTab}
             onTabChange={(val) => setActiveTab(val as 'orderbook' | 'trades')}
-            className="bg-base border border-border-subtle"
+            variant={tabsVariant}
+            className={tabsVariant === "pill" ? "bg-base border border-border-subtle" : undefined}
           />
         </div>
       </div>
