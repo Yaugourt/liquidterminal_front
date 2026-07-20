@@ -15,6 +15,7 @@ import {
   Hip3AssetKpiRibbon,
   Hip3BasisCard,
   Hip3ControlCard,
+  Hip3FactList,
   Hip3MarketTape,
   Hip3OiCapCard,
   Hip3SiblingMarkets,
@@ -82,11 +83,12 @@ export default function Hip3AssetPage() {
   const venueName = venue?.fullName || venue?.name || dexId.toUpperCase();
   const isLive = status === "live";
 
-  // The three facts a HIP-3 market has that an ordinary perp does not. They
-  // used to sit at the very bottom of the right rail, under two full-height
-  // sections — which is to say, unread.
+  // The facts a HIP-3 market has that an ordinary perp does not. Rows, not a
+  // three-column grid: two of the three are absent on most markets, and a fixed
+  // grid reserved their track and rendered a card-sized hole. A missing fact
+  // now removes its row.
   const trustRow = (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+    <Hip3FactList>
       <Hip3BasisCard coin={coin} markPx={asset.markPx} ticker={ticker} />
       <Hip3ControlCard
         venue={venue}
@@ -96,7 +98,7 @@ export default function Hip3AssetPage() {
         totalCount={view.totalCount}
       />
       <Hip3OiCapCard view={view} />
-    </div>
+    </Hip3FactList>
   );
 
   // Full width now that the 380px rail is gone.
