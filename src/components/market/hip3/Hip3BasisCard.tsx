@@ -1,9 +1,9 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useHip3Underlying } from "@/services/market/hip3/underlying";
+import { Hip3Chip, Hip3FactCard } from "./Hip3FactCard";
 
 /** Narrowest span the gauge shows either side of zero. */
 const GAUGE_MIN_BPS = 50;
@@ -18,12 +18,8 @@ function gaugeRange(basisBps: number): number {
 }
 
 /**
- * The synthetic against the instrument it tracks.
- *
- * Promoted out of the bottom rail: on a HIP-3 market the oracle is run by the
- * venue operator, so an independent price is the single most load-bearing fact
- * on the page — and it was sitting under two full-height sections where nobody
- * scrolled.
+ * The synthetic against the instrument it tracks — the only independent check
+ * on an oracle the venue operator runs.
  */
 export function Hip3BasisCard({
   coin,
@@ -49,46 +45,25 @@ export function Hip3BasisCard({
   const offset = basisBps === null ? null : basisBps / (range * 2);
 
   return (
-    <Card className="flex flex-col">
-      <div className="flex items-baseline gap-2 px-4 py-2.5 border-b border-border-subtle">
-        <h3 className="text-[13px] font-medium text-text-primary truncate">
-          Versus real {quote.symbol}
-        </h3>
-        <span className="ml-auto shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">
+    <Hip3FactCard
+      title={`Versus real ${quote.symbol}`}
+      headAside={
+        <Hip3Chip tone={stale ? "muted" : "success"}>
+          <span className={`w-1.5 h-1.5 rounded-full ${stale ? "bg-text-tertiary" : "bg-success"}`} />
           {quote.market} {stale ? "closed" : "open"}
-        </span>
-      </div>
-
-      <div className="px-4 py-3 flex items-end gap-5">
-        <div className="shrink-0">
-          <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Basis</div>
-          <div className="mono text-[26px] font-medium leading-none mt-1.5 text-text-primary">
-            {basisBps === null ? (
-              "—"
-            ) : (
-              <>
-                {basisBps >= 0 ? "+" : "−"}
-                {Math.abs(basisBps).toFixed(1)}{" "}
-                <span className="text-[14px] text-text-tertiary">bps</span>
-              </>
-            )}
-          </div>
-        </div>
-
-        {offset !== null && (
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between text-[11px] text-text-tertiary">
-              <span>
-                real <span className="mono text-text-secondary">{formatPrice(quote.price, format)}</span>
-              </span>
-              <span>
-                synth{" "}
-                <span className="mono text-text-secondary">
-                  {markPx === null ? "N/A" : formatPrice(markPx, format)}
-                </span>
-              </span>
-            </div>
-            <div className="relative h-1.5 w-full rounded-full bg-surface-2 mt-2">
+        </Hip3Chip>
+      }
+      value={
+        basisBps === null
+          ? "—"
+          : `${basisBps >= 0 ? "+" : "−"}${Math.abs(basisBps).toFixed(1)}`
+      }
+      unit={basisBps === null ? undefined : "bps"}
+      qualifier={basisBps === null ? "not comparable" : "synthetic vs real"}
+      visual={
+        offset === null ? null : (
+          <div>
+            <div className="relative h-1.5 w-full rounded-full bg-surface-2">
               <div className="absolute inset-y-0 left-1/2 w-px bg-border-strong" />
               <div
                 className="absolute inset-y-0 w-1 rounded-full bg-brand"
@@ -101,17 +76,28 @@ export function Hip3BasisCard({
               <span>+{range}bp</span>
             </div>
           </div>
-        )}
-      </div>
-
-      <div className="px-4 py-2 border-t border-border-subtle text-[11px] text-text-tertiary">
-        {basisBps === null ? (
-          <>Basis not shown — {quote.basisNote ?? "mapping not confirmed for this instrument"}.</>
+        )
+      }
+      leftLabel={
+        <>
+          real <span className="mono text-text-secondary">{formatPrice(quote.price, format)}</span>
+        </>
+      }
+      rightLabel={
+        <>
+          synth{" "}
+          <span className="mono text-text-secondary">
+            {markPx === null ? "N/A" : formatPrice(markPx, format)}
+          </span>
+        </>
+      }
+      context={
+        basisBps === null ? (
+          <>Basis hidden — {quote.basisNote ?? "mapping not confirmed"}.</>
         ) : stale ? (
           <>
             {quote.market} is closed: this gap is the{" "}
-            <span className="text-text-secondary">move priced for reopening</span>, not a tracking
-            error.
+            <span className="text-text-secondary">move priced for reopening</span>.
           </>
         ) : (
           <>
@@ -122,8 +108,8 @@ export function Hip3BasisCard({
             </span>{" "}
             away.
           </>
-        )}
-      </div>
-    </Card>
+        )
+      }
+    />
   );
 }
