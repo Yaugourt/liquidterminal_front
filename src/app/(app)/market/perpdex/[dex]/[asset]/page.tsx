@@ -13,12 +13,13 @@ import { OrderBook } from "@/components/market/token";
 import {
   Hip3AssetHeader,
   Hip3AssetKpiRibbon,
+  Hip3BasisCard,
+  Hip3ControlCard,
   Hip3MarketTape,
+  Hip3OiCapCard,
   Hip3SiblingMarkets,
   Hip3StatusBanner,
   Hip3TopTraders,
-  Hip3UnderlyingCard,
-  Hip3VenueCard,
 } from "@/components/market/hip3";
 import { useHip3AssetView } from "@/services/market/hip3";
 import { useHip3Snapshot } from "@/services/indexer/hip3";
@@ -81,29 +82,26 @@ export default function Hip3AssetPage() {
   const venueName = venue?.fullName || venue?.name || dexId.toUpperCase();
   const isLive = status === "live";
 
-  const rightRail = (
-    <div className="space-y-4">
-      <Hip3UnderlyingCard coin={coin} markPx={asset.markPx} ticker={ticker} />
-      <Hip3VenueCard
+  // The three facts a HIP-3 market has that an ordinary perp does not. They
+  // used to sit at the very bottom of the right rail, under two full-height
+  // sections — which is to say, unread.
+  const trustRow = (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+      <Hip3BasisCard coin={coin} markPx={asset.markPx} ticker={ticker} />
+      <Hip3ControlCard
         venue={venue}
         oracleUpdater={view.oracleUpdater}
+        collateral={asset.collateralToken}
         liveCount={view.liveCount}
         totalCount={view.totalCount}
       />
+      <Hip3OiCapCard view={view} />
     </div>
   );
 
-  // A venue whose markets are all delisted has no siblings to show. Keeping the
-  // two-column grid there would strand the venue card next to an empty half.
-  const bottomSection = view.siblings.length ? (
-    <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_380px] gap-4 items-start">
-      <div className="min-w-0">
-        <Hip3SiblingMarkets siblings={view.siblings} dexId={dexId} venueName={venueName} />
-      </div>
-      {rightRail}
-    </div>
-  ) : (
-    <div className="max-w-md">{rightRail}</div>
+  // Full width now that the 380px rail is gone.
+  const siblingsBlock = (
+    <Hip3SiblingMarkets siblings={view.siblings} dexId={dexId} venueName={venueName} />
   );
 
   const headerBlock = (
@@ -139,10 +137,11 @@ export default function Hip3AssetPage() {
             </div>
           </div>
         </Card>
+        {trustRow}
         {/* A halted market still has a tape and trader history worth reading —
             that is what turns this from an empty page into an archive. */}
         {activityBlock}
-        {bottomSection}
+        {siblingsBlock}
       </div>
     );
   }
@@ -152,7 +151,12 @@ export default function Hip3AssetPage() {
       <TradingLayout
         marketType="hip3"
         tokenName={coin}
-        tokenInfoSlot={headerBlock}
+        tokenInfoSlot={
+          <div className="space-y-4">
+            {headerBlock}
+            {trustRow}
+          </div>
+        }
         chartSlot={
           <TradingViewChart
             symbol={coin}
@@ -161,11 +165,19 @@ export default function Hip3AssetPage() {
             className="flex-1 min-h-[450px]"
           />
         }
-        orderBookSlot={<OrderBook symbol={coin} perpCoinId={coin} tokenNameProp={ticker} />}
+        orderBookSlot={
+          <OrderBook
+            symbol={coin}
+            perpCoinId={coin}
+            tokenNameProp={ticker}
+            // Minimal DS tabs — the boxed pills are the legacy variant.
+            tabsVariant="text"
+          />
+        }
         bottomSectionSlot={
           <div className="space-y-4">
             {activityBlock}
-            {bottomSection}
+            {siblingsBlock}
           </div>
         }
       />
