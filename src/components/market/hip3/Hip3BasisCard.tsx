@@ -31,16 +31,17 @@ export function Hip3BasisCard({
   ticker: string;
 }) {
   const { format } = useNumberFormat();
-  const { quote, unavailable, basisBps, impliedGapPercent, isLoading } = useHip3Underlying(
-    coin,
-    markPx
-  );
+  const { quote, unavailable, basisBps, impliedGapPercent, marketOpen, isLoading } =
+    useHip3Underlying(coin, markPx);
 
   // No listed counterpart, or outside the data plan: no card. Silence beats an
   // error for something that is not broken.
   if (unavailable || (isLoading && !quote) || !quote) return null;
 
-  const stale = quote.quotedAt ? Date.now() - quote.quotedAt > 6 * 3600_000 : false;
+  // Real session state when the exchange publishes one. Falls back to "closed"
+  // only for instruments with no cash calendar to consult.
+  const closed = marketOpen === null ? false : !marketOpen;
+  const showState = marketOpen !== null;
   const range = basisBps === null ? GAUGE_MIN_BPS : gaugeRange(basisBps);
   const offset = basisBps === null ? null : basisBps / (range * 2);
 
@@ -48,9 +49,12 @@ export function Hip3BasisCard({
     <Hip3FactCard
       title={`Versus real ${quote.symbol}`}
       headAside={
-        <Hip3Chip tone={stale ? "muted" : "success"}>
-          <span className={`w-1.5 h-1.5 rounded-full ${stale ? "bg-text-tertiary" : "bg-success"}`} />
-          {quote.market} {stale ? "closed" : "open"}
+        <Hip3Chip tone={!showState ? "muted" : closed ? "muted" : "success"}>
+          {showState ? (
+            <span className={`w-1.5 h-1.5 rounded-full ${closed ? "bg-text-tertiary" : "bg-success"}`} />
+          ) : null}
+          {quote.market}
+          {showState ? (closed ? " closed" : " open") : ""}
         </Hip3Chip>
       }
       value={
@@ -94,7 +98,7 @@ export function Hip3BasisCard({
       context={
         basisBps === null ? (
           <>Basis hidden — {quote.basisNote ?? "mapping not confirmed"}.</>
-        ) : stale ? (
+        ) : closed ? (
           <>
             {quote.market} is closed: this gap is the{" "}
             <span className="text-text-secondary">move priced for reopening</span>.

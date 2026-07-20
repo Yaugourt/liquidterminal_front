@@ -15,7 +15,10 @@ export interface UnderlyingQuote {
   price: number;
   previousClose: number | null;
   changePercent: number | null;
-  quotedAt: number | null;
+  /** Trading date of `price`. */
+  quotedOn: string | null;
+  /** Real session state. Null when the instrument has no cash-equity calendar. */
+  marketOpen: boolean | null;
 }
 
 export interface UnderlyingUnavailable {
@@ -58,6 +61,12 @@ export interface Hip3Basis {
    * this is the reopening gap the synthetic is pricing in.
    */
   impliedGapPercent: number | null;
+  /**
+   * Whether the cash market is trading right now. Read from the exchange
+   * calendar, not guessed from how old the price is — that heuristic called the
+   * market "live" for the six hours after the close, and "closed" all session.
+   */
+  marketOpen: boolean | null;
   isLoading: boolean;
 }
 
@@ -82,6 +91,13 @@ export function useHip3Underlying(coin: string | null, markPx: number | null): H
       impliedGapPercent = ((markPx - quote.price) / quote.price) * 100;
     }
 
-    return { quote, unavailable, basisBps, impliedGapPercent, isLoading };
+    return {
+      quote,
+      unavailable,
+      basisBps,
+      impliedGapPercent,
+      marketOpen: quote?.marketOpen ?? null,
+      isLoading,
+    };
   }, [data, markPx, isLoading]);
 }
