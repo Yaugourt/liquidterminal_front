@@ -39,97 +39,104 @@ const EQUITY = (symbol: string, market = "NASDAQ"): UnderlyingRef => ({
   basisComparable: true,
 });
 
+/**
+ * Keyed by TICKER, not by `dex:TICKER`.
+ *
+ * The instrument a synthetic tracks is a property of the ticker: `cash:NVDA`
+ * and `xyz:NVDA` are both Nvidia. Keying by venue meant a second HIP-3 venue
+ * listing the same eight companies got no card at all.
+ */
 export const HIP3_UNDERLYING: Record<string, UnderlyingRef> = {
   // ── US equities & US-listed ADRs ──────────────────────────────────
-  "xyz:AAPL": EQUITY("AAPL"),
-  "xyz:AMAT": EQUITY("AMAT"),
-  "xyz:AMD": {
+  "AAPL": EQUITY("AAPL"),
+  "AMAT": EQUITY("AMAT"),
+  "AMD": {
     ...EQUITY("AMD"),
     basisComparable: false,
     basisNote: "Measured gap exceeds weekend drift — mapping not yet confirmed",
   },
-  "xyz:AMZN": EQUITY("AMZN"),
-  "xyz:AVGO": EQUITY("AVGO"),
-  "xyz:BX": EQUITY("BX", "NYSE"),
-  "xyz:COIN": EQUITY("COIN"),
-  "xyz:COST": EQUITY("COST"),
-  "xyz:CRCL": EQUITY("CRCL", "NYSE"),
-  "xyz:CRWV": EQUITY("CRWV"),
-  "xyz:DELL": EQUITY("DELL", "NYSE"),
-  "xyz:DKNG": EQUITY("DKNG"),
-  "xyz:EBAY": EQUITY("EBAY"),
-  "xyz:GME": EQUITY("GME", "NYSE"),
-  "xyz:GOOGL": EQUITY("GOOGL"),
-  "xyz:HIMS": EQUITY("HIMS", "NYSE"),
-  "xyz:HOOD": EQUITY("HOOD"),
-  "xyz:IBM": EQUITY("IBM", "NYSE"),
-  "xyz:INTC": {
+  "AMZN": EQUITY("AMZN"),
+  "AVGO": EQUITY("AVGO"),
+  "BX": EQUITY("BX", "NYSE"),
+  "COIN": EQUITY("COIN"),
+  "COST": EQUITY("COST"),
+  "CRCL": EQUITY("CRCL", "NYSE"),
+  "CRWV": EQUITY("CRWV"),
+  "DELL": EQUITY("DELL", "NYSE"),
+  "DKNG": EQUITY("DKNG"),
+  "EBAY": EQUITY("EBAY"),
+  "GME": EQUITY("GME", "NYSE"),
+  "GOOGL": EQUITY("GOOGL"),
+  "HIMS": EQUITY("HIMS", "NYSE"),
+  "HOOD": EQUITY("HOOD"),
+  "IBM": EQUITY("IBM", "NYSE"),
+  "INTC": {
     ...EQUITY("INTC"),
     basisComparable: false,
     basisNote: "Measured gap exceeds weekend drift — mapping not yet confirmed",
   },
-  "xyz:LLY": EQUITY("LLY", "NYSE"),
-  "xyz:META": EQUITY("META"),
-  "xyz:MRVL": EQUITY("MRVL"),
-  "xyz:MSFT": EQUITY("MSFT"),
-  "xyz:MSTR": EQUITY("MSTR"),
-  "xyz:MU": EQUITY("MU"),
-  "xyz:NBIS": EQUITY("NBIS"),
-  "xyz:NFLX": EQUITY("NFLX"),
-  "xyz:NOK": EQUITY("NOK", "NYSE"),
-  "xyz:NOW": EQUITY("NOW", "NYSE"),
-  "xyz:NVDA": EQUITY("NVDA"),
-  "xyz:ORCL": EQUITY("ORCL", "NYSE"),
-  "xyz:PLTR": EQUITY("PLTR"),
-  "xyz:QCOM": EQUITY("QCOM"),
-  "xyz:RIVN": EQUITY("RIVN"),
-  "xyz:RKLB": EQUITY("RKLB"),
-  "xyz:SNDK": EQUITY("SNDK"),
-  "xyz:STRC": EQUITY("STRC"),
-  "xyz:TSLA": EQUITY("TSLA"),
-  "xyz:WDC": EQUITY("WDC", "NYSE"),
-  "xyz:ZM": EQUITY("ZM"),
-  "xyz:BE": EQUITY("BE", "NYSE"),
-  "xyz:BB": EQUITY("BB", "NYSE"),
-  "xyz:LITE": EQUITY("LITE"),
-  "xyz:USAR": EQUITY("USAR"),
-  "xyz:BABA": {
+  "LLY": EQUITY("LLY", "NYSE"),
+  "META": EQUITY("META"),
+  "MRVL": EQUITY("MRVL"),
+  "MSFT": EQUITY("MSFT"),
+  "MSTR": EQUITY("MSTR"),
+  "MU": EQUITY("MU"),
+  "NBIS": EQUITY("NBIS"),
+  "NFLX": EQUITY("NFLX"),
+  "NOK": EQUITY("NOK", "NYSE"),
+  "NOW": EQUITY("NOW", "NYSE"),
+  "NVDA": EQUITY("NVDA"),
+  "ORCL": EQUITY("ORCL", "NYSE"),
+  "PLTR": EQUITY("PLTR"),
+  "QCOM": EQUITY("QCOM"),
+  "RIVN": EQUITY("RIVN"),
+  "RKLB": EQUITY("RKLB"),
+  "SNDK": EQUITY("SNDK"),
+  "STRC": EQUITY("STRC"),
+  "TSLA": EQUITY("TSLA"),
+  "WDC": EQUITY("WDC", "NYSE"),
+  "ZM": EQUITY("ZM"),
+  "BE": EQUITY("BE", "NYSE"),
+  "BB": EQUITY("BB", "NYSE"),
+  "LITE": EQUITY("LITE"),
+  "USAR": EQUITY("USAR"),
+  "BABA": {
     ...EQUITY("BABA", "NYSE"),
     basisComparable: false,
     basisNote: "ADR versus Hong Kong listing — ratio not yet confirmed",
   },
-  "xyz:TSM": EQUITY("TSM", "NYSE"),
-  "xyz:ASML": EQUITY("ASML"),
-  "xyz:ARM": EQUITY("ARM"),
+  "TSM": EQUITY("TSM", "NYSE"),
+  "ASML": EQUITY("ASML"),
+  "ARM": EQUITY("ARM"),
 
   // ── US-listed ETFs ────────────────────────────────────────────────
-  "xyz:SMH": { symbol: "SMH", assetClass: "etf", market: "NASDAQ", basisComparable: true },
-  "xyz:XLE": { symbol: "XLE", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
-  "xyz:EWJ": { symbol: "EWJ", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
-  "xyz:EWT": { symbol: "EWT", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
-  "xyz:EWY": { symbol: "EWY", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
-  "xyz:EWZ": { symbol: "EWZ", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
-  "xyz:URNM": { symbol: "URNM", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
+  "SMH": { symbol: "SMH", assetClass: "etf", market: "NASDAQ", basisComparable: true },
+  "XLE": { symbol: "XLE", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
+  "EWJ": { symbol: "EWJ", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
+  "EWT": { symbol: "EWT", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
+  "EWY": { symbol: "EWY", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
+  "EWZ": { symbol: "EWZ", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
+  "URNM": { symbol: "URNM", assetClass: "etf", market: "NYSE Arca", basisComparable: true },
 
   // ── Non-US listings (paid tiers only, kept so an upgrade just works) ──
-  "xyz:SOFTBANK": EQUITY("9984.T", "Tokyo"),
-  "xyz:IBIDEN": EQUITY("4062.T", "Tokyo"),
-  "xyz:KIOXIA": EQUITY("285A.T", "Tokyo"),
-  "xyz:HYUNDAI": EQUITY("005380.KS", "Seoul"),
-  "xyz:SKHX": EQUITY("000660.KS", "Seoul"),
-  "xyz:SMSN": EQUITY("005930.KS", "Seoul"),
+  "SOFTBANK": EQUITY("9984.T", "Tokyo"),
+  "IBIDEN": EQUITY("4062.T", "Tokyo"),
+  "KIOXIA": EQUITY("285A.T", "Tokyo"),
+  "HYUNDAI": EQUITY("005380.KS", "Seoul"),
+  "SKHX": EQUITY("000660.KS", "Seoul"),
+  "SMSN": EQUITY("005930.KS", "Seoul"),
 
   // ── Commodities ───────────────────────────────────────────────────
-  "xyz:GOLD": { symbol: "GCUSD", assetClass: "commodity", market: "COMEX", basisComparable: true },
-  "xyz:SILVER": { symbol: "SIUSD", assetClass: "commodity", market: "COMEX", basisComparable: true },
-  "xyz:BRENTOIL": { symbol: "BZUSD", assetClass: "commodity", market: "ICE", basisComparable: true },
-  "xyz:COPPER": { symbol: "HGUSD", assetClass: "commodity", market: "COMEX", basisComparable: true },
-  "xyz:PLATINUM": { symbol: "PLUSD", assetClass: "commodity", market: "NYMEX", basisComparable: true },
-  "xyz:PALLADIUM": { symbol: "PAUSD", assetClass: "commodity", market: "NYMEX", basisComparable: true },
-  "xyz:NATGAS": { symbol: "NGUSD", assetClass: "commodity", market: "NYMEX", basisComparable: true },
-  "xyz:CORN": { symbol: "ZCUSD", assetClass: "commodity", market: "CBOT", basisComparable: true },
-  "xyz:WHEAT": { symbol: "ZWUSD", assetClass: "commodity", market: "CBOT", basisComparable: true },
-  "xyz:CL": {
+  "GOLD": { symbol: "GCUSD", assetClass: "commodity", market: "COMEX", basisComparable: true },
+  "SILVER": { symbol: "SIUSD", assetClass: "commodity", market: "COMEX", basisComparable: true },
+  "BRENTOIL": { symbol: "BZUSD", assetClass: "commodity", market: "ICE", basisComparable: true },
+  "COPPER": { symbol: "HGUSD", assetClass: "commodity", market: "COMEX", basisComparable: true },
+  "PLATINUM": { symbol: "PLUSD", assetClass: "commodity", market: "NYMEX", basisComparable: true },
+  "PALLADIUM": { symbol: "PAUSD", assetClass: "commodity", market: "NYMEX", basisComparable: true },
+  "NATGAS": { symbol: "NGUSD", assetClass: "commodity", market: "NYMEX", basisComparable: true },
+  "CORN": { symbol: "ZCUSD", assetClass: "commodity", market: "CBOT", basisComparable: true },
+  "WHEAT": { symbol: "ZWUSD", assetClass: "commodity", market: "CBOT", basisComparable: true },
+  "CL": {
     symbol: "CLUSD",
     assetClass: "commodity",
     market: "NYMEX",
@@ -138,24 +145,24 @@ export const HIP3_UNDERLYING: Record<string, UnderlyingRef> = {
   },
 
   // ── Forex ─────────────────────────────────────────────────────────
-  "xyz:EUR": { symbol: "EURUSD", assetClass: "forex", market: "FX", basisComparable: true },
-  "xyz:GBP": { symbol: "GBPUSD", assetClass: "forex", market: "FX", basisComparable: true },
-  "xyz:JPY": { symbol: "USDJPY", assetClass: "forex", market: "FX", basisComparable: true },
-  "xyz:KRW": { symbol: "USDKRW", assetClass: "forex", market: "FX", basisComparable: true },
+  "EUR": { symbol: "EURUSD", assetClass: "forex", market: "FX", basisComparable: true },
+  "GBP": { symbol: "GBPUSD", assetClass: "forex", market: "FX", basisComparable: true },
+  "JPY": { symbol: "USDJPY", assetClass: "forex", market: "FX", basisComparable: true },
+  "KRW": { symbol: "USDKRW", assetClass: "forex", market: "FX", basisComparable: true },
 
   // ── Indices ───────────────────────────────────────────────────────
-  "xyz:SP500": { symbol: "^GSPC", assetClass: "index", market: "S&P", basisComparable: true },
-  "xyz:NIFTY": { symbol: "^NSEI", assetClass: "index", market: "NSE", basisComparable: true },
-  "xyz:IBOV": { symbol: "^BVSP", assetClass: "index", market: "B3", basisComparable: true },
-  "xyz:DXY": { symbol: "^DXY", assetClass: "index", market: "ICE", basisComparable: true },
-  "xyz:JP225": {
+  "SP500": { symbol: "^GSPC", assetClass: "index", market: "S&P", basisComparable: true },
+  "NIFTY": { symbol: "^NSEI", assetClass: "index", market: "NSE", basisComparable: true },
+  "IBOV": { symbol: "^BVSP", assetClass: "index", market: "B3", basisComparable: true },
+  "DXY": { symbol: "^DXY", assetClass: "index", market: "ICE", basisComparable: true },
+  "JP225": {
     symbol: "^N225",
     assetClass: "index",
     market: "Nikkei",
     basisComparable: false,
     basisNote: "Futures versus cash index — mapping not yet confirmed",
   },
-  "xyz:VIX": {
+  "VIX": {
     symbol: "^VIX",
     assetClass: "index",
     market: "CBOE",
@@ -165,13 +172,12 @@ export const HIP3_UNDERLYING: Record<string, UnderlyingRef> = {
 };
 
 /**
- * Resolve a HIP-3 coin to its real-world instrument.
+ * Resolve a HIP-3 coin to its real-world instrument, from any venue.
  *
- * Normalises casing the same way the route does (`xyz:CL`), so `/XYZ/cl` and
- * `/xyz/CL` resolve to the same entry.
+ * Casing is normalised so `/XYZ/cl` and `/xyz/CL` land on the same entry.
  */
 export function getUnderlyingRef(coin: string): UnderlyingRef | null {
-  const [dex, ticker] = coin.split(":");
-  if (!dex || !ticker) return null;
-  return HIP3_UNDERLYING[`${dex.toLowerCase()}:${ticker.toUpperCase()}`] ?? null;
+  const ticker = coin.split(":")[1];
+  if (!ticker) return null;
+  return HIP3_UNDERLYING[ticker.toUpperCase()] ?? null;
 }
