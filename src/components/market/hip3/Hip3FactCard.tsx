@@ -1,84 +1,114 @@
 "use client";
 
-import { ReactNode } from "react";
+import { Children, ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 
 /**
- * Shared shell for the three HIP-3 fact cards.
+ * The HIP-3 facts, as one block of aligned rows.
  *
- * They sit side by side and previously each invented its own layout — one led
- * with a number and a gauge, one was a four-row spec sheet, one a number and a
- * bar — so they read as three unrelated widgets, and the shortest left a hole
- * at the bottom once the grid stretched them to equal height.
+ * These three facts used to be three side-by-side cards in a `grid-cols-3`,
+ * each with its own head, border and footer sentence. Two things were wrong
+ * with that. Cards return `null` when their fact has no data — and a fixed grid
+ * still reserves the track, so the majority of markets (no listed counterpart
+ * for the basis, no published cap) rendered a card-sized hole. And three heads,
+ * three borders and three footers spent most of a 197px strip on chrome for
+ * three numbers.
  *
- * Every slot here is positional, so the three cannot drift apart again:
- * head, hero value, a fixed-height visual band, a pair of end labels, and one
- * line of context pinned to the bottom.
+ * Rows solve both. A missing fact deletes its row and the block gets shorter;
+ * there is no slot left to sit empty. One head serves all three.
+ *
+ * Sizing note: the values are 14px, deliberately below the KpiRibbon's 22px and
+ * the mark price's 24px. In the card version they were 26px — the largest type
+ * on the page — which put optional, caveat-laden facts above the price of the
+ * thing being traded.
  */
-export function Hip3FactCard({
-  title,
-  headAside,
-  value,
-  unit,
-  qualifier,
-  visual,
-  leftLabel,
-  rightLabel,
-  context,
-}: {
-  title: string;
-  /** Right side of the card head — a chip or a link. */
-  headAside?: ReactNode;
-  /** The one headline value. */
-  value: ReactNode;
-  /** Small suffix rendered inside the value, e.g. "bps". */
-  unit?: string;
-  /** Short phrase to the right of the value. */
-  qualifier?: ReactNode;
-  /** Gauge, bar or chip row. Occupies the same vertical band on all three. */
-  visual?: ReactNode;
-  leftLabel?: ReactNode;
-  rightLabel?: ReactNode;
-  /** One line, always last. */
-  context: ReactNode;
-}) {
+export function Hip3FactList({ children }: { children: ReactNode }) {
+  // Children that rendered nothing are dropped by `toArray`, so an all-absent
+  // block disappears entirely rather than leaving a head over empty space.
+  const rows = Children.toArray(children);
+  if (rows.length === 0) return null;
+
   return (
-    <Card className="flex flex-col h-full">
-      <div className="flex items-baseline gap-2 px-4 py-2.5 border-b border-border-subtle">
-        <h3 className="text-[13px] font-medium text-text-primary truncate">{title}</h3>
-        {headAside ? <div className="ml-auto shrink-0">{headAside}</div> : null}
+    <Card className="overflow-hidden">
+      <div className="flex items-center gap-2 px-4 py-1.5 border-b border-border-subtle">
+        <h3 className="text-[13px] leading-[18px] font-medium text-text-primary">
+          What to check on this market
+        </h3>
+        <span className="inline-flex items-center h-[16px] text-[10px] leading-none font-medium px-1.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
+          HIP-3
+        </span>
       </div>
-
-      <div className="px-4 pt-3.5 pb-3 flex flex-col gap-3">
-        <div className="flex items-baseline gap-2 min-w-0">
-          <span className="mono text-[26px] font-medium tracking-[-0.02em] leading-none text-text-primary">
-            {value}
-            {unit ? <span className="text-[14px] text-text-tertiary"> {unit}</span> : null}
-          </span>
-          {qualifier ? (
-            <span className="text-[11px] text-text-tertiary truncate">{qualifier}</span>
-          ) : null}
-        </div>
-
-        {/* Fixed band so a card with no visual keeps the others' rhythm. */}
-        <div className="min-h-[26px] flex flex-col justify-center">{visual}</div>
-
-        {(leftLabel || rightLabel) && (
-          <div className="flex items-center justify-between gap-3 text-[11px] text-text-tertiary">
-            <span className="truncate">{leftLabel}</span>
-            <span className="truncate text-right">{rightLabel}</span>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-auto px-4 py-2 border-t border-border-subtle text-[11px] text-text-tertiary">
-        {context}
-      </div>
+      <div className="divide-y divide-border-subtle">{rows}</div>
     </Card>
   );
 }
 
-/** Chip used in the card heads and in the control card's power row. */
+/**
+ * One fact: subject, value, meter, clause, aside.
+ *
+ * Flex rather than a grid template on purpose. The widths live once, here, and
+ * a row with no meter needs no column-span arithmetic — the clause simply
+ * absorbs the space.
+ *
+ * Three widths, which is why the cells carry `order`. Single line from `xl`.
+ * At `lg` the clause drops to its own full-width line: with a 232px sidebar the
+ * remaining column is ~120px there, and the caveat broke into three lines. On
+ * phones the subject takes a line of its own too.
+ */
+export function Hip3FactRow({
+  subject,
+  value,
+  unit,
+  meter,
+  clause,
+  aside,
+}: {
+  subject: string;
+  /** The one number. `—` when the fact is known but not answerable. */
+  value: ReactNode;
+  /** Small suffix inside the value, e.g. "bps" or "%". */
+  unit?: string;
+  /** Gauge or bar. Omit when the fact is not a measurement — the clause then
+   *  takes the column, rather than an empty track being drawn. */
+  meter?: ReactNode;
+  /** The honest sentence, sitting next to the number it qualifies. */
+  clause: ReactNode;
+  /** Chip or link, pinned right. */
+  aside?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 py-2.5 xl:py-2 xl:min-h-[34px]">
+      <div className="order-1 w-full lg:w-[168px] lg:shrink-0 text-[12.5px] leading-[18px] font-medium text-text-primary truncate">
+        {subject}
+      </div>
+
+      <div className="order-2 w-[96px] shrink-0 mono text-[14px] leading-[18px] font-medium text-text-primary whitespace-nowrap">
+        {value}
+        {unit ? <span className="text-[10.5px] font-normal text-text-tertiary"> {unit}</span> : null}
+      </div>
+
+      {/* Absent when the fact is not a measurement — the clause then takes the
+          space instead of an empty track being drawn. Dropped on phones, where
+          112px of track pushes the aside onto a fourth line and a gauge that
+          narrow reads worse than the number already next to it. */}
+      {meter ? <div className="order-3 hidden sm:block w-[112px] shrink-0">{meter}</div> : null}
+
+      {/* Wraps rather than truncates: this is the sentence that qualifies the
+          number, and an ellipsis lands mid-caveat at intermediate widths. */}
+      <div className="order-5 xl:order-4 w-full xl:w-auto xl:flex-1 min-w-0 text-[11.5px] leading-[18px] text-text-tertiary">
+        {clause}
+      </div>
+
+      {aside ? (
+        <div className="order-4 xl:order-5 ml-auto xl:ml-0 shrink-0 flex items-center h-[18px]">
+          {aside}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** Chip used in the row asides. */
 export function Hip3Chip({
   children,
   tone = "neutral",
@@ -94,7 +124,7 @@ export function Hip3Chip({
         : "bg-surface-2 border-border-subtle text-text-secondary";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-[10px] px-1.5 py-0.5 rounded border font-medium ${cls}`}
+      className={`inline-flex items-center h-[18px] gap-1.5 text-[10px] leading-none px-1.5 rounded border font-medium whitespace-nowrap ${cls}`}
     >
       {children}
     </span>

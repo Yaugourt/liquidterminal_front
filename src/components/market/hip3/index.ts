@@ -4,6 +4,7 @@ export { Hip3AssetKpiRibbon } from './Hip3AssetKpiRibbon';
 export { Hip3SiblingMarkets } from './Hip3SiblingMarkets';
 export { Hip3MarketTape } from './Hip3MarketTape';
 export { Hip3TopTraders } from './Hip3TopTraders';
+export { Hip3FactList } from './Hip3FactCard';
 export { Hip3BasisCard } from './Hip3BasisCard';
 export { Hip3ControlCard } from './Hip3ControlCard';
 export { Hip3OiCapCard } from './Hip3OiCapCard';
