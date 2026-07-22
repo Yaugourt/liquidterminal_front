@@ -3,11 +3,22 @@
 import { Fragment, memo, useMemo, useState } from "react";
 import { Coins } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { ChartEmpty, ChartError, ChartLoading } from "@/components/common";
+import { ChartEmpty, ChartError, ChartLoading, FlowConfluence, type FlowSegment } from "@/components/common";
+import { chartPalette } from "@/components/common";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import type { RevenueWindow } from "@/services/market/revenue";
 import { fmtUsd } from "./format";
+
+/* Same colours as RevenueChart's series, so the confluence above the bars and
+   the bars themselves name each source the same way. */
+const CONFLUENCE_COLORS: Record<string, string> = {
+  perp: chartPalette.multiSeries[0],
+  spot: chartPalette.gold,
+  auction: chartPalette.multiSeries[3],
+  priority: chartPalette.multiSeries[4],
+  hip4: chartPalette.multiSeries[6],
+};
 
 const WINDOWS: readonly RevenueWindow[] = ["7d", "30d", "90d"] as const;
 const WINDOW_LABELS: Record<RevenueWindow, string> = {
@@ -29,6 +40,32 @@ export const RevenueFlywheelCard = memo(function RevenueFlywheelCard() {
   const { breakdown, isLoading, error } = useRevenueBreakdown(window);
 
   const days = useMemo(() => breakdown?.days ?? [], [breakdown]);
+
+  /* Where the buyback fuel actually comes from, over the selected window.
+     Auctions merge HIP-1 and HIP-3 exactly as RevenueChart does: both are
+     slot-pricing Dutch auctions. */
+  const confluence = useMemo<FlowSegment[]>(() => {
+    if (days.length === 0) return [];
+    const sum = (pick: (d: (typeof days)[number]) => number) =>
+      days.reduce((acc, d) => acc + (pick(d) || 0), 0);
+    return [
+      { key: "perp", label: "Perp", value: sum((d) => d.perp), color: CONFLUENCE_COLORS.perp },
+      { key: "spot", label: "Spot", value: sum((d) => d.spot), color: CONFLUENCE_COLORS.spot },
+      {
+        key: "auction",
+        label: "Auctions",
+        value: sum((d) => (d.hip1 ?? 0) + (d.hip3 ?? 0)),
+        color: CONFLUENCE_COLORS.auction,
+      },
+      { key: "priority", label: "Priority", value: sum((d) => d.priority), color: CONFLUENCE_COLORS.priority },
+      { key: "hip4", label: "HIP-4", value: sum((d) => d.hip4), color: CONFLUENCE_COLORS.hip4 },
+    ].filter((s) => s.value > 0);
+  }, [days]);
+
+  const windowTotal = useMemo(
+    () => days.reduce((acc, d) => acc + (d.total || 0), 0),
+    [days]
+  );
 
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -84,7 +121,19 @@ export const RevenueFlywheelCard = memo(function RevenueFlywheelCard() {
             <ChartEmpty suggestion="Try selecting a wider window" />
           </div>
         ) : (
-          <RevenueChart days={days} height={220} />
+          <>
+            {confluence.length > 1 && (
+              <div className="px-3.5 pt-3 pb-2 border-b border-border-subtle">
+                <FlowConfluence
+                  segments={confluence}
+                  height={150}
+                  trunkLabel={`${WINDOW_LABELS[window]} total`}
+                  trunkValue={fmtUsd(windowTotal)}
+                />
+              </div>
+            )}
+            <RevenueChart days={days} height={220} />
+          </>
         )}
       </div>
 
