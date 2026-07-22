@@ -37,7 +37,7 @@ export function LoadingState({
                 <Loader2 className={cn(config.icon, "animate-spin text-brand mb-3")} />
             ) : (
                 <div className="mb-3 flex flex-col items-center gap-2">
-                    <Hypurr mood="meditation" height={size === "lg" ? 88 : 64} animation="float" />
+                    <Hypurr mood="meditation" height={size === "lg" ? 88 : 64} />
                     <Loader2 className="h-4 w-4 animate-spin text-brand" />
                 </div>
             )}

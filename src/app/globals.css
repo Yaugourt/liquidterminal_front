@@ -421,64 +421,12 @@ html {
   --usdh-chip-active-text: 5 23 40;
 }
 
-/* ── Hypurr micro-animations ─────────────────────────────────────────
-   Pure transforms (GPU-cheap), each used via the Hypurr `animation` prop.
-   Discretion rule: long idle periods, small amplitudes. */
-
-/* Levitating meditation (loading states). */
-@keyframes hypurr-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
-}
-.hypurr-float {
-  animation: hypurr-float 3.6s ease-in-out infinite;
-}
-
-/* Peek-a-boo: mostly hidden behind the ribbon, rises to look around
-   every ~14s. Hover brings it fully up (animation dropped, transition
-   takes over from the computed transform). */
-@keyframes hypurr-peek {
-  0%, 62% { transform: translateY(64%); }
-  68%, 88% { transform: translateY(6%); }
-  94%, 100% { transform: translateY(64%); }
-}
-.hypurr-peek {
-  animation: hypurr-peek 14s ease-in-out infinite;
-  transition: transform 0.35s ease-out;
-}
-.hypurr-peek-zone:hover .hypurr-peek {
-  animation: none;
-  transform: translateY(0);
-}
-
-/* Gentle sway (footer meowdy). */
-@keyframes hypurr-sway {
-  0%, 100% { transform: rotate(-2.5deg); }
-  50% { transform: rotate(2.5deg); }
-}
-.hypurr-sway {
-  animation: hypurr-sway 4.5s ease-in-out infinite;
-  transform-origin: bottom center;
-}
-
-/* Pop-in (palette easter egg). */
-@keyframes hypurr-pop {
-  0% { transform: scale(0.5); opacity: 0; }
-  70% { transform: scale(1.06); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.hypurr-pop {
-  animation: hypurr-pop 0.35s cubic-bezier(0.34, 1.4, 0.64, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hypurr-float, .hypurr-peek, .hypurr-sway, .hypurr-pop {
-    animation: none;
-  }
-  .hypurr-peek {
-    transform: translateY(0);
-  }
-}
+/* Hypurr is static. It used to carry four idle micro-animations (float, peek,
+   sway, pop) driven by an `animation` prop. Transform-only and cheap per frame,
+   but `infinite` means the page never reaches an idle state: the compositor
+   keeps the surface live for as long as the tab is open, which is what memory
+   pays for. The peek resting pose now lives as a fixed offset at its two call
+   sites (landing LivePulse, dashboard PulseBar). */
 
 /* Suppress sidebar collapse/expand transitions on the very first paint so a
    persisted collapsed state doesn't replay its animation on every page load. */

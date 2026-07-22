@@ -13,26 +13,24 @@ export const HYPURR_MOODS = [
 
 export type HypurrMood = (typeof HYPURR_MOODS)[number];
 
-/** Micro-animations defined in globals.css; all transform-only and
- *  disabled under prefers-reduced-motion. */
-export type HypurrAnimation = "float" | "peek" | "sway" | "pop";
-
 interface HypurrProps {
   mood: HypurrMood;
   /** Rendered height in px; width follows the 4:3 source ratio. */
   height?: number;
   className?: string;
   title?: string;
-  animation?: HypurrAnimation;
 }
 
 /**
  * Hypurr, the Hyperliquid mascot. Rule of the house: Hypurr lives in the
  * states around the data (loading, empty, degraded, celebration) and as a
  * mood companion; it never covers or replaces a number.
+ *
+ * Static by design. The mascot used to carry four idle CSS animations (float,
+ * peek, sway, pop); they were removed because an infinite animation keeps the
+ * page repainting for as long as the tab is open.
  */
-export function Hypurr({ mood, height = 80, className, title, animation }: HypurrProps) {
-  const animationClass = animation ? `hypurr-${animation}` : "";
+export function Hypurr({ mood, height = 80, className, title }: HypurrProps) {
   return (
     <Image
       src={`/hypurr-web/${mood}.webp`}
@@ -40,7 +38,7 @@ export function Hypurr({ mood, height = 80, className, title, animation }: Hypur
       title={title}
       width={Math.round((height * 4) / 3)}
       height={height}
-      className={[animationClass, className].filter(Boolean).join(" ")}
+      className={className}
       style={{ height, width: "auto" }}
     />
   );
