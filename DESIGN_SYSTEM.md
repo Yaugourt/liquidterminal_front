@@ -767,48 +767,15 @@ Keep downstream intensity well under the source (`0.09` against `0.22`). The
 eye should read one bright spring and a faint current, never two competing
 fields. A stream that crosses body copy at readable strength is a bug.
 
-### Two registers: weather and plumbing
-
-The layer has two components and they live under opposite rules. Getting this
-wrong is how a data tool ends up decorated.
-
-| | `DataFlow` / `LiquidSurface` | `FlowConfluence` |
-|---|---|---|
-| What it is | **Weather.** Atmosphere. | **Plumbing.** A chart. |
-| Carries | Nothing | A real quantity per stream |
-| Allowed on | Four narrative paths (below) | Anywhere a chart is allowed |
-| Held to | Decoration rules | Chart rules (§1, real data only) |
-
-`FlowConfluence` renders N tributaries joining one river, each source's stream
-count being its actual share of the total. It is allowed on data surfaces
-precisely because it is not decoration: it says something true, and it says it
-in the brand's own hand instead of borrowing a stacked bar.
-
-```tsx
-<FlowConfluence
-  segments={[{ key: "perp", label: "Perp", value: 68_400_000, color: chartPalette.multiSeries[0] }, …]}
-  height={150}
-  trunkLabel="30D total"
-  trunkValue={fmtUsd(total)}
-/>
-```
-
-Non-negotiable, or it becomes decoration wearing a chart's clothes:
-
-- **Stream counts come from the data.** Largest-remainder share-out, one stream
-  minimum per source, so a 0.3% source is a trickle and never a lie.
-- **The figures render as text next to the graphic.** The `<svg>` is
-  `aria-hidden`; nothing lives only in the picture.
-- **Colors come from `chartPalette`**, matching whatever chart it sits next to.
-  A confluence that names Perp differently from the bars below it is worse than
-  no confluence.
-- **Never invent a segment** to balance the picture. If a source is zero it is
-  filtered out, not drawn thin.
-
-First use: `RevenueFlywheelCard` on `/hype`, above the stacked bars, showing
-which fees actually fund the HYPE buyback.
-
 ### Where the layer does **not** go
+
+**Decorative only, by decision.** The layer was briefly extended into a second
+"plumbing" register (`FlowConfluence`: tributaries sized by a real share,
+mounted over the HYPE revenue bars). It was reverted. The mark and its currents
+are a decorative asset; they do not carry statistics. Do not re-derive it: if
+the direction comes back it starts from that decision, not from the code, which
+lives in git history at `0db02b2`.
+
 
 Settled by an adversarial design review (5 designers, positions then
 cross-examination). Every rule below is checkable without a judgement call.
