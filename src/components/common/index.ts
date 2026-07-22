@@ -58,6 +58,11 @@ export type { DataFlowProps } from './DataFlow';
 export { LiquidSurface, useLiquidSurface } from './LiquidSurface';
 export type { LiquidSurfaceProps } from './LiquidSurface';
 
+// Plumbing, not weather: every stream is a real quantity, so this one is a
+// chart and is allowed on data surfaces. See §13.
+export { FlowConfluence } from './FlowConfluence';
+export type { FlowConfluenceProps, FlowSegment } from './FlowConfluence';
+
 export { KpiRibbon } from './KpiRibbon';
 export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';
 
