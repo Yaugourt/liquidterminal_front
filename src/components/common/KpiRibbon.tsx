@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * This file IS the canonical KPI ribbon primitive (DESIGN_SYSTEM §7.b) — the
  * single allowed place to hand-write the `gap-px bg-border-subtle` strip. Every
@@ -5,6 +7,7 @@
  * ribbons outside common/ lands, this file gets the sanctioned disable.
  */
 import type { ReactNode } from "react";
+import { useLiquidSurface } from "./LiquidSurface";
 
 /** Value color, mapped to a semantic token — never a raw hex. */
 export type KpiTone = "default" | "gold" | "success" | "danger";
@@ -98,6 +101,23 @@ export function KpiRibbon({
 }: KpiRibbonProps) {
   const cols = columns ?? DEFAULT_COLUMNS[cells.length] ?? "grid-cols-2 sm:grid-cols-3";
   const plain = variant === "plain";
+
+  /*
+   * The liquid layer is allowed to pass BEHIND a ribbon (the landing hero does
+   * exactly that) only because `boxed` cells paint an opaque `bg-surface`. With
+   * `plain`, or unbordered, the currents come through and land under the
+   * numbers, which §13 forbids. That safety was an accident of a default until
+   * now; here it is a decision. Dev-only: shipping a hard throw to users over a
+   * decorative rule would be worse than the rule it protects.
+   */
+  const inLiquid = useLiquidSurface();
+  if (process.env.NODE_ENV !== "production" && inLiquid && (plain || !bordered)) {
+    throw new Error(
+      '<KpiRibbon> inside a <LiquidSurface> must stay opaque: use variant="boxed" ' +
+        "with `bordered` (DESIGN_SYSTEM §13). A transparent ribbon lets the flow " +
+        "field render behind the numbers."
+    );
+  }
 
   const gridClass = plain
     ? `grid ${cols} divide-x divide-y sm:divide-y-0 divide-border-subtle`

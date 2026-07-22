@@ -235,6 +235,17 @@
     }
 
     /**
+     * `.focus-ring` — the single visible focus treatment. Mandatory on any
+     * interactive element sitting on a liquid surface (§13): a cyan decoration
+     * behind a link makes the UA's default outline indistinguishable. Radius is
+     * left to the element so pills and cards keep their own shape.
+     */
+    .focus-ring {
+        @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand
+               focus-visible:ring-offset-2 focus-visible:ring-offset-base;
+    }
+
+    /**
      * `.liquid-emit` — glow carried by the mark itself, so the source reads as
      * lit rather than as a sticker on a halo.
      */
@@ -364,6 +375,23 @@ html {
   .liquid-pulse,
   .liquid-bloom-pulse {
     animation: none;
+  }
+}
+
+/* Forced colors (Windows High Contrast) overrides `stroke` but NOT
+   `stroke-opacity`, so the currents survive the override and land in the forced
+   text colour: a field tuned to sit at 5-27% of cyan on navy becomes 38 lines
+   of CanvasText across the copy. The layer carries no information, so the only
+   correct behaviour in a mode the user picked for legibility is to leave. */
+@media (forced-colors: active) {
+  .liquid-flow,
+  .liquid-bloom {
+    display: none;
+  }
+
+  .liquid-emit,
+  .liquid-pulse {
+    filter: none;
   }
 }
 

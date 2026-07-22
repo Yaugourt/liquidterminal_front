@@ -89,6 +89,22 @@ const eslintConfig = [
           ],
           paths: [
             {
+              /*
+               * The liquid layer is scoped by PATH, not by taste: taste drifts,
+               * routes lint. Allowed importers are listed in the override below.
+               *
+               * This has to be `paths` + `importNames` on the barrel, NOT a
+               * `patterns` entry on "@/components/common/DataFlow" — the
+               * `@/components/common/*` group above already bans that specifier,
+               * so a pattern rule here would forbid an import nobody is allowed
+               * to write and catch nothing.
+               */
+              name: "@/components/common",
+              importNames: ["DataFlow", "LiquidSurface"],
+              message:
+                "La couche liquide (DESIGN_SYSTEM §13) est réservée aux surfaces narratives : landing, /funding, 404, étape welcome de l'onboarding. Jamais sous src/app/(app)/**, où la donnée se lit. <LiquidMark> reste libre : le logo n'est pas la couche.",
+            },
+            {
               name: "lucide-react",
               importNames: ["Loader2"],
               message:
@@ -119,6 +135,13 @@ const eslintConfig = [
       // to render the underlying <table>; the grid-cols rule isn't relevant
       // here either since it doesn't use Tailwind arbitrary grids.
       "src/components/common/OverviewModule.tsx",
+      // Liquid layer allowlist (DESIGN_SYSTEM §13). These four surfaces are the
+      // only places <DataFlow>/<LiquidSurface> may be imported. Adding a fifth
+      // is a design decision, so it has to be made here, in a diff someone reads.
+      "src/components/landing/**/*.tsx",
+      "src/app/not-found.tsx",
+      "src/app/funding/**/*.tsx",
+      "src/components/onboarding/OnboardingVisual.tsx",
     ],
     rules: {
       "no-restricted-syntax": "off",

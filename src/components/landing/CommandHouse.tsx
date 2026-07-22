@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
-import { DataFlow, KpiRibbon, LiquidMark, type KpiCell } from "@/components/common";
+import { KpiRibbon, LiquidMark, LiquidSurface, type KpiCell } from "@/components/common";
 import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useHypePrice } from "@/services/market/hype/hooks";
@@ -104,13 +104,13 @@ function TopNav() {
   return (
     <header className="border-b border-border-subtle">
       <div className="max-w-[1280px] mx-auto px-6 h-14 flex items-center gap-6">
-        <Link href="/" className="flex items-center gap-2 shrink-0">
+        <Link href="/" className="focus-ring flex items-center gap-2 shrink-0">
           <LiquidMark decorative />
           <span className="font-inter text-[14px] font-semibold tracking-tight">Liquid Terminal</span>
         </Link>
         <nav className="hidden md:flex items-center gap-3 text-[12.5px] text-text-tertiary">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="inline-block px-1 py-3.5 -my-3.5 hover:text-text-primary">
+            <Link key={link.href} href={link.href} className="focus-ring inline-block px-1 py-3.5 -my-3.5 hover:text-text-primary">
               {link.label}
             </Link>
           ))}
@@ -121,7 +121,7 @@ function TopNav() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackBotCta("landing-nav")}
-            className="h-8 px-3 inline-flex items-center rounded-md text-xs font-medium border border-gold/40 text-gold hover:bg-gold/10"
+            className="focus-ring h-8 px-3 inline-flex items-center rounded-md text-xs font-medium border border-gold/40 text-gold hover:bg-gold/10"
           >
             Bot
           </a>
@@ -135,7 +135,7 @@ function TopNav() {
           <Link
             href={APP_HOME}
             onClick={() => trackConnectStarted("landing-nav")}
-            className="h-8 px-3 inline-flex items-center gap-1.5 rounded-md text-xs font-semibold bg-brand text-brand-text-on hover:bg-brand/90"
+            className="focus-ring h-8 px-3 inline-flex items-center gap-1.5 rounded-md text-xs font-semibold bg-brand text-brand-text-on hover:bg-brand/90"
           >
             Access app
             <span aria-hidden="true">→</span>
@@ -155,7 +155,7 @@ function TopNav() {
             <Link
               key={link.href}
               href={link.href}
-              className="shrink-0 rounded-md px-2.5 py-1 hover:bg-surface-2 hover:text-text-primary"
+              className="focus-ring shrink-0 rounded-md px-2.5 py-1 hover:bg-surface-2 hover:text-text-primary"
             >
               {link.label}
             </Link>
@@ -187,7 +187,7 @@ function Hero() {
             <Link
               key={chip.label}
               href={chip.href}
-              className="rounded-md border border-border-subtle bg-surface-2 px-2.5 py-1 text-[11px] text-text-secondary hover:text-text-primary"
+              className="focus-ring rounded-md border border-border-subtle bg-surface-2 px-2.5 py-1 text-[11px] text-text-secondary hover:text-text-primary"
             >
               {chip.label}
             </Link>
@@ -293,7 +293,7 @@ function ScreenShot({ src, alt, url, name, caption, href, priority }: ScreenShot
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 mt-3 px-1">
         <span className="text-[13px] font-medium text-text-primary">{name}</span>
         <span className="text-[12px] text-text-secondary">{caption}</span>
-        <Link href={href} className="ml-auto mono text-[11.5px] text-brand hover:text-brand-hover inline-block px-1.5 py-2.5 -my-2.5">
+        <Link href={href} className="focus-ring ml-auto mono text-[11.5px] text-brand hover:text-brand-hover inline-block px-1.5 py-2.5 -my-2.5">
           Open →
         </Link>
       </div>
@@ -362,7 +362,7 @@ function ProviderCard({ initials, name, description, domain, endpoints, href }: 
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors"
+      className="focus-ring group bg-surface border border-border-subtle rounded-lg p-5 flex flex-col gap-4 hover:border-border-default transition-colors"
     >
       <div className="flex items-center justify-between">
         <div className="w-10 h-10 rounded-lg bg-surface-2 border border-border-subtle flex items-center justify-center text-[13px] font-semibold text-text-secondary">
@@ -403,7 +403,7 @@ function DataSources() {
         href="https://app.hypedexer.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="group block mt-10 bg-surface border border-brand/30 rounded-lg p-6 hover:border-brand/50 transition-colors"
+        className="focus-ring group block mt-10 bg-surface border border-brand/30 rounded-lg p-6 hover:border-brand/50 transition-colors"
       >
         <div className="flex flex-col lg:flex-row lg:items-center gap-6">
           <div className="flex items-center gap-4 lg:w-[300px] shrink-0">
@@ -554,7 +554,7 @@ function CharterAndBot() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackBotCta("landing-bot-card")}
-                className="h-9 px-4 inline-flex items-center rounded-md text-[12.5px] font-semibold bg-gold/10 border border-gold/40 text-gold hover:bg-gold/20"
+                className="focus-ring h-9 px-4 inline-flex items-center rounded-md text-[12.5px] font-semibold bg-gold/10 border border-gold/40 text-gold hover:bg-gold/20"
               >
                 Set your first alert
               </a>
@@ -571,25 +571,27 @@ function Footer() {
   return (
     // The other end of the hero: same water, arrived. `mode="stream"` carries
     // the flow without opening a second source (§13, rule of one source).
-    <footer className="relative border-t border-border-subtle">
-      <DataFlow mode="stream" lines={16} intensity={0.09} focus={0.34} className="text-brand" />
-      <div className="relative z-10 max-w-[1280px] mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+    <footer className="border-t border-border-subtle">
+      <LiquidSurface
+        field={{ mode: "stream", lines: 16, intensity: 0.09, focus: 0.34, className: "text-brand" }}
+        contentClassName="max-w-[1280px] mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8"
+      >
         <div className="space-y-3 lg:col-span-1">
           <div className="flex items-center gap-2">
             <LiquidMark size={16} decorative />
             <span className="font-inter text-[13px] font-semibold tracking-tight">Liquid Terminal</span>
             <Hypurr mood="meowdy" height={36} className="ml-1" title="meowdy" />
           </div>
-          <p className="text-[11.5px] leading-relaxed text-text-tertiary max-w-[260px]">
+          <p className="text-[11.5px] leading-relaxed text-text-secondary max-w-[260px]">
             Open source. Free API. Built for Hyperliquid.
           </p>
         </div>
         {FOOTER_COLUMNS.map((column) => (
           <div key={column.title} className="space-y-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">{column.title}</div>
+            <div className="text-[10px] uppercase tracking-[0.08em] text-text-secondary">{column.title}</div>
             <div className="flex flex-col gap-2 text-[12px] text-text-secondary">
               {column.links.map((link) => (
-                <Link key={link.href} href={link.href} className="inline-block py-1 hover:text-text-primary">
+                <Link key={link.href} href={link.href} className="focus-ring inline-block py-1 hover:text-text-primary">
                   {link.label}
                 </Link>
               ))}
@@ -597,13 +599,13 @@ function Footer() {
           </div>
         ))}
         <div className="space-y-2.5">
-          <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Open</div>
+          <div className="text-[10px] uppercase tracking-[0.08em] text-text-secondary">Open</div>
           <div className="flex flex-col gap-2 text-[12px] text-text-secondary">
             <a
               href="https://github.com/Liquid-Terminal"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block py-1 hover:text-text-primary"
+              className="focus-ring inline-block py-1 hover:text-text-primary"
             >
               GitHub
             </a>
@@ -611,16 +613,16 @@ function Footer() {
               href="https://x.com/liquidterminal"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block py-1 hover:text-text-primary"
+              className="focus-ring inline-block py-1 hover:text-text-primary"
             >
               X
             </a>
-            <Link href="/legal/terms" className="inline-block py-1 hover:text-text-primary">
+            <Link href="/legal/terms" className="focus-ring inline-block py-1 hover:text-text-primary">
               Legal
             </Link>
           </div>
         </div>
-      </div>
+      </LiquidSurface>
     </footer>
   );
 }
@@ -635,15 +637,14 @@ export function CommandHouse() {
        * surfaces. `top-[95px]` is the mark centre (pt-16 + half of a 62px
        * mark), so the emission point tracks the logo at every viewport.
        */}
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-x-0 top-[95px] bottom-0 z-0">
-          <DataFlow origin={{ x: 50, y: 0 }} lines={38} animated className="text-brand" />
-        </div>
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6">
-          <Hero />
-          <LivePulse />
-        </div>
-      </div>
+      <LiquidSurface
+        field={{ origin: { x: 50, y: 0 }, lines: 38, animated: true, className: "text-brand" }}
+        fieldClassName="inset-x-0 top-[95px] bottom-0"
+        contentClassName="max-w-[1280px] mx-auto px-6"
+      >
+        <Hero />
+        <LivePulse />
+      </LiquidSurface>
       <InsideTheTerminal />
       <DataSources />
       <CharterAndBot />

@@ -428,13 +428,15 @@ Use instead of &lt;Image src="/logo.svg"&gt;: the file carries generic .cls-1/2/
   <!-- ───────────────────────── Liquid layer — DataFlow ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">DataFlow + .liquid-bloom  (DESIGN_SYSTEM §13 · decorative flow field)</div>
-    <div class="kit-jsx">React: &lt;DataFlow origin? lines? spread? intensity? focus? animated? fade? className /&gt;  ·  @/components/common
-JSX: &lt;div className="relative"&gt;
-  &lt;div className="pointer-events-none absolute inset-x-0 top-[95px] bottom-0 z-0"&gt;&lt;DataFlow className="text-brand" /&gt;&lt;/div&gt;
-  &lt;div className="relative z-10"&gt;{content}&lt;/div&gt;
-&lt;/div&gt;
-ONE source per page. Position a wrapper, DataFlow fills it with inset-0. Color via a token class (strokes are currentColor).
-z-index rule (§3): field is z-0, content MUST be relative z-10.</div>
+    <div class="kit-jsx">React: &lt;LiquidSurface field={{origin?, mode?, lines?, spread?, intensity?, focus?, animated?, className}} fieldClassName? contentClassName?&gt;  ·  @/components/common
+&lt;LiquidSurface
+  field={{ origin: { x: 50, y: 0 }, lines: 38, animated: true, className: "text-brand" }}
+  fieldClassName="inset-x-0 top-[95px] bottom-0"
+  contentClassName="max-w-[1280px] mx-auto px-6"&gt;{content}&lt;/LiquidSurface&gt;
+
+Never render &lt;DataFlow&gt; directly: LiquidSurface owns the z-0/z-10 contract AND tells &lt;KpiRibbon&gt; it is standing in the water
+(a transparent ribbon inside a surface throws in dev). Importable from 4 paths only, enforced by no-restricted-imports.
+ONE field per screen, at most one mode="source" per document. Every interactive element on the surface carries .focus-ring.</div>
     <div class="relative h-[420px] overflow-hidden rounded-lg border border-border-subtle bg-base mt-2">
       <div class="pointer-events-none absolute inset-x-0 top-[86px] bottom-0 z-0" data-flow></div>
       <div class="relative z-10 flex flex-col items-center pt-[55px] text-center">
