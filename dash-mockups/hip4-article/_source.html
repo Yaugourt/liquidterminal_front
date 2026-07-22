@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HIP-4 visuals</title>
+<style>
+__FONTS__
+
+:root{
+  --bg-base:#08101A;
+  --bg-surface:#0F1421;
+  --bg-surface-2:#141B2A;
+  --bg-surface-3:#1C2436;
+  --border-subtle:#1E2535;
+  --border-default:#2C354A;
+  --text-primary:#E8EAED;
+  --text-secondary:#9CA3AF;
+  --text-tertiary:#6B7280;
+  --brand:#83E9FF;
+  --gold:#F9E370;
+  --success:#1FB58E;
+  --danger:#E53E3E;
+  --sans:'Inter',ui-sans-serif,system-ui,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+
+.frame{
+  position:relative;width:1600px;height:900px;overflow:hidden;
+  background:var(--bg-base);color:var(--text-primary);
+  display:flex;flex-direction:column;
+}
+.aurora{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(900px 520px at 82% -16%, rgba(131,233,255,.13), transparent 62%),
+    radial-gradient(620px 400px at 0% 112%, rgba(131,233,255,.06), transparent 60%);
+}
+.pad{position:relative;z-index:1;padding:52px 60px 96px;flex:1;display:flex;flex-direction:column;min-height:0;}
+
+/* chrome */
+.chrome{display:flex;justify-content:space-between;align-items:center;}
+.brandrow{display:flex;align-items:center;gap:12px;}
+.mark{width:30px;height:30px;display:block;}
+.bname{font-size:16px;font-weight:700;letter-spacing:-.016em;line-height:1;}
+.bsub{font-family:var(--mono);font-size:7.5px;letter-spacing:.2em;color:var(--text-tertiary);text-transform:uppercase;margin-top:4px;}
+.chip-url{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary);}
+
+.foot{
+  position:absolute;left:60px;right:60px;bottom:30px;z-index:1;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:#4B5563;
+  padding-top:18px;border-top:1px solid var(--border-subtle);
+}
+
+.kicker{
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--brand);
+  display:flex;align-items:center;gap:12px;
+}
+.kicker::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(131,233,255,.36),transparent);}
+
+h1{font-size:112px;line-height:.92;letter-spacing:-.05em;font-weight:700;}
+h2{font-size:46px;line-height:1.08;letter-spacing:-.03em;font-weight:700;}
+.lede{font-size:19px;line-height:1.55;color:var(--text-secondary);max-width:1000px;}
+
+/* ---------- cover ---------- */
+/* Ghosted brand mark anchoring the empty right side of the poster. */
+.ghost{
+  position:absolute;right:-90px;top:50%;transform:translateY(-50%);
+  width:720px;height:720px;pointer-events:none;z-index:0;opacity:.05;color:var(--brand);
+}
+.ghost svg{width:100%;height:100%;display:block;}
+.cov-title{display:flex;align-items:flex-end;gap:26px;}
+.cov-tag{
+  font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--brand);border:1px solid rgba(131,233,255,.34);background:rgba(131,233,255,.07);
+  padding:9px 15px;border-radius:7px;margin-bottom:14px;
+}
+.thesis{font-size:30px;line-height:1.34;letter-spacing:-.022em;font-weight:600;max-width:1180px;}
+.thesis .dim{color:var(--text-tertiary);font-weight:500;}
+.chips{display:flex;gap:9px;flex-wrap:wrap;}
+.chip{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.11em;text-transform:uppercase;
+  padding:11px 15px;border-radius:7px;border:1px solid var(--border-default);
+  background:rgba(20,27,42,.66);color:var(--text-secondary);
+}
+.chip b{color:var(--text-primary);font-weight:500;}
+.chip.cy{border-color:rgba(131,233,255,.3);color:var(--brand);background:rgba(131,233,255,.06);}
+
+/* ---------- compare table ---------- */
+.cmp{
+  margin-top:30px;flex:1;min-height:0;
+  border:1px solid var(--border-subtle);border-radius:13px;overflow:hidden;
+  display:grid;grid-template-columns:172px 1fr 1fr;grid-template-rows:auto repeat(5,1fr);
+  background:var(--bg-surface);
+}
+.cmp .hd{
+  grid-row:1;padding:15px 22px;background:var(--bg-surface-2);
+  border-bottom:1px solid var(--border-default);display:flex;align-items:center;gap:11px;
+}
+.cmp .hd .n{font-size:21px;font-weight:700;letter-spacing:-.02em;}
+.cmp .hd .t{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;}
+.cmp .hd.h3 .n{color:var(--gold);}
+.cmp .hd.h3 .t{color:var(--text-tertiary);}
+.cmp .hd.h4 .n{color:var(--brand);}
+.cmp .hd.h4 .t{color:var(--brand);opacity:.75;}
+.cmp .hd.spacer{background:var(--bg-surface-2);}
+
+.cl{padding:15px 22px;border-bottom:1px solid var(--border-subtle);display:flex;flex-direction:column;justify-content:center;}
+.cmp > .cl:nth-last-child(-n+3){border-bottom:none;}
+.cl.lbl{font-family:var(--mono);font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--text-tertiary);background:rgba(20,27,42,.4);}
+.cl.v3{border-left:1px solid var(--border-subtle);}
+.cl.v4{border-left:1px solid var(--border-subtle);background:rgba(131,233,255,.028);}
+.cl .big{font-size:24px;font-weight:700;letter-spacing:-.024em;line-height:1.1;}
+.cl .big.gold{color:var(--gold);}
+.cl .big.cy{color:var(--brand);}
+.cl .txt{font-size:15px;line-height:1.42;color:var(--text-primary);font-weight:500;}
+.cl .sub{font-size:12.5px;line-height:1.45;color:var(--text-tertiary);margin-top:5px;}
+.cl.v3 .txt{color:var(--text-secondary);font-weight:400;}
+
+.quote{
+  margin-top:22px;border-left:2px solid var(--brand);padding:5px 0 5px 20px;
+  font-size:19px;line-height:1.48;letter-spacing:-.014em;font-weight:500;max-width:1440px;
+}
+.quote .dim{color:var(--text-tertiary);}
+
+/* ---------- stat panels ---------- */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:28px;flex:1;min-height:0;}
+.panel{
+  border:1px solid var(--border-subtle);border-radius:12px;background:var(--bg-surface);
+  padding:24px 24px;display:flex;flex-direction:column;justify-content:center;
+}
+.panel.warn{border-color:rgba(229,62,62,.34);background:rgba(229,62,62,.05);}
+.panel .plbl{font-family:var(--mono);font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--text-tertiary);}
+.panel.warn .plbl{color:var(--danger);}
+.panel .pval{font-size:44px;font-weight:700;letter-spacing:-.036em;line-height:1;margin-top:15px;}
+.panel .pval.cy{color:var(--brand);}
+.panel .pval.gold{color:var(--gold);}
+.panel .pval.dg{color:var(--danger);font-size:30px;line-height:1.14;}
+.panel .pdesc{font-size:13.5px;line-height:1.5;color:var(--text-tertiary);margin-top:14px;}
+
+.row2{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:13px;flex:1;min-height:0;}
+.wide{border:1px solid var(--border-subtle);border-radius:12px;background:var(--bg-surface);padding:26px 24px;display:flex;flex-direction:column;justify-content:flex-start;}
+.wide .wl{font-family:var(--mono);font-size:10px;letter-spacing:.19em;text-transform:uppercase;color:var(--brand);}
+.wide .wt{font-size:18.5px;font-weight:600;letter-spacing:-.018em;margin-top:13px;line-height:1.3;}
+.wide .wd{font-size:13px;line-height:1.55;color:var(--text-tertiary);margin-top:11px;}
+.wide .wd b{color:var(--text-secondary);font-weight:500;}
+
+/* ---------- payoff list ---------- */
+.pflist{display:grid;grid-template-columns:1fr 1fr;gap:0 52px;margin-top:24px;flex:1;min-height:0;}
+.pfcol{display:flex;flex-direction:column;}
+.pfi{flex:1;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--border-subtle);padding:0 2px;}
+.pfcol .pfi:last-child{border-bottom:none;}
+.pfi .n{font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.2;}
+.pfi .d{font-size:14px;line-height:1.45;color:var(--text-tertiary);margin-top:7px;}
+.pfi.note .n{color:var(--brand);}
+.pfi.note .d{color:var(--text-secondary);}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;}
+.sb{border:1px solid var(--border-subtle);border-radius:12px;padding:22px 24px;background:var(--bg-surface);}
+.sb.old{background:rgba(15,20,33,.5);}
+.sb .sl{font-family:var(--mono);font-size:10px;letter-spacing:.19em;text-transform:uppercase;}
+.sb.old .sl{color:var(--gold);}
+.sb.new .sl{color:var(--brand);}
+.sb .sv{font-size:27px;font-weight:700;letter-spacing:-.026em;margin-top:13px;line-height:1.15;}
+.sb.old .sv{color:var(--text-secondary);}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. COVER ============ -->
+<section class="frame" id="f1">
+  <div class="aurora"></div>
+  <div class="ghost">__GHOST__</div>
+  <div class="pad" style="justify-content:space-between;">
+    <div class="chrome">
+      <div class="brandrow">
+        __MARK__
+        <div>
+          <div class="bname">Liquid Terminal</div>
+          <div class="bsub">Hyperliquid data</div>
+        </div>
+      </div>
+      <div class="chip-url">liquidterminal.xyz</div>
+    </div>
+
+    <div style="margin:auto 0;">
+      <div class="kicker" style="max-width:520px;">Hyperliquid</div>
+      <div class="cov-title" style="margin-top:24px;">
+        <h1>HIP-4</h1>
+        <div class="cov-tag">Permissionless deployment</div>
+      </div>
+      <div class="thesis" style="margin-top:26px;">
+        Validators write the rules.<br>
+        <span class="dim">Deployers instantiate them.</span>
+      </div>
+      <div class="chips" style="margin-top:38px;">
+        <span class="chip cy"><b>500K HYPE</b> staked</span>
+        <span class="chip">Templates enforced onchain</span>
+        <span class="chip">Fee share capped at <b>50%</b></span>
+        <span class="chip">Outcomes recycle</span>
+        <span class="chip">AQAv2 collateral only</span>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>What matters beyond the stake</span><span>All specs preliminary</span></div>
+</section>
+
+<!-- ============ 2. CONTROL MODELS ============ -->
+<section class="frame" id="f2">
+  <div class="aurora"></div>
+  <div class="pad">
+    <div class="chrome" style="margin-bottom:26px;">
+      <div class="kicker" style="max-width:640px;">Two different control models</div>
+      <div class="chip-url">liquidterminal.xyz</div>
+    </div>
+
+    <h2>Where the constraint lives.</h2>
+
+    <div class="cmp">
+      <div class="hd spacer"></div>
+      <div class="hd h3"><span class="n">HIP-3</span><span class="t">Perp DEXs</span></div>
+      <div class="hd h4"><span class="n">HIP-4</span><span class="t">Outcome markets</span></div>
+
+      <div class="cl lbl">Control</div>
+      <div class="cl v3"><div class="txt">The deployer defines everything.</div><div class="sub">Oracle, spec, parameters.</div></div>
+      <div class="cl v4"><div class="txt">Validators vote on templates first.</div><div class="sub">Deployers instantiate templates they did not write.</div></div>
+
+      <div class="cl lbl">Enforcement</div>
+      <div class="cl v3"><div class="txt">Policed after the fact.</div><div class="sub">Through slashing.</div></div>
+      <div class="cl v4"><div class="txt">Stored and enforced onchain.</div><div class="sub">The constraint moves upstream, into the template.</div></div>
+
+      <div class="cl lbl">Fee share</div>
+      <div class="cl v3"><div class="big gold">0 to 300%</div></div>
+      <div class="cl v4"><div class="big cy">Capped at 50%</div><div class="sub">Deployers compete on identical products.</div></div>
+
+      <div class="cl lbl">Slots</div>
+      <div class="cl v3"><div class="txt">Auctioned. Permanent.</div></div>
+      <div class="cl v4"><div class="txt">100 outcomes, 200 tokens.</div><div class="sub">Settling frees the allocation for reuse.</div></div>
+
+      <div class="cl lbl">Expands</div>
+      <div class="cl v3"><div class="txt">The asset universe.</div></div>
+      <div class="cl v4"><div class="txt">The payoff universe.</div></div>
+    </div>
+
+    <div class="quote">
+      A perp fails on a bad price: observable, arbitrageable.
+      <span class="dim">An outcome fails on an ambiguous question, which is neither.</span>
+    </div>
+  </div>
+  <div class="foot"><span>Liquid Terminal</span><span>All specs preliminary</span></div>
+</section>
+
+<!-- ============ 3. DEPLOYER ECONOMICS ============ -->
+<section class="frame" id="f3">
+  <div class="aurora"></div>
+  <div class="pad">
+    <div class="chrome" style="margin-bottom:26px;">
+      <div class="kicker" style="max-width:640px;">The fine print</div>
+      <div class="chip-url">liquidterminal.xyz</div>
+    </div>
+
+    <h2>What it costs to be a deployer.</h2>
+
+    <div class="grid3">
+      <div class="panel">
+        <div class="plbl">Stake per deployer</div>
+        <div class="pval cy">500K HYPE</div>
+        <div class="pdesc">Required to deploy outcome markets permissionlessly.</div>
+      </div>
+      <div class="panel">
+        <div class="plbl">Lock</div>
+        <div class="pval">6 months</div>
+        <div class="pdesc">To unstake, you must settle every market you deployed.</div>
+      </div>
+      <div class="panel warn">
+        <div class="plbl">New slashing condition</div>
+        <div class="pval dg">Unsettled<br>&gt; 1 week</div>
+        <div class="pdesc">Markets left incorrectly unsettled. HIP-3 has no equivalent.</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="wide">
+        <div class="wl">The exit risk</div>
+        <div class="wt">A single long-dated outcome holds your stake hostage past your intended exit.</div>
+        <div class="wd">Flagged in the announcement. <b>Price it in before you deploy.</b></div>
+      </div>
+      <div class="wide">
+        <div class="wl">Competition by design</div>
+        <div class="wt">Multiple deployers can deploy the exact same template instantiation.</div>
+        <div class="wd">Same market, competing deployers. <b>When they compete on identical products, the fee ceiling does not need to be high.</b> Hence 50% against 0 to 300% on HIP-3.</div>
+      </div>
+      <div class="wide">
+        <div class="wl">The collateral gate</div>
+        <div class="wt">AQAv2 quote tokens only.</div>
+        <div class="wd">Not a fee discount, that was AQAv1. AQAv2 is a revenue share: <b>~90% of cost-adjusted reserve yield on HL supply flows to the protocol</b>, and it needs two deployers staking 500K HYPE each. Outcome markets are built on stablecoins that pay the protocol to exist.</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Liquid Terminal</span><span>All specs preliminary</span></div>
+</section>
+
+<!-- ============ 4. BEYOND BINARY ============ -->
+<section class="frame" id="f4">
+  <div class="aurora"></div>
+  <div class="pad">
+    <div class="chrome" style="margin-bottom:26px;">
+      <div class="kicker" style="max-width:640px;">Beyond binary</div>
+      <div class="chip-url">liquidterminal.xyz</div>
+    </div>
+
+    <h2>It is not a prediction market primitive.</h2>
+
+    <div class="split">
+      <div class="sb old"><div class="sl">HIP-3 expanded</div><div class="sv">The asset universe</div></div>
+      <div class="sb new"><div class="sl">HIP-4 expands</div><div class="sv">The payoff universe</div></div>
+    </div>
+
+    <div class="pflist">
+      <div class="pfcol">
+        <div class="pfi"><div class="n">Strike ladders</div><div class="d">Stacked outcomes across price levels.</div></div>
+        <div class="pfi"><div class="n">Range markets</div><div class="d">Bounded exposure between two levels.</div></div>
+        <div class="pfi"><div class="n">Funding-rate hedges</div><div class="d">Offset the cost of carry directly.</div></div>
+        <div class="pfi"><div class="n">Basis trades</div><div class="d">Spot against derivative, expressed as an outcome.</div></div>
+      </div>
+      <div class="pfcol">
+        <div class="pfi"><div class="n">Volatility exposure</div><div class="d">Trade the move, not the direction.</div></div>
+        <div class="pfi"><div class="n">Depeg insurance</div><div class="d">Priced protection on stablecoin pegs.</div></div>
+        <div class="pfi"><div class="n">Structured payoffs</div><div class="d">Composed shapes from the same primitive.</div></div>
+        <div class="pfi note"><div class="n">Same slot, same infra</div><div class="d">Canonical markets stay under 10 per year. Deployers scale the long tail, both layers composable in one account.</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Liquid Terminal</span><span>All specs preliminary</span></div>
+</section>
+
+</body>
+</html>

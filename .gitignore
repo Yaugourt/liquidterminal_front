@@ -49,3 +49,6 @@ next-env.d.ts
 .claude/
 .gstack/
 .design-audit/
+
+# WSL alternate-data-stream junk
+*:Zone.Identifier
