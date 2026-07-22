@@ -764,3 +764,27 @@ fields. A stream that crosses body copy at readable strength is a bug.
 Data-dense surfaces: tables, charts, KPI cells, anything inside a `<Card>`.
 The layer is background weather for narrative pages (landing, funding, legal,
 onboarding, 404). Numbers get a flat surface behind them, always.
+
+### Shared links (Open Graph / Twitter cards)
+
+`pnpm gen:og` regenerates every card from `scripts/gen-og.mjs`. One template,
+five cards, output committed to `public/og/` plus `public/og-image.png` and
+`public/twitter-image.png`. The streamline math in that script is a port of
+`DataFlow.tsx`; changing one without the other makes shared links stop looking
+like the site they point at.
+
+Layout rules baked into the template, learned by rendering:
+
+- **Copy left, source right.** A 1200x630 canvas only shows the first third of a
+  fan aimed across it, and that stretch is where the currents are still straight.
+  It read as light rays and it striped the headline. Giving the field its own
+  half fixes both.
+- **`scaleY` the field, don't shorten it.** The full fan is drawn into a tall box
+  and squashed, so the card shows the drape rather than the emission. Shortening
+  the box instead just crops back to the straight part.
+- **The mark, its bloom, the field and the URL are always brand cyan.** Only the
+  tag pill and the accented word in the title follow a section accent. A gold
+  droplet on a shared wiki link reads as a different product.
+- **The mark is large and it is the only one.** At feed thumbnail size it is the
+  only element anyone resolves, so the top-left lockup is the wordmark alone and
+  the card keeps one source.
