@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "visual-check": "node scripts/visual-check.mjs",
-    "sync:hip4": "mkdir -p public/hip4 && echo 'HIP-4 pages are React (src/components/hip4/chapters). Optional: cp ../hip4_docs/dashboard/pages/*.html public/hip4/ only if you still need static HTML mirrors; bundled ABIs live in src/lib/hip4/abi and public/hip4/*.abi.'"
+    "sync:hip4": "mkdir -p public/hip4 && echo 'HIP-4 pages are React (src/components/hip4/chapters). Optional: cp ../hip4_docs/dashboard/pages/*.html public/hip4/ only if you still need static HTML mirrors; bundled ABIs live in src/lib/hip4/abi and public/hip4/*.abi.'",
+    "gen:og": "node scripts/gen-og.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
