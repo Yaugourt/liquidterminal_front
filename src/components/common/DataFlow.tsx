@@ -40,7 +40,7 @@ export interface DataFlowProps {
   intensity?: number;
   /**
    * Where the light sits across the fan, as a distance from the axis (0 =
-   * on the axis, 0.5 = at the outer edge). Default 0.28, which keeps the
+   * on the axis, 0.5 = at the outer edge). Default 0.3, which keeps the
    * middle channel dark so centered copy stays readable.
    */
   focus?: number;

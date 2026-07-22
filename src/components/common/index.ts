@@ -51,9 +51,12 @@ export { OutcomeRow } from './OutcomeRow';
 export type { OutcomeRowProps, OutcomeRowVariant } from './OutcomeRow';
 
 // KPI ribbon (§7.b)
-// Liquid layer (decorative, §13)
+// Liquid layer (decorative, §13). Import LiquidSurface, not DataFlow: the
+// wrapper is what carries the z-index contract and the opaque-ribbon invariant.
 export { DataFlow } from './DataFlow';
 export type { DataFlowProps } from './DataFlow';
+export { LiquidSurface, useLiquidSurface } from './LiquidSurface';
+export type { LiquidSurfaceProps } from './LiquidSurface';
 
 export { KpiRibbon } from './KpiRibbon';
 export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';

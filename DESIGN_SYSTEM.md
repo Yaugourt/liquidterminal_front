@@ -15,7 +15,7 @@
 
 | Tailwind token | Hex | Usage |
 |---|---|---|
-| `bg-base` | `#0A0B0F` | App background |
+| `bg-base` | `#08101A` | App background |
 | `bg-surface` | `#0F1421` | Card / sidebar background |
 | `bg-surface-2` | `#141B2A` | Table header, hover, pills |
 | `bg-surface-3` | `#1C2436` | Deeper hover, dropdown items |
@@ -691,17 +691,23 @@ are inlined on one page, and a raster `<img>` cannot glow per shape.
 
 ### `<DataFlow>` — the flow field
 
+Do not render `<DataFlow>` directly. Go through **`<LiquidSurface>`**, which
+owns the z-index contract and tells anything rendering numbers that it is
+standing in the water:
+
 ```tsx
-<div className="relative">
-  <div className="pointer-events-none absolute inset-x-0 top-[95px] bottom-0 z-0">
-    <DataFlow origin={{ x: 50, y: 0 }} lines={38} animated className="text-brand" />
-  </div>
-  <div className="relative z-10">{/* content */}</div>
-</div>
+<LiquidSurface
+  field={{ origin: { x: 50, y: 0 }, lines: 38, animated: true, className: "text-brand" }}
+  fieldClassName="inset-x-0 top-[95px] bottom-0"
+  contentClassName="max-w-[1280px] mx-auto px-6"
+>
+  {children}
+</LiquidSurface>
 ```
 
-Position a wrapper, let `DataFlow` fill it with `inset-0`. Color it with a
-token class on `className` (the strokes are `currentColor`); never a hex.
+`fieldClassName` positions the field (default `inset-0`); use it to hang the
+field off the source rather than off the box. Color with a token class on
+`field.className` (the strokes are `currentColor`); never a hex.
 
 | Prop | Default | Note |
 |---|---|---|
@@ -714,7 +720,9 @@ token class on `className` (the strokes are `currentColor`); never a hex.
 | `fade` | `true` | dissolves both ends |
 
 **z-index rule** — same as the page halo (§3): the field is `z-0`, content
-**must** be `relative z-10`.
+**must** be `relative z-10`. `<LiquidSurface>` does this for you, which is the
+point: it was prose for exactly one week and prose does not survive a second
+contributor.
 
 ### Learned the hard way
 
@@ -761,9 +769,61 @@ fields. A stream that crosses body copy at readable strength is a bug.
 
 ### Where the layer does **not** go
 
-Data-dense surfaces: tables, charts, KPI cells, anything inside a `<Card>`.
-The layer is background weather for narrative pages (landing, funding, legal,
-onboarding, 404). Numbers get a flat surface behind them, always.
+Settled by an adversarial design review (5 designers, positions then
+cross-examination). Every rule below is checkable without a judgement call.
+
+**Scope is a path allowlist, not an intention.** `DataFlow` and `LiquidSurface`
+are importable from exactly four places, enforced by `no-restricted-imports` in
+`eslint.config.mjs`:
+
+- `src/components/landing/**`
+- `src/app/not-found.tsx`
+- `src/app/funding/**`
+- `src/components/onboarding/OnboardingVisual.tsx` (welcome step only)
+
+Nothing under `src/app/(app)/**`, ever. The wiki will be argued as narrative;
+the answer stays no, precisely because it renders in the same shell as
+`/market`. `<LiquidMark>` stays free everywhere: the logo is not the layer.
+
+The rule has to be written as `paths` + `importNames` on the barrel. A
+`patterns` entry on `@/components/common/DataFlow` is a no-op, because the
+`@/components/common/*` group is already banned: it would forbid a specifier
+nobody is allowed to write and catch nothing.
+
+**One field per rendered screen**, at most one in `mode="source"` per document.
+Counting emitters alone made an unlimited number of streams conformant.
+
+**Never behind a `<KpiRibbon>` or its wrapper**, except on the landing and
+`/funding`, where the ribbon must render `variant="boxed"` with `bordered`.
+`KpiRibbon` throws in dev when it finds itself transparent inside a
+`<LiquidSurface>`: the dive under the ribbon only works because boxed cells
+paint an opaque `bg-surface`, and that was an accident of a default until it
+was written down.
+
+**One `animated` instance in the codebase**, the landing hero. Forbidden on any
+route that opens a WebSocket, mounts a chart, or polls on an interval.
+
+**No `mode="source"` in a box narrower than ~0.6 of its height.** Under
+`preserveAspectRatio="none"` a tall narrow box flattens the undulation into a
+vertical comb, and the `max-width: 640px` de-densifier never fires on desktop.
+
+**The layer never encodes state.** No binding to connection, freshness, volume,
+volatility or loading. Review test: if a reviewer can finish "the water here
+means…" with something factual, reject it.
+
+**No text in `text-text-tertiary`, or under 12px, inside a field's box.**
+Measured: tertiary is 3.95:1 on `bg-base`, already under AA before any field.
+
+**Intensity caps: 0.22 source, 0.09 stream.** A stream readable over body copy
+is a bug, not a setting.
+
+**Every interactive element on a liquid surface carries `.focus-ring`.** A cyan
+decoration behind a link makes the UA's default outline indistinguishable.
+
+Legal pages were listed here as in scope. That was wrong and is removed:
+`max-w-3xl` left-aligned prose read for minutes is the geometry `focus` does
+not protect, and the sticky `backdrop-blur-xl` header re-rasterises a masked
+field for the whole scroll. The 24px mark already there is enough.
 
 ### Shared links (Open Graph / Twitter cards)
 
