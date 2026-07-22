@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Terminal - Sponsors &amp; data credits (placement study)</title>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  SPONSORS & DATA CREDITS - placement study.
+
+  Composed from kit.html blocks only. Tokens copied verbatim from
+  src/app/globals.css :root (NOT from DESIGN_SYSTEM.md, whose colour table
+  is stale: it still lists #0A0B0F for bg-base and #1FA85B for success).
+
+  The spine of this study is ONE distinction:
+
+    • DATA CREDIT  - factual attribution of a source. Unpaid. Text, near
+      the data it credits. Norm: CoinGecko attribution guide.
+    • PATRON       - someone who funds the project. Logo, on a dedicated
+      page, grouped by named tier. Norm: L2BEAT /donate.
+
+  HypeDexer is a data credit today. It becomes a patron only if a deal is
+  signed. Mixing the two is the failure mode this study is built to avoid.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .kit-label { font: 600 11px/1.4 "JetBrains Mono", monospace; color: #6B7280; }
+  .kit-jsx { font: 400 11px/1.5 "JetBrains Mono", monospace; color: #83E9FF; white-space: pre-wrap; }
+  .kit-sec { border-top: 1px dashed #2C354A; }
+  .kit-bad { font: 400 11px/1.5 "JetBrains Mono", monospace; color: #E53E3E; white-space: pre-wrap; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+<!-- HypeDexer mark, monochrome. Source: HypedexerBranding/SVG/Logo Hypedexer.svg,
+     with fill="black" AND stroke="black" rewritten to currentColor. -->
+<svg width="0" height="0" class="hidden" aria-hidden="true">
+  <symbol id="hd-mark" viewBox="0 0 452 452">
+    <path d="M224.826 198.97C225.233 198.997 225.625 199.007 226 199C225.603 198.978 225.212 198.968 224.826 198.97C209.968 197.99 174.475 174.709 165.828 128.209C145.839 75.9484 79.2111 128.207 131.773 159.556C142.385 163.538 170.476 179.752 197.128 212C205.23 211.462 212.237 199.027 224.826 198.97Z" fill="currentColor"/>
+    <path d="M227.151 198.972C226.753 198.997 226.369 199.006 226 199C226.389 198.979 226.772 198.97 227.151 198.972C242.051 198.045 277.116 175.259 285.825 129.053C305.942 77.1585 373.001 129.051 320.099 160.182C309.419 164.135 281.882 180.978 255.059 213C246.898 212.466 239.841 199.07 227.151 198.972Z" fill="currentColor"/>
+    <path d="M224.87 252.028C225.261 252.003 225.638 251.994 226 252C225.618 252.021 225.242 252.03 224.87 252.028C210.039 252.974 174.483 276.437 165.828 322.854C145.839 374.967 79.2111 322.855 131.773 291.594C142.385 287.624 170.485 270.158 197.136 238C205.248 238.537 212.254 251.943 224.87 252.028Z" fill="currentColor"/>
+    <path d="M227.164 252.03C226.761 252.004 226.373 251.993 226 252C226.393 252.022 226.781 252.032 227.164 252.03C242.07 253.013 277.119 276.631 285.825 322.907C305.942 374.895 373.001 322.909 320.099 291.722C309.419 287.762 281.891 271.08 255.067 239C246.909 239.535 239.846 251.981 227.164 252.03Z" fill="currentColor"/>
+    <path d="M143.725 249.08C171.142 233.787 180.017 235.992 196.341 236.734C200.784 225.604 200.812 222.658 196.369 213.012C165.948 215.98 153.737 208.032 143.634 202.866C85.0678 185.085 91.8956 269.41 143.725 249.08Z" fill="currentColor"/>
+    <path d="M308.275 249.448C280.858 234.154 271.983 236.359 255.659 237.101C251.215 225.971 251.188 223.025 255.631 213.379C286.052 216.347 298.263 208.4 308.366 203.233C366.932 185.452 360.104 269.777 308.275 249.448Z" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<div class="max-w-[1280px] mx-auto px-6 py-10 space-y-10">
+
+  <header class="space-y-3">
+    <h1 class="font-inter text-3xl font-semibold tracking-tight">Sponsors &amp; data credits</h1>
+    <p class="text-sm text-text-secondary max-w-3xl">
+      Four placements, ranked by how much they cost the user. Every block below is composed from
+      <span class="mono text-brand">kit.html</span> - no invented classes. The one rule that governs all of them:
+      a <strong class="text-text-primary">data credit</strong> (factual, unpaid, near the data) is never rendered
+      like a <strong class="text-text-primary">patron</strong> (funder, logo, dedicated page).
+    </p>
+    <div class="flex flex-wrap gap-2 pt-1">
+      <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">0 sponsor logos on data views</span>
+      <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">1 persistent credit</span>
+      <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">5–8 logos on /funding</span>
+    </div>
+  </header>
+
+  <!-- ───────────────────── PLACEMENT 1 - landing Data sources ───────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">PLACEMENT 1 - landing “Data sources” · the logo slot that already exists</div>
+    <div class="kit-jsx">Ships in: src/components/landing/CommandHouse.tsx:401-403 · replace the "HD" initials tile with &lt;use href="#hd-mark"/&gt;
+Cost to the user: zero - the card, the link and the badge are already in production. Only the tile changes.</div>
+
+    <div class="grid gap-4 lg:grid-cols-2 mt-2">
+      <!-- BEFORE -->
+      <div class="space-y-2">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Today - initials placeholder</div>
+        <div class="rounded-lg border border-brand/30 bg-surface p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-12 h-12 rounded-lg bg-brand/10 border border-brand/30 flex items-center justify-center shrink-0">
+              <span class="mono text-[15px] font-semibold text-brand">HD</span>
+            </div>
+            <div class="min-w-0 space-y-1.5">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[15px] font-semibold text-text-primary">HypeDexer</span>
+                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-brand/10 border border-brand/25 text-brand">Primary data provider</span>
+              </div>
+              <p class="text-[12px] text-text-secondary">The data engine of the terminal, built by Enigma Validator.</p>
+              <p class="text-[10.5px] text-text-tertiary"><span class="mono">61</span> endpoints in production</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="space-y-2">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Proposed - real mark, monochrome</div>
+        <a href="https://app.hypedexer.com" target="_blank" rel="noopener noreferrer"
+           class="block rounded-lg border border-brand/30 bg-surface p-4 hover:border-brand/50 transition-colors group">
+          <div class="flex items-start gap-3">
+            <div class="w-12 h-12 rounded-lg bg-brand/10 border border-brand/30 flex items-center justify-center shrink-0">
+              <svg class="w-7 h-7 text-brand" aria-hidden="true"><use href="#hd-mark"/></svg>
+            </div>
+            <div class="min-w-0 space-y-1.5">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-[15px] font-semibold text-text-primary group-hover:text-brand transition-colors">HypeDexer</span>
+                <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-brand/10 border border-brand/25 text-brand">Primary data provider</span>
+              </div>
+              <p class="text-[12px] text-text-secondary">The data engine of the terminal, built by Enigma Validator.</p>
+              <p class="text-[10.5px] text-text-tertiary"><span class="mono">61</span> endpoints in production</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="kit-jsx mt-1">Note: the mark inherits text-brand via currentColor, so HypeDexer's purple (#400BDF/#B50CF2) never
+fights the terminal's cyan. Same trick lets the same file render text-tertiary in the footer.</div>
+  </section>
+
+  <!-- ───────────────────── PLACEMENT 2 - contextual credit ───────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">PLACEMENT 2 - contextual credit under the data it credits</div>
+    <div class="kit-jsx">React: &lt;DataAttribution sources={[…]} /&gt;  ·  new primitive in @/components/common
+Generalises the one-off already shipping at FeesRevenuePanel.tsx:99-101 ("Sources: Hypurrscan · HypeDexer · HL").
+Follows the CoinGecko attribution norm: short text, hyperlinked, placed directly above or below the data set.</div>
+
+    <div class="rounded-lg border border-border-subtle bg-surface overflow-hidden mt-2">
+      <div class="px-3.5 py-2.5 flex items-center gap-2 border-b border-border-subtle">
+        <h3 class="text-[13px] font-medium text-text-primary truncate">Fees &amp; revenue</h3>
+        <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">30d</span>
+      </div>
+      <div class="px-3.5 py-3 grid grid-cols-3 gap-4">
+        <div><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Total fees</div><div class="mono text-[22px] font-medium leading-none mt-2">$41.2M</div></div>
+        <div><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Buyback</div><div class="mono text-[22px] font-medium leading-none mt-2 text-success">$38.9M</div></div>
+        <div><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Assistance fund</div><div class="mono text-[22px] font-medium leading-none mt-2 text-gold">$2.3M</div></div>
+      </div>
+      <!-- the attribution strip -->
+      <div class="px-3.5 py-1.5 border-t border-border-subtle flex items-center gap-1.5 text-[10px] text-text-tertiary">
+        <span>Sources:</span>
+        <a href="https://hypurrscan.io" target="_blank" rel="noopener noreferrer" class="hover:text-text-secondary transition-colors">Hypurrscan</a>
+        <span class="text-border-strong">·</span>
+        <a href="https://app.hypedexer.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 hover:text-brand transition-colors">
+          <svg class="w-2.5 h-2.5" aria-hidden="true"><use href="#hd-mark"/></svg>HypeDexer
+        </a>
+        <span class="text-border-strong">·</span>
+        <a href="https://hyperliquid.xyz" target="_blank" rel="noopener noreferrer" class="hover:text-text-secondary transition-colors">HL</a>
+        <span class="ml-auto">Updated <span class="mono">12s ago</span></span>
+      </div>
+    </div>
+
+    <div class="kit-jsx mt-1">Unlimited instances - this is a fact about the data, not an ad. 10px, text-tertiary, below the fold of
+the card. The 2.5px mark is the only place a logo appears inside the product, and it reads as a bullet.</div>
+  </section>
+
+  <!-- ───────────────────── PLACEMENT 3 - global footer ───────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">PLACEMENT 3 - the one persistent credit · LegalFooter</div>
+    <div class="kit-jsx">Ships in: src/components/common/LegalFooter.tsx - the centre of its justify-between is empty today.
+Mounted on every (app) route and every /legal route. This is the ONLY placement that follows the user everywhere.</div>
+
+    <footer class="relative z-10 mt-2 border-t border-border-subtle">
+      <div class="px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-[11px] text-text-tertiary">© 2026 Liquid Terminal. All rights reserved.</p>
+        <a href="https://app.hypedexer.com" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-1.5 text-[11px] text-text-tertiary hover:text-brand transition-colors">
+          Data by <svg class="w-3 h-3" aria-hidden="true"><use href="#hd-mark"/></svg> <span class="font-medium">HypeDexer</span>
+        </a>
+        <nav class="flex items-center gap-4 text-[11px] text-text-tertiary">
+          <a href="#" class="hover:text-text-secondary transition-colors">Terms</a>
+          <a href="#" class="hover:text-text-secondary transition-colors">Privacy</a>
+          <a href="#" class="hover:text-text-secondary transition-colors">Disclaimer</a>
+          <a href="#" class="hover:text-text-secondary transition-colors">Funding</a>
+        </nav>
+      </div>
+    </footer>
+
+    <div class="kit-jsx mt-1">"Funding" joins the legal links - that is the discreet text entry point to placement 4, exactly how
+DefiLlama and L2BEAT surface "Donate". One line, below the fold, no image weight.</div>
+  </section>
+
+  <!-- ───────────────────── PLACEMENT 4 - /funding ───────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">PLACEMENT 4 - /funding · where logos are allowed to be logos</div>
+    <div class="kit-jsx">New route. Honours CHARTE.md:42-44 ("Liquid Terminal publiera une page /funding… Un bien public se finance
+a la lumiere") - already promised publicly, roadmap NEXT item 8. Modelled on L2BEAT /donate (7 logos, 3 named tiers).</div>
+
+    <div class="space-y-6 mt-2">
+      <div class="space-y-1.5">
+        <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Funding</h1>
+        <p class="text-sm text-text-secondary max-w-2xl">
+          Liquid Terminal is a free, MIT-licensed public good. Here is who pays for it, and what they do and
+          do not get in return. Patrons never influence what the terminal shows.
+        </p>
+      </div>
+
+      <!-- TIER 1 -->
+      <div class="space-y-2">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[13px] font-medium text-text-primary">Principal patron</h2>
+          <span class="text-[11px] text-text-tertiary">1 seat</span>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface p-5 flex items-center justify-center h-[104px]">
+          <div class="flex items-center gap-3 text-text-secondary">
+            <svg class="w-10 h-10" aria-hidden="true"><use href="#hd-mark"/></svg>
+            <span class="text-[22px] font-semibold tracking-tight">HypeDexer</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIER 2 -->
+      <div class="space-y-2">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[13px] font-medium text-text-primary">Supporting patrons</h2>
+          <span class="text-[11px] text-text-tertiary">up to 4 seats</span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex-1 min-w-[180px] rounded-lg border border-border-subtle bg-surface h-[72px] flex items-center justify-center text-text-tertiary text-[13px] font-medium">Native Markets</div>
+          <div class="flex-1 min-w-[180px] rounded-lg border border-border-subtle bg-surface h-[72px] flex items-center justify-center text-text-tertiary text-[13px] font-medium">Kinetiq</div>
+          <div class="flex-1 min-w-[180px] rounded-lg border border-border-subtle bg-surface h-[72px] flex items-center justify-center text-text-tertiary text-[13px] font-medium">HyperSwap</div>
+          <div class="flex-1 min-w-[180px] rounded-lg border border-border-default border-dashed bg-surface/40 h-[72px] flex items-center justify-center text-text-tertiary/60 text-[11px]">seat open</div>
+        </div>
+      </div>
+
+      <!-- TIER 3 - text only, ASF model -->
+      <div class="space-y-2">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[13px] font-medium text-text-primary">Backers</h2>
+          <span class="text-[11px] text-text-tertiary">text only - no logo, unlimited</span>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface px-4 py-3">
+          <p class="text-[12px] text-text-secondary leading-relaxed">
+            Hyper Foundation grant · Enigma Validator · Gitcoin round 21 ·
+            <span class="text-text-tertiary">+ 47 individual donors</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- transparency table - the L2BEAT move -->
+      <div class="space-y-2">
+        <div class="flex items-baseline gap-2">
+          <h2 class="text-[13px] font-medium text-text-primary">Where the money comes from</h2>
+          <span class="text-[11px] text-text-tertiary">updated quarterly</span>
+        </div>
+        <div class="rounded-lg border border-border-subtle overflow-hidden">
+          <table class="w-full text-left">
+            <thead class="bg-surface-2">
+              <tr class="text-[9px] uppercase tracking-wide text-text-tertiary">
+                <th class="px-4 py-2 font-medium">Band</th>
+                <th class="px-4 py-2 font-medium">Source</th>
+                <th class="px-4 py-2 font-medium text-right">Period</th>
+              </tr>
+            </thead>
+            <tbody class="text-[11.5px]">
+              <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 mono text-text-tertiary">&gt; $100k</td><td class="px-4 py-2.5 text-text-primary">Hyper Foundation grant</td><td class="px-4 py-2.5 mono text-text-tertiary text-right">2026</td></tr>
+              <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 mono text-text-tertiary">$25k–100k</td><td class="px-4 py-2.5 text-text-primary">HypeDexer partnership</td><td class="px-4 py-2.5 mono text-text-tertiary text-right">2026</td></tr>
+              <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 mono text-text-tertiary">&lt; $25k</td><td class="px-4 py-2.5 text-text-primary">Community donations · Telegram bot</td><td class="px-4 py-2.5 mono text-text-tertiary text-right">ongoing</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[10px] text-text-tertiary">
+          Patrons are listed here because they fund the terminal. They get no influence over rankings, listings or
+          what any chart shows - and this page exists so you can check that claim against the money.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────── REJECTED ───────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">REJECTED - placements that were considered and should not ship</div>
+    <div class="kit-bad">× Header centre (Header.tsx, the widest empty space in the shell) - persistent, above the fold, next to
+  the search. This is the single most valuable pixel on the site and selling it is what turns a terminal into a
+  billboard. Etherscan does it: 4 ad slots on its home, one mid-content between the chart and latest blocks.
+× Sidebar footer band - persistent on every route, survives the 56px collapse. Same objection, plus it competes
+  with the Mainnet status dot, which is functional.
+× Onboarding step 8 "our sponsors" - first contact with a new user, spent on a logo.
+× Chart co-watermark (ChartWatermark.tsx) - screenshots travel; a sponsor mark riding LT's data into Twitter is
+  exactly the "je gagne quand tu trades" posture STRATEGY_ANNEXES.md:428 warns damages the grant pitch.
+× An uncapped cheap logo tier - Vue.js sells 36 Gold seats at $500/mo with no cap; a visible share is now
+  Instagram-follower farms and betting sites. A cheap unbounded tier becomes an ad network on its own.</div>
+  </section>
+
+  <!-- ───────────────────── EVIDENCE ───────────────────── -->
+  <section class="space-y-3 kit-sec pt-8 pb-10">
+    <div class="kit-label">EVIDENCE - what the comparable sites actually do</div>
+    <div class="rounded-lg border border-border-subtle overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-surface-2">
+          <tr class="text-[9px] uppercase tracking-wide text-text-tertiary">
+            <th class="px-4 py-2 font-medium">Site</th>
+            <th class="px-4 py-2 font-medium text-right">Logos on data views</th>
+            <th class="px-4 py-2 font-medium text-right">On dedicated page</th>
+            <th class="px-4 py-2 font-medium">Entry point</th>
+          </tr>
+        </thead>
+        <tbody class="text-[11.5px]">
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">DefiLlama</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-tertiary">0</td><td class="px-4 py-2.5 text-text-secondary">“Donate” text link, footer</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">L2BEAT</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-primary">7 · 3 tiers</td><td class="px-4 py-2.5 text-text-secondary">“Donate” text link, footer</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">GeckoTerminal</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-tertiary">-</td><td class="px-4 py-2.5 text-text-secondary">-</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">Token Terminal</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-tertiary">-</td><td class="px-4 py-2.5 text-text-secondary">-</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">Dune</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-tertiary">1 partner</td><td class="px-4 py-2.5 text-text-secondary">marketing home</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">Blockscout</td><td class="px-4 py-2.5 mono text-right text-danger">2 ad formats</td><td class="px-4 py-2.5 mono text-right text-text-tertiary">-</td><td class="px-4 py-2.5 text-text-secondary">ads on by default, self-hosted</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">Etherscan</td><td class="px-4 py-2.5 mono text-right text-danger">4 slots</td><td class="px-4 py-2.5 mono text-right text-text-tertiary">-</td><td class="px-4 py-2.5 text-text-secondary">labelled “Sponsored:”</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">growthepie</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-primary">3 funders + 4 sources</td><td class="px-4 py-2.5 text-text-secondary">“Donate” + “Contributors”, footer</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">Hypurrscan</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-primary">7 · flat, no tier</td><td class="px-4 py-2.5 text-text-secondary">/about · header referral CTA</td></tr>
+          <tr class="border-t border-border-subtle"><td class="px-4 py-2.5 text-text-primary">ASXN</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-tertiary">0 · grey text line</td><td class="px-4 py-2.5 text-text-secondary">no footer at all · header referral CTA</td></tr>
+          <tr class="border-t border-border-subtle bg-brand/[0.04]"><td class="px-4 py-2.5 text-brand font-medium">Liquid Terminal (proposed)</td><td class="px-4 py-2.5 mono text-right text-success">0</td><td class="px-4 py-2.5 mono text-right text-text-primary">5–8 · 3 tiers</td><td class="px-4 py-2.5 text-text-secondary">“Funding” text link, footer</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-[10px] text-text-tertiary max-w-3xl leading-relaxed">
+      Every credible data platform observed shows zero patron logos on its data screens. The ones that monetise
+      the product surface (Blockscout, Etherscan, DexScreener) are also the ones whose neutrality gets questioned.
+      <br><br>
+      growthepie - a public good funded the same way LT wants to be - independently arrived at the exact split this
+      study proposes: <strong class="text-text-secondary">4 data-source logos on /contributors</strong> and
+      <strong class="text-text-secondary">3 funder logos on /donate</strong>, two separate sections on two separate
+      pages, both reached by plain text links in a footer “ABOUT” column. Its footer names funders in prose, not logos.
+      <br><br>
+      Also worth deciding separately: both Hyperliquid-native comparables (Hypurrscan, ASXN) monetise through a
+      Hyperliquid <strong class="text-text-secondary">referral CTA in the header</strong> - “Support Me”,
+      “Trade · Save 4%” - not through sponsor logos. That is the ecosystem norm, it costs no visual real estate,
+      and CHARTE.md:25-33 already writes the rules it would have to follow.
+    </p>
+  </section>
+
+</div>
+</body>
+</html>

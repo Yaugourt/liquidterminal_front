@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LT banner</title>
+<style>
+__FONTS__
+
+:root{
+  --bg-base:#08101A;
+  --text-primary:#E8EAED;
+  --text-secondary:#9CA3AF;
+  --text-tertiary:#6B7280;
+  --brand:#83E9FF;
+  --sans:'Inter',ui-sans-serif,system-ui,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#000;font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+
+/* 1500x500. Measured from a live profile capture: the avatar covers roughly
+   x 41..391, y 325..500. Nothing readable goes in that box. */
+.banner{
+  position:relative;width:1500px;height:500px;overflow:hidden;
+  background:
+    radial-gradient(1050px 600px at 62% 78%, rgba(131,233,255,.11), transparent 62%),
+    linear-gradient(112deg, #060C14 0%, #08101A 46%, #0A1622 100%);
+  color:var(--text-primary);
+}
+
+.grid{
+  position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.4;
+  background-image:
+    radial-gradient(circle at 56% 64%, #000 0%, transparent 62%),
+    linear-gradient(rgba(131,233,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(131,233,255,.045) 1px, transparent 1px);
+  background-size:100% 100%, 42px 42px, 42px 42px;
+}
+
+.flow{position:absolute;inset:0;width:100%;height:100%;z-index:1;}
+
+/* bloom on the convergence point, so the avatar reads as the emitter */
+.spark{
+  position:absolute;width:300px;height:300px;z-index:1;pointer-events:none;
+  background:radial-gradient(circle, rgba(131,233,255,.30) 0%, rgba(131,233,255,.09) 36%, transparent 66%);
+}
+
+__GEOM__
+
+/* Copy lives in the top-left, entirely above the avatar box. Sizes are set so
+   they survive X halving the banner on a narrow viewport. */
+.copy{position:absolute;z-index:3;left:66px;top:58px;}
+.wordmark{font-size:70px;font-weight:700;letter-spacing:-.034em;line-height:1;}
+.tag{
+  font-family:var(--mono);font-size:17px;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--brand);margin-top:16px;
+}
+.line{
+  font-size:28px;font-weight:400;letter-spacing:-.012em;line-height:1.35;
+  color:var(--text-secondary);margin-top:28px;
+}
+.line b{color:var(--text-primary);font-weight:600;}
+
+.url{
+  position:absolute;z-index:3;right:56px;bottom:34px;
+  font-family:var(--mono);font-size:16px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-tertiary);
+}
+</style>
+</head>
+<body>
+<section class="banner" id="banner">
+  <div class="grid"></div>
+  __FLOW__
+  <div class="spark"></div>
+
+  <div class="copy">
+    <div class="wordmark">Liquid Terminal</div>
+    <div class="tag">Hyperliquid data</div>
+    <div class="line">Markets, vaults, validators, blocks.<br><b>One source. Free, real time.</b></div>
+  </div>
+
+  <div class="url">liquidterminal.xyz</div>
+</section>
+</body>
+</html>
