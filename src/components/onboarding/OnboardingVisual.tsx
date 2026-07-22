@@ -1,13 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import { Search, Wallet } from "lucide-react";
+import { LiquidMark } from "@/components/common";
 import type { OnboardingStep } from "./onboardingSteps";
 
 /**
  * Abstract, token-only illustrations for each tour step.
- * Everything is built in CSS (gradients, orbs, mini mock-tiles) — no binary
- * assets besides the existing `/logo.svg`.
+ * Everything is built in CSS (gradients, orbs, mini mock-tiles) plus the
+ * inline <LiquidMark> — no binary assets at all.
  */
 
 /** Blurred brand/gold orbs shared by every step — the subtle V4 halo. */
@@ -28,7 +28,7 @@ function WelcomeVisual() {
       <div className="relative">
         <div className="absolute inset-0 -m-6 rounded-full bg-brand/20 blur-2xl" />
         <div className="relative grid h-20 w-20 place-items-center rounded-2xl border border-brand/25 bg-surface-2/80 shadow-lg shadow-black/30">
-          <Image src="/logo.svg" alt="Liquid Terminal" width={44} height={44} className="h-11 w-11" />
+          <LiquidMark size={44} decorative className="liquid-emit" />
         </div>
       </div>
     </div>

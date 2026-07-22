@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Settings, Shield, MessageCircle, Github, BookOpen, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { SidebarToggle } from "@/components/common"
-import { TokenAvatar } from "@/components/common"
+import { TokenAvatar, LiquidMark } from "@/components/common"
 import Image from "next/image"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
@@ -268,7 +268,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         onClick={() => setIsOpen(false)}
                         aria-label="Liquid Terminal — Dashboard"
                     >
-                        <Image src="/logo.svg" alt="Liquid Terminal" width={26} height={26} className="h-[26px] w-[26px] shrink-0" />
+                        <LiquidMark size={26} decorative className="shrink-0" />
                         <div className={cn("whitespace-nowrap transition-opacity duration-150", isCollapsed ? "opacity-0" : "opacity-100 delay-75")}>
                             <div className="text-[14px] font-semibold leading-none text-text-primary">
                                 Liquid Terminal

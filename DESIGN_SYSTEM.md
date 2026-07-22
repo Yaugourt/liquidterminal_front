@@ -614,6 +614,8 @@ Documenting these limits to avoid running into them again:
 ### Primitives (`src/components/common/`)
 - `TypedDataTable`, `Column<T>` — tables (standalone pages, see §5.a).
 - `TokenAvatar` — inline HL-CDN token badge (see §5.c). Single source for any "small coin icon" outside leaderboard cells.
+- `LiquidMark` — the Liquid Terminal mark as inline SVG, two-tone or `currentColor` (see §13). Use instead of `<Image src="/logo.svg">`.
+- `DataFlow` — decorative streamline field poured from one origin (see §13).
 - `AuroraAreaChart`, `AuroraHistogramChart` — Recharts wrappers, mono-series / histogram (see §6.1).
 - `DonutTopN` — Recharts donut "Top N + Rest" with hover ActiveArc (see §6.4).
 - `FlowGrid` + `FlowBar` — Top-N ranking with animated bars, Builders-style stagger (see §6.5).
@@ -654,3 +656,111 @@ Documenting these limits to avoid running into them again:
 
 ### Shell (`src/components/`)
 - `Sidebar`, `Header`, `ExplorerSearchBar`.
+
+## 13. Liquid layer
+
+> "We treat data like water." The brand line, made visual. It is a **decorative
+> layer**, never an information one.
+
+### The rule of one source
+
+A page gets **at most one emitter**. The mark glows, currents leave it, and
+everything downstream is the same water arriving somewhere. Two glowing marks
+on one screen, or a flow field with no visible origin, both break the reading.
+
+The landing is the reference implementation: the mark sits at the top of the
+hero, the field is emitted from its centre, and the currents dive under the
+KPI ribbon — which is exactly where the data surfaces as numbers.
+
+### `<LiquidMark>` — the mark, inline
+
+```tsx
+<LiquidMark decorative />                                  // nav, 22px, two-tone
+<LiquidMark size={16} decorative />                        // footer
+<LiquidMark size={62} tone="current" className="liquid-emit text-brand" />  // source
+```
+
+- `tone="duo"` (default) — neutral peak over a cyan arc. The logo.
+- `tone="current"` — monochrome, inherits `color`. Use for a source or on a
+  colored surface.
+- `decorative` — sets `aria-hidden` when a real label sits next to it.
+
+Prefer it over `<Image src="/logo.svg">`: the exported file carries generic
+`.cls-1/2/3` classes in a `<style>` block, which collide as soon as two copies
+are inlined on one page, and a raster `<img>` cannot glow per shape.
+
+### `<DataFlow>` — the flow field
+
+```tsx
+<div className="relative">
+  <div className="pointer-events-none absolute inset-x-0 top-[95px] bottom-0 z-0">
+    <DataFlow origin={{ x: 50, y: 0 }} lines={38} animated className="text-brand" />
+  </div>
+  <div className="relative z-10">{/* content */}</div>
+</div>
+```
+
+Position a wrapper, let `DataFlow` fill it with `inset-0`. Color it with a
+token class on `className` (the strokes are `currentColor`); never a hex.
+
+| Prop | Default | Note |
+|---|---|---|
+| `origin` | `{x:50, y:1}` | percent of the box; put it on the mark centre |
+| `lines` | `38` | above ~60 the field turns into a wash |
+| `spread` | `190` | fan width at the far edge, in percent of box width |
+| `intensity` | `0.22` | opacity of the brightest current |
+| `focus` | `0.3` | distance from the axis where the light sits |
+| `animated` | `false` | slow breathe; opt in |
+| `fade` | `true` | dissolves both ends |
+
+**z-index rule** — same as the page halo (§3): the field is `z-0`, content
+**must** be `relative z-10`.
+
+### Learned the hard way
+
+- **Ease-out the opening, never ease-in.** `1 - (1-u)^2.2` opens fast then
+  flattens, so the currents fall roughly parallel. A linear or ease-in profile
+  draws a perspective star and reads as light rays, not water.
+- **Two harmonics minimum.** One sine is too clean to pass for liquid.
+- **Weight the light across the fan, not along the axis.** Brightness computed
+  from distance-to-the-emission-line bunches every bright current on that line.
+  `focus` puts the light in the body of the fan and keeps the middle channel
+  dark, which is what makes centered copy survive on top.
+- **Narrow viewports squeeze the fan into a curtain.** Under 640px the layer
+  drops every second line and steps back to 55% opacity (`globals.css`).
+- **Motion is opacity, not dash offset.** A moving `stroke-dashoffset` breaks
+  the lines into particles; the field only reads as water while continuous.
+
+### Helper classes (`globals.css`)
+
+- `.liquid-bloom` — cyan halo. Put it on a sibling **behind** the mark so the
+  mark itself stays crisp.
+- `.liquid-emit` — drop-shadow glow carried by the mark, so the source reads
+  as lit rather than as a sticker on a halo.
+- `.liquid-current` — the breathe animation, applied by `<DataFlow animated>`;
+  honours `prefers-reduced-motion`.
+
+### Carrying the flow through a page
+
+The rule of one source is about **emitters**, not about how far the water goes.
+A page can keep the currents running as long as it does not open a second
+spring. That is what `mode="stream"` is for: same two harmonics, no origin,
+near-parallel currents crossing the box.
+
+```tsx
+// Landing footer — the other end of the hero. Same water, arrived.
+<footer className="relative border-t border-border-subtle">
+  <DataFlow mode="stream" lines={16} intensity={0.09} focus={0.34} className="text-brand" />
+  <div className="relative z-10">{…}</div>
+</footer>
+```
+
+Keep downstream intensity well under the source (`0.09` against `0.22`). The
+eye should read one bright spring and a faint current, never two competing
+fields. A stream that crosses body copy at readable strength is a bug.
+
+### Where the layer does **not** go
+
+Data-dense surfaces: tables, charts, KPI cells, anything inside a `<Card>`.
+The layer is background weather for narrative pages (landing, funding, legal,
+onboarding, 404). Numbers get a flat surface behind them, always.
