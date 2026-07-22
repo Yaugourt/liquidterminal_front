@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Providers } from "@/components/Providers";
-import { GlobalSearchPalette } from "@/components/search/GlobalSearchPalette";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/site-config";
@@ -109,12 +107,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className} font-sans`}>
       <body className={`${inter.className} font-sans antialiased bg-base`}>
-        <Providers>
-          {children}
-          <GlobalSearchPalette />
-          <SpeedInsights />
-          <Analytics />
-        </Providers>
+        {children}
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

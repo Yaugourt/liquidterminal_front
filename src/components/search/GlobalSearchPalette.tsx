@@ -196,7 +196,7 @@ export function GlobalSearchPalette() {
 
         {eggMood && (
           <div className="flex items-center gap-4 rounded-md bg-surface-2 px-4 py-3 m-1 border border-border-subtle">
-            <Hypurr mood={eggMood} height={64} animation="pop" />
+            <Hypurr mood={eggMood} height={64} />
             <div>
               <div className="text-[13px] text-text-primary">gm anon</div>
               <div className="mono text-[11px] text-text-tertiary">

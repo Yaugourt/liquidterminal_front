@@ -251,10 +251,13 @@ function LivePulse() {
   ];
 
   return (
-    <section className="hypurr-peek-zone relative">
+    <section className="relative">
       {mood && (
-        <div className="absolute -top-[60px] right-6 z-0 hidden md:block" title={moodLabel ?? undefined}>
-          <Hypurr mood={mood} height={64} animation="peek" />
+        // -19px is where the peek animation used to rest: -60px of offset plus
+        // the 64% translate it held between rises. Hard-coding the resting pose
+        // keeps the mascot half-tucked behind the ribbon without an animation.
+        <div className="absolute -top-[19px] right-6 z-0 hidden md:block" title={moodLabel ?? undefined}>
+          <Hypurr mood={mood} height={64} />
         </div>
       )}
       <div className="relative z-10">
@@ -575,7 +578,7 @@ function Footer() {
           <div className="flex items-center gap-2">
             <LiquidMark size={16} decorative />
             <span className="font-inter text-[13px] font-semibold tracking-tight">Liquid Terminal</span>
-            <Hypurr mood="meowdy" height={36} className="ml-1" title="meowdy" animation="sway" />
+            <Hypurr mood="meowdy" height={36} className="ml-1" title="meowdy" />
           </div>
           <p className="text-[11.5px] leading-relaxed text-text-tertiary max-w-[260px]">
             Open source. Free API. Built for Hyperliquid.

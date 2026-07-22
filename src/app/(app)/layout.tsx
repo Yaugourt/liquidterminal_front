@@ -9,6 +9,8 @@ import { useWindowSize } from "@/hooks/use-window-size";
 import { useSidebarUi } from "@/store/use-sidebar-ui";
 import { OnboardingGate } from "@/components/onboarding";
 import { MissionsGate } from "@/components/missions";
+import { Providers } from "@/components/Providers";
+import { GlobalSearchPalette } from "@/components/search/GlobalSearchPalette";
 import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -37,6 +39,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const isCollapsed = hasMounted && collapsed;
 
     return (
+        <Providers>
         <div className="min-h-screen bg-base text-text-primary font-inter">
             {/* Mobile menu button */}
             <div className="fixed top-4 left-4 z-50 lg:hidden">
@@ -66,6 +69,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             <OnboardingGate />
             <MissionsGate />
+            <GlobalSearchPalette />
         </div>
+        </Providers>
     );
 }

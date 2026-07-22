@@ -52,10 +52,12 @@ export const PulseBar = memo(function PulseBar() {
   ];
 
   return (
-    <div className="hypurr-peek-zone relative">
+    <div className="relative">
       {mood && (
-        <div className="absolute -top-[54px] right-4 z-0 hidden md:block" title={moodLabel ?? undefined}>
-          <Hypurr mood={mood} height={56} animation="peek" />
+        // Resting pose of the old peek animation, hard-coded: -54px of offset
+        // plus its 64% translate. See Hypurr for why the animation is gone.
+        <div className="absolute -top-[18px] right-4 z-0 hidden md:block" title={moodLabel ?? undefined}>
+          <Hypurr mood={mood} height={56} />
         </div>
       )}
       <div className="relative z-10">
