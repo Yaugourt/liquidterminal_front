@@ -1,7 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { ReactNode } from "react";
-import { LegalFooter } from "@/components/common";
+import { LegalFooter, LiquidMark } from "@/components/common";
 
 export default function LegalLayout({ children }: { children: ReactNode }) {
   return (
@@ -9,7 +8,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
       <header className="relative z-10 sticky top-0 bg-base/80 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-text-primary hover:text-brand transition-colors">
-            <Image src="/logo.svg" alt="Liquid Terminal" width={24} height={24} className="w-6 h-6" />
+            <LiquidMark size={24} decorative />
             <span className="font-medium text-sm">Liquid Terminal</span>
           </Link>
           <nav className="flex items-center gap-1 text-xs text-text-tertiary">

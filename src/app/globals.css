@@ -215,6 +215,33 @@
         color: rgb(var(--gold));
         font-weight: 500;
     }
+
+    /* ===== Liquid layer (DESIGN_SYSTEM §13) =====
+       "We treat data like water": one source, currents flowing out of it.
+       Decorative only — see <DataFlow> and <LiquidMark>. */
+
+    /**
+     * `.liquid-bloom` — the cyan halo that turns a mark into a light source.
+     * Sized by the element it is put on; keep it on a sibling behind the mark
+     * so the mark itself stays crisp.
+     */
+    .liquid-bloom {
+        background: radial-gradient(
+            circle,
+            rgb(var(--brand-accent-rgb) / 0.20) 0%,
+            rgb(var(--brand-accent-rgb) / 0.07) 34%,
+            transparent 72%
+        );
+    }
+
+    /**
+     * `.liquid-emit` — glow carried by the mark itself, so the source reads as
+     * lit rather than as a sticker on a halo.
+     */
+    .liquid-emit {
+        filter: drop-shadow(0 0 18px rgb(var(--brand-accent-rgb) / 0.55))
+                drop-shadow(0 0 44px rgb(var(--brand-accent-rgb) / 0.28));
+    }
 }
 
 /* ===== Scrollbars ===== */
@@ -280,6 +307,77 @@ html {
   );
   background-size: 200% 100%;
   animation: ticker-shimmer 1.5s ease-in-out infinite;
+}
+
+/* ─── Liquid layer motion ──────────────────────────────────────────────
+   Currents breathe instead of scrolling: a dash offset would break the lines
+   into particles, and the field reads as water only while it stays continuous.
+   Long period, small amplitude, staggered per line by <DataFlow>. */
+
+@keyframes liquid-current {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.42; }
+}
+
+.liquid-current {
+  animation: liquid-current 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-current {
+    animation: none;
+  }
+}
+
+/* The source pulses: the mark gathers light, releases it, and the swell runs
+   down into the field. Deliberately slow (7s, same order as `liquid-current`)
+   so it reads as a tide rather than a blinking indicator. */
+
+@keyframes liquid-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 14px rgb(var(--brand-accent-rgb) / 0.38))
+            drop-shadow(0 0 36px rgb(var(--brand-accent-rgb) / 0.18));
+  }
+  46% {
+    filter: drop-shadow(0 0 26px rgb(var(--brand-accent-rgb) / 0.70))
+            drop-shadow(0 0 62px rgb(var(--brand-accent-rgb) / 0.36));
+  }
+}
+
+.liquid-pulse {
+  animation: liquid-pulse 7s ease-in-out infinite;
+}
+
+/* The bloom breathes in step with the mark, half a beat behind, so the halo
+   trails the source instead of flashing with it. */
+@keyframes liquid-bloom-pulse {
+  0%, 100% { opacity: 0.72; transform: scale(0.94); }
+  46% { opacity: 1; transform: scale(1.06); }
+}
+
+.liquid-bloom-pulse {
+  animation: liquid-bloom-pulse 7s ease-in-out infinite;
+  animation-delay: 0.45s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-pulse,
+  .liquid-bloom-pulse {
+    animation: none;
+  }
+}
+
+/* A narrow viewport squeezes the fan into a near-vertical curtain that reads
+   as a laser grid, not as water. Halving the count restores the spacing the
+   field needs, and the whole layer steps back behind mobile copy. */
+@media (max-width: 640px) {
+  .liquid-flow {
+    opacity: 0.55;
+  }
+
+  .liquid-flow polyline:nth-child(even) {
+    display: none;
+  }
 }
 
 /* ─── USDH widget — Liquid Terminal theme ──────────────────────────── */

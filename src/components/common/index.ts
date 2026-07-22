@@ -8,6 +8,7 @@
 // Atomic UI helpers
 export { TokenAvatar } from './TokenAvatar';
 export { HypeMark } from './HypeMark';
+export { LiquidMark } from './LiquidMark';
 export { AddressIdenticon } from './AddressIdenticon';
 export { PriceChange, getPriceChangeColor, formatPriceChange } from './PriceChange';
 export { Pagination } from './pagination';
@@ -50,6 +51,10 @@ export { OutcomeRow } from './OutcomeRow';
 export type { OutcomeRowProps, OutcomeRowVariant } from './OutcomeRow';
 
 // KPI ribbon (§7.b)
+// Liquid layer (decorative, §13)
+export { DataFlow } from './DataFlow';
+export type { DataFlowProps } from './DataFlow';
+
 export { KpiRibbon } from './KpiRibbon';
 export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';
 

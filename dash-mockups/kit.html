@@ -54,6 +54,36 @@
   .kit-label { font: 600 11px/1.4 "JetBrains Mono", monospace; color: #6B7280; }
   .kit-jsx { font: 400 11px/1.5 "JetBrains Mono", monospace; color: #83E9FF; white-space: pre-wrap; }
   .kit-sec { border-top: 1px dashed #2C354A; }
+
+  /* Liquid layer (DESIGN_SYSTEM §13) — verbatim copy of src/app/globals.css.
+     Keep in sync; the kit is only useful while it matches what ships. */
+  .liquid-bloom {
+    background: radial-gradient(circle,
+      rgb(131 233 255 / 0.20) 0%, rgb(131 233 255 / 0.07) 34%, transparent 72%);
+  }
+  .liquid-emit {
+    filter: drop-shadow(0 0 18px rgb(131 233 255 / 0.55))
+            drop-shadow(0 0 44px rgb(131 233 255 / 0.28));
+  }
+  @keyframes liquid-current { 0%, 100% { opacity: 1; } 50% { opacity: 0.42; } }
+  .liquid-current { animation: liquid-current 9s ease-in-out infinite; }
+  @keyframes liquid-pulse {
+    0%, 100% { filter: drop-shadow(0 0 14px rgb(131 233 255 / 0.38)) drop-shadow(0 0 36px rgb(131 233 255 / 0.18)); }
+    46%      { filter: drop-shadow(0 0 26px rgb(131 233 255 / 0.70)) drop-shadow(0 0 62px rgb(131 233 255 / 0.36)); }
+  }
+  .liquid-pulse { animation: liquid-pulse 7s ease-in-out infinite; }
+  @keyframes liquid-bloom-pulse {
+    0%, 100% { opacity: 0.72; transform: scale(0.94); }
+    46%      { opacity: 1; transform: scale(1.06); }
+  }
+  .liquid-bloom-pulse { animation: liquid-bloom-pulse 7s ease-in-out infinite; animation-delay: 0.45s; }
+  @media (max-width: 640px) {
+    .liquid-flow { opacity: 0.55; }
+    .liquid-flow polyline:nth-child(even) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .liquid-current, .liquid-pulse, .liquid-bloom-pulse { animation: none; }
+  }
 </style>
 </head>
 <body class="font-sans text-text-primary antialiased">
@@ -365,11 +395,122 @@ minmax(0,1fr) is REQUIRED so a wide table scrolls inside its column instead of b
     </div>
   </section>
 
+  <!-- ───────────────────────── Liquid layer — LiquidMark ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">LiquidMark  (DESIGN_SYSTEM §13 · the mark, inline SVG)</div>
+    <div class="kit-jsx">React: &lt;LiquidMark size? tone?: "duo"|"current" decorative? /&gt;  ·  @/components/common
+Use instead of &lt;Image src="/logo.svg"&gt;: the file carries generic .cls-1/2/3 classes that collide when inlined twice.
+`decorative` sets aria-hidden when a real label sits next to it.</div>
+    <div class="flex flex-wrap items-end gap-8 mt-2 bg-surface border border-border-subtle rounded-lg p-6">
+      <div class="flex flex-col items-center gap-2">
+        <span data-mark="duo" style="width:26px;height:26px"></span>
+        <span class="mono text-[10px] text-text-tertiary">duo · 26 · sidebar</span>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <span data-mark="duo" style="width:22px;height:22px"></span>
+        <span class="mono text-[10px] text-text-tertiary">duo · 22 · nav</span>
+      </div>
+      <div class="flex flex-col items-center gap-2 text-brand">
+        <span data-mark="current" style="width:44px;height:44px"></span>
+        <span class="mono text-[10px] text-text-tertiary">current · text-brand</span>
+      </div>
+      <div class="flex flex-col items-center gap-2 text-text-tertiary">
+        <span data-mark="current" style="width:44px;height:44px"></span>
+        <span class="mono text-[10px] text-text-tertiary">current · text-tertiary</span>
+      </div>
+      <div class="flex flex-col items-center gap-2 text-brand">
+        <span data-mark="current" class="liquid-pulse" style="width:62px;height:62px"></span>
+        <span class="mono text-[10px] text-text-tertiary">.liquid-pulse · the source</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────────────── Liquid layer — DataFlow ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">DataFlow + .liquid-bloom  (DESIGN_SYSTEM §13 · decorative flow field)</div>
+    <div class="kit-jsx">React: &lt;DataFlow origin? lines? spread? intensity? focus? animated? fade? className /&gt;  ·  @/components/common
+JSX: &lt;div className="relative"&gt;
+  &lt;div className="pointer-events-none absolute inset-x-0 top-[95px] bottom-0 z-0"&gt;&lt;DataFlow className="text-brand" /&gt;&lt;/div&gt;
+  &lt;div className="relative z-10"&gt;{content}&lt;/div&gt;
+&lt;/div&gt;
+ONE source per page. Position a wrapper, DataFlow fills it with inset-0. Color via a token class (strokes are currentColor).
+z-index rule (§3): field is z-0, content MUST be relative z-10.</div>
+    <div class="relative h-[420px] overflow-hidden rounded-lg border border-border-subtle bg-base mt-2">
+      <div class="pointer-events-none absolute inset-x-0 top-[86px] bottom-0 z-0" data-flow></div>
+      <div class="relative z-10 flex flex-col items-center pt-[55px] text-center">
+        <div class="relative flex items-center justify-center">
+          <div class="liquid-bloom liquid-bloom-pulse pointer-events-none absolute h-[260px] w-[260px] rounded-full"></div>
+          <span data-mark="current" class="liquid-pulse relative text-brand" style="width:62px;height:62px"></span>
+        </div>
+        <div class="mono text-[11px] font-semibold tracking-[0.18em] uppercase text-brand mt-8">Kicker over the field</div>
+        <h2 class="font-inter font-semibold tracking-tight text-[34px] leading-[1.08] mt-4">Copy stays readable.</h2>
+        <p class="text-sm text-text-secondary mt-3 max-w-md">
+          `focus` keeps the middle channel dark. That is what lets centered copy sit on top of the field.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <footer class="kit-sec pt-8 text-xs text-text-tertiary">
     Tokens mirror <span class="mono">src/app/globals.css</span>. Primitives live in
     <span class="mono">src/components/common/</span>. Keep this kit in sync when a primitive changes.
   </footer>
 
 </div>
+
+<script>
+/*
+  Liquid layer blocks. The geometry below is a verbatim port of
+  src/components/common/DataFlow.tsx and src/components/common/LiquidMark.tsx —
+  when one changes, change the other in the same PR, or the kit stops being a
+  1:1 mirror and mockups start lying about what will ship.
+*/
+const MARK_SHAPES = `
+  <polygon points="462.14 405.28 437.5 405.28 386.14 311.63 310.14 173.05 234.15 311.63 182.79 405.28 158.15 405.28 234.15 266.7 310.14 128.13 386.14 266.7 462.14 405.28"
+           fill="currentColor" stroke="currentColor" stroke-width="28.92" stroke-miterlimit="10" __PEAK__/>
+  <path d="m478.82,491.36c0,89.4-75.3,161.86-168.17,161.86s-168.18-72.46-168.18-161.86h26.62c0,74.76,62.98,135.35,140.65,135.35s140.63-60.59,140.63-135.35h28.44Z"
+        fill="currentColor" stroke="currentColor" stroke-width="30.43" stroke-miterlimit="10" __ARC__/>`;
+
+document.querySelectorAll('[data-mark]').forEach((el) => {
+  const duo = el.getAttribute('data-mark') === 'duo';
+  const shapes = MARK_SHAPES
+    .replace('__PEAK__', duo ? 'class="text-text-primary"' : '')
+    .replace('__ARC__', duo ? 'class="text-brand"' : '');
+  el.innerHTML = `<svg viewBox="-17 63 656 656" fill="none" aria-hidden="true"
+    style="width:100%;height:100%;display:block">${shapes}</svg>`;
+});
+
+function buildFlow({ origin = { x: 50, y: 0 }, lines = 38, spread = 190, intensity = 0.22, focus = 0.3, animated = true } = {}) {
+  const SEED = 1.2;
+  let out = '';
+  for (let i = 0; i < lines; i++) {
+    const t = lines === 1 ? 0.5 : i / (lines - 1);
+    const signed = t - 0.5;
+    const phase = i * 0.79;
+    const pts = [];
+    for (let y = origin.y; y <= 100; y += 2) {
+      const u = (y - origin.y) / (100 - origin.y);
+      const open = 1 - Math.pow(1 - u, 2.2);
+      const amp = 4.6 * Math.pow(u, 0.6) * (0.55 + 0.45 * Math.sin(phase));
+      const x = origin.x + signed * (SEED + spread * open)
+        + amp * Math.sin(y / 15 + phase) + amp * 0.45 * Math.sin(y / 7.3 + phase * 1.7);
+      pts.push(`${x.toFixed(2)},${y.toFixed(1)}`);
+    }
+    const d = Math.abs(signed);
+    const w = Math.max(0, 1 - Math.abs(d - focus) / focus);
+    out += `<polyline points="${pts.join(' ')}" fill="none" stroke="currentColor"
+      stroke-opacity="${(0.05 + intensity * w).toFixed(3)}" stroke-width="${(0.8 + 0.9 * w).toFixed(2)}"
+      stroke-linecap="round" vector-effect="non-scaling-stroke"
+      ${animated ? `class="liquid-current" style="animation-delay:${(i * 0.41).toFixed(2)}s"` : ''}/>`;
+  }
+  const fade = 'linear-gradient(to bottom, transparent 0%, #000 8%, #000 72%, transparent 98%)';
+  return `<div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden text-brand"
+    style="mask-image:${fade};-webkit-mask-image:${fade}">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="liquid-flow h-full w-full">${out}</svg>
+  </div>`;
+}
+
+document.querySelectorAll('[data-flow]').forEach((el) => { el.innerHTML = buildFlow(); });
+</script>
 </body>
 </html>

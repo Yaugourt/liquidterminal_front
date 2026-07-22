@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { SearchTrigger } from "@/components/search/SearchTrigger";
-import { KpiRibbon, type KpiCell } from "@/components/common";
+import { DataFlow, KpiRibbon, LiquidMark, type KpiCell } from "@/components/common";
 import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useHypePrice } from "@/services/market/hype/hooks";
@@ -83,15 +83,20 @@ const SEARCH_CHIPS = [
   { label: "Tx hash", href: "/explorer" },
 ] as const;
 
-function LogoMark({ size = 22 }: { size?: number }) {
+/**
+ * Source of the hero flow field. The mark is not decoration here: the currents
+ * of <DataFlow> are emitted from this exact point, so the logo reads as the
+ * spring the data pours out of.
+ */
+function LiquidSource() {
   return (
-    <Image
-      src="/logo.svg"
-      alt="Liquid Terminal"
-      width={size}
-      height={size}
-      style={{ height: size, width: size }}
-    />
+    <div className="relative flex items-center justify-center mb-8">
+      <div
+        aria-hidden="true"
+        className="liquid-bloom liquid-bloom-pulse pointer-events-none absolute h-[260px] w-[260px] rounded-full"
+      />
+      <LiquidMark size={62} tone="current" className="liquid-pulse relative text-brand" />
+    </div>
   );
 }
 
@@ -100,7 +105,7 @@ function TopNav() {
     <header className="border-b border-border-subtle">
       <div className="max-w-[1280px] mx-auto px-6 h-14 flex items-center gap-6">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <LogoMark />
+          <LiquidMark decorative />
           <span className="font-inter text-[14px] font-semibold tracking-tight">Liquid Terminal</span>
         </Link>
         <nav className="hidden md:flex items-center gap-3 text-[12.5px] text-text-tertiary">
@@ -163,7 +168,8 @@ function TopNav() {
 
 function Hero() {
   return (
-    <section className="py-20 flex flex-col items-center text-center">
+    <section className="pt-16 pb-20 flex flex-col items-center text-center">
+      <LiquidSource />
       <div className="mono text-[11px] font-semibold tracking-[0.18em] uppercase text-brand mb-4">
         Open-source · MIT · Free forever
       </div>
@@ -560,11 +566,14 @@ function CharterAndBot() {
 
 function Footer() {
   return (
-    <footer className="border-t border-border-subtle">
-      <div className="max-w-[1280px] mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+    // The other end of the hero: same water, arrived. `mode="stream"` carries
+    // the flow without opening a second source (§13, rule of one source).
+    <footer className="relative border-t border-border-subtle">
+      <DataFlow mode="stream" lines={16} intensity={0.09} focus={0.34} className="text-brand" />
+      <div className="relative z-10 max-w-[1280px] mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
         <div className="space-y-3 lg:col-span-1">
           <div className="flex items-center gap-2">
-            <LogoMark size={16} />
+            <LiquidMark size={16} decorative />
             <span className="font-inter text-[13px] font-semibold tracking-tight">Liquid Terminal</span>
             <Hypurr mood="meowdy" height={36} className="ml-1" title="meowdy" animation="sway" />
           </div>
@@ -617,9 +626,20 @@ export function CommandHouse() {
   return (
     <div className="min-h-screen bg-base text-text-primary antialiased">
       <TopNav />
-      <div className="max-w-[1280px] mx-auto px-6">
-        <Hero />
-        <LivePulse />
+      {/*
+       * Hero + live ribbon share one flow field: the currents leave the mark
+       * and dive under the KPI cells, which is where the data actually
+       * surfaces. `top-[95px]` is the mark centre (pt-16 + half of a 62px
+       * mark), so the emission point tracks the logo at every viewport.
+       */}
+      <div className="relative">
+        <div className="pointer-events-none absolute inset-x-0 top-[95px] bottom-0 z-0">
+          <DataFlow origin={{ x: 50, y: 0 }} lines={38} animated className="text-brand" />
+        </div>
+        <div className="relative z-10 max-w-[1280px] mx-auto px-6">
+          <Hero />
+          <LivePulse />
+        </div>
       </div>
       <InsideTheTerminal />
       <DataSources />
