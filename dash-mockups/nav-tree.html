@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Terminal — Rail arborescent (OAK-style)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: {
+      colors: {
+        base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+        "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+        "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+        brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+        gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+      },
+      fontFamily: { sans: ["Inter","ui-sans-serif","system-ui","sans-serif"], inter: ["Inter"], mono: ["JetBrains Mono","ui-monospace","monospace"] },
+    } },
+  };
+</script>
+<style>
+  body { background:#08101A; }
+  .mono { font-family:"JetBrains Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  .note { font:600 11px/1.4 "JetBrains Mono",monospace; color:#6B7280; letter-spacing:.04em; }
+  .sec { border-top:1px dashed #2C354A; }
+  /* Le trait qui relie les enfants à leur parent, comme chez OAK. */
+  .kids { border-left:1px solid #2C354A; margin-left:19px; padding-left:11px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+<div class="max-w-[1180px] mx-auto px-6 py-10 space-y-10">
+
+  <header class="space-y-4">
+    <div class="note">LIQUID TERMINAL · RAIL ARBORESCENT · RÉPONSE À DEUX QUESTIONS</div>
+    <h1 class="font-inter text-3xl font-semibold tracking-tight">Les familles deviennent des parents qu'on plie.</h1>
+    <div class="rounded-lg border border-border-subtle bg-surface p-5 space-y-3 max-w-3xl">
+      <p class="text-[13px] leading-relaxed text-text-secondary">
+        <span class="text-text-primary font-medium">1. HyperEVM.</span>
+        Il rentre dans <span class="text-brand">CHAIN</span>, juste sous Explorer. CHAIN, c'est « comment la machine
+        tourne » : il y a deux machines, la L1 HyperCore et l'EVM. Explorer regarde la première, HyperEVM la seconde.
+        Une entrée, une page à bâtir, alimentée par HypurrTrace sans clé. Pas de groupe d'un seul élément, pas de trou.
+      </p>
+      <p class="text-[13px] leading-relaxed text-text-secondary">
+        <span class="text-text-primary font-medium">2. Les sous-menus, façon OAK.</span>
+        Les intitulés de famille cessent d'être de simples étiquettes grises : ils deviennent des lignes cliquables
+        avec une icône et un chevron. On clique pour plier ou déplier toute une famille, et les enfants pendent d'un
+        trait vertical. C'est plus lisible, ça montre la structure d'un coup, et surtout <span class="text-text-primary">ça
+        résout la hauteur</span> : chacun replie les familles qu'il n'utilise pas.
+      </p>
+    </div>
+  </header>
+
+  <!-- Deux rails côte à côte : tout déplié, puis deux familles repliées -->
+  <section class="sec pt-8 space-y-4">
+    <div class="note">DEUX ÉTATS DU MÊME RAIL · HyperEVM EST SOUS CHAIN</div>
+
+    <div class="flex flex-wrap gap-8">
+
+      <!-- ── Rail A : tout déplié ── -->
+      <div class="space-y-2">
+        <div class="mono text-[10.5px] text-text-tertiary">tout déplié · 712px</div>
+        <div class="w-[236px] rounded-lg border border-border-default bg-surface overflow-hidden">
+          <div class="h-14 px-[15px] flex items-center gap-2 border-b border-border-subtle">
+            <svg viewBox="0 0 24 24" class="h-5 w-5 text-brand" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3.5 4 5.5 6.6 5.5 9.4A5.5 5.5 0 0 1 12 18a5.5 5.5 0 0 1-5.5-5.6C6.5 9.6 8.5 7 12 3z"/></svg>
+            <div class="font-inter text-[13.5px] font-semibold tracking-tight">Liquid Terminal</div>
+          </div>
+          <nav class="px-2.5 py-2.5 space-y-1.5">
+
+            <!-- singles -->
+            <a href="#" class="flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10.5 12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+              Home
+            </a>
+            <a href="#" class="flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">
+              <span class="h-4 w-4 rounded-full bg-brand/15 border border-brand/40 flex items-center justify-center mono text-[8px] text-brand">H</span>
+              HYPE
+              <span class="ml-auto mono text-[10.5px] text-success">+2.66%</span>
+            </a>
+
+            <!-- MARKETS -->
+            <div class="pt-1">
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-brand" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>
+                Markets
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="relative flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] font-medium text-text-primary bg-surface-2">
+                  <span class="absolute -left-[12px] top-1/2 w-[7px] h-px bg-border-default"></span>
+                  Market <span class="ml-auto mono text-[10px] text-text-tertiary">403</span>
+                </a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Perp DEXs <span class="ml-auto mono text-[9.5px] text-text-tertiary">HIP-3</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Outcomes <span class="ml-auto mono text-[9.5px] text-text-tertiary">HIP-4</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Builders</a>
+              </div>
+            </div>
+
+            <!-- CAPITAL -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-gold" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16M6 21V8l6-4 6 4v13"/></svg>
+                Capital
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Vaults <span class="ml-auto mono text-[10px] text-text-tertiary">3.2k</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Validators <span class="ml-auto mono text-[10px] text-text-tertiary">33</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Tracker</a>
+              </div>
+            </div>
+
+            <!-- CHAIN -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Chain
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">
+                  Explorer
+                  <span class="ml-auto mono text-[9px] px-1 py-px rounded border border-brand/30 bg-brand/10 text-brand">Core</span>
+                </a>
+                <a href="#" class="relative flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-primary bg-brand/5 border border-brand/20">
+                  <span class="absolute -left-[12px] top-1/2 w-[7px] h-px bg-brand/40"></span>
+                  HyperEVM
+                  <span class="ml-auto mono text-[9px] px-1 py-px rounded border border-gold/30 bg-gold/10 text-gold">new</span>
+                </a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Liquidations</a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Priority fees</a>
+              </div>
+            </div>
+
+            <!-- ECOSYSTEM -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/></svg>
+                Ecosystem
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Projects <span class="ml-auto mono text-[10px] text-text-tertiary">312</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Public Goods</a>
+              </div>
+            </div>
+
+            <!-- LEARN -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/></svg>
+                Learn
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Wiki <span class="ml-auto mono text-[10px] text-text-tertiary">184</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Read Lists</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- ── Rail B : Capital et Ecosystem repliés ── -->
+      <div class="space-y-2">
+        <div class="mono text-[10.5px] text-text-tertiary">deux familles repliées · 512px</div>
+        <div class="w-[236px] rounded-lg border border-border-default bg-surface overflow-hidden">
+          <div class="h-14 px-[15px] flex items-center gap-2 border-b border-border-subtle">
+            <svg viewBox="0 0 24 24" class="h-5 w-5 text-brand" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3.5 4 5.5 6.6 5.5 9.4A5.5 5.5 0 0 1 12 18a5.5 5.5 0 0 1-5.5-5.6C6.5 9.6 8.5 7 12 3z"/></svg>
+            <div class="font-inter text-[13.5px] font-semibold tracking-tight">Liquid Terminal</div>
+          </div>
+          <nav class="px-2.5 py-2.5 space-y-1.5">
+            <a href="#" class="flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[13px] text-text-secondary"><svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10.5 12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+            <a href="#" class="flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[13px] text-text-secondary"><span class="h-4 w-4 rounded-full bg-brand/15 border border-brand/40 flex items-center justify-center mono text-[8px] text-brand">H</span>HYPE<span class="ml-auto mono text-[10.5px] text-success">+2.66%</span></a>
+
+            <div class="pt-1">
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-brand" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>Markets
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="relative flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] font-medium text-text-primary bg-surface-2"><span class="absolute -left-[12px] top-1/2 w-[7px] h-px bg-border-default"></span>Market <span class="ml-auto mono text-[10px] text-text-tertiary">403</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Perp DEXs <span class="ml-auto mono text-[9.5px] text-text-tertiary">HIP-3</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Outcomes <span class="ml-auto mono text-[9.5px] text-text-tertiary">HIP-4</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Builders</a>
+              </div>
+            </div>
+
+            <!-- Capital replié -->
+            <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-secondary hover:bg-surface-2">
+              <svg viewBox="0 0 24 24" class="h-4 w-4 text-gold" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16M6 21V8l6-4 6 4v13"/></svg>Capital
+              <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary -rotate-90" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Chain
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Explorer <span class="ml-auto mono text-[9px] px-1 py-px rounded border border-brand/30 bg-brand/10 text-brand">Core</span></a>
+                <a href="#" class="relative flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-primary bg-brand/5 border border-brand/20"><span class="absolute -left-[12px] top-1/2 w-[7px] h-px bg-brand/40"></span>HyperEVM <span class="ml-auto mono text-[9px] px-1 py-px rounded border border-gold/30 bg-gold/10 text-gold">new</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Liquidations</a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Priority fees</a>
+              </div>
+            </div>
+
+            <!-- Ecosystem replié -->
+            <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-secondary hover:bg-surface-2">
+              <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/></svg>Ecosystem
+              <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary -rotate-90" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/></svg>Learn
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Wiki <span class="ml-auto mono text-[10px] text-text-tertiary">184</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary">Read Lists</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- ── Notes ── -->
+      <div class="flex-1 min-w-[300px] space-y-4">
+        <div class="rounded-lg border border-brand/25 bg-brand/[0.05] p-4 space-y-2">
+          <div class="text-[13px] font-medium">Où va HyperEVM</div>
+          <p class="text-[12.5px] leading-relaxed text-text-secondary">
+            Sous <span class="text-brand">Chain</span>, deuxième position, avec une pastille
+            <span class="mono text-[10px] px-1 rounded border border-gold/30 bg-gold/10 text-gold">new</span>.
+            Explorer porte <span class="mono text-[10px] px-1 rounded border border-brand/30 bg-brand/10 text-brand">Core</span>,
+            HyperEVM est la vue de l'autre chaîne. La famille Chain devient littéralement « les deux couches de la machine ».
+          </p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface p-4 space-y-2">
+          <div class="text-[13px] font-medium">Le pli résout la hauteur</div>
+          <p class="text-[12.5px] leading-relaxed text-text-secondary">
+            Tout déplié : <span class="mono text-text-primary">712px</span>, à peine plus que la version plate.
+            Mais chacun replie ce qu'il n'utilise pas. Un utilisateur qui ne touche ni au capital ni à l'écosystème
+            tombe à <span class="mono text-text-primary">512px</span>. L'état de pli est mémorisé, comme la sidebar
+            personnalisable actuelle, en plus simple.
+          </p>
+        </div>
+        <div class="rounded-lg border border-border-subtle bg-surface p-4 space-y-2">
+          <div class="text-[13px] font-medium">Ce que ça change côté code</div>
+          <p class="text-[12.5px] leading-relaxed text-text-secondary">
+            La structure de <span class="mono text-[11px] text-brand">sidebar-config.ts</span> est déjà un arbre
+            groupe → entrées. Il n'y a rien à réinventer : on ajoute un état plié/déplié par groupe et le trait vertical.
+            Aucune page touchée.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- La seule vraie décision -->
+  <section class="sec pt-8 space-y-4">
+    <div class="note">LE SEUL ARBITRAGE · L'ARBRE ET LA SCOPE BAR SE RECOUVRENT-ILS ?</div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="rounded-lg border border-border-subtle bg-surface p-4 space-y-2">
+        <div class="text-[13px] font-medium">Version que je te montre</div>
+        <p class="text-[12.5px] leading-relaxed text-text-secondary">
+          <span class="text-text-primary">Markets</span> déplie Market, Perp DEXs, Outcomes, Builders. Ce sont quatre
+          destinations distinctes. La <span class="text-text-primary">MarketScopeBar reste</span> sur la page /market
+          pour basculer entre Spot, Perpetual, Auctions et les autres. Rail = structure, scope bar = vitesse dans le hub.
+          Les deux ne disent pas la même chose, ils ne se doublent pas.
+        </p>
+      </div>
+      <div class="rounded-lg border border-border-subtle bg-surface p-4 space-y-2">
+        <div class="text-[13px] font-medium">Version alternative, si tu la préfères</div>
+        <p class="text-[12.5px] leading-relaxed text-text-secondary">
+          Markets déplie <span class="text-text-primary">directement Spot, Perpetual, PerpDexs, HIP-4, Builders</span>,
+          c'est-à-dire les onglets actuels de la scope bar. On gagne un niveau, mais on
+          <span class="text-text-primary">supprime la scope bar</span> pour ne pas dire deux fois la même chose. C'est
+          le moment où l'arbre remplace le hub que tu aimes, au lieu de le compléter. À toi de dire si tu y tiens.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="sec pt-6 pb-4">
+    <p class="text-[11.5px] text-text-tertiary">Rail arborescent façon OAK · HyperEVM sous Chain · navigation seule, aucune page modifiée</p>
+  </footer>
+
+</div>
+</body>
+</html>
