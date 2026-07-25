@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Terminal — Navigation finale</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: {
+    colors: {
+      base:"#08101A", surface:"#0F1421", "surface-2":"#141B2A", "surface-3":"#1C2436",
+      "border-subtle":"#1E2535", "border-default":"#2C354A", "border-strong":"#3D4760",
+      "text-primary":"#E8EAED", "text-secondary":"#9CA3AF", "text-tertiary":"#6B7280",
+      brand:{ DEFAULT:"#83E9FF", hover:"#A8F0FF", deep:"#1692AD", "text-on":"#051728" },
+      gold:"#F9E370", success:"#1FB58E", danger:"#E53E3E",
+    },
+    fontFamily:{ sans:["Inter","ui-sans-serif","system-ui","sans-serif"], inter:["Inter"], mono:["JetBrains Mono","ui-monospace","monospace"] },
+  } } };
+</script>
+<style>
+  body { background:#08101A; }
+  .mono { font-family:"JetBrains Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+  .note { font:600 11px/1.4 "JetBrains Mono",monospace; color:#6B7280; letter-spacing:.04em; }
+  .sec { border-top:1px dashed #2C354A; }
+  .kids { border-left:1px solid #2C354A; margin-left:19px; padding-left:11px; }
+  .plane { scrollbar-width:thin; scrollbar-color:#2C354A transparent; }
+  .plane::-webkit-scrollbar { width:6px; }
+  .plane::-webkit-scrollbar-thumb { background:#2C354A; border-radius:3px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+<div class="max-w-[1440px] mx-auto px-6 py-10 space-y-10">
+
+  <header class="space-y-4">
+    <div class="note">LIQUID TERMINAL · NAVIGATION FINALE · LA VERSION RETENUE</div>
+    <h1 class="font-inter text-3xl font-semibold tracking-tight">Deux navigations, un arbre pliable, rien de perdu.</h1>
+    <div class="rounded-lg border border-border-subtle bg-surface p-5 space-y-2.5 max-w-4xl text-[13px] leading-relaxed text-text-secondary">
+      <p>
+        <span class="text-text-primary font-medium">À gauche</span>, un arbre façon OAK : les familles se plient, les
+        enfants pendent d'un trait. Trois familles HyperCore prises dans la doc Hyperliquid, plus HyperEVM logé sous Chain.
+        <span class="text-text-primary font-medium">À droite</span>, le plan du maintenant : ce qui bouge, ce que tu suis.
+      </p>
+      <p>
+        <span class="text-text-primary font-medium">Décisions tranchées :</span>
+        la MarketScopeBar reste (le rail dit la structure, elle donne la vitesse dans le hub) ·
+        HyperEVM est une entrée sous Chain, pas un groupe à part ·
+        aucune page, URL ou module existant n'est touché, le changement tient dans <span class="mono text-[11px] text-brand">sidebar-config.ts</span>
+        plus le composant de droite.
+      </p>
+    </div>
+  </header>
+
+  <!-- ═══════════════ La page en situation ═══════════════ -->
+  <section class="sec pt-8 space-y-3">
+    <div class="note">/market/spot · LES DEUX NAVIGATIONS + LA SCOPE BAR</div>
+
+    <div class="rounded-lg border border-border-default overflow-hidden bg-base">
+      <div class="flex" style="height: 812px;">
+
+        <!-- ── Rail gauche, arbre OAK ── -->
+        <aside class="w-[236px] shrink-0 bg-surface border-r border-border-subtle flex flex-col">
+          <div class="h-14 px-[15px] flex items-center gap-2 border-b border-border-subtle">
+            <svg viewBox="0 0 24 24" class="h-5 w-5 text-brand" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3c3.5 4 5.5 6.6 5.5 9.4A5.5 5.5 0 0 1 12 18a5.5 5.5 0 0 1-5.5-5.6C6.5 9.6 8.5 7 12 3z"/></svg>
+            <div class="min-w-0">
+              <div class="font-inter text-[13.5px] font-semibold tracking-tight leading-none">Liquid Terminal</div>
+              <div class="mono text-[9px] text-text-tertiary tracking-[0.1em] mt-0.5">HYPERLIQUID DATA</div>
+            </div>
+            <button class="ml-auto text-text-tertiary" aria-label="Collapse"><svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+          </div>
+
+          <nav class="flex-1 overflow-y-auto px-2.5 py-2.5 space-y-1.5">
+            <a href="#" class="flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">
+              <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10.5 12 4l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home
+            </a>
+            <a href="#" class="flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[13px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">
+              <span class="h-4 w-4 rounded-full bg-brand/15 border border-brand/40 flex items-center justify-center mono text-[8px] text-brand">H</span>HYPE
+              <span class="ml-auto mono text-[10.5px] text-success">+2.66%</span>
+            </a>
+
+            <!-- MARKETS -->
+            <div class="pt-1">
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-brand" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V9m5 10V5m5 14v-7m5 7V8"/></svg>Markets
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="relative flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] font-medium text-text-primary bg-surface-2"><span class="absolute -left-[12px] top-1/2 w-[7px] h-px bg-border-default"></span>Market <span class="ml-auto mono text-[10px] text-text-tertiary">403</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Perp DEXs <span class="ml-auto mono text-[9.5px] text-text-tertiary">HIP-3</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Outcomes <span class="ml-auto mono text-[9.5px] text-text-tertiary">HIP-4</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Builders</a>
+              </div>
+            </div>
+
+            <!-- CAPITAL -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-gold" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21h16M6 21V8l6-4 6 4v13"/></svg>Capital
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Vaults <span class="ml-auto mono text-[10px] text-text-tertiary">3.2k</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Validators <span class="ml-auto mono text-[10px] text-text-tertiary">33</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Tracker</a>
+              </div>
+            </div>
+
+            <!-- CHAIN -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Chain
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Explorer <span class="ml-auto mono text-[9px] px-1 py-px rounded border border-brand/30 bg-brand/10 text-brand">Core</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">HyperEVM <span class="ml-auto mono text-[9px] px-1 py-px rounded border border-gold/30 bg-gold/10 text-gold">new</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Liquidations</a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Priority fees</a>
+              </div>
+            </div>
+
+            <!-- ECOSYSTEM -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/></svg>Ecosystem
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Projects <span class="ml-auto mono text-[10px] text-text-tertiary">312</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Public Goods</a>
+              </div>
+            </div>
+
+            <!-- LEARN -->
+            <div>
+              <button class="w-full flex items-center gap-2.5 h-[30px] px-2.5 rounded-md text-[12px] font-medium text-text-primary hover:bg-surface-2">
+                <svg viewBox="0 0 24 24" class="h-4 w-4 text-text-secondary" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/></svg>Learn
+                <svg viewBox="0 0 24 24" class="ml-auto h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="kids mt-0.5 space-y-0.5">
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Wiki <span class="ml-auto mono text-[10px] text-text-tertiary">184</span></a>
+                <a href="#" class="flex items-center h-[28px] px-2.5 rounded-md text-[12.5px] text-text-secondary hover:bg-surface-2 hover:text-text-primary">Read Lists</a>
+              </div>
+            </div>
+          </nav>
+
+          <div class="px-2.5 py-2 border-t border-border-subtle">
+            <div class="flex items-center gap-2.5 h-[28px] px-2.5 text-[11.5px] text-text-tertiary"><svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m15 6-6 6 6 6"/></svg>Collapse</div>
+          </div>
+        </aside>
+
+        <!-- ── Contenu ── -->
+        <div class="flex-1 min-w-0 flex flex-col">
+          <div class="h-14 px-5 flex items-center gap-3 border-b border-border-subtle">
+            <div class="flex items-center gap-1.5 text-[12px] mono">
+              <span class="text-text-secondary">Markets</span><span class="text-text-tertiary">/</span><span class="text-text-primary">Spot</span>
+              <span class="inline-flex items-center gap-1 h-[18px] px-1.5 ml-2 rounded border border-brand/30 bg-brand/10 text-brand text-[9.5px]">HyperCore</span>
+            </div>
+            <div class="ml-auto flex items-center gap-2">
+              <div class="w-[300px] h-8 rounded-md bg-surface border border-border-subtle flex items-center gap-2 px-2.5">
+                <svg viewBox="0 0 24 24" class="h-3.5 w-3.5 text-text-tertiary" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                <span class="text-[12px] text-text-tertiary">Search token, address, block…</span>
+                <span class="ml-auto mono text-[10px] text-text-tertiary border border-border-subtle rounded px-1">⌘K</span>
+              </div>
+              <div class="h-8 w-8 rounded-md bg-brand/15 border border-brand/30 flex items-center justify-center mono text-[10px] text-brand">YN</div>
+            </div>
+          </div>
+
+          <div class="flex-1 overflow-hidden px-5 py-4 space-y-4">
+            <div class="flex items-center gap-1 overflow-x-auto">
+              <span class="mono text-[10px] uppercase tracking-[0.1em] text-text-tertiary mr-2 shrink-0">Market</span>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] text-text-tertiary whitespace-nowrap">Overview</a>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] font-medium text-brand bg-brand/10 whitespace-nowrap">Spot <span class="mono text-[10.5px] opacity-70">214</span></a>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] text-text-tertiary whitespace-nowrap">Perpetual <span class="mono text-[10.5px]">189</span></a>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] text-text-tertiary whitespace-nowrap">PerpDexs <span class="mono text-[10.5px]">12</span></a>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] text-text-tertiary whitespace-nowrap">HIP-4 <span class="mono text-[10.5px]">48</span></a>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] text-text-tertiary whitespace-nowrap">Auctions <span class="mono text-[10.5px] text-gold">2 live</span></a>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] text-text-tertiary whitespace-nowrap">Builders</a>
+              <a href="#" class="px-2.5 py-1 rounded-md text-[12.5px] text-text-tertiary whitespace-nowrap">Tracker</a>
+            </div>
+
+            <div class="flex items-end justify-between gap-3">
+              <div class="space-y-1"><h1 class="font-inter text-2xl font-semibold tracking-tight">Spot</h1><div class="mono text-[11.5px] text-text-tertiary">updated 4s ago</div></div>
+              <button class="h-8 px-3 rounded-md border border-border-default text-[12px] text-text-secondary">Export CSV</button>
+            </div>
+
+            <div class="grid grid-cols-4 gap-px bg-border-subtle rounded-lg overflow-hidden border border-border-subtle">
+              <div class="bg-surface px-4 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Spot volume 24h</div><div class="mono text-[22px] font-medium mt-1">$412.8M</div><div class="mono text-[10.5px] text-success mt-0.5">+8.4%</div></div>
+              <div class="bg-surface px-4 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Pairs</div><div class="mono text-[22px] font-medium mt-1">214</div><div class="text-[10.5px] text-text-tertiary mt-0.5">HIP-1</div></div>
+              <div class="bg-surface px-4 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Spot fees 24h</div><div class="mono text-[22px] font-medium mt-1 text-gold">$318K</div></div>
+              <div class="bg-surface px-4 py-3"><div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">USDC on spot</div><div class="mono text-[22px] font-medium mt-1">$3.02B</div></div>
+            </div>
+
+            <div class="rounded-lg border border-border-subtle bg-surface overflow-hidden">
+              <table class="w-full text-[12.5px]">
+                <thead><tr class="bg-surface-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
+                  <th class="text-left font-medium px-4 py-2 w-[44px]">#</th><th class="text-left font-medium px-4 py-2">Token</th>
+                  <th class="text-right font-medium px-4 py-2">Price</th><th class="text-right font-medium px-4 py-2">24h</th>
+                  <th class="text-right font-medium px-4 py-2">Volume 24h</th><th class="text-right font-medium px-4 py-2">Market cap</th></tr></thead>
+                <tbody class="divide-y divide-border-subtle">
+                  <tr><td class="px-4 py-2.5 mono text-text-tertiary">1</td><td class="px-4 py-2.5"><div class="flex items-center gap-2"><span class="h-6 w-6 rounded-full bg-brand/15 border border-brand/30 flex items-center justify-center mono text-[9px] text-brand">HY</span><div><div class="font-medium">HYPE</div><div class="text-[10.5px] text-text-tertiary">HIP-1 · index 150</div></div></div></td><td class="px-4 py-2.5 text-right mono">$65.56</td><td class="px-4 py-2.5 text-right mono text-success">+2.66%</td><td class="px-4 py-2.5 text-right mono">$184.2M</td><td class="px-4 py-2.5 text-right mono">$21.9B</td></tr>
+                  <tr><td class="px-4 py-2.5 mono text-text-tertiary">2</td><td class="px-4 py-2.5"><div class="flex items-center gap-2"><span class="h-6 w-6 rounded-full bg-surface-3 border border-border-default flex items-center justify-center mono text-[9px] text-text-secondary">PU</span><div><div class="font-medium">PURR</div><div class="text-[10.5px] text-text-tertiary">HIP-1 · index 0</div></div></div></td><td class="px-4 py-2.5 text-right mono">$0.2814</td><td class="px-4 py-2.5 text-right mono text-danger">-4.12%</td><td class="px-4 py-2.5 text-right mono">$9.8M</td><td class="px-4 py-2.5 text-right mono">$281M</td></tr>
+                  <tr><td class="px-4 py-2.5 mono text-text-tertiary">3</td><td class="px-4 py-2.5"><div class="flex items-center gap-2"><span class="h-6 w-6 rounded-full bg-surface-3 border border-border-default flex items-center justify-center mono text-[9px] text-text-secondary">HF</span><div><div class="font-medium">HFUN</div><div class="text-[10.5px] text-text-tertiary">HIP-1 · index 4</div></div></div></td><td class="px-4 py-2.5 text-right mono">$12.84</td><td class="px-4 py-2.5 text-right mono text-success">+11.4%</td><td class="px-4 py-2.5 text-right mono">$2.9M</td><td class="px-4 py-2.5 text-right mono">$12.8M</td></tr>
+                  <tr><td class="px-4 py-2.5 mono text-text-tertiary">4</td><td class="px-4 py-2.5"><div class="flex items-center gap-2"><span class="h-6 w-6 rounded-full bg-surface-3 border border-border-default flex items-center justify-center mono text-[9px] text-text-secondary">FE</span><div><div class="font-medium">FEUSD</div><div class="text-[10.5px] text-text-tertiary">HIP-1 · index 212</div></div></div></td><td class="px-4 py-2.5 text-right mono">$0.9994</td><td class="px-4 py-2.5 text-right mono text-danger">-0.02%</td><td class="px-4 py-2.5 text-right mono">$4.1M</td><td class="px-4 py-2.5 text-right mono">$62.8M</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Plan droit ── -->
+        <aside class="w-[300px] shrink-0 bg-surface border-l border-border-subtle flex flex-col">
+          <div class="h-14 px-4 flex items-center gap-2 border-b border-border-subtle">
+            <span class="w-1.5 h-1.5 rounded-full bg-success"></span><span class="mono text-[10px] tracking-[0.1em] text-text-secondary">NOW</span>
+            <span class="mono text-[10.5px] text-text-tertiary">block 41,208,913</span>
+            <button class="ml-auto text-text-tertiary" aria-label="Pause"><svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5v14M16 5v14"/></svg></button>
+          </div>
+          <div class="plane flex-1 overflow-y-auto divide-y divide-border-subtle">
+            <div class="p-4 space-y-2">
+              <div class="flex items-center gap-2"><span class="text-[12px] font-medium text-text-primary">Tape</span><span class="ml-auto mono text-[10px] text-text-tertiary">312 ev/s</span></div>
+              <div class="flex items-center gap-1 text-[10.5px]"><span class="px-1.5 py-0.5 rounded bg-surface-3 text-text-primary">All</span><span class="px-1.5 py-0.5 rounded text-brand bg-brand/10">Spot</span><span class="px-1.5 py-0.5 rounded text-text-tertiary">Whales</span><span class="px-1.5 py-0.5 rounded text-text-tertiary">Liq</span></div>
+              <div class="space-y-1 pt-0.5">
+                <div class="flex items-center gap-2 mono text-[10.5px]"><span class="text-text-tertiary">12:41:07</span><span class="w-1.5 h-1.5 rounded-full bg-success shrink-0"></span><span class="text-text-secondary truncate">HYPE buy · 0x7a3f…9c2e</span><span class="ml-auto text-text-primary">$1.24M</span></div>
+                <div class="flex items-center gap-2 mono text-[10.5px]"><span class="text-text-tertiary">12:41:02</span><span class="w-1.5 h-1.5 rounded-full bg-danger shrink-0"></span><span class="text-text-secondary truncate">PURR sell · 0x41bb…02aa</span><span class="ml-auto text-text-primary">$318K</span></div>
+                <div class="flex items-center gap-2 mono text-[10.5px]"><span class="text-text-tertiary">12:40:58</span><span class="w-1.5 h-1.5 rounded-full bg-gold shrink-0"></span><span class="text-text-secondary truncate">SOLV ticker won</span><span class="ml-auto text-text-primary">$8.4K</span></div>
+                <div class="flex items-center gap-2 mono text-[10.5px]"><span class="text-text-tertiary">12:40:51</span><span class="w-1.5 h-1.5 rounded-full bg-success shrink-0"></span><span class="text-text-secondary truncate">HFUN buy · 0xd0c1…7741</span><span class="ml-auto text-text-primary">$207K</span></div>
+                <div class="flex items-center gap-2 mono text-[10.5px]"><span class="text-text-tertiary">12:40:44</span><span class="w-1.5 h-1.5 rounded-full bg-danger shrink-0"></span><span class="text-text-secondary truncate">ETH liq · 0x2ac8…1f5d</span><span class="ml-auto text-text-primary">$74K</span></div>
+              </div>
+            </div>
+            <div class="p-4 space-y-2">
+              <div class="flex items-center gap-2"><span class="text-[12px] font-medium text-text-primary">Watchlist</span><span class="ml-auto mono text-[10px] text-text-tertiary">Edit</span></div>
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2"><span class="h-5 w-5 rounded-full bg-brand/15 border border-brand/30 flex items-center justify-center mono text-[8px] text-brand">HY</span><span class="text-[11.5px] text-text-primary">HYPE</span><span class="ml-auto mono text-[11px]">$65.56</span><span class="mono text-[10.5px] text-success w-[52px] text-right">+2.66%</span></div>
+                <div class="flex items-center gap-2"><span class="h-5 w-5 rounded-full bg-surface-3 border border-border-default flex items-center justify-center mono text-[8px] text-text-secondary">BT</span><span class="text-[11.5px] text-text-primary">BTC</span><span class="ml-auto mono text-[11px]">$88,412</span><span class="mono text-[10.5px] text-danger w-[52px] text-right">-1.10%</span></div>
+                <div class="flex items-center gap-2"><span class="h-5 w-5 rounded-full bg-surface-3 border border-border-default flex items-center justify-center mono text-[8px] text-text-secondary">PU</span><span class="text-[11.5px] text-text-primary">PURR</span><span class="ml-auto mono text-[11px]">$0.1842</span><span class="mono text-[10.5px] text-danger w-[52px] text-right">-6.10%</span></div>
+              </div>
+            </div>
+            <div class="p-4 space-y-2">
+              <div class="flex items-center gap-2"><span class="text-[12px] font-medium text-text-primary">My wallets</span><a href="#" class="ml-auto mono text-[10px] text-brand">Tracker →</a></div>
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span><span class="text-[11.5px] text-text-primary">Main</span><span class="mono text-[10px] text-text-tertiary">0xa4f2…8b10</span><span class="ml-auto mono text-[11px] text-success">+$4.1K</span></div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span><span class="text-[11.5px] text-text-primary">Farm</span><span class="mono text-[10px] text-text-tertiary">0x31de…44c9</span><span class="ml-auto mono text-[11px] text-danger">-$820</span></div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span><span class="text-[11.5px] text-text-primary">Whale 7</span><span class="mono text-[10px] text-text-tertiary">0x7a3f…9c2e</span><span class="ml-auto mono text-[11px] text-danger">-$1.2M</span></div>
+              </div>
+            </div>
+            <div class="p-4 space-y-2">
+              <div class="flex items-center gap-2"><span class="text-[12px] font-medium text-text-primary">Alerts</span><span class="mono text-[9px] px-1.5 py-px rounded border border-danger/30 bg-danger/10 text-danger">2 fired</span><span class="ml-auto mono text-[10px] text-text-tertiary">14 armed</span></div>
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-danger"></span><span class="text-[11.5px] text-text-secondary truncate">HYPE funding &lt; -0.05%</span><span class="ml-auto mono text-[10px] text-text-tertiary">3m</span></div>
+                <div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-danger"></span><span class="text-[11.5px] text-text-secondary truncate">Whale 7 unstake queued</span><span class="ml-auto mono text-[10px] text-text-tertiary">18m</span></div>
+              </div>
+            </div>
+            <div class="p-4 space-y-2">
+              <div class="flex items-center gap-2"><span class="text-[12px] font-medium text-text-primary">Under tension</span><span class="ml-auto mono text-[10px] text-text-tertiary">auto</span></div>
+              <div class="space-y-1.5">
+                <div class="flex items-center gap-2"><span class="text-[11.5px] text-text-primary">kBONK</span><span class="text-[10.5px] text-text-tertiary">funding extreme</span><span class="ml-auto mono text-[11px] text-danger">-0.31%</span></div>
+                <div class="flex items-center gap-2"><span class="text-[11.5px] text-text-primary">HYPE</span><span class="text-[10.5px] text-text-tertiary">OI +38% · 1h</span><span class="ml-auto mono text-[11px]">$1.9B</span></div>
+                <div class="flex items-center gap-2"><span class="text-[11.5px] text-text-primary">unit:BTC</span><span class="text-[10.5px] text-text-tertiary">depth collapse</span><span class="ml-auto mono text-[11px] text-danger">-64%</span></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ Le menu, routes réelles ═══════════════ -->
+  <section class="sec pt-8 space-y-4">
+    <div class="note">LE MENU · 16 ENTRÉES · TOUTES VERS UNE ROUTE QUI EXISTE, SAUF HyperEVM À BÂTIR</div>
+    <div class="rounded-lg border border-border-subtle bg-surface overflow-hidden">
+      <table class="w-full text-[12.5px]">
+        <thead><tr class="bg-surface-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
+          <th class="text-left font-medium px-4 py-2 w-[210px]">Famille · Entrée</th>
+          <th class="text-left font-medium px-4 py-2 w-[210px]">Route</th>
+          <th class="text-left font-medium px-4 py-2">Note</th></tr></thead>
+        <tbody class="divide-y divide-border-subtle text-text-secondary">
+          <tr><td class="px-4 py-2 text-text-primary">Home</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/dashboard</td><td class="px-4 py-2 text-text-tertiary">inchangé</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary">HYPE</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/hype</td><td class="px-4 py-2 text-text-tertiary">épinglé en haut, sujet transverse</td></tr>
+
+          <tr class="bg-brand/[0.06]"><td colspan="3" class="px-4 py-1.5"><span class="mono text-[10px] tracking-[0.1em] text-brand">MARKETS</span></td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Market</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/market</td><td class="px-4 py-2">garde sa MarketScopeBar : Overview, Spot, Perpetual, PerpDexs, HIP-4, Auctions, Builders, Tracker</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Perp DEXs</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/market/perpdex</td><td class="px-4 py-2 text-text-tertiary">HIP-3</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Outcomes</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/market/hip4</td><td class="px-4 py-2 text-text-tertiary">HIP-4, nom en clair</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Builders</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/market/builders</td><td class="px-4 py-2 text-text-tertiary">inchangé</td></tr>
+
+          <tr class="bg-gold/[0.06]"><td colspan="3" class="px-4 py-1.5"><span class="mono text-[10px] tracking-[0.1em] text-gold">CAPITAL</span></td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Vaults</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/explorer/vaults</td><td class="px-4 py-2">quitte « Explorer » : un vault est du capital</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Validators</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/explorer/validator</td><td class="px-4 py-2">la page du staking</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Tracker</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/market/tracker</td><td class="px-4 py-2">perd son sous-menu, My Wallets et Public Lists sont des onglets</td></tr>
+
+          <tr class="bg-surface-2/40"><td colspan="3" class="px-4 py-1.5"><span class="mono text-[10px] tracking-[0.1em] text-text-secondary">CHAIN</span></td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Explorer <span class="mono text-[9px] px-1 rounded border border-brand/30 bg-brand/10 text-brand ml-1">Core</span></td><td class="px-4 py-2 mono text-[11.5px] text-brand">/explorer</td><td class="px-4 py-2">le dashboard actuel, intact. Libellé « Dashboard » abandonné, il doublait Home</td></tr>
+          <tr class="bg-gold/[0.03]"><td class="px-4 py-2 text-text-primary pl-8">HyperEVM <span class="mono text-[9px] px-1 rounded border border-gold/30 bg-gold/10 text-gold ml-1">new</span></td><td class="px-4 py-2 mono text-[11.5px] text-gold">/evm</td><td class="px-4 py-2">seule page à bâtir. Alimentée par HypurrTrace, sans clé. La vue de l'autre chaîne</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Liquidations</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/explorer/liquidations</td><td class="px-4 py-2">événement de clearinghouse</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Priority fees</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/explorer/priority-fees</td><td class="px-4 py-2">règle d'ordonnancement. Entrée visible, pas un onglet</td></tr>
+
+          <tr class="bg-surface-2/40"><td colspan="3" class="px-4 py-1.5"><span class="mono text-[10px] tracking-[0.1em] text-text-tertiary">ECOSYSTEM</span></td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Projects</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/ecosystem/project</td><td class="px-4 py-2 text-text-tertiary">inchangé</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Public Goods</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/ecosystem/publicgoods</td><td class="px-4 py-2">perd son sous-menu, les enfants restent des onglets</td></tr>
+
+          <tr class="bg-surface-2/40"><td colspan="3" class="px-4 py-1.5"><span class="mono text-[10px] tracking-[0.1em] text-text-tertiary">LEARN</span></td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Wiki</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/wiki</td><td class="px-4 py-2">libellé « App » abandonné</td></tr>
+          <tr><td class="px-4 py-2 text-text-primary pl-8">Read Lists</td><td class="px-4 py-2 mono text-[11.5px] text-brand">/wiki/readlist</td><td class="px-4 py-2">une entrée au lieu de deux</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="rounded-lg border border-border-subtle bg-surface p-4 space-y-2">
+        <div class="text-[13px] font-medium">Hauteur</div>
+        <p class="text-[12.5px] leading-relaxed text-text-secondary">Tout déplié <span class="mono text-text-primary">712px</span>. Chaque famille se replie, l'état est mémorisé, le rail descend jusqu'à <span class="mono text-text-primary">~510px</span> selon l'usage.</p>
+      </div>
+      <div class="rounded-lg border border-border-subtle bg-surface p-4 space-y-2">
+        <div class="text-[13px] font-medium">Ce qui est touché</div>
+        <p class="text-[12.5px] leading-relaxed text-text-secondary">Uniquement <span class="mono text-[11px] text-brand">sidebar-config.ts</span> et le composant du plan droit. Zéro page existante, zéro URL, zéro redirection. La seule page neuve est <span class="mono text-[11px] text-gold">/evm</span>.</p>
+      </div>
+      <div class="rounded-lg border border-border-subtle bg-surface p-4 space-y-2">
+        <div class="text-[13px] font-medium">Hors du rail</div>
+        <p class="text-[12.5px] leading-relaxed text-text-secondary">Profile (avatar), Legal (footer), Labs (URL directe), USDH (extinction), enchères (déjà liées depuis le hub Market). Adresses par la recherche.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="sec pt-6 pb-4">
+    <p class="text-[11.5px] text-text-tertiary">Navigation finale · arbre OAK pliable · MarketScopeBar conservée · HyperEVM sous Chain · navigation seule, aucune page existante modifiée</p>
+  </footer>
+
+</div>
+</body>
+</html>
