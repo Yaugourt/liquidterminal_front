@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Terminal · Nav C · Intent-first</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root, keep in sync.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  a:focus-visible, button:focus-visible { outline: 2px solid #83E9FF; outline-offset: 2px; border-radius: 6px; }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+<div class="mx-auto" style="max-width:1440px">
+
+  <!-- ══════════════════════ Thesis card ══════════════════════ -->
+  <section class="px-8 pt-10 pb-8">
+    <div class="mono text-[11px] font-semibold tracking-[0.18em] uppercase text-brand">Nav proposal C</div>
+    <h1 class="font-inter text-[30px] font-semibold tracking-tight mt-3">Intent-first: left the verbs, right the nouns.</h1>
+    <div class="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-4 items-start">
+      <div class="bg-surface border border-border-subtle rounded-lg p-5">
+        <p class="text-sm text-text-secondary leading-relaxed">
+          The left rail is organised by <span class="text-text-primary font-medium">what you came to do</span>: Trade,
+          Track, Explore, Learn, Build. Not by how the protocol is built. A newcomer who has never heard of HIP-3 still
+          knows which of five verbs matches their question. The right rail is the opposite axis: it follows
+          <span class="text-text-primary font-medium">the object you are currently looking at</span>, and carries it
+          across the verbs.
+        </p>
+        <div class="mt-4 pt-4 border-t border-border-subtle">
+          <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">The filing rule, one sentence</div>
+          <p class="text-[13px] text-text-primary mt-2 leading-relaxed">
+            A page goes under the verb of the question you arrive with, and if that question contains the word
+            <span class="mono text-brand">“my”</span>, it goes to Track, whatever the data underneath is.
+          </p>
+        </div>
+      </div>
+      <div class="bg-surface border border-border-subtle rounded-lg p-5">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Core / EVM is a facet, never a section</div>
+        <p class="text-[12.5px] text-text-secondary mt-2.5 leading-relaxed">
+          HyperCore and HyperEVM are two halves of one chain, so they are a
+          <span class="text-text-primary">layer switch in the scope bar</span> and a
+          <span class="text-text-primary">badge on every row</span>, present on every page where the answer differs,
+          absent where it does not. Objects that straddle both keep one page and show both sides.
+        </p>
+        <div class="flex flex-wrap items-center gap-2 mt-4">
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Core</span>
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">EVM</span>
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium">Core + EVM</span>
+          <span class="text-[11px] text-text-tertiary">HYPE · USDH · validators · bridged tickers</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ STATE 1 ══════════════════════ -->
+  <div class="px-8 pt-6 pb-3">
+    <div class="flex items-baseline gap-3">
+      <span class="mono text-[11px] font-semibold tracking-[0.15em] uppercase text-text-tertiary">State 1</span>
+      <h2 class="font-inter text-[17px] font-semibold tracking-tight">A market page · <span class="mono text-brand text-[14px]">/market/spot</span></h2>
+      <span class="text-[12px] text-text-tertiary">Trade is active · scope bar carries the venues · right rail carries the token you last opened</span>
+    </div>
+  </div>
+
+  <div class="mx-8 mb-14 border border-border-subtle rounded-xl overflow-hidden bg-base">
+    <div class="flex">
+
+      <!-- ───── LEFT RAIL (expanded) ───── -->
+      <aside class="w-[232px] shrink-0 border-r border-border-subtle bg-surface flex flex-col">
+        <div class="h-[52px] flex items-center gap-2 px-3.5 border-b border-border-subtle">
+          <span data-mark="duo" style="width:22px;height:22px"></span>
+          <span class="font-inter text-[13.5px] font-semibold tracking-tight">Liquid Terminal</span>
+          <button class="ml-auto text-text-tertiary hover:text-text-primary" aria-label="Collapse rail">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+          </button>
+        </div>
+
+        <nav class="flex-1 p-2 space-y-0.5 overflow-hidden" data-rail>
+          <a class="rail-link" data-active><span data-icon="home"></span>Home</a>
+
+          <div class="rail-group">Trade<span class="rail-caption">decide on a market</span></div>
+          <a class="rail-link" data-current><span data-icon="candles"></span>Markets</a>
+          <a class="rail-link"><span data-icon="swap"></span>Swap USDH</a>
+
+          <div class="rail-group">Track<span class="rail-caption">what is yours</span></div>
+          <a class="rail-link"><span data-icon="pie"></span>Portfolio</a>
+          <a class="rail-link"><span data-icon="wallet"></span>Wallets<span class="rail-count mono">4</span></a>
+          <a class="rail-link"><span data-icon="star"></span>Watchlists</a>
+          <a class="rail-link"><span data-icon="book"></span>Reading list</a>
+          <a class="rail-link"><span data-icon="pen"></span>Contributions</a>
+          <a class="rail-link"><span data-icon="user"></span>Account</a>
+
+          <div class="rail-group">Explore<span class="rail-caption">verify onchain</span></div>
+          <a class="rail-link"><span data-icon="blocks"></span>Network</a>
+          <a class="rail-link"><span data-icon="drop"></span>HYPE</a>
+          <a class="rail-link"><span data-icon="nodes"></span>Validators &amp; staking</a>
+          <a class="rail-link"><span data-icon="vault"></span>Vaults</a>
+          <a class="rail-link"><span data-icon="zap"></span>Liquidations</a>
+          <a class="rail-link"><span data-icon="fuel"></span>Blockspace &amp; fees</a>
+
+          <div class="rail-group">Learn<span class="rail-caption">understand</span></div>
+          <a class="rail-link"><span data-icon="library"></span>Wiki</a>
+          <a class="rail-link"><span data-icon="tag"></span>Topics</a>
+          <a class="rail-link"><span data-icon="cap"></span>Courses</a>
+          <a class="rail-link"><span data-icon="globe"></span>Public lists</a>
+
+          <div class="rail-group">Build<span class="rail-caption">ship on Hyperliquid</span></div>
+          <a class="rail-link"><span data-icon="boxes"></span>Projects</a>
+          <a class="rail-link"><span data-icon="heart"></span>Public goods</a>
+          <a class="rail-link"><span data-icon="gavel"></span>Deploy auctions</a>
+          <a class="rail-link"><span data-icon="hammer"></span>Builder codes</a>
+          <a class="rail-link"><span data-icon="flask"></span>Labs<span class="rail-count mono">dev</span></a>
+        </nav>
+
+        <div class="px-3.5 py-2.5 border-t border-border-subtle flex items-center gap-2">
+          <a class="text-[11px] text-text-tertiary hover:text-text-primary">Legal</a>
+          <a class="text-[11px] text-text-tertiary hover:text-text-primary">Docs</a>
+          <span class="mono ml-auto text-[10.5px] text-text-tertiary">v4.2</span>
+        </div>
+      </aside>
+
+      <!-- ───── MAIN ───── -->
+      <main class="flex-1 min-w-0">
+        <!-- sticky header -->
+        <header class="h-[52px] flex items-center gap-3 px-5 border-b border-border-subtle bg-base/80">
+          <div class="relative flex-1 max-w-sm">
+            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input placeholder="Search token, wallet, tx, validator…" class="w-full h-8 pl-8 pr-11 text-[12.5px] bg-surface border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+            <span class="mono absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] text-text-tertiary border border-border-subtle bg-surface-2 rounded px-1.5 py-0.5">⌘K</span>
+          </div>
+          <button class="ml-auto h-8 px-2.5 rounded-md text-[12px] font-medium text-text-secondary hover:text-text-primary border border-border-subtle">Settings</button>
+          <button class="h-8 px-3 rounded-md text-[12px] font-semibold bg-brand text-brand-text-on hover:bg-brand/90">0x7a3f…c21e</button>
+        </header>
+
+        <div class="flex">
+          <!-- content column -->
+          <div class="flex-1 min-w-0 px-6 py-5">
+
+            <!-- ScopeBar : siblings + layer facet -->
+            <nav class="flex items-center gap-1 mb-5 min-w-0">
+              <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary mr-2 shrink-0">Markets</span>
+              <a class="scope-tab">Overview</a>
+              <a class="scope-tab" data-active>Spot <span class="mono text-[10.5px] ml-1.5 text-brand/70">218</span></a>
+              <a class="scope-tab">Perps <span class="mono text-[10.5px] ml-1.5 text-text-tertiary">194</span></a>
+              <a class="scope-tab">Perp DEXs <span class="mono text-[10.5px] ml-1.5 text-text-tertiary">17</span></a>
+              <a class="scope-tab">Outcome <span class="mono text-[10.5px] ml-1.5 text-text-tertiary">61</span></a>
+              <div class="ml-auto flex items-center gap-2 shrink-0">
+                <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary">Layer</span>
+                <div class="inline-flex items-center rounded-md border border-border-subtle bg-surface-2 p-0.5">
+                  <button class="px-2 h-6 rounded text-[11.5px] font-medium bg-brand/15 text-brand">Core</button>
+                  <button class="px-2 h-6 rounded text-[11.5px] text-text-tertiary hover:text-text-primary">EVM</button>
+                  <button class="px-2 h-6 rounded text-[11.5px] text-text-tertiary hover:text-text-primary">Both</button>
+                </div>
+              </div>
+            </nav>
+
+            <!-- PageHeader -->
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-4">
+              <div class="space-y-1.5 min-w-0">
+                <h1 class="font-inter text-2xl font-semibold text-text-primary tracking-tight">Spot</h1>
+                <p class="text-sm text-text-secondary">updated <span class="mono">9s ago</span></p>
+              </div>
+              <div class="flex items-center gap-2 sm:shrink-0">
+                <button class="h-8 gap-1.5 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Export CSV</button>
+              </div>
+            </div>
+
+            <!-- KpiRibbon -->
+            <div class="grid grid-cols-4 border border-border-subtle rounded-lg divide-x divide-border-subtle overflow-hidden">
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Spot volume 24h</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$412.6M</div>
+                <div class="text-[10.5px] text-success mt-1.5">+8.4% · vs 24h</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Pairs</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">218</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">HIP-1 · 41 with an ERC-20</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Spot fees 24h</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">$318.4K</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">to Assistance Fund</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Market cap</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$28.4B</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">all listed tickers</div>
+              </div>
+            </div>
+
+            <!-- TypedDataTable -->
+            <div class="min-w-0 bg-surface border border-border-subtle rounded-lg mt-4 overflow-hidden">
+              <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+                <div class="relative flex-1 min-w-[180px] max-w-xs">
+                  <input placeholder="Search ticker, deployer…" class="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+                </div>
+                <div class="flex items-center gap-3 text-xs">
+                  <button class="text-brand font-medium">All <span class="mono text-text-tertiary">218</span></button>
+                  <button class="text-text-tertiary hover:text-text-primary">Strict <span class="mono">96</span></button>
+                  <button class="text-text-tertiary hover:text-text-primary">Bridged <span class="mono">41</span></button>
+                </div>
+                <span class="text-text-tertiary text-[11.5px] ml-auto shrink-0">218 pairs</span>
+              </div>
+              <table class="w-full border-collapse">
+                <thead><tr>
+                  <th class="th text-right">#</th>
+                  <th class="th text-left">Pair</th>
+                  <th class="th text-left">Layer</th>
+                  <th class="th text-right">Price</th>
+                  <th class="th text-right">24h</th>
+                  <th class="th text-right">Volume 24h</th>
+                </tr></thead>
+                <tbody>
+                  <tr class="hover:bg-surface-2/60 transition-colors">
+                    <td class="td text-right"><span class="mono text-text-tertiary text-[11px]">1</span></td>
+                    <td class="td">
+                      <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-surface-2 text-text-secondary">HY</span>
+                        <div class="min-w-0"><div class="text-[13px] font-medium text-text-primary truncate">HYPE / USDC</div><div class="mono text-[11px] text-text-tertiary">@107</div></div>
+                      </div>
+                    </td>
+                    <td class="td"><span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium">Core + EVM</span></td>
+                    <td class="td text-right mono text-[13px] text-text-primary">$65.56</td>
+                    <td class="td text-right"><span class="mono text-[13px] font-medium text-success">+2.66%</span></td>
+                    <td class="td text-right mono text-[13px] text-text-secondary">$186.2M</td>
+                  </tr>
+                  <tr class="hover:bg-surface-2/60 transition-colors">
+                    <td class="td text-right"><span class="mono text-text-tertiary text-[11px]">2</span></td>
+                    <td class="td">
+                      <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-surface-2 text-text-secondary">UH</span>
+                        <div class="min-w-0"><div class="text-[13px] font-medium text-text-primary truncate">USDH / USDC</div><div class="mono text-[11px] text-text-tertiary">@166</div></div>
+                      </div>
+                    </td>
+                    <td class="td"><span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium">Core + EVM</span></td>
+                    <td class="td text-right mono text-[13px] text-text-primary">$1.0002</td>
+                    <td class="td text-right"><span class="mono text-[13px] font-medium text-text-secondary">+0.01%</span></td>
+                    <td class="td text-right mono text-[13px] text-text-secondary">$41.9M</td>
+                  </tr>
+                  <tr class="hover:bg-surface-2/60 transition-colors">
+                    <td class="td text-right"><span class="mono text-text-tertiary text-[11px]">3</span></td>
+                    <td class="td">
+                      <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-surface-2 text-text-secondary">PU</span>
+                        <div class="min-w-0"><div class="text-[13px] font-medium text-text-primary truncate">PURR / USDC</div><div class="mono text-[11px] text-text-tertiary">@1</div></div>
+                      </div>
+                    </td>
+                    <td class="td"><span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Core</span></td>
+                    <td class="td text-right mono text-[13px] text-text-primary">$0.2841</td>
+                    <td class="td text-right"><span class="mono text-[13px] font-medium text-danger">-4.12%</span></td>
+                    <td class="td text-right mono text-[13px] text-text-secondary">$12.4M</td>
+                  </tr>
+                  <tr class="hover:bg-surface-2/60 transition-colors">
+                    <td class="td text-right"><span class="mono text-text-tertiary text-[11px]">4</span></td>
+                    <td class="td">
+                      <div class="flex items-center gap-3">
+                        <span class="w-7 h-7 shrink-0 rounded-md grid place-items-center text-[10px] font-semibold bg-surface-2 text-text-secondary">FE</span>
+                        <div class="min-w-0"><div class="text-[13px] font-medium text-text-primary truncate">FEUSD / USDC</div><div class="mono text-[11px] text-text-tertiary">@142</div></div>
+                      </div>
+                    </td>
+                    <td class="td"><span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Core</span></td>
+                    <td class="td text-right mono text-[13px] text-text-primary">$0.9994</td>
+                    <td class="td text-right"><span class="mono text-[13px] font-medium text-text-secondary">0.00%</span></td>
+                    <td class="td text-right mono text-[13px] text-text-secondary">$6.1M</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ───── RIGHT RAIL — the object rail ───── -->
+          <aside class="w-[280px] shrink-0 border-l border-border-subtle bg-surface/40 px-4 py-5 space-y-4">
+            <div class="flex items-baseline gap-2">
+              <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary">Context</span>
+              <span class="text-[11px] text-text-tertiary ml-auto">pinned everywhere</span>
+            </div>
+
+            <!-- Watching -->
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">Watching</h3>
+                <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">Edit →</a>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HY</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">HYPE</div><div class="mono text-[10px] text-text-tertiary truncate">$65.56</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-success">+2.66%</div>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">0x</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">Whale · Machi</div><div class="mono text-[10px] text-text-tertiary truncate">0x9a1c…44de</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-danger">-1.9%</div>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2/60 transition-colors">
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HL</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">HLP vault</div><div class="mono text-[10px] text-text-tertiary truncate">$356.9M TVL</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-success">+1.28%</div>
+              </div>
+            </div>
+
+            <!-- On this page -->
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">On this page</h3>
+              </div>
+              <div class="px-4 py-3 space-y-2">
+                <a class="anchor" data-active>Spot summary</a>
+                <a class="anchor">All pairs</a>
+                <a class="anchor">Bridged tickers <span class="mono text-[10.5px] text-text-tertiary">41</span></a>
+                <a class="anchor">Recent listings</a>
+              </div>
+            </div>
+
+            <!-- Cross-intent -->
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">Spot, other intents</h3>
+              </div>
+              <div class="divide-y divide-border-subtle">
+                <a class="cross"><span class="cross-verb">Build</span><span class="cross-label">Bid on a ticker auction</span></a>
+                <a class="cross"><span class="cross-verb">Explore</span><span class="cross-label">Token deploys &amp; genesis</span></a>
+                <a class="cross"><span class="cross-verb">Learn</span><span class="cross-label">What HIP-1 and HIP-2 do</span></a>
+                <a class="cross"><span class="cross-verb">Track</span><span class="cross-label">Add HYPE to a watchlist</span></a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ STATE 2 ══════════════════════ -->
+  <div class="px-8 pt-2 pb-3">
+    <div class="flex items-baseline gap-3">
+      <span class="mono text-[11px] font-semibold tracking-[0.15em] uppercase text-text-tertiary">State 2</span>
+      <h2 class="font-inter text-[17px] font-semibold tracking-tight">Another family · <span class="mono text-brand text-[14px]">/explorer</span> with the layer facet on EVM</h2>
+      <span class="text-[12px] text-text-tertiary">same two rails, same scope bar, HyperEVM is one click and never a section</span>
+    </div>
+  </div>
+
+  <div class="mx-8 mb-14 border border-border-subtle rounded-xl overflow-hidden bg-base">
+    <div class="flex">
+
+      <!-- LEFT RAIL, Explore active -->
+      <aside class="w-[232px] shrink-0 border-r border-border-subtle bg-surface flex flex-col">
+        <div class="h-[52px] flex items-center gap-2 px-3.5 border-b border-border-subtle">
+          <span data-mark="duo" style="width:22px;height:22px"></span>
+          <span class="font-inter text-[13.5px] font-semibold tracking-tight">Liquid Terminal</span>
+          <button class="ml-auto text-text-tertiary hover:text-text-primary" aria-label="Collapse rail">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+          </button>
+        </div>
+
+        <nav class="flex-1 p-2 space-y-0.5 overflow-hidden" data-rail>
+          <a class="rail-link"><span data-icon="home"></span>Home</a>
+
+          <div class="rail-group">Trade<span class="rail-caption">decide on a market</span></div>
+          <a class="rail-link"><span data-icon="candles"></span>Markets</a>
+          <a class="rail-link"><span data-icon="swap"></span>Swap USDH</a>
+
+          <div class="rail-group">Track<span class="rail-caption">what is yours</span></div>
+          <a class="rail-link"><span data-icon="pie"></span>Portfolio</a>
+          <a class="rail-link"><span data-icon="wallet"></span>Wallets<span class="rail-count mono">4</span></a>
+          <a class="rail-link"><span data-icon="star"></span>Watchlists</a>
+          <a class="rail-link"><span data-icon="book"></span>Reading list</a>
+          <a class="rail-link"><span data-icon="pen"></span>Contributions</a>
+          <a class="rail-link"><span data-icon="user"></span>Account</a>
+
+          <div class="rail-group">Explore<span class="rail-caption">verify onchain</span></div>
+          <a class="rail-link" data-current><span data-icon="blocks"></span>Network</a>
+          <a class="rail-link"><span data-icon="drop"></span>HYPE</a>
+          <a class="rail-link"><span data-icon="nodes"></span>Validators &amp; staking</a>
+          <a class="rail-link"><span data-icon="vault"></span>Vaults</a>
+          <a class="rail-link"><span data-icon="zap"></span>Liquidations</a>
+          <a class="rail-link"><span data-icon="fuel"></span>Blockspace &amp; fees</a>
+
+          <div class="rail-group">Learn<span class="rail-caption">understand</span></div>
+          <a class="rail-link"><span data-icon="library"></span>Wiki</a>
+          <a class="rail-link"><span data-icon="tag"></span>Topics</a>
+          <a class="rail-link"><span data-icon="cap"></span>Courses</a>
+          <a class="rail-link"><span data-icon="globe"></span>Public lists</a>
+
+          <div class="rail-group">Build<span class="rail-caption">ship on Hyperliquid</span></div>
+          <a class="rail-link"><span data-icon="boxes"></span>Projects</a>
+          <a class="rail-link"><span data-icon="heart"></span>Public goods</a>
+          <a class="rail-link"><span data-icon="gavel"></span>Deploy auctions</a>
+          <a class="rail-link"><span data-icon="hammer"></span>Builder codes</a>
+          <a class="rail-link"><span data-icon="flask"></span>Labs<span class="rail-count mono">dev</span></a>
+        </nav>
+
+        <div class="px-3.5 py-2.5 border-t border-border-subtle flex items-center gap-2">
+          <a class="text-[11px] text-text-tertiary hover:text-text-primary">Legal</a>
+          <a class="text-[11px] text-text-tertiary hover:text-text-primary">Docs</a>
+          <span class="mono ml-auto text-[10.5px] text-text-tertiary">v4.2</span>
+        </div>
+      </aside>
+
+      <main class="flex-1 min-w-0">
+        <header class="h-[52px] flex items-center gap-3 px-5 border-b border-border-subtle bg-base/80">
+          <div class="relative flex-1 max-w-sm">
+            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input placeholder="Search token, wallet, tx, validator…" class="w-full h-8 pl-8 pr-11 text-[12.5px] bg-surface border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+            <span class="mono absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] text-text-tertiary border border-border-subtle bg-surface-2 rounded px-1.5 py-0.5">⌘K</span>
+          </div>
+          <button class="ml-auto h-8 px-2.5 rounded-md text-[12px] font-medium text-text-secondary hover:text-text-primary border border-border-subtle">Settings</button>
+          <button class="h-8 px-3 rounded-md text-[12px] font-semibold bg-brand text-brand-text-on hover:bg-brand/90">0x7a3f…c21e</button>
+        </header>
+
+        <div class="flex">
+          <div class="flex-1 min-w-0 px-6 py-5">
+
+            <nav class="flex items-center gap-1 mb-5 min-w-0">
+              <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary mr-2 shrink-0">Explore</span>
+              <a class="scope-tab" data-active>Network</a>
+              <a class="scope-tab">HYPE</a>
+              <a class="scope-tab">Validators</a>
+              <a class="scope-tab">Vaults <span class="mono text-[10.5px] ml-1.5 text-text-tertiary">3,241</span></a>
+              <a class="scope-tab">Liquidations</a>
+              <a class="scope-tab">Blockspace</a>
+              <div class="ml-auto flex items-center gap-2 shrink-0">
+                <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary">Layer</span>
+                <div class="inline-flex items-center rounded-md border border-border-subtle bg-surface-2 p-0.5">
+                  <button class="px-2 h-6 rounded text-[11.5px] text-text-tertiary hover:text-text-primary">Core</button>
+                  <button class="px-2 h-6 rounded text-[11.5px] font-medium bg-brand/15 text-brand">EVM</button>
+                  <button class="px-2 h-6 rounded text-[11.5px] text-text-tertiary hover:text-text-primary">Both</button>
+                </div>
+              </div>
+            </nav>
+
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-4">
+              <div class="space-y-1.5 min-w-0">
+                <h1 class="font-inter text-2xl font-semibold text-text-primary tracking-tight">Network</h1>
+                <p class="text-sm text-text-secondary">HyperEVM view · updated <span class="mono">2s ago</span></p>
+              </div>
+              <div class="flex items-center gap-2 sm:shrink-0">
+                <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Live</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-4 border border-border-subtle rounded-lg divide-x divide-border-subtle overflow-hidden">
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Big block height</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">8,142,901</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">one every ~60s</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">EVM tx 24h</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">1.94M</div>
+                <div class="text-[10.5px] text-success mt-1.5">+11.2% · vs 24h</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Gas burned 24h</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">1,284 HYPE</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">EIP-1559 base fee</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Core ↔ EVM 24h</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$96.4M</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">both directions</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4 mt-4 items-start">
+              <div class="bg-surface border border-border-subtle rounded-lg flex flex-col min-w-0">
+                <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                  <h3 class="text-[13px] font-medium text-text-primary truncate">Latest big blocks</h3>
+                  <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">All →</a>
+                </div>
+                <table class="w-full border-collapse table-fixed">
+                  <colgroup><col><col style="width:64px"><col style="width:84px"></colgroup>
+                  <thead><tr>
+                    <th class="th2 text-left">Block</th>
+                    <th class="th2 text-right">Tx</th>
+                    <th class="th2 text-right">Gas used</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr class="tr2"><td class="td2"><span class="mono text-[12.5px] text-brand">8,142,901</span></td><td class="td2 text-right mono text-[12.5px] text-text-secondary">184</td><td class="td2 text-right mono text-[12.5px] text-text-secondary">21.4M</td></tr>
+                    <tr class="tr2"><td class="td2"><span class="mono text-[12.5px] text-brand">8,142,900</span></td><td class="td2 text-right mono text-[12.5px] text-text-secondary">96</td><td class="td2 text-right mono text-[12.5px] text-text-secondary">12.8M</td></tr>
+                    <tr class="tr2"><td class="td2"><span class="mono text-[12.5px] text-brand">8,142,899</span></td><td class="td2 text-right mono text-[12.5px] text-text-secondary">241</td><td class="td2 text-right mono text-[12.5px] text-text-secondary">29.9M</td></tr>
+                    <tr class="tr2"><td class="td2"><span class="mono text-[12.5px] text-brand">8,142,898</span></td><td class="td2 text-right mono text-[12.5px] text-text-secondary">57</td><td class="td2 text-right mono text-[12.5px] text-text-secondary">7.2M</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="bg-surface border border-border-subtle rounded-lg flex flex-col min-w-0">
+                <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                  <h3 class="text-[13px] font-medium text-text-primary truncate">Core ↔ EVM transfers</h3>
+                  <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">last 5 min</span>
+                </div>
+                <div class="px-4 py-3.5 border-b border-border-subtle">
+                  <div class="flex items-center justify-between text-[11px] mb-2"><span class="font-semibold text-success">Core → EVM $61.2M</span><span class="font-semibold text-danger">EVM → Core $35.2M</span></div>
+                  <div class="flex w-full overflow-hidden rounded-full bg-surface-2" style="height:10px">
+                    <div class="h-full bg-success" style="width:63%"></div>
+                    <div class="h-full bg-danger" style="width:37%"></div>
+                  </div>
+                </div>
+                <table class="w-full border-collapse table-fixed">
+                  <colgroup><col style="width:78px"><col><col style="width:82px"></colgroup>
+                  <thead><tr>
+                    <th class="th2 text-left">Dir</th>
+                    <th class="th2 text-left">Asset</th>
+                    <th class="th2 text-right">Amount</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr class="tr2"><td class="td2"><span class="mono text-[11px] text-success">Core→EVM</span></td><td class="td2 text-[12.5px] text-text-primary">HYPE → WHYPE</td><td class="td2 text-right mono text-[12.5px] text-text-secondary">$4.1M</td></tr>
+                    <tr class="tr2"><td class="td2"><span class="mono text-[11px] text-danger">EVM→Core</span></td><td class="td2 text-[12.5px] text-text-primary">USDH</td><td class="td2 text-right mono text-[12.5px] text-text-secondary">$1.8M</td></tr>
+                    <tr class="tr2"><td class="td2"><span class="mono text-[11px] text-success">Core→EVM</span></td><td class="td2 text-[12.5px] text-text-primary">USDC</td><td class="td2 text-right mono text-[12.5px] text-text-secondary">$920K</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT RAIL · explorer flavour -->
+          <aside class="w-[280px] shrink-0 border-l border-border-subtle bg-surface/40 px-4 py-5 space-y-4">
+            <div class="flex items-baseline gap-2">
+              <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary">Context</span>
+              <span class="text-[11px] text-text-tertiary ml-auto">pinned everywhere</span>
+            </div>
+
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">Where you are</h3>
+                <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">layer</span>
+              </div>
+              <div class="px-4 py-3.5 space-y-2.5">
+                <p class="text-[12px] text-text-secondary leading-relaxed">
+                  You are reading the <span class="text-text-primary font-medium">HyperEVM</span> side. Same validators,
+                  same consensus, different block space.
+                </p>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Core</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-text-tertiary"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg>
+                  <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium">EVM</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">On this page</h3>
+              </div>
+              <div class="px-4 py-3 space-y-2">
+                <a class="anchor" data-active>Network pulse</a>
+                <a class="anchor">Big blocks</a>
+                <a class="anchor">Core ↔ EVM transfers</a>
+                <a class="anchor">Contract deploys</a>
+                <a class="anchor">Capital evolution</a>
+              </div>
+            </div>
+
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">HyperEVM, other intents</h3>
+              </div>
+              <div class="divide-y divide-border-subtle">
+                <a class="cross"><span class="cross-verb">Trade</span><span class="cross-label">Tickers with an ERC-20</span></a>
+                <a class="cross"><span class="cross-verb">Build</span><span class="cross-label">RPC, precompiles, CoreWriter</span></a>
+                <a class="cross"><span class="cross-verb">Learn</span><span class="cross-label">Dual-block architecture</span></a>
+                <a class="cross"><span class="cross-verb">Track</span><span class="cross-label">Your EVM balances</span></a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ STATE 3 ══════════════════════ -->
+  <div class="px-8 pt-2 pb-3">
+    <div class="flex items-baseline gap-3">
+      <span class="mono text-[11px] font-semibold tracking-[0.15em] uppercase text-text-tertiary">State 3</span>
+      <h2 class="font-inter text-[17px] font-semibold tracking-tight">Rail collapsed to 56px · <span class="mono text-brand text-[14px]">/hype</span>, the object that straddles both layers</h2>
+      <span class="text-[12px] text-text-tertiary">the left rail folds to five verbs, the right rail never folds</span>
+    </div>
+  </div>
+
+  <div class="mx-8 mb-16 border border-border-subtle rounded-xl overflow-hidden bg-base">
+    <div class="flex">
+
+      <!-- COLLAPSED RAIL -->
+      <aside class="w-14 shrink-0 border-r border-border-subtle bg-surface flex flex-col relative">
+        <!-- hover flyout of the collapsed rail, floating over the content -->
+        <div class="absolute left-full top-[368px] z-20 ml-1 w-[196px] rounded-lg border border-border-default bg-surface shadow-2xl shadow-black/50 p-2">
+          <div class="rail-group !pt-1">Explore<span class="rail-caption">verify onchain</span></div>
+          <a class="rail-link"><span data-icon="blocks"></span>Network</a>
+          <a class="rail-link" data-current><span data-icon="drop"></span>HYPE</a>
+          <a class="rail-link"><span data-icon="nodes"></span>Validators</a>
+          <div class="px-2 pt-2 pb-0.5 text-[10px] text-text-tertiary">hover flyout · collapsed rail</div>
+        </div>
+        <div class="h-[52px] flex items-center justify-center border-b border-border-subtle">
+          <span data-mark="duo" style="width:22px;height:22px"></span>
+        </div>
+        <nav class="flex-1 py-2 flex flex-col items-center gap-0.5">
+          <a class="rail-ic" title="Home"><span data-icon="home"></span></a>
+          <div class="rail-sep"></div>
+          <a class="rail-ic" title="Trade"><span data-icon="candles"></span></a>
+          <a class="rail-ic" title="Swap USDH"><span data-icon="swap"></span></a>
+          <div class="rail-sep"></div>
+          <a class="rail-ic" title="Portfolio"><span data-icon="pie"></span></a>
+          <a class="rail-ic" title="Wallets"><span data-icon="wallet"></span></a>
+          <a class="rail-ic" title="Watchlists"><span data-icon="star"></span></a>
+          <div class="rail-sep"></div>
+          <a class="rail-ic" title="Network"><span data-icon="blocks"></span></a>
+          <a class="rail-ic" data-current title="HYPE"><span data-icon="drop"></span></a>
+          <a class="rail-ic" title="Validators"><span data-icon="nodes"></span></a>
+          <a class="rail-ic" title="Vaults"><span data-icon="vault"></span></a>
+          <a class="rail-ic" title="Liquidations"><span data-icon="zap"></span></a>
+          <a class="rail-ic" title="Blockspace"><span data-icon="fuel"></span></a>
+          <div class="rail-sep"></div>
+          <a class="rail-ic" title="Wiki"><span data-icon="library"></span></a>
+          <div class="rail-sep"></div>
+          <a class="rail-ic" title="Projects"><span data-icon="boxes"></span></a>
+          <a class="rail-ic" title="Public goods"><span data-icon="heart"></span></a>
+          <a class="rail-ic" title="Deploy auctions"><span data-icon="gavel"></span></a>
+        </nav>
+        <div class="py-2.5 flex justify-center border-t border-border-subtle">
+          <button class="text-text-tertiary hover:text-text-primary" aria-label="Expand rail">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </aside>
+
+      <main class="flex-1 min-w-0">
+        <header class="h-[52px] flex items-center gap-3 px-5 border-b border-border-subtle bg-base/80">
+          <div class="relative flex-1 max-w-sm">
+            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input placeholder="Search token, wallet, tx, validator…" class="w-full h-8 pl-8 pr-11 text-[12.5px] bg-surface border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+            <span class="mono absolute right-2 top-1/2 -translate-y-1/2 text-[10.5px] text-text-tertiary border border-border-subtle bg-surface-2 rounded px-1.5 py-0.5">⌘K</span>
+          </div>
+          <button class="ml-auto h-8 px-2.5 rounded-md text-[12px] font-medium text-text-secondary hover:text-text-primary border border-border-subtle">Settings</button>
+          <button class="h-8 px-3 rounded-md text-[12px] font-semibold bg-brand text-brand-text-on hover:bg-brand/90">0x7a3f…c21e</button>
+        </header>
+
+        <div class="flex">
+          <div class="flex-1 min-w-0 px-6 py-5">
+
+            <nav class="flex items-center gap-1 mb-5 min-w-0">
+              <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary mr-2 shrink-0">Explore</span>
+              <a class="scope-tab">Network</a>
+              <a class="scope-tab" data-active>HYPE</a>
+              <a class="scope-tab">Validators</a>
+              <a class="scope-tab">Vaults</a>
+              <a class="scope-tab">Liquidations</a>
+              <a class="scope-tab">Blockspace</a>
+              <div class="ml-auto flex items-center gap-2 shrink-0">
+                <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary">Layer</span>
+                <div class="inline-flex items-center rounded-md border border-border-subtle bg-surface-2 p-0.5">
+                  <button class="px-2 h-6 rounded text-[11.5px] text-text-tertiary hover:text-text-primary">Core</button>
+                  <button class="px-2 h-6 rounded text-[11.5px] text-text-tertiary hover:text-text-primary">EVM</button>
+                  <button class="px-2 h-6 rounded text-[11.5px] font-medium bg-brand/15 text-brand">Both</button>
+                </div>
+              </div>
+            </nav>
+
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-4">
+              <div class="space-y-1.5 min-w-0">
+                <div class="flex items-center gap-2.5">
+                  <h1 class="font-inter text-2xl font-semibold text-text-primary tracking-tight">HYPE</h1>
+                  <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/25 text-brand font-medium">Core + EVM</span>
+                </div>
+                <p class="text-sm text-text-secondary">one token, two representations · updated <span class="mono">14s ago</span></p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-4 border border-border-subtle rounded-lg divide-x divide-border-subtle overflow-hidden">
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Price</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">$65.56</div>
+                <div class="text-[10.5px] text-success mt-1.5">+2.66% · 24h</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Circulating</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">338.4M</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">of 1B max</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Staked · Core</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-text-primary">438.3M</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">21 validators</div>
+              </div>
+              <div class="px-5 py-4 flex flex-col">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">Wrapped · EVM</div>
+                <div class="mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2 text-gold">12.8M</div>
+                <div class="text-[10.5px] text-text-tertiary mt-1.5">WHYPE contract</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4 mt-4 items-start">
+              <div class="bg-surface border border-border-subtle rounded-lg flex flex-col min-w-0">
+                <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                  <h3 class="text-[13px] font-medium text-text-primary truncate">On HyperCore</h3>
+                  <span class="ml-auto shrink-0 inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">Core</span>
+                </div>
+                <div class="divide-y divide-border-subtle">
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">Staking rewards APR</span><span class="ml-auto mono text-[12.5px] font-medium text-success">+2.28%</span></div>
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">Buybacks · 24h</span><span class="ml-auto mono text-[12.5px] font-medium text-gold">$1.94M</span></div>
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">Spot book depth ±2%</span><span class="ml-auto mono text-[12.5px] text-text-secondary">$8.4M</span></div>
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">Assistance Fund</span><span class="ml-auto mono text-[12.5px] text-text-secondary">28.1M HYPE</span></div>
+                </div>
+              </div>
+              <div class="bg-surface border border-border-subtle rounded-lg flex flex-col min-w-0">
+                <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                  <h3 class="text-[13px] font-medium text-text-primary truncate">On HyperEVM · WHYPE</h3>
+                  <span class="ml-auto shrink-0 inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-secondary font-medium">EVM</span>
+                </div>
+                <div class="divide-y divide-border-subtle">
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">Contract</span><span class="ml-auto mono text-[12px] text-brand">0x5555…5555</span></div>
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">Wrapped supply</span><span class="ml-auto mono text-[12.5px] text-text-secondary">12.8M</span></div>
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">DEX liquidity</span><span class="ml-auto mono text-[12.5px] text-text-secondary">$96.2M</span></div>
+                  <div class="flex items-center gap-3 px-4 py-2.5"><span class="text-[12.5px] text-text-secondary">Holders</span><span class="ml-auto mono text-[12.5px] text-text-secondary">48,214</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 bg-surface border border-border-subtle rounded-lg px-4 py-3.5">
+              <div class="flex items-center justify-between text-[11px] mb-2">
+                <span class="font-semibold text-text-secondary">Where HYPE sits · Core 96.2%</span>
+                <span class="font-semibold text-text-secondary">Wrapped on EVM 3.8%</span>
+              </div>
+              <div class="flex w-full overflow-hidden rounded-full bg-surface-2" style="height:10px">
+                <div class="h-full bg-brand" style="width:96.2%"></div>
+                <div class="h-full bg-gold" style="width:3.8%"></div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="w-[280px] shrink-0 border-l border-border-subtle bg-surface/40 px-4 py-5 space-y-4">
+            <div class="flex items-baseline gap-2">
+              <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary">Context</span>
+              <span class="text-[11px] text-text-tertiary ml-auto">rail stays open</span>
+            </div>
+
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">HYPE, other intents</h3>
+              </div>
+              <div class="divide-y divide-border-subtle">
+                <a class="cross"><span class="cross-verb">Trade</span><span class="cross-label">HYPE / USDC spot book</span></a>
+                <a class="cross"><span class="cross-verb">Trade</span><span class="cross-label">HYPE perp · funding 0.0031%</span></a>
+                <a class="cross"><span class="cross-verb">Explore</span><span class="cross-label">Delegate to a validator</span></a>
+                <a class="cross"><span class="cross-verb">Track</span><span class="cross-label">Your HYPE across both layers</span></a>
+                <a class="cross"><span class="cross-verb">Learn</span><span class="cross-label">Why WHYPE exists</span></a>
+              </div>
+            </div>
+
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">Watching</h3>
+                <a class="ml-auto shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">Edit →</a>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle hover:bg-surface-2/60 transition-colors">
+                <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">01</span>
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HY</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">HYPE</div><div class="mono text-[10px] text-text-tertiary truncate">$65.56</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-success">+2.66%</div>
+              </div>
+              <div class="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-2/60 transition-colors">
+                <span class="mono w-4 shrink-0 text-[11px] text-text-tertiary">02</span>
+                <div class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary">HL</div>
+                <div class="min-w-0"><div class="text-[12.5px] font-medium text-text-primary truncate">HLP vault</div><div class="mono text-[10px] text-text-tertiary truncate">$356.9M TVL</div></div>
+                <div class="ml-auto shrink-0 mono text-[12.5px] font-medium text-success">+1.28%</div>
+              </div>
+            </div>
+
+            <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+              <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
+                <h3 class="text-[13px] font-medium text-text-primary truncate">On this page</h3>
+              </div>
+              <div class="px-4 py-3 space-y-2">
+                <a class="anchor" data-active>Supply &amp; price</a>
+                <a class="anchor">Core side</a>
+                <a class="anchor">EVM side</a>
+                <a class="anchor">Buybacks &amp; burn</a>
+                <a class="anchor">Revenue</a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ Legend ══════════════════════ -->
+  <section class="px-8 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div class="bg-surface border border-border-subtle rounded-lg p-5">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Left rail · the verbs</div>
+        <p class="text-[12.5px] text-text-secondary mt-2.5 leading-relaxed">
+          Five intents, never nested twice. A group label carries a one-line caption so the verb is unambiguous
+          on first visit. Collapsed, the group separators keep the five blocks readable at 56px.
+        </p>
+      </div>
+      <div class="bg-surface border border-border-subtle rounded-lg p-5">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Scope bar · the perimeter</div>
+        <p class="text-[12.5px] text-text-secondary mt-2.5 leading-relaxed">
+          The <span class="mono text-brand text-[11.5px]">MarketScopeBar</span> pattern, generalised to every section:
+          siblings on the left, the Core / EVM / Both layer switch on the right. It is the only place the two halves
+          of Hyperliquid are named.
+        </p>
+      </div>
+      <div class="bg-surface border border-border-subtle rounded-lg p-5">
+        <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Right rail · the nouns</div>
+        <p class="text-[12.5px] text-text-secondary mt-2.5 leading-relaxed">
+          Watching (yours, everywhere) · On this page (anchors) · Other intents (the same object seen from the four
+          other verbs). It is what pays back the cost of splitting an object across sections.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ── Liquid layer — verbatim port of LiquidMark (see kit.html) ── */
+const MARK_SHAPES = `
+  <polygon points="462.14 405.28 437.5 405.28 386.14 311.63 310.14 173.05 234.15 311.63 182.79 405.28 158.15 405.28 234.15 266.7 310.14 128.13 386.14 266.7 462.14 405.28"
+           fill="currentColor" stroke="currentColor" stroke-width="28.92" stroke-miterlimit="10" __PEAK__/>
+  <path d="m478.82,491.36c0,89.4-75.3,161.86-168.17,161.86s-168.18-72.46-168.18-161.86h26.62c0,74.76,62.98,135.35,140.65,135.35s140.63-60.59,140.63-135.35h28.44Z"
+        fill="currentColor" stroke="currentColor" stroke-width="30.43" stroke-miterlimit="10" __ARC__/>`;
+
+document.querySelectorAll('[data-mark]').forEach((el) => {
+  const duo = el.getAttribute('data-mark') === 'duo';
+  const shapes = MARK_SHAPES
+    .replace('__PEAK__', duo ? 'class="text-text-primary"' : '')
+    .replace('__ARC__', duo ? 'class="text-brand"' : '');
+  el.innerHTML = `<svg viewBox="-17 63 656 656" fill="none" aria-hidden="true"
+    style="width:100%;height:100%;display:block">${shapes}</svg>`;
+});
+
+/* ── Nav icons (lucide-shaped, 16px, currentColor) ── */
+const ICONS = {
+  home:    '<path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/>',
+  candles: '<path d="M7 4v3M7 17v3M17 4v3M17 17v3"/><rect x="4.5" y="7" width="5" height="10" rx="1"/><rect x="14.5" y="7" width="5" height="10" rx="1"/>',
+  swap:    '<path d="M4 9h13l-3-3M20 15H7l3 3"/>',
+  pie:     '<path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/>',
+  wallet:  '<path d="M3 8a2 2 0 0 1 2-2h11"/><path d="M3 8h15a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="16" cy="13.5" r="1.1"/>',
+  star:    '<path d="m12 3.5 2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/>',
+  book:    '<path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v18H6.5A1.5 1.5 0 0 1 5 19.5z"/><path d="M9 3v18"/>',
+  pen:     '<path d="M4 20h4L20 8l-4-4L4 16z"/><path d="m14.5 5.5 4 4"/>',
+  user:    '<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+  blocks:  '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m12 12 8-4.5M12 12v9M12 12 4 7.5"/>',
+  drop:    '<path d="M12 3s6 6.4 6 10a6 6 0 0 1-12 0c0-3.6 6-10 6-10z"/>',
+  nodes:   '<circle cx="12" cy="5" r="2.3"/><circle cx="5" cy="19" r="2.3"/><circle cx="19" cy="19" r="2.3"/><path d="M11 7.2 6.2 16.6M13 7.2l4.8 9.4M7.4 19h9.2"/>',
+  vault:   '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="12" r="3.6"/><path d="M12 4v4M12 16v4"/>',
+  zap:     '<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
+  fuel:    '<path d="M4 20V5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v15"/><path d="M3 20h12M6 9h5"/><path d="M17 9h2a1 1 0 0 1 1 1v6a1.4 1.4 0 0 1-2.8 0V6l-2.7-2"/>',
+  library: '<rect x="3" y="4" width="4" height="16" rx="1"/><rect x="9" y="4" width="4" height="16" rx="1"/><path d="m15.5 5.5 4.2 13.5"/>',
+  tag:     '<path d="M3 12V5a2 2 0 0 1 2-2h7l9 9-9 9z"/><circle cx="7.6" cy="7.6" r="1.2"/>',
+  cap:     '<path d="m3 9 9-4 9 4-9 4z"/><path d="M7 11.4V17c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-5.6"/>',
+  globe:   '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.4 2.6 3.7 5.7 3.7 9S14.4 18.4 12 21c-2.4-2.6-3.7-5.7-3.7-9S9.6 5.6 12 3z"/>',
+  boxes:   '<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>',
+  heart:   '<path d="M12 20s-7.2-4.6-7.2-9.5A3.8 3.8 0 0 1 12 8.2a3.8 3.8 0 0 1 7.2 2.3C19.2 15.4 12 20 12 20z"/>',
+  gavel:   '<path d="m3 20 7-7"/><path d="m8.5 6.5 6 6"/><path d="m12 3 8 8-2.5 2.5-8-8z"/>',
+  hammer:  '<path d="m13.5 6.5 4 4-8 8-4-4z"/><path d="m13.5 6.5 3-3 4 4-3 3"/>',
+  flask:   '<path d="M10 3v6.2L4.4 18.7A1.5 1.5 0 0 0 5.7 21h12.6a1.5 1.5 0 0 0 1.3-2.3L14 9.2V3"/><path d="M9 3h6M7.6 14h8.8"/>',
+};
+document.querySelectorAll('[data-icon]').forEach((el) => {
+  const k = el.getAttribute('data-icon');
+  el.outerHTML = `<svg class="nav-ic" width="16" height="16" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
+    aria-hidden="true">${ICONS[k] || ''}</svg>`;
+});
+</script>
+
+<style>
+  /* Composed only from kit tokens, no raw hex. */
+  .rail-link { display:flex; align-items:center; gap:.625rem; height:32px; padding:0 .625rem;
+    border-radius:6px; font-size:13px; cursor:pointer; }
+  .rail-group { padding:.75rem .625rem .35rem; font-size:10px; text-transform:uppercase;
+    letter-spacing:.1em; display:flex; align-items:baseline; gap:.5rem; }
+  .rail-caption { font-size:9.5px; letter-spacing:.02em; text-transform:none; }
+  .rail-count { margin-left:auto; font-size:10px; }
+  .rail-sep { width:20px; height:1px; margin:.4rem 0; }
+  .rail-ic { width:34px; height:32px; display:grid; place-items:center; border-radius:6px; cursor:pointer; }
+  .scope-tab { padding:.25rem .625rem; border-radius:6px; font-size:12.5px; white-space:nowrap; cursor:pointer; }
+  .anchor { display:block; font-size:12px; padding-left:.625rem; border-left:2px solid transparent; cursor:pointer; }
+  .cross { display:flex; align-items:center; gap:.5rem; padding:.5rem 1rem; cursor:pointer; }
+  .cross-verb { font-size:9.5px; text-transform:uppercase; letter-spacing:.08em; width:44px; flex:none; }
+  .cross-label { font-size:12px; min-width:0; }
+  .th { padding:.625rem 1rem; font-size:10px; text-transform:uppercase; letter-spacing:.08em; font-weight:500; }
+  .td { padding:.75rem 1rem; }
+  .th2 { padding:.5rem .75rem; font-size:10px; text-transform:uppercase; letter-spacing:.08em; font-weight:500; }
+  .td2 { padding:.5rem .75rem; }
+  .nav-ic { flex:none; }
+</style>
+<script>
+  /* Token classes applied to the composed selectors so nothing is a raw hex. */
+  const apply = (sel, cls) => document.querySelectorAll(sel).forEach(e => e.classList.add(...cls.split(' ')));
+  apply('.rail-link', 'hover:bg-surface-2 transition-colors');
+  apply('.rail-link:not([data-current]):not([data-active])', 'text-text-secondary hover:text-text-primary');
+  apply('.rail-link[data-active]', 'text-text-primary hover:text-text-primary');
+  apply('.rail-link[data-current]', 'bg-brand/10 text-brand font-medium');
+  apply('.rail-group', 'text-text-tertiary');
+  apply('.rail-caption', 'text-text-tertiary/70');
+  apply('.rail-count', 'text-text-tertiary');
+  apply('.rail-sep', 'bg-border-subtle');
+  apply('.rail-ic', 'hover:bg-surface-2 transition-colors');
+  apply('.rail-ic:not([data-current])', 'text-text-tertiary hover:text-text-primary');
+  apply('.rail-ic[data-current]', 'bg-brand/10 text-brand');
+  apply('.scope-tab', 'transition-colors');
+  apply('.scope-tab:not([data-active])', 'text-text-tertiary hover:text-text-primary');
+  apply('.scope-tab[data-active]', 'text-brand font-medium bg-brand/10');
+  apply('.anchor:not([data-active])', 'text-text-tertiary hover:text-text-primary border-border-subtle');
+  apply('.anchor[data-active]', 'text-text-primary border-brand');
+  apply('.cross', 'hover:bg-surface-2/60 transition-colors');
+  apply('.cross-verb', 'text-text-tertiary');
+  apply('.cross-label', 'text-text-secondary truncate');
+  apply('.th', 'text-text-tertiary border-b border-border-subtle');
+  apply('.th2', 'text-text-tertiary border-b border-border-subtle');
+  apply('.tr2', 'border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors');
+</script>
+</body>
+</html>
