@@ -87,6 +87,9 @@ export const ExportButton = memo(function ExportButton({
     } catch (error) {
       setMessage(await readExportError(error));
       setFailed(true);
+      // The server refuses over capacity without spending the quota, so the
+      // count has not moved — but a refetch keeps the display honest either way.
+      await refetchQuota();
     } finally {
       setRunning(false);
     }
@@ -191,7 +194,7 @@ export const ExportButton = memo(function ExportButton({
             ) : (
               <Download className="w-3 h-3" />
             )}
-            Export
+            {running ? "Building…" : "Export"}
           </Button>
         </div>
       </PopoverContent>
