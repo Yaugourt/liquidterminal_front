@@ -103,9 +103,31 @@ export async function GET(request: NextRequest) {
 
   const hypeUsd = breakdown.meta?.hypeUsd ?? null;
   const spotMultiplier = breakdown.meta?.spotMultiplier ?? 2;
-  // A source with no band would otherwise be named in the formula with nothing
-  // to show for it, which reads as a missing number rather than an absent one.
-  const hip4Pending = breakdown.meta?.sourceStatus?.hip4 === "not_yet_live";
+
+  /**
+   * A total is only as complete as the feeds behind it. When a source is down,
+   * its rows come back as zero and the headline silently understates revenue —
+   * so the tile has to say which sources are missing, not just print the sum.
+   * Naming them in the formula while they contribute nothing would be worse
+   * than leaving them out: it claims coverage the number does not have.
+   */
+  const SOURCE_LABELS: Record<string, string> = {
+    perpSpot: "perp/spot",
+    hip1: "HIP-1 auctions",
+    hip3: "HIP-3 auctions",
+    hip4: "HIP-4",
+    priority: "priority fees",
+  };
+  const status = breakdown.meta?.sourceStatus ?? {};
+  const missing = Object.entries(status)
+    .filter(([, s]) => s === "error" || s === "stale")
+    .map(([k]) => SOURCE_LABELS[k] ?? k);
+  const pending = Object.entries(status)
+    .filter(([, s]) => s === "not_yet_live")
+    .map(([k]) => SOURCE_LABELS[k] ?? k);
+  const included = Object.entries(status)
+    .filter(([, s]) => s === "ok")
+    .map(([k]) => SOURCE_LABELS[k] ?? k);
   const stamp = new Date(breakdown.meta?.lastUpdate ?? Date.now()).toISOString().slice(0, 16).replace("T", " ");
 
   return new ImageResponse(
@@ -236,8 +258,7 @@ export async function GET(request: NextRequest) {
               first long method string and breaks the alignment. */}
           <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
             <div style={{ display: "flex" }}>
-              {`Perp + spot (×${spotMultiplier}) + HIP-1/HIP-3 auctions + priority fees`}
-              {hip4Pending ? " · HIP-4 pending mainnet" : " + HIP-4"}
+              {`Covers ${included.join(", ") || "no source"} · spot ×${spotMultiplier}`}
               {hypeUsd ? ` · HYPE @ $${hypeUsd.toFixed(2)}` : ""}
             </div>
             <div style={{ display: "flex", marginLeft: "auto", color: C.brand, letterSpacing: 1 }}>
@@ -247,6 +268,16 @@ export async function GET(request: NextRequest) {
           <div style={{ display: "flex", marginTop: 6 }}>
             {`Sources: Hypurrscan · HypeDexer · Hyperliquid — ${stamp} UTC`}
           </div>
+          {missing.length > 0 && (
+            <div style={{ display: "flex", marginTop: 6, color: C.warn }}>
+              {`Understated: ${missing.join(", ")} unavailable at capture time`}
+            </div>
+          )}
+          {pending.length > 0 && (
+            <div style={{ display: "flex", marginTop: 6 }}>
+              {`${pending.join(", ")} not yet live on mainnet`}
+            </div>
+          )}
         </div>
       </div>
     ),
