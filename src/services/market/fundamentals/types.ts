@@ -120,3 +120,45 @@ export interface UseFeeRevenueHistoryResult {
   error: Error | null;
   refetch: () => Promise<void>;
 }
+
+/**
+ * Trailing-twelve-month multiples at one point in time.
+ *
+ * TTM rather than an annualised shorter window because a quarter of crypto
+ * revenue annualises to whatever the quarter happened to be. The multiple is
+ * only worth quoting on a basis the reader can compare to an exchange.
+ *
+ * Both bases are reported. Circulating is what the market actually prices;
+ * fully diluted is what it will price once the vesting schedule finishes, and
+ * with roughly 70% of the supply still to enter float the two answers differ by
+ * more than a factor of three. Publishing one without the other picks a side.
+ */
+export interface ValuationMultiples {
+  /** Trailing twelve months of gross fees. */
+  ttmFees: number | null;
+  /** Trailing twelve months of protocol revenue. */
+  ttmRevenue: number | null;
+  /** Days the trailing figures are actually built from. */
+  ttmDays: number;
+  marketCap: number | null;
+  fdv: number | null;
+  /** Market cap ÷ TTM fees. */
+  priceToFees: number | null;
+  /** Market cap ÷ TTM revenue — the P/E of a protocol. */
+  priceToEarnings: number | null;
+  /** The same two on fully diluted supply. */
+  priceToFeesFd: number | null;
+  priceToEarningsFd: number | null;
+  /** TTM revenue ÷ market cap. The inverse of P/E, read as a yield. */
+  earningsYield: number | null;
+  earningsYieldFd: number | null;
+}
+
+/** One day of the multiple series, on a fully diluted basis. */
+export interface MultiplePoint {
+  time: number;
+  /** Fully diluted valuation that day: close × max supply. */
+  fdv: number;
+  priceToFees: number;
+  priceToEarnings: number;
+}
