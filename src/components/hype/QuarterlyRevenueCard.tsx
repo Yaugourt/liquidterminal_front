@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { ChartError, ChartLoading, chartPalette } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toQuarters, useFeeRevenueHistory, type RevenueQuarter } from "@/services/market/fundamentals";
+import { SeriesLegend } from "./SeriesLegend";
 
 /**
  * Protocol revenue by calendar quarter.
@@ -248,6 +249,13 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
           </ResponsiveContainer>
         )}
       </div>
+
+      <SeriesLegend
+        items={[
+          { key: "revenue", label: "Protocol revenue", color: chartPalette.accent, shape: "bar" },
+          { key: "paidOut", label: "Paid out", color: chartPalette.violet, shape: "bar" },
+        ]}
+      />
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
         <span>Source: DefiLlama daily series, aggregated to calendar quarters</span>

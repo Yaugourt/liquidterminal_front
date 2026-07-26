@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { ChartError, ChartLoading, PeriodSelector, chartPalette } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown, type RevenueWindow } from "@/services/market/revenue";
+import { SeriesLegend } from "./SeriesLegend";
 
 /**
  * Where revenue comes from, over time.
@@ -111,7 +112,10 @@ const MixTooltip = ({
 
 export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
   const [window, setWindow] = useState<RevenueWindow>("90d");
-  const [view, setView] = useState<View>("share");
+  // Dollars by default. Perp is over 90% of the book, so the share view draws
+  // one flat band and reads as a broken chart; the concentration it exists to
+  // show is stated more precisely by the percentages in the legend below.
+  const [view, setView] = useState<View>("usd");
   const uid = useId().replace(/:/g, "");
   const { breakdown, isLoading, error } = useRevenueBreakdown(window);
 
@@ -246,15 +250,14 @@ export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3.5 py-2 border-t border-border-subtle">
-        {live.map((s) => (
-          <span key={s.key} className="flex items-center gap-1.5 text-[10.5px] text-text-secondary">
-            <span className="h-2 w-2 rounded-sm" style={{ background: s.color }} />
-            {s.label}
-            <span className="text-text-tertiary mono">{(s.share * 100).toFixed(1)}%</span>
-          </span>
-        ))}
-      </div>
+      <SeriesLegend
+        items={live.map((s) => ({
+          key: s.key,
+          label: s.label,
+          color: s.color,
+          value: `${(s.share * 100).toFixed(1)}%`,
+        }))}
+      />
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
         <span>Source: our own six-source breakdown</span>

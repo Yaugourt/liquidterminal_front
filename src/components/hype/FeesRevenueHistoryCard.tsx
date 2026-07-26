@@ -18,6 +18,7 @@ import { Card } from "@/components/ui/card";
 import { ChartError, ChartLoading, PeriodSelector, chartPalette } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { movingAverage, useFeeRevenueHistory, type FeeRevenueDay } from "@/services/market/fundamentals";
+import { SeriesLegend } from "./SeriesLegend";
 
 /**
  * The income statement as a time series.
@@ -353,6 +354,20 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
           </ResponsiveContainer>
         )}
       </div>
+
+      <SeriesLegend
+        items={
+          view === "split"
+            ? [
+                { key: "revenue", label: "Protocol revenue", color: chartPalette.accent },
+                { key: "paidOut", label: "Paid out", color: chartPalette.violet },
+              ]
+            : [
+                { key: "margin", label: `Gross margin, ${MARGIN_SMOOTHING}d average`, color: chartPalette.accent, shape: "line" },
+                { key: "avg", label: "Window average", color: chartPalette.gold, shape: "line" },
+              ]
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
         <span>Source: DefiLlama daily series</span>

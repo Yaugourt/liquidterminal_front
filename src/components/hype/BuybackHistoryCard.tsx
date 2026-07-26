@@ -17,6 +17,7 @@ import { ChartError, ChartLoading, chartPalette } from "@/components/common";
 import { compactHype, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useAfBuybacks } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
+import { SeriesLegend } from "./SeriesLegend";
 
 /**
  * The buyback, day by day, against the revenue that funds it.
@@ -262,6 +263,13 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
           </ResponsiveContainer>
         )}
       </div>
+
+      <SeriesLegend
+        items={[
+          { key: "buyback", label: "Bought back", color: chartPalette.accent, shape: "bar" },
+          { key: "revenue", label: "Protocol revenue", color: chartPalette.gold, shape: "line" },
+        ]}
+      />
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
         <span>Bars: Assistance Fund fills · line: our six-source revenue</span>
