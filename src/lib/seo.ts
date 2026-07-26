@@ -259,11 +259,45 @@ export const seoConfig = {
     image: "/og/market.png",
   },
 
+  // The dashboard holds no personal data — it is the ecosystem overview, split
+  // into four scopes. The old "track your portfolio" copy promised an account
+  // page that never existed here (that is /profile).
   dashboard: {
-    title: "Dashboard - Your Hyperliquid Overview",
-    description: "Personalized dashboard for your Hyperliquid activity. Track your portfolio, positions, transactions, and more.",
-    keywords: ["crypto dashboard", "portfolio overview", "trading dashboard", "Hyperliquid account"],
+    title: "Dashboard - Hyperliquid Ecosystem Overview",
+    description: "Live overview of the Hyperliquid ecosystem: network activity, market venues, capital allocation, and the projects building on it.",
+    keywords: ["Hyperliquid dashboard", "ecosystem overview", "Hyperliquid metrics", "onchain activity"],
     path: "/dashboard",
+  },
+
+  dashboardMarket: {
+    title: "Market Overview - Hyperliquid Venues",
+    description: "Perpetuals, HIP-3 markets, spot trading, live liquidations and TWAP flow across Hyperliquid, in one recap.",
+    keywords: ["Hyperliquid market overview", "perpetuals", "HIP-3", "spot markets", "liquidations"],
+    path: "/dashboard/market",
+    image: "/og/market.png",
+  },
+
+  dashboardCapital: {
+    title: "Capital Overview - Hyperliquid Vaults, Validators & Traders",
+    description: "Protocol revenue, stablecoin supply, vault and validator allocation, plus the wallets moving size on Hyperliquid.",
+    keywords: ["Hyperliquid capital", "protocol revenue", "vaults", "validators", "wallet tracker"],
+    path: "/dashboard/capital",
+    image: "/og/explorer.png",
+  },
+
+  dashboardEcosystem: {
+    title: "Ecosystem Overview - Projects & Research on Hyperliquid",
+    description: "Protocols building on Hyperliquid ranked by TVL and fees via DefiLlama, alongside the most saved research and read lists.",
+    keywords: ["Hyperliquid ecosystem", "DefiLlama", "protocol TVL", "Hyperliquid projects", "research"],
+    path: "/dashboard/ecosystem",
+    image: "/og/ecosystem.png",
+  },
+
+  exportPage: {
+    title: "Export Hyperliquid Data as CSV",
+    description: "Download Hyperliquid market, chain and capital data as CSV: fills, liquidations, HIP-3 and HIP-4 markets, vaults, validators and more, over the date range you choose.",
+    keywords: ["Hyperliquid CSV", "export data", "Hyperliquid API", "onchain data download", "trading data"],
+    path: "/export",
   },
 
   publicGoodsPage: {

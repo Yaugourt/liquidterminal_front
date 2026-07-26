@@ -131,6 +131,10 @@ const eslintConfig = [
       "src/components/ui/table-states.tsx",
       // labs/charts/** are isolated showcases (see AGENTS.md); hex is permitted there.
       "src/components/labs/charts/**/*.{ts,tsx}",
+      // Share tiles are rendered by Satori, which understands neither CSS
+      // variables nor Tailwind — only literal inline styles. This file is to
+      // tiles what chartTheme.ts is to charts: the one place their hex lives.
+      "src/lib/og/tileTheme.ts",
       // OverviewModule is the canonical compact-table primitive — it's allowed
       // to render the underlying <table>; the grid-cols rule isn't relevant
       // here either since it doesn't use Tailwind arbitrary grids.

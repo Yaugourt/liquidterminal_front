@@ -114,11 +114,13 @@ export const Hip3TopDeployersCard = memo(function Hip3TopDeployersCard() {
       href="/market/perpdex"
     >
       <ModuleTable
+        // Declared widths make the table `table-fixed` so deployer names
+        // truncate instead of widening the card past its column.
         columns={[
           { header: "Deployer" },
-          { header: "Markets" },
-          { header: "Vol" },
-          { header: "OI" },
+          { header: "Markets", width: 74 },
+          { header: "Vol", width: 84 },
+          { header: "OI", width: 84 },
         ]}
       >
         {isLoading && top.length === 0 && (
