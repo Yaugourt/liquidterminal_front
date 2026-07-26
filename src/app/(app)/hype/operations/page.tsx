@@ -1,7 +1,7 @@
 "use client";
 
 import { SectionHead } from "@/components/dashboard/SectionHead";
-import { FeeRunRateCard, OperatingMetricsCard } from "@/components/hype";
+import { FeeRunRateCard, OperatingMetricsCard, TvlHistoryCard } from "@/components/hype";
 
 /**
  * HYPE · Operations — what the venue actually moved.
@@ -34,6 +34,14 @@ export default function HypeOperationsPage() {
           subtitle="Fees charged per hour, perp against spot · the session cycle"
         />
         <FeeRunRateCard />
+      </section>
+
+      <section className="space-y-2.5">
+        <SectionHead
+          title="Deposit base"
+          subtitle="Collateral parked on the venue · the slowest number the protocol has"
+        />
+        <TvlHistoryCard />
       </section>
     </div>
   );

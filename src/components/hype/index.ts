@@ -18,3 +18,6 @@ export { QuarterlyRevenueCard } from "./QuarterlyRevenueCard";
 export { RevenueMixHistoryCard } from "./RevenueMixHistoryCard";
 export { BuybackHistoryCard } from "./BuybackHistoryCard";
 export { FeeRunRateCard } from "./FeeRunRateCard";
+export { TvlHistoryCard } from "./TvlHistoryCard";
+export { ValuationMultiplesCard } from "./ValuationMultiplesCard";
+export { MultipleHistoryCard } from "./MultipleHistoryCard";

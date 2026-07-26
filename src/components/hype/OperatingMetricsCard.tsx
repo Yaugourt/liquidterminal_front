@@ -7,7 +7,6 @@ import { ChartError, ChartLoading, KpiRibbon } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
-import { useActiveUsers } from "@/services/market/activeusers";
 
 /**
  * The operating side of the business: what the venue moved, what it holds open
@@ -21,12 +20,15 @@ import { useActiveUsers } from "@/services/market/activeusers";
  * rolling 24h snapshot; dividing one by the other mixes two windows, and the
  * only public volume series on a matching basis measures the spot DEX rather
  * than traded notional. It arrives with a volume history of our own.
+ *
+ * There is no account count either. The nearest endpoint is a top-traders
+ * leaderboard: its `totalCount` reports the size of the ranked pool and is
+ * capped at 100, so it reads "100 active traders" no matter how many accounts
+ * traded. A number that never moves is worse than an absent one.
  */
 export const OperatingMetricsCard = memo(function OperatingMetricsCard() {
   const { stats: perp, isLoading: loadingPerp, error: perpError } = usePerpGlobalStats();
   const { stats: spot, isLoading: loadingSpot, error: spotError } = useSpotGlobalStats();
-  const { metadata, isLoading: loadingUsers } = useActiveUsers({ hours: 24, limit: 1 });
-
   const turnover =
     perp?.totalVolume24h && perp?.totalOpenInterest
       ? perp.totalVolume24h / perp.totalOpenInterest
@@ -80,14 +82,6 @@ export const OperatingMetricsCard = memo(function OperatingMetricsCard() {
                   value: spot?.totalPairs == null ? "—" : compactCount(spot.totalPairs),
                 },
                 { label: "USDC on spot", value: compactUsd(spot?.totalSpotUSDC ?? null) },
-                {
-                  label: "Active traders",
-                  value:
-                    loadingUsers || metadata?.totalCount == null
-                      ? "—"
-                      : compactCount(metadata.totalCount),
-                  sub: "last 24h",
-                },
               ]}
             />
           </div>
@@ -98,6 +92,8 @@ export const OperatingMetricsCard = memo(function OperatingMetricsCard() {
         <span>Source: Hyperliquid info API via our backend</span>
         <span className="opacity-50">·</span>
         <span>Turnover is derived from the same snapshot as its two legs.</span>
+        <span className="opacity-50">·</span>
+        <span>No account count: no source we hold reports one that moves.</span>
       </div>
     </Card>
   );
