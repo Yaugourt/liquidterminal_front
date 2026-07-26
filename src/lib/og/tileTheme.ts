@@ -23,6 +23,8 @@ export const tileColors = {
   textSecondary: "#9BA7B8",
   textTertiary: "#5E6B7E",
   brand: "#83E9FF",
+  /** Caveats that change how the number should be read. */
+  warn: "#F9E370",
 } as const;
 
 /** Brand halo behind a tile headline, matching the app shell's own glow. */
