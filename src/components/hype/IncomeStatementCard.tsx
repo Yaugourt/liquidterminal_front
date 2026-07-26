@@ -95,7 +95,9 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      {/* flex-wrap: at 375 the title, the period pill and the four tabs do not
+          fit one line, and without it the last tab is clipped off the card. */}
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Receipt size={13} className="text-brand" />
         </span>

@@ -229,7 +229,8 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
                 tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
-                minTickGap={24}
+                // 44px: at 375 the thirteen day labels collide at anything tighter.
+                minTickGap={44}
               />
               <YAxis
                 tickFormatter={(v) => formatUsdAxis(Number(v))}

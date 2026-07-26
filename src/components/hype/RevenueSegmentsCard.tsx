@@ -78,7 +78,9 @@ export const RevenueSegmentsCard = memo(function RevenueSegmentsCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      {/* flex-wrap: same reason as the income statement — the tab row is the
+          first thing to fall off the card edge at 375. */}
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <PieChart size={13} className="text-brand" />
         </span>
