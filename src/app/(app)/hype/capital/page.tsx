@@ -4,7 +4,7 @@ import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
   AssistanceFundCard,
   BurnCard,
-  CapitalReturnedCard,
+  BuybackHistoryCard,
   GenesisDistributionCard,
   HypeStakingCard,
   SupplyScarcityCard,
@@ -24,9 +24,9 @@ export default function HypeCapitalPage() {
       <section className="space-y-2.5">
         <SectionHead
           title="Returns to holders"
-          subtitle="What share of revenue comes back as a buyback"
+          subtitle="What the fund bought each day against the revenue that funds it"
         />
-        <CapitalReturnedCard />
+        <BuybackHistoryCard />
       </section>
 
       <section className="space-y-2.5">
