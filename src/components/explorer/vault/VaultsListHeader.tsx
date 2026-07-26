@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, ExternalLink, Plus } from "lucide-react";
+import { ExternalLink, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/common";
-import type {
-  UseVaultsDirectoryResult,
-  VaultRow,
-} from "@/services/explorer/vault/hooks/useVaultsDirectory";
+import { ExportButton } from "@/components/export/ExportButton";
+import type { UseVaultsDirectoryResult } from "@/services/explorer/vault/hooks/useVaultsDirectory";
 
 interface VaultsListHeaderProps {
   directory: UseVaultsDirectoryResult;
@@ -23,55 +21,8 @@ function formatRelative(ms: number): string {
   return `${h}h ago`;
 }
 
-function buildCsv(rows: VaultRow[]): string {
-  const header = [
-    "rank",
-    "name",
-    "address",
-    "leader",
-    "tvl",
-    "apr_percent",
-    "followers",
-    "commission_percent",
-    "isClosed",
-    "createdAtMs",
-  ];
-  const lines = rows.map((r, i) => {
-    const esc = (v: string | number | boolean | null) => {
-      const s = v === null || v === undefined ? "" : String(v);
-      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-    };
-    return [
-      i + 1,
-      esc(r.summary.name),
-      r.summary.vaultAddress,
-      r.summary.leader,
-      r.summary.tvl,
-      r.apr.toFixed(4),
-      r.followerCount ?? "",
-      r.leaderCommission !== null ? (r.leaderCommission * 100).toFixed(2) : "",
-      r.summary.isClosed,
-      r.summary.createTimeMillis,
-    ].join(",");
-  });
-  return [header.join(","), ...lines].join("\n");
-}
-
-function downloadCsv(rows: VaultRow[]) {
-  const blob = new Blob([buildCsv(rows)], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  const stamp = new Date().toISOString().split("T")[0];
-  a.href = url;
-  a.download = `liquid-terminal-vaults-${stamp}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
 export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
-  const { dataUpdatedAt, filtered } = directory;
+  const { dataUpdatedAt } = directory;
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -96,21 +47,7 @@ export function VaultsListHeader({ directory }: VaultsListHeaderProps) {
       description={description}
       actions={
         <>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5 text-xs font-medium"
-            onClick={() => downloadCsv(filtered)}
-            disabled={filtered.length === 0}
-            title={
-              filtered.length === 0
-                ? "No rows to export"
-                : `Export ${filtered.length} filtered rows`
-            }
-          >
-            <Download className="h-3 w-3" />
-            Export CSV
-          </Button>
+          <ExportButton datasetId="vault-summaries" label="Export CSV" />
           <Button
             size="sm"
             className="h-8 gap-1.5 text-xs font-semibold bg-brand hover:bg-brand/90 text-brand-text-on"

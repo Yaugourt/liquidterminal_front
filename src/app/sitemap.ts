@@ -15,6 +15,12 @@ const WIKI_CHAPTERS = Object.keys(CHAPTER_CATEGORY_MAP).map(slugify)
  */
 const STATIC_ROUTES: Array<{ path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }> = [
   { path: '', changeFrequency: 'daily', priority: 1 },
+  // Dashboard scopes
+  { path: '/dashboard', changeFrequency: 'hourly', priority: 0.9 },
+  { path: '/dashboard/market', changeFrequency: 'hourly', priority: 0.7 },
+  { path: '/dashboard/capital', changeFrequency: 'hourly', priority: 0.7 },
+  { path: '/dashboard/ecosystem', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/export', changeFrequency: 'weekly', priority: 0.6 },
   // Explorer
   { path: '/explorer', changeFrequency: 'daily', priority: 0.9 },
   { path: '/explorer/vaults', changeFrequency: 'hourly', priority: 0.8 },

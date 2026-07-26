@@ -9,7 +9,7 @@ import {
   ChartLoading,
 } from "@/components/common";
 import { fullUsd } from "@/lib/formatters/numberFormatting";
-import { HypeMark } from "@/components/common";
+import { HypeMark, ShareTile } from "@/components/common";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import type { RevenueWindow } from "@/services/market/revenue";
 import { RevenueChart } from "./RevenueChart";
@@ -75,6 +75,14 @@ export const FeesRevenuePanel = memo(function FeesRevenuePanel() {
             </Fragment>
           ))}
         </div>
+        {/* Offered only once there is something to cite. */}
+        {days.length > 0 && (
+          <ShareTile
+            src={`/api/tile/revenue?window=${window}`}
+            filename={`liquidterminal-revenue-${window}`}
+            label="Copy revenue as image"
+          />
+        )}
       </div>
 
       {/* body — chart + KPI strip (left) / breakdown + capital base (right) */}
