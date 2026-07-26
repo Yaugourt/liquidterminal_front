@@ -8,6 +8,7 @@ import { ChartError, ChartLoading, chartPalette } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toHourlyFeeFlow } from "@/services/market/fees/derive";
 import { useFeesHistory } from "@/services/market/fees/hooks/useFeesHistory";
+import { SeriesLegend } from "./SeriesLegend";
 
 /**
  * The venue's fee rate, hour by hour, split by book.
@@ -224,6 +225,13 @@ export const FeeRunRateCard = memo(function FeeRunRateCard() {
           </ResponsiveContainer>
         )}
       </div>
+
+      <SeriesLegend
+        items={[
+          { key: "perp", label: "Perp", color: chartPalette.accent },
+          { key: "spot", label: "Spot", color: chartPalette.gold },
+        ]}
+      />
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
         <span>Derived from our own cumulative fee counter, differenced per hour</span>

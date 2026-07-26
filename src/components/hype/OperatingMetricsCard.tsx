@@ -7,6 +7,7 @@ import { ChartError, ChartLoading, KpiRibbon } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
+import { useActiveTraders24h, useTotalFills24h } from "@/services/indexer/overview";
 
 /**
  * The operating side of the business: what the venue moved, what it holds open
@@ -16,19 +17,32 @@ import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalSt
  * many times the book turns in a day. Both legs come from the same perp
  * snapshot, so the ratio is internally consistent.
  *
+ * Accounts and fills come from the indexer, which counts them directly. Its
+ * volume figure is left alone: it reports roughly 2.8x the venue's own 24h
+ * notional, and until that gap is explained the two cannot sit in the same
+ * card. Counts have no such ambiguity — a fill is a fill whatever the notional
+ * attached to it.
+ *
  * There is deliberately no take rate. Revenue is a daily series and volume is a
  * rolling 24h snapshot; dividing one by the other mixes two windows, and the
  * only public volume series on a matching basis measures the spot DEX rather
  * than traded notional. It arrives with a volume history of our own.
- *
- * There is no account count either. The nearest endpoint is a top-traders
- * leaderboard: its `totalCount` reports the size of the ranked pool and is
- * capped at 100, so it reads "100 active traders" no matter how many accounts
- * traded. A number that never moves is worse than an absent one.
  */
+/** "+9.8% vs prior 24h", or nothing when the endpoint reports no variation. */
+const signedPct = (value: number | null | undefined): string | undefined =>
+  value == null || !Number.isFinite(value)
+    ? undefined
+    : `${value >= 0 ? "+" : ""}${value.toFixed(1)}% vs prior 24h`;
+
+const toneOf = (value: number | null | undefined): "success" | "danger" | undefined =>
+  value == null || !Number.isFinite(value) ? undefined : value >= 0 ? "success" : "danger";
+
 export const OperatingMetricsCard = memo(function OperatingMetricsCard() {
   const { stats: perp, isLoading: loadingPerp, error: perpError } = usePerpGlobalStats();
   const { stats: spot, isLoading: loadingSpot, error: spotError } = useSpotGlobalStats();
+  const { data: traders } = useActiveTraders24h();
+  const { data: fills } = useTotalFills24h();
+
   const turnover =
     perp?.totalVolume24h && perp?.totalOpenInterest
       ? perp.totalVolume24h / perp.totalOpenInterest
@@ -82,6 +96,18 @@ export const OperatingMetricsCard = memo(function OperatingMetricsCard() {
                   value: spot?.totalPairs == null ? "—" : compactCount(spot.totalPairs),
                 },
                 { label: "USDC on spot", value: compactUsd(spot?.totalSpotUSDC ?? null) },
+                {
+                  label: "Active traders",
+                  value: traders?.value == null ? "—" : compactCount(traders.value),
+                  sub: signedPct(traders?.variationPct),
+                  tone: toneOf(traders?.variationPct),
+                },
+                {
+                  label: "Fills",
+                  value: fills?.value == null ? "—" : compactCount(fills.value),
+                  sub: signedPct(fills?.variationPct),
+                  tone: toneOf(fills?.variationPct),
+                },
               ]}
             />
           </div>
@@ -93,7 +119,7 @@ export const OperatingMetricsCard = memo(function OperatingMetricsCard() {
         <span className="opacity-50">·</span>
         <span>Turnover is derived from the same snapshot as its two legs.</span>
         <span className="opacity-50">·</span>
-        <span>No account count: no source we hold reports one that moves.</span>
+        <span>Accounts and fills are counted by our indexer; its volume is not shown here.</span>
       </div>
     </Card>
   );
