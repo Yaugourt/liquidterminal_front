@@ -69,3 +69,54 @@ export interface UseProtocolFundamentalsResult {
   error: Error | null;
   refetch: () => Promise<void>;
 }
+
+/**
+ * One completed UTC day of the fee/revenue split.
+ *
+ * The aggregate publishes the two ends as separate daily series; joining them
+ * on the day is what turns a pair of totals into a margin that can be watched
+ * over time. The running day is dropped upstream: it is a few hours of fees
+ * against a full day of history and would read as a collapse.
+ */
+export interface FeeRevenueDay {
+  /** UTC midnight of the day (ms). */
+  time: number;
+  /** What users paid to trade. */
+  fees: number;
+  /** What the protocol kept. */
+  revenue: number;
+  /** fees − revenue: paid to HLP, builders and spot deployers. */
+  paidOut: number;
+  /** revenue ÷ fees. Null on a day with no fees rather than zero. */
+  margin: number | null;
+}
+
+/**
+ * A calendar quarter aggregated from the daily series.
+ *
+ * The unit an equity reader compares in. The running quarter is kept but
+ * flagged: dropping it hides the trend the reader came for, and printing it
+ * unmarked invites a comparison against a full quarter.
+ */
+export interface RevenueQuarter {
+  /** Short label, e.g. "Q2 26". */
+  label: string;
+  /** First day of the quarter (ms) — sort key and x axis. */
+  time: number;
+  fees: number;
+  revenue: number;
+  /** Days present in the series for this quarter. */
+  days: number;
+  /** True while the quarter is still running. */
+  partial: boolean;
+  /** Revenue growth over the previous quarter. Null for the first, and for
+   *  any comparison against a partial one, which would understate it. */
+  qoq: number | null;
+}
+
+export interface UseFeeRevenueHistoryResult {
+  days: FeeRevenueDay[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
