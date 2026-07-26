@@ -40,6 +40,12 @@ interface OverviewModuleProps {
   /** Link to the full page. Omit to hide the "View all" link — e.g. when the
    * module is already rendered on that destination page. */
   href?: string;
+  /**
+   * Slot pinned to the right of the head, before the "View all" link — the home
+   * of card-level actions such as the CSV export button. Lives on the primitive
+   * so an action reaches every module without editing a single page.
+   */
+  actions?: ReactNode;
   /** Card body: a table or a leaderboard list. */
   children?: ReactNode;
   className?: string;
@@ -52,6 +58,7 @@ export const OverviewModule = memo(function OverviewModule({
   tagVariant = "pill",
   viewAllLabel,
   href,
+  actions,
   children,
   className,
 }: OverviewModuleProps) {
@@ -77,10 +84,13 @@ export const OverviewModule = memo(function OverviewModule({
               {tag}
             </span>
           ))}
+        {actions && (
+          <span className="ml-auto shrink-0 flex items-center gap-1">{actions}</span>
+        )}
         {href && (
           <Link
             href={href}
-            className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+            className={`shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors ${actions ? "" : "ml-auto"}`}
           >
             {viewAllLabel ?? "View all"}
             <ArrowRight size={12} />

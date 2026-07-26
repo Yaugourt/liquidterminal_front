@@ -177,6 +177,19 @@ export const useSidebarPreferences = create<SidebarPreferencesState>()(
       // Bumped with the family rename; persist drops the old v1 blob, then
       // `initializePreferences` seeds the new defaults.
       version: CURRENT_VERSION,
+      /**
+       * Same trap as `use-sidebar-ui`: a versioned store without a migrate makes
+       * zustand discard any entry whose version differs (including the
+       * unversioned ones written before CURRENT_VERSION existed) and log
+       * "State loaded from storage couldn't be migrated".
+       *
+       * Stale layouts are dropped rather than merged — that is already the rule
+       * `initializePreferences` applies on a version mismatch, and a half-merged
+       * layout would resurrect groups the new version no longer defines.
+       */
+      migrate: (): Pick<SidebarPreferencesState, "preferences"> => ({
+        preferences: null,
+      }),
     }
   )
 );

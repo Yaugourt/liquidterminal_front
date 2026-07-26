@@ -54,6 +54,9 @@ interface SidebarUiState {
  */
 const DEFAULT_FOLDED_GROUPS = ["capital", "chain", "ecosystem", "learn"];
 
+/** Bump alongside a breaking change to the persisted shape, then extend `migrate`. */
+const SIDEBAR_UI_VERSION = 2;
+
 export const useSidebarUi = create<SidebarUiState>()(
   persist(
     (set) => ({
@@ -84,11 +87,25 @@ export const useSidebarUi = create<SidebarUiState>()(
       storage: createJSONStorage(() => localStorage),
       // Bumped whenever the default fold set changes so persisted blobs don't
       // pin the old layout. v1: all families collapsed on load. v2: Markets
-      // opens by default. A version mismatch with no migrate discards the old
-      // blob, so everyone picks up the new default once. Adding a field (e.g.
-      // `navMode`) needs no bump — persist merges shallowly over the initial
-      // state, so an older blob simply inherits the new field's default.
-      version: 2,
+      // opens by default. Adding a field (e.g. `navMode`) needs no bump —
+      // persist merges shallowly over the initial state, so an older blob
+      // simply inherits the new field's default.
+      version: SIDEBAR_UI_VERSION,
+      /**
+       * Without a migrate, zustand discards a mismatched blob AND logs
+       * "State loaded from storage couldn't be migrated" — an error every
+       * returning user saw on load.
+       *
+       * Returning only `collapsed` keeps the intent of the version bump: every
+       * other field, `foldedGroups` included, falls back to the initial state,
+       * so everyone still picks up the new default fold set once. The rail's
+       * collapsed state is the one thing worth carrying across, and it is the
+       * only field this store held before the families landed.
+       */
+      migrate: (persisted): Pick<SidebarUiState, "collapsed"> => {
+        const collapsed = (persisted as Partial<SidebarUiState> | null)?.collapsed;
+        return { collapsed: typeof collapsed === "boolean" ? collapsed : false };
+      },
     }
   )
 );

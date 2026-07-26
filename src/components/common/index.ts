@@ -8,6 +8,7 @@
 // Atomic UI helpers
 export { TokenAvatar } from './TokenAvatar';
 export { HypeMark } from './HypeMark';
+export { ShareTile } from './ShareTile';
 export { LiquidMark } from './LiquidMark';
 export { AddressIdenticon } from './AddressIdenticon';
 export { PriceChange, getPriceChangeColor, formatPriceChange } from './PriceChange';
