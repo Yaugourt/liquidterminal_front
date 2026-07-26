@@ -142,9 +142,11 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
       <div className="grid grid-cols-3 gap-px bg-border-subtle">
         {[
           {
-            label: summary.last ? `${summary.last.label} revenue` : "Last quarter",
+            // Fixed label with the quarter in the sub line: "Q2 26 revenue"
+            // does not fit a third of a 375px card and truncates to "Q2 26 REVE…".
+            label: "Revenue",
             value: summary.last ? compactUsd(summary.last.revenue) : "—",
-            sub: "last completed quarter",
+            sub: summary.last ? `${summary.last.label} · last complete` : "no closed quarter",
             tone: "" as const,
           },
           {
@@ -161,7 +163,7 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
           },
         ].map((cell) => (
           <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate">
+            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
               {cell.label}
             </div>
             <div
