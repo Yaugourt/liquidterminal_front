@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Terminal — CSV export</title>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  CSV EXPORT — two entry points, one engine.
+
+    A · Card action   a download icon in the card head → popover pre-filled
+                      with that card's dataset and its current filters.
+    B · /export page  the same engine with full parameter control (time
+                      window, coin, side, size floor, columns, row cap).
+
+  Every dataset, endpoint and parameter below is real: taken from the routes
+  LiquidTerminal_Back already proxies to HypeDexer (start_time / end_time /
+  coin / side / size_usd / order / limit / cursor).
+
+  Blocks copied from dash-mockups/kit.html (1:1 with React primitives).
+  ════════════════════════════════════════════════════════════════════════
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root — keep in sync.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .scrollbar-brand::-webkit-scrollbar { height: 4px; }
+  .scrollbar-brand::-webkit-scrollbar-thumb { background: #2C354A; border-radius: 2px; }
+  [data-panel] { display: none; }
+  [data-panel].is-active { display: block; }
+  .mk-note {
+    font: 400 11px/1.5 "JetBrains Mono", monospace;
+    color: #83E9FF; background: rgba(131,233,255,.06);
+    border: 1px dashed rgba(131,233,255,.3); border-radius: 6px; padding: 8px 10px;
+  }
+  .mk-warn { color: #F9E370; background: rgba(249,227,112,.06); border-color: rgba(249,227,112,.32); }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+
+<div class="max-w-[1400px] mx-auto px-6 py-8">
+
+  <div class="w-full space-y-3">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div class="space-y-1.5 min-w-0">
+        <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">CSV export</h1>
+        <p class="text-sm text-text-secondary max-w-2xl">Two entry points, one engine. Quota enforced server-side.</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="flex items-center gap-1 mt-5 mb-5 overflow-x-auto scrollbar-brand">
+    <span class="text-[10px] uppercase tracking-[0.1em] text-text-tertiary mr-2 shrink-0">Surface</span>
+    <button data-tab="card" class="tab px-2.5 py-1 rounded-md text-[12.5px] whitespace-nowrap transition-colors text-brand font-medium bg-brand/10">A · Card action</button>
+    <button data-tab="page" class="tab px-2.5 py-1 rounded-md text-[12.5px] whitespace-nowrap transition-colors text-text-tertiary hover:text-text-primary">B · /export page</button>
+    <button data-tab="states" class="tab px-2.5 py-1 rounded-md text-[12.5px] whitespace-nowrap transition-colors text-text-tertiary hover:text-text-primary">C · States</button>
+  </nav>
+
+
+  <!-- ══════════════════════ A · CARD ACTION ══════════════════════ -->
+  <div data-panel="card" class="is-active space-y-6">
+
+    <div class="mk-note">The icon lives in the card head, left of "View all →". Adding it to <span class="text-gold">OverviewModule</span> covers 24 cards and to <span class="text-gold">TypedDataTable</span> another 50, without touching a single page.</div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+      <!-- resting state -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">1 · Resting — icon only, no cost</div>
+        <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+          <div class="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+            <span class="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#83E9FF" stroke-width="2" class="w-3 h-3"><path d="M3 17V7m4 10V11m4 6V4m4 13v-8m4 8V9"/></svg>
+            </span>
+            <h3 class="text-[13px] font-semibold text-text-primary truncate">Top Vaults</h3>
+            <span class="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">$305.18M TVL</span>
+            <button class="ml-auto shrink-0 w-6 h-6 grid place-items-center rounded-md text-text-tertiary hover:text-brand hover:bg-surface-2 transition-colors" title="Export CSV">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            </button>
+            <a class="shrink-0 text-[11px] text-text-tertiary hover:text-text-primary">All vaults →</a>
+          </div>
+          <table class="w-full border-collapse table-fixed">
+            <colgroup><col><col style="width:72px"><col style="width:96px"></colgroup>
+            <thead><tr>
+              <th class="px-4 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">Vault</th>
+              <th class="px-4 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">APR</th>
+              <th class="px-4 py-2 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">TVL</th>
+            </tr></thead>
+            <tbody>
+              <tr class="border-b border-border-subtle hover:bg-surface-2 transition-colors">
+                <td class="px-4 py-2.5 overflow-hidden text-left"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">HY</div><div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">Hyperliquidity Provider</div><div class="text-[10px] text-text-tertiary truncate mono">0x677d...84e7</div></div></div></td>
+                <td class="px-4 py-2.5 text-right"><span class="mono text-[12.5px] font-semibold text-success">0.1%</span></td>
+                <td class="px-4 py-2.5 text-right"><span class="mono text-[12.5px] text-text-primary">$225.73M</span></td>
+              </tr>
+              <tr class="border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
+                <td class="px-4 py-2.5 overflow-hidden text-left"><div class="flex items-center gap-2.5"><div class="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-brand/10 text-brand">HG</div><div class="min-w-0"><div class="text-[12.5px] font-semibold text-text-primary truncate">HyperGrowth</div><div class="text-[10px] text-text-tertiary truncate mono">0x2b80...6f4b</div></div></div></td>
+                <td class="px-4 py-2.5 text-right"><span class="mono text-[12.5px] font-semibold text-success">+214%</span></td>
+                <td class="px-4 py-2.5 text-right"><span class="mono text-[12.5px] text-text-primary">$13.30M</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- popover open -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">2 · Clicked — popover, pre-filled from the card</div>
+        <div class="bg-surface border border-border-default rounded-lg w-full max-w-[400px] shadow-2xl">
+          <div class="flex items-center gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+            <span class="text-[12.5px] font-semibold text-text-primary">Export · Top Vaults</span>
+            <button class="ml-auto text-text-tertiary hover:text-text-primary text-[14px] leading-none">×</button>
+          </div>
+
+          <div class="px-3.5 py-3 space-y-3">
+            <div class="space-y-1.5">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Rows</div>
+              <div class="flex items-center gap-3 text-xs">
+                <button class="text-brand font-medium">Visible <span class="mono text-text-tertiary">5</span></button>
+                <button class="text-text-tertiary hover:text-text-primary">Full dataset <span class="mono">3,241</span></button>
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Columns</div>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">name ✓</span>
+                <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">address ✓</span>
+                <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">tvl ✓</span>
+                <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">apr ✓</span>
+                <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary">leader</span>
+                <span class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary">isClosed</span>
+              </div>
+            </div>
+
+            <div class="rounded-md bg-surface-2 border border-border-subtle px-2.5 py-2">
+              <div class="text-[9.5px] uppercase tracking-[0.08em] text-text-tertiary mb-1">Request</div>
+              <div class="mono text-[10.5px] text-text-secondary break-all">GET /market/vaults?limit=3241&amp;sortBy=tvl</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 px-3.5 py-2.5 border-t border-border-subtle">
+            <span class="text-[11px] text-text-tertiary"><span class="mono text-text-secondary">1</span> export left today</span>
+            <a class="text-[11px] text-text-tertiary hover:text-brand underline decoration-dotted">More options</a>
+            <button class="ml-auto h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3 h-3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Export
+            </button>
+          </div>
+        </div>
+        <p class="text-[11.5px] text-text-tertiary max-w-[400px]">"More options" opens <span class="mono text-text-secondary">/export</span> with this dataset and these filters already applied.</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════ B · EXPORT PAGE ══════════════════════ -->
+  <div data-panel="page" class="space-y-6">
+
+    <div class="mk-note">One page, three columns: pick a dataset, shape the query, see exactly what you get. The parameter form is generated from a per-dataset manifest, so adding a dataset is one object, not a new screen.</div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[240px_minmax(0,1fr)_300px] gap-4 items-start">
+
+      <!-- dataset picker -->
+      <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+          <h3 class="text-[13px] font-semibold text-text-primary">Dataset</h3>
+          <span class="ml-auto shrink-0 text-[11px] text-text-tertiary">14</span>
+        </div>
+        <div class="px-2 py-2 space-y-3">
+          <div>
+            <div class="px-1.5 pb-1 text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Trading</div>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md bg-brand/10 text-brand text-[12.5px] font-medium flex items-center gap-2">Perp fills <span class="mono text-[10px] ml-auto text-brand/70">time</span> <span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Spot fills <span class="mono text-[10px] ml-auto">time</span> <span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Liquidations <span class="mono text-[10px] ml-auto">time</span> <span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Completed trades <span class="mono text-[10px] ml-auto">time</span> <span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">TWAP orders</button>
+          </div>
+          <div>
+            <div class="px-1.5 pb-1 text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Chain</div>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">EVM transactions <span class="mono text-[10px] ml-auto">time</span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">EVM transfers <span class="mono text-[10px] ml-auto">time</span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">HIP-3 fills <span class="mono text-[10px] ml-auto">time</span></button>
+          </div>
+          <div>
+            <div class="px-1.5 pb-1 text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Capital</div>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Vaults <span class="ml-auto"><span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Validators <span class="ml-auto"><span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Top traders <span class="ml-auto"><span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></span></button>
+          </div>
+          <div>
+            <div class="px-1.5 pb-1 text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Ecosystem</div>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Projects <span class="ml-auto"><span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px] flex items-center gap-2">Builders <span class="ml-auto"><span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span></span></button>
+            <button class="w-full text-left px-1.5 py-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-2 text-[12.5px]">Wiki resources</button>
+          </div>
+        </div>
+        <div class="px-3.5 py-2.5 border-t border-border-subtle">
+          <div class="space-y-1">
+            <div><span class="mono text-[10px] text-text-tertiary">time</span><span class="text-[10.5px] text-text-tertiary"> = accepts a date window</span></div>
+            <div><span class="mono text-[9px] px-1 rounded bg-brand/15 text-brand border border-brand/25">v1</span><span class="text-[10.5px] text-text-tertiary"> = shipped in the first release</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- parameters -->
+      <div class="min-w-0 space-y-4">
+
+        <div class="bg-surface border border-border-subtle rounded-lg">
+          <div class="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+            <h3 class="text-[13px] font-semibold text-text-primary">Perp fills</h3>
+            <span class="text-[11px] text-text-tertiary">every fill on the perp order book</span>
+            <span class="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">/indexer/fills</span>
+          </div>
+
+          <div class="px-3.5 py-3.5 space-y-4">
+
+            <!-- time window -->
+            <div class="space-y-2">
+              <div class="flex items-baseline gap-2">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Time window</div>
+                <span class="text-[10.5px] text-text-tertiary ml-auto">UTC</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-3 text-xs">
+                <button class="text-text-tertiary hover:text-text-primary">24h</button>
+                <button class="text-text-tertiary hover:text-text-primary">7d</button>
+                <button class="text-text-tertiary hover:text-text-primary">30d</button>
+                <button class="text-brand font-medium">Custom</button>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="space-y-1">
+                  <label class="text-[10.5px] text-text-tertiary">From</label>
+                  <input value="2026-07-01T00:00" type="datetime-local" class="w-full px-3 h-8 text-[12.5px] mono bg-transparent border border-border-subtle rounded-md text-text-primary" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10.5px] text-text-tertiary">To</label>
+                  <input value="2026-07-26T00:00" type="datetime-local" class="w-full px-3 h-8 text-[12.5px] mono bg-transparent border border-border-subtle rounded-md text-text-primary" />
+                </div>
+              </div>
+            </div>
+
+            <!-- filters -->
+            <div class="space-y-2">
+              <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Filters</div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div class="space-y-1">
+                  <label class="text-[10.5px] text-text-tertiary">Coin</label>
+                  <input value="HYPE" placeholder="all" class="w-full px-3 h-8 text-[12.5px] mono bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10.5px] text-text-tertiary">Side</label>
+                  <div class="flex items-center gap-3 h-8 text-xs">
+                    <button class="text-brand font-medium">All</button>
+                    <button class="text-text-tertiary hover:text-text-primary">Buy</button>
+                    <button class="text-text-tertiary hover:text-text-primary">Sell</button>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10.5px] text-text-tertiary">Min size (USD)</label>
+                  <input value="10000" class="w-full px-3 h-8 text-[12.5px] mono bg-transparent border border-border-subtle rounded-md text-text-primary" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div class="space-y-1 sm:col-span-2">
+                  <label class="text-[10.5px] text-text-tertiary">Trader address</label>
+                  <input placeholder="0x… — leave empty for the market-wide feed" class="w-full px-3 h-8 text-[12.5px] mono bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-[10.5px] text-text-tertiary">Order</label>
+                  <div class="flex items-center gap-3 h-8 text-xs">
+                    <button class="text-brand font-medium">Newest</button>
+                    <button class="text-text-tertiary hover:text-text-primary">Oldest</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- columns -->
+            <div class="space-y-2">
+              <div class="flex items-baseline gap-2">
+                <div class="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">Columns</div>
+                <button class="ml-auto text-[10.5px] text-text-tertiary hover:text-brand">Select all</button>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">time ✓</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">coin ✓</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">side ✓</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">px ✓</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">sz ✓</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">size_usd ✓</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-brand/10 border border-brand/30 text-brand">user ✓</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary">hash</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary">fee</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary">closed_pnl</span>
+                <span class="inline-flex items-center text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary">has_priority_gas</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- preview -->
+        <div class="bg-surface border border-border-subtle rounded-lg overflow-hidden">
+          <div class="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+            <h3 class="text-[13px] font-semibold text-text-primary">Preview</h3>
+            <span class="text-[11px] text-text-tertiary">first 5 rows · free, does not spend your export</span>
+            <button class="ml-auto shrink-0 h-7 text-[11px] font-medium inline-flex items-center px-2.5 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Refresh</button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead><tr>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">time</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">coin</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">side</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">px</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">sz</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-right">size_usd</th>
+                <th class="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left">user</th>
+              </tr></thead>
+              <tbody class="mono text-[11.5px]">
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60"><td class="px-4 py-2 text-text-secondary">2026-07-25T23:58:12Z</td><td class="px-4 py-2 text-text-primary">HYPE</td><td class="px-4 py-2 text-success">B</td><td class="px-4 py-2 text-right text-text-secondary">58.48</td><td class="px-4 py-2 text-right text-text-secondary">4120.5</td><td class="px-4 py-2 text-right text-text-primary">240,966</td><td class="px-4 py-2 text-text-tertiary">0x7f3a…b91c</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60"><td class="px-4 py-2 text-text-secondary">2026-07-25T23:57:44Z</td><td class="px-4 py-2 text-text-primary">HYPE</td><td class="px-4 py-2 text-danger">A</td><td class="px-4 py-2 text-right text-text-secondary">58.51</td><td class="px-4 py-2 text-right text-text-secondary">1980.0</td><td class="px-4 py-2 text-right text-text-primary">115,850</td><td class="px-4 py-2 text-text-tertiary">0x2c9d…4e07</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60"><td class="px-4 py-2 text-text-secondary">2026-07-25T23:56:03Z</td><td class="px-4 py-2 text-text-primary">HYPE</td><td class="px-4 py-2 text-success">B</td><td class="px-4 py-2 text-right text-text-secondary">58.44</td><td class="px-4 py-2 text-right text-text-secondary">920.7</td><td class="px-4 py-2 text-right text-text-primary">53,806</td><td class="px-4 py-2 text-text-tertiary">0xa14b…d2f8</td></tr>
+                <tr class="border-b border-border-subtle hover:bg-surface-2/60"><td class="px-4 py-2 text-text-secondary">2026-07-25T23:55:21Z</td><td class="px-4 py-2 text-text-primary">HYPE</td><td class="px-4 py-2 text-danger">A</td><td class="px-4 py-2 text-right text-text-secondary">58.47</td><td class="px-4 py-2 text-right text-text-secondary">610.2</td><td class="px-4 py-2 text-right text-text-primary">35,678</td><td class="px-4 py-2 text-text-tertiary">0xf4f7…239f</td></tr>
+                <tr class="hover:bg-surface-2/60"><td class="px-4 py-2 text-text-secondary">2026-07-25T23:54:09Z</td><td class="px-4 py-2 text-text-primary">HYPE</td><td class="px-4 py-2 text-success">B</td><td class="px-4 py-2 text-right text-text-secondary">58.39</td><td class="px-4 py-2 text-right text-text-secondary">205.4</td><td class="px-4 py-2 text-right text-text-primary">11,993</td><td class="px-4 py-2 text-text-tertiary">0x7789…f60d</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- summary rail -->
+      <div class="space-y-4">
+        <div class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+          <div class="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+            <h3 class="text-[13px] font-semibold text-text-primary">Your export</h3>
+          </div>
+          <div class="px-3.5 py-3 space-y-3">
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="text-[11.5px] text-text-secondary">Matching rows</span>
+              <span class="mono text-[15px] font-medium text-text-primary">18,442</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="text-[11.5px] text-text-secondary">Row cap</span>
+              <span class="mono text-[12.5px] text-text-primary">50,000</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="text-[11.5px] text-text-secondary">Columns</span>
+              <span class="mono text-[12.5px] text-text-primary">7 / 11</span>
+            </div>
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="text-[11.5px] text-text-secondary">Est. size</span>
+              <span class="mono text-[12.5px] text-text-secondary">~2.1 MB</span>
+            </div>
+            <div class="h-px bg-border-subtle"></div>
+            <div class="space-y-1.5">
+              <div class="text-[9.5px] uppercase tracking-[0.08em] text-text-tertiary">Resolved request</div>
+              <div class="mono text-[10.5px] text-text-secondary break-all leading-relaxed">GET /export/fills?start_time=2026-07-01T00:00:00Z&amp;end_time=2026-07-26T00:00:00Z&amp;coin=HYPE&amp;size_usd=10000&amp;order=desc</div>
+            </div>
+          </div>
+          <div class="px-3.5 py-2.5 border-t border-border-subtle space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-text-tertiary">Exports left today</span>
+              <span class="ml-auto mono text-[12.5px] font-medium text-brand">1 / 1</span>
+            </div>
+            <button class="w-full h-9 gap-1.5 text-xs font-semibold inline-flex items-center justify-center rounded-md bg-brand text-brand-text-on hover:bg-brand/90">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-3.5 h-3.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Export 18,442 rows
+            </button>
+            <p class="text-[10.5px] text-text-tertiary text-center">Resets 24h after your last export.</p>
+          </div>
+        </div>
+
+        <div class="mk-note">The row count and the preview are cheap <span class="text-gold">count</span> / <span class="text-gold">limit=5</span> calls. Only the download spends the quota, so nobody burns their export on a typo.</div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════ C · STATES ══════════════════════ -->
+  <div data-panel="states" class="space-y-6">
+
+    <div class="mk-note">The states that decide whether this feels fair. Each is a real branch of the flow, not decoration.</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+
+      <!-- logged out -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">Signed out</div>
+        <div class="bg-surface border border-border-subtle rounded-lg p-4 space-y-3">
+          <p class="text-[12.5px] text-text-secondary">Exports are tied to your account so the quota can be counted.</p>
+          <button class="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90">Connect</button>
+        </div>
+      </div>
+
+      <!-- quota spent -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">Quota spent</div>
+        <div class="bg-surface border border-border-subtle rounded-lg p-4 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-gold/10 border border-gold/25 text-gold font-medium">0 / 1 left</span>
+          </div>
+          <p class="text-[12.5px] text-text-secondary">Your export resets in <span class="mono text-text-primary">18h 24m</span>.</p>
+          <p class="text-[11.5px] text-text-tertiary">Last export: <span class="mono">perp fills · 18,442 rows · today 05:36</span></p>
+          <button disabled class="h-8 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary cursor-not-allowed">Export</button>
+        </div>
+      </div>
+
+      <!-- too many rows -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">Over the row cap</div>
+        <div class="bg-surface border border-border-subtle rounded-lg p-4 space-y-3">
+          <p class="text-[12.5px] text-text-secondary">Your window matches <span class="mono text-text-primary">412,908</span> rows, above the <span class="mono">50,000</span> cap.</p>
+          <div class="mk-note mk-warn">Narrow the window, raise the size floor, or export the newest 50,000.</div>
+          <div class="flex items-center gap-2">
+            <button class="h-8 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Newest 50,000</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- running -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">Running</div>
+        <div class="bg-surface border border-border-subtle rounded-lg p-4 space-y-3">
+          <p class="text-[12.5px] text-text-secondary">Paging HypeDexer…</p>
+          <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand opacity-80" style="width:62%"></div></div>
+          <p class="mono text-[11px] text-text-tertiary">11,400 / 18,442 rows</p>
+        </div>
+      </div>
+
+      <!-- done -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">Done</div>
+        <div class="bg-surface border border-border-subtle rounded-lg p-4 space-y-3">
+          <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Downloaded</span>
+          <p class="mono text-[11.5px] text-text-secondary break-all">liquid-terminal-perp-fills-20260701-20260726.csv</p>
+          <p class="text-[11.5px] text-text-tertiary">18,442 rows · 7 columns · 2.06 MB</p>
+        </div>
+      </div>
+
+      <!-- upstream degraded -->
+      <div class="space-y-2">
+        <div class="text-[11px] uppercase tracking-[0.08em] text-text-tertiary">Upstream down</div>
+        <div class="bg-surface border border-border-subtle rounded-lg p-4 space-y-3">
+          <p class="text-[12.5px] text-text-secondary">HypeDexer answered <span class="mono text-danger">402</span> partway through.</p>
+          <div class="mk-note mk-warn">Nothing was downloaded and <span class="text-gold">your export was not spent</span>. The quota is only recorded once the file is complete.</div>
+          <button class="h-8 text-xs font-medium inline-flex items-center px-3 rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary">Retry</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll(".tab");
+  const panels = document.querySelectorAll("[data-panel]");
+  const activeCls = ["text-brand", "font-medium", "bg-brand/10"];
+  const idleCls = ["text-text-tertiary", "hover:text-text-primary"];
+  function show(name) {
+    panels.forEach((p) => p.classList.toggle("is-active", p.dataset.panel === name));
+    tabs.forEach((t) => {
+      const on = t.dataset.tab === name;
+      t.classList.remove(...activeCls, ...idleCls);
+      t.classList.add(...(on ? activeCls : idleCls));
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => show(t.dataset.tab)));
+</script>
+
+</body>
+</html>
