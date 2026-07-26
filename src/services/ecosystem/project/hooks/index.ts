@@ -5,6 +5,8 @@ export { useProjectContext } from './useProjectContext';
 export { useTvlHistory } from './useTvlHistory';
 export { useChainStats } from './useChainStats';
 export { useProjectsMetricsMap } from './useProjectsMetricsMap';
+export { useRankedProjects } from './useRankedProjects';
+export type { RankedProject, ProjectCategoryTotal, UseRankedProjectsResult } from './useRankedProjects';
 export { useCategories } from './useCategories';
 export { useCreateProject } from './useCreateProject';
 export { useCreateCategory } from './useCreateCategory';

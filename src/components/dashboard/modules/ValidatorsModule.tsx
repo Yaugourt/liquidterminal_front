@@ -34,12 +34,14 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
       href="/explorer/validator"
     >
       <ModuleTable
+        // Declared widths make the table `table-fixed` so the validator name
+        // truncates; without them five dense columns push past every card.
         columns={[
           { header: "Validator" },
-          { header: "Stake" },
-          { header: "APR" },
-          { header: "Commission" },
-          { header: "Uptime" },
+          { header: "Stake", width: 86 },
+          { header: "APR", width: 62 },
+          { header: "Commission", width: 92 },
+          { header: "Uptime", width: 72 },
         ]}
       >
         {isLoading && topValidators.length === 0 && (

@@ -2,6 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { Vault } from "lucide-react";
+import { ExportButton } from "@/components/export/ExportButton";
 import {
   OverviewModule,
   ModuleTable,
@@ -30,18 +31,22 @@ export const VaultsModule = memo(function VaultsModule() {
       tag={`${compactUsd(totalTvl)} TVL`}
       viewAllLabel="All vaults"
       href="/explorer/vaults"
+      actions={<ExportButton datasetId="vault-summaries" />}
     >
+      {/* Three columns, leader folded into the vault identity: a fourth dense
+          column needs ~86px for an address, which a half-width card (and every
+          mobile card) cannot spare without clipping. Declared widths also switch
+          the table to `table-fixed`, so long vault names truncate. */}
       <ModuleTable
         columns={[
           { header: "Vault" },
-          { header: "APR" },
-          { header: "TVL" },
-          { header: "Leader" },
+          { header: "APR", width: 72 },
+          { header: "TVL", width: 96 },
         ]}
       >
         {isLoading && topVaults.length === 0 && (
           <tr>
-            <td colSpan={4} className="px-4 py-2.5 text-[12px] text-text-tertiary">
+            <td colSpan={3} className="px-4 py-2.5 text-[12px] text-text-tertiary">
               …
             </td>
           </tr>
@@ -55,15 +60,13 @@ export const VaultsModule = memo(function VaultsModule() {
                 key="vault"
                 logo={v.summary.name.slice(0, 2).toUpperCase()}
                 name={v.summary.name}
+                sub={truncateAddress(v.summary.leader)}
               />,
               <span key="apr" className="mono font-semibold text-success">
                 {`${v.apr.toFixed(1)}%`}
               </span>,
               <span key="tvl" className="mono text-text-primary">
                 {compactUsd(parseFloat(v.summary.tvl))}
-              </span>,
-              <span key="leader" className="mono text-text-secondary">
-                {truncateAddress(v.summary.leader)}
               </span>,
             ]}
           />
