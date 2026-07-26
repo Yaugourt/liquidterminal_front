@@ -2,6 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { LineChart } from "lucide-react";
+import { ExportButton } from "@/components/export/ExportButton";
 import {
   OverviewModule,
   ModuleTable,
@@ -109,14 +110,17 @@ export const Hip3MarketsPanel = memo(function Hip3MarketsPanel() {
       tag="by 24h vol"
       viewAllLabel="All perp DEXs"
       href="/market/perpdex"
+      actions={<ExportButton datasetId="hip3-assets" />}
     >
       {/* Top markets — strict ModuleTable (each row links to its primary DEX) */}
       <ModuleTable
+        // Declared widths make the table `table-fixed` so the ticker truncates
+        // instead of widening the card past its column.
         columns={[
           { header: "Ticker" },
-          { header: "Price" },
-          { header: "24h Vol" },
-          { header: "Open Interest" },
+          { header: "Price", width: 82 },
+          { header: "24h Vol", width: 88 },
+          { header: "Open Interest", width: 104 },
         ]}
       >
         {isLoading && topMarkets.length === 0 ? (

@@ -81,12 +81,14 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
       viewAllLabel={isSpot ? "All spot" : "All perp"}
       href={`/market/${market}`}
     >
+      {/* Declared widths switch the table to `table-fixed`: the asset name
+          truncates rather than widening the table past its card. */}
       <ModuleTable
         columns={[
           { header: isSpot ? "Token" : "Asset" },
-          { header: "Price" },
-          { header: "24h" },
-          { header: "Volume" },
+          { header: "Price", width: 90 },
+          { header: "24h", width: 70 },
+          { header: "Volume", width: 84 },
         ]}
       >
         {isLoading && rows.length === 0 && (

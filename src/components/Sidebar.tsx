@@ -19,6 +19,14 @@ import {
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
 
+/**
+ * Rail entries whose sub-routes are scope tabs (carried by a scope bar on the
+ * page), not destinations of their own. Their children must keep the parent
+ * entry highlighted. /market is deliberately absent: its sub-routes ARE rail
+ * entries, so prefix-matching it there would light two rows at once.
+ */
+const SCOPE_TAB_ROOTS = ["/dashboard"]
+
 const socials = [
     { name: 'Discord', href: '#', Icon: MessageCircle },
     { name: 'Twitter', href: 'https://x.com/liquidterminal', Icon: () => <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> },
@@ -119,6 +127,10 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const isItemActive = (item: NavigationItem): boolean =>
         pathname === item.href ||
         (item.href.startsWith("/market/") && pathname.startsWith(`${item.href}/`)) ||
+        // Roots whose sub-routes are scope tabs rather than rail entries: the
+        // parent must stay lit on /dashboard/capital & co, and no sibling entry
+        // can double-highlight since those scopes are not in the rail.
+        (SCOPE_TAB_ROOTS.includes(item.href) && pathname.startsWith(`${item.href}/`)) ||
         Boolean(item.children && item.children.some((child) => pathname === child.href));
 
     /** Icon node — token logo > custom image > lucide, in a fixed 16px slot. */

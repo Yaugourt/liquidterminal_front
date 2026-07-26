@@ -2,6 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { Wrench } from "lucide-react";
+import { ExportButton } from "@/components/export/ExportButton";
 import {
   OverviewModule,
   ModuleTable,
@@ -50,6 +51,7 @@ export const BuildersModule = memo(function BuildersModule() {
       tag={`${compactUsd(current?.totalBuilderFees)} fees 24h`}
       viewAllLabel="All builders"
       href="/market/builders"
+      actions={<ExportButton datasetId="builders" />}
     >
       <ModuleTable
         columns={[

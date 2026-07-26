@@ -1,12 +1,12 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ModuleTable, ModuleTableRow, SearchBar } from "@/components/common";
 import { ErrorState } from "@/components/ui/error-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ProjectModal } from "./ProjectModal";
+import { ProjectLogo } from "./ProjectLogo";
 import { useCategories, useProjectsMetricsMap } from "@/services/ecosystem/project";
 import { fetchAllProjects } from "@/services/ecosystem/project/api";
 import { Project, ProjectListMetric } from "@/services/ecosystem/project/types";
@@ -22,21 +22,6 @@ const DASH = <span className="mono text-text-tertiary">—</span>;
 /** Below this a TVL headline compacts to "$0.00" — an anti-signal, render a dash. */
 const TVL_DISPLAY_FLOOR = 1_000;
 const CATEGORIES_COLLAPSED = 7;
-
-/** Tiny logo with initials fallback (several r2.dev logos 404 in prod). */
-function RowLogo({ logo, name, muted }: { logo: string; name: string; muted?: boolean }) {
-  const [failed, setFailed] = useState(false);
-  if (!logo || failed) {
-    return (
-      <span className={`w-6 h-6 rounded bg-surface-2 border border-border-subtle grid place-items-center text-[8px] font-semibold shrink-0 ${muted ? "text-text-tertiary" : "text-text-secondary"}`}>
-        {name.slice(0, 2).toUpperCase()}
-      </span>
-    );
-  }
-  return (
-    <Image src={logo} alt={name} width={24} height={24} className="rounded object-cover shrink-0" onError={() => setFailed(true)} />
-  );
-}
 
 function changeCell(change7d: number | null | undefined): React.ReactNode {
   if (change7d == null) return DASH;
@@ -158,7 +143,7 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
         cells={[
           <span key="rank" className="mono text-[11px] text-text-tertiary">{rank ?? "—"}</span>,
           <span key="name" className="flex items-center gap-2.5 min-w-0">
-            <RowLogo logo={project.logo} name={project.title} muted={rank == null} />
+            <ProjectLogo logo={project.logo} name={project.title} muted={rank == null} />
             <span className="font-medium text-text-primary truncate shrink-0 max-w-[160px]">{project.title}</span>
             <span className="text-text-tertiary truncate hidden lg:inline text-[12px]">{project.desc}</span>
           </span>,
@@ -296,7 +281,7 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
                   onClick={() => router.push(`/ecosystem/project/${p.id}`)}
                   className="flex items-center gap-2 px-2 py-1.5 rounded w-full text-left hover:bg-surface-2"
                 >
-                  <RowLogo logo={p.logo} name={p.title} muted />
+                  <ProjectLogo logo={p.logo} name={p.title} muted />
                   <span className="text-text-primary truncate">{p.title}</span>
                   <span className="mono text-text-tertiary text-[10.5px] ml-auto shrink-0">
                     {new Date(p.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
