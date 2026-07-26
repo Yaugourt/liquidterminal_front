@@ -1,9 +1,8 @@
 "use client";
 
-import { PageHeader, PageFaq } from "@/components/common";
+import { PageFaq } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
-  HypePricePill,
   HypeHeroRibbon,
   HypePriceChart,
   SupplyScarcityCard,
@@ -16,7 +15,11 @@ import {
 import { HYPE_FAQ } from "@/lib/page-faqs";
 
 /**
- * HYPE — everything about Hyperliquid's native asset on one page.
+ * HYPE · Overview — the live state of Hyperliquid's native asset.
+ *
+ * The header, quote and scope bar live in the layout; this route owns the
+ * overview chapter only. Analysis that reads the token as a business is one
+ * scope over, in Financials.
  *
  * Flow (top → bottom):
  *  1. Overview            — live price, market cap / FDV, circulating, AF, lifetime revenue.
@@ -31,13 +34,6 @@ import { HYPE_FAQ } from "@/lib/page-faqs";
 export default function HypePage() {
   return (
     <div className="space-y-8">
-      <PageHeader
-        title="HYPE"
-        titleQualifier="· the Hyperliquid token"
-        description="The native asset of Hyperliquid — supply and scarcity, the Assistance Fund buyback flywheel, protocol revenue, burn and staking."
-        actions={<HypePricePill />}
-      />
-
       {/* 1 — Overview */}
       <section className="space-y-2.5">
         <SectionHead title="Overview" subtitle="Live price, valuation & headline supply" />
