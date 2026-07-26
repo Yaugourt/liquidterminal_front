@@ -8,3 +8,7 @@ export { FlywheelDiagram } from "./FlywheelDiagram";
 export { RevenueFlywheelCard } from "./RevenueFlywheelCard";
 export { BurnCard } from "./BurnCard";
 export { HypeStakingCard } from "./HypeStakingCard";
+export { HypeScopeBar } from "./HypeScopeBar";
+export { IncomeStatementCard } from "./IncomeStatementCard";
+export { RevenueSegmentsCard } from "./RevenueSegmentsCard";
+export { RevenueReconciliation } from "./RevenueReconciliation";
