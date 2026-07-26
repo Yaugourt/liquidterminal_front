@@ -13,6 +13,8 @@ interface ScopeItem {
 const SCOPES: ScopeItem[] = [
   { label: "Overview", href: "/hype", exact: true },
   { label: "Financials", href: "/hype/financials" },
+  { label: "Capital", href: "/hype/capital" },
+  { label: "Operations", href: "/hype/operations" },
 ];
 
 /**

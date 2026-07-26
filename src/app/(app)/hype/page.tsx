@@ -2,83 +2,38 @@
 
 import { PageFaq } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
-import {
-  HypeHeroRibbon,
-  HypePriceChart,
-  SupplyScarcityCard,
-  GenesisDistributionCard,
-  AssistanceFundCard,
-  RevenueFlywheelCard,
-  BurnCard,
-  HypeStakingCard,
-} from "@/components/hype";
+import { HypeHeroRibbon, HypePriceChart, RevenueFlywheelCard } from "@/components/hype";
 import { HYPE_FAQ } from "@/lib/page-faqs";
 
 /**
  * HYPE · Overview — the live state of Hyperliquid's native asset.
  *
  * The header, quote and scope bar live in the layout; this route owns the
- * overview chapter only. Analysis that reads the token as a business is one
- * scope over, in Financials.
+ * overview only: the quote, the chart, and the one diagram that explains how
+ * fees turn into buybacks. Everything that needs analysis rather than a glance
+ * moved to its own chapter — supply and buybacks to Capital, the statements to
+ * Financials, volume and accounts to Operations.
  *
- * Flow (top → bottom):
- *  1. Overview            — live price, market cap / FDV, circulating, AF, lifetime revenue.
- *  2. Supply & Scarcity   — current supply composition + genesis allocation & vesting.
- *  3. Buyback Flywheel     — Assistance Fund holdings, cost basis & buyback per day/week/month.
- *  4. Revenue & Burn      — protocol fees fueling the buyback · HYPE removed from supply.
- *  5. Staking & Security  — HYPE locked in proof-of-stake.
- *
- * All live figures come from the on-chain Hyperliquid info API and the backend
- * revenue endpoint, so the page stays consistent with the rest of the app.
+ * The page used to stack all five, which meant the price sat above 2,500px of
+ * mechanics nobody scrolled to.
  */
 export default function HypePage() {
   return (
     <div className="space-y-8">
-      {/* 1 — Overview */}
       <section className="space-y-2.5">
         <SectionHead title="Overview" subtitle="Live price, valuation & headline supply" />
         <HypeHeroRibbon />
         <HypePriceChart />
       </section>
 
-      {/* 2 — Supply & Scarcity */}
       <section className="space-y-2.5">
         <SectionHead
-          title="Supply &amp; Scarcity"
-          subtitle="How the 1B genesis HYPE splits today · allocation & vesting"
+          title="The Flywheel"
+          subtitle="How protocol fees become a buyback · the mechanics in one picture"
         />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <SupplyScarcityCard />
-          <GenesisDistributionCard />
-        </div>
+        <RevenueFlywheelCard />
       </section>
 
-      {/* 3 — The Buyback Flywheel */}
-      <section className="space-y-2.5">
-        <SectionHead
-          title="The Buyback Flywheel"
-          subtitle="Assistance Fund holdings, cost basis & estimated buyback per day / week / month"
-        />
-        <AssistanceFundCard />
-      </section>
-
-      {/* 4 — Revenue & Burn */}
-      <section className="space-y-2.5">
-        <SectionHead
-          title="Revenue &amp; Burn"
-          subtitle="Protocol fees that fund the buyback · HYPE removed from supply"
-        />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <RevenueFlywheelCard />
-          <BurnCard />
-        </div>
-      </section>
-
-      {/* 5 — Staking & Security */}
-      <section className="space-y-2.5">
-        <SectionHead title="Staking &amp; Security" subtitle="HYPE locked in proof-of-stake" />
-        <HypeStakingCard />
-      </section>
       <PageFaq items={HYPE_FAQ} />
     </div>
   );
