@@ -10,12 +10,15 @@ import { usePathname } from 'next/navigation'
 import { hasRole } from "@/lib/roleHelpers"
 import { useSidebarPreferences } from "@/store/use-sidebar-preferences"
 import { useSidebarUi } from "@/store/use-sidebar-ui"
+import { useSidebarBadges } from "@/hooks/useSidebarBadges"
 import {
     defaultNavigationGroups,
     getDefaultSidebarPreferences,
     applyPreferencesToNavigation,
+    getGroupId,
     type NavigationGroup,
-    type NavigationItem
+    type NavigationItem,
+    type NavigationAccent,
 } from "@/lib/sidebar-config"
 import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
 
@@ -63,7 +66,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     // collapsed state renders instantly instead of replaying its animation.
     const [animReady, setAnimReady] = useState(false);
     const { preferences, initializePreferences, getPreferences } = useSidebarPreferences();
-    const { collapsed, toggleCollapsed } = useSidebarUi();
+    const { collapsed, toggleCollapsed, foldedGroups, toggleGroup, navMode } = useSidebarUi();
+    // Live end-of-row counts (Market pairs, vaults, validators, projects, HYPE 24h).
+    const badges = useSidebarBadges();
     const [navigationGroups, setNavigationGroups] = useState<NavigationGroup[]>(defaultNavigationGroups);
 
     // Collapsed only applies to the desktop rail — the mobile drawer always
@@ -179,6 +184,42 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             {renderIcon(item, isActive)}
                         </span>
                         <span className={labelClass}>{item.name}</span>
+                        {/* End-of-row marker: colored pill (Core/new) > static tag
+                            (HIP-3/HIP-4) > live count/price move. */}
+                        {item.badge ? (
+                            <span
+                                className={cn(
+                                    "ml-auto shrink-0 mono text-[9px] leading-none px-1 py-px rounded border",
+                                    labelClass,
+                                    item.badge.tone === "new"
+                                        ? "border-gold/30 bg-gold/10 text-gold"
+                                        : "border-brand/30 bg-brand/10 text-brand"
+                                )}
+                            >
+                                {item.badge.label}
+                            </span>
+                        ) : item.tag ? (
+                            <span className={cn("ml-auto shrink-0 mono text-[9.5px] text-text-tertiary", labelClass)}>
+                                {item.tag}
+                            </span>
+                        ) : badges[item.href] ? (
+                            <span className={cn("ml-auto shrink-0 mono text-[10.5px] flex items-baseline gap-1", labelClass)}>
+                                {badges[item.href].prefix && (
+                                    <span className="text-text-tertiary">{badges[item.href].prefix}</span>
+                                )}
+                                <span
+                                    className={cn(
+                                        badges[item.href].tone === "up"
+                                            ? "text-success"
+                                            : badges[item.href].tone === "down"
+                                                ? "text-danger"
+                                                : "text-text-tertiary"
+                                    )}
+                                >
+                                    {badges[item.href].text}
+                                </span>
+                            </span>
+                        ) : null}
                     </Link>
                     {item.children && !isCollapsed && (
                         <button
@@ -215,6 +256,65 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     </ul>
                 )}
             </li>
+        );
+    };
+
+    /** Ids of the foldable families, in render order (the home block has none). */
+    const namedGroupIds = navigationGroups
+        .filter((group) => group.groupName)
+        .map((group) => getGroupId(group.groupName));
+
+    /**
+     * In `focus` mode the open family is derived rather than stored: the first
+     * one still open wins. That way switching over from a multi-open tree
+     * normalises on the spot, without writing to storage — and switching back
+     * hands the user their own folds again.
+     */
+    const focusOpenId =
+        navMode === "focus" ? namedGroupIds.find((id) => !foldedGroups.includes(id)) ?? null : null;
+
+    /** Fold state for one family, per layout mode. The 56px rail never folds. */
+    const isGroupFolded = (groupId: string): boolean => {
+        if (isCollapsed || navMode === "expanded") return false;
+        if (navMode === "focus") return groupId !== focusOpenId;
+        return foldedGroups.includes(groupId);
+    };
+
+    /** Family accent → icon tint on the collapsible header. */
+    const accentIconClass = (accent?: NavigationAccent) =>
+        accent === "brand" ? "text-brand" : accent === "gold" ? "text-gold" : "text-text-secondary";
+
+    /**
+     * Expanded-state family header (OAK-style): icon + label + chevron, the whole
+     * row folds/unfolds the family. Only rendered when the rail is expanded — the
+     * collapsed 56px rail keeps the hairline separator via `renderGroupHeader`.
+     * In `expanded` nav mode nothing folds, so the row degrades to a plain
+     * (non-interactive) label with no chevron and no hover affordance.
+     */
+    const renderFamilyHeader = (group: NavigationGroup, groupId: string, isFolded: boolean) => {
+        const Icon = group.IconComponent;
+        const inner = (
+            <>
+                {Icon && <Icon className={cn("w-4 h-4 shrink-0", accentIconClass(group.accent))} />}
+                <span className="truncate">{group.groupName}</span>
+            </>
+        );
+        const rowClass = "w-full flex items-center gap-2.5 px-2.5 py-[6px] rounded-md text-[12px] font-medium text-text-primary overflow-hidden";
+
+        if (navMode === "expanded") {
+            return <div className={rowClass}>{inner}</div>;
+        }
+
+        return (
+            <button
+                onClick={() => toggleGroup(groupId, namedGroupIds)}
+                aria-expanded={!isFolded}
+                aria-label={`Toggle ${group.groupName}`}
+                className={cn(rowClass, "hover:bg-surface-2 transition-colors")}
+            >
+                {inner}
+                <ChevronDown className={cn("ml-auto w-3.5 h-3.5 shrink-0 text-text-tertiary transition-transform", isFolded && "-rotate-90")} />
+            </button>
         );
     };
 
@@ -318,15 +418,33 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
                 {/* Navigation */}
                 <nav className="flex-1 px-2.5 py-3 overflow-y-auto overflow-x-hidden scrollbar-brand">
-                    <ul className={cn("transition-all duration-200", isCollapsed ? "space-y-3" : "space-y-5")}>
-                        {navigationGroups.map((group, groupIndex) => (
-                            <li key={groupIndex} className="space-y-1">
-                                {group.groupName && renderGroupHeader(group.groupName)}
-                                <ul className="space-y-0.5">
-                                    {group.items.map(renderItem)}
-                                </ul>
-                            </li>
-                        ))}
+                    <ul className={cn("transition-all duration-200", isCollapsed ? "space-y-3" : "space-y-1.5")}>
+                        {navigationGroups.map((group, groupIndex) => {
+                            // Header-less home block: no family header, no fold.
+                            if (!group.groupName) {
+                                return (
+                                    <li key={groupIndex} className="space-y-0.5">
+                                        <ul className="space-y-0.5">{group.items.map(renderItem)}</ul>
+                                    </li>
+                                );
+                            }
+
+                            const groupId = getGroupId(group.groupName);
+                            const isFolded = isGroupFolded(groupId);
+
+                            return (
+                                <li key={groupIndex} className={cn(isCollapsed ? "space-y-1" : "space-y-0.5")}>
+                                    {isCollapsed
+                                        ? renderGroupHeader(group.groupName)
+                                        : renderFamilyHeader(group, groupId, isFolded)}
+                                    {!isFolded && (
+                                        <ul className={cn("space-y-0.5", !isCollapsed && "ml-[19px] border-l border-border-subtle pl-2")}>
+                                            {group.items.map(renderItem)}
+                                        </ul>
+                                    )}
+                                </li>
+                            );
+                        })}
 
                         {isAdmin && (
                             <li className="space-y-1">

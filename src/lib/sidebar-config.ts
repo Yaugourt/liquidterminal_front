@@ -1,8 +1,6 @@
 import { ComponentType } from "react";
 import {
   Heart,
-  ClipboardList,
-  Clock,
   Network,
   Vault,
   Wallet,
@@ -18,8 +16,22 @@ import {
   Hammer,
   Boxes,
   Library,
+  BarChart3,
+  Landmark,
+  GraduationCap,
+  Cpu,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
+
+/** Small pill shown at the end of an entry (e.g. Core / new). */
+export type NavigationBadge = { label: string; tone: "core" | "new" };
+
+/**
+ * Live counts shown at the end of an entry, keyed by href. Resolved by
+ * `useSidebarBadges` from the cheapest available stats source, and omitted
+ * until loaded (no data → no number, DS rule). Static markers (HIP-3, HIP-4)
+ * live on the item as `tag` instead.
+ */
 
 /**
  * Navigation item structure
@@ -31,15 +43,27 @@ export interface NavigationItem {
   IconComponent?: ComponentType<{ className?: string }>;
   /** HL CDN token logo (e.g. "HYPE") rendered via TokenAvatar instead of a lucide icon. */
   tokenIcon?: string;
+  /** End-of-row pill, e.g. HyperCore vs HyperEVM markers. */
+  badge?: NavigationBadge;
+  /** Static muted marker at row end (e.g. "HIP-3"), when there is no live count. */
+  tag?: string;
   children?: NavigationItem[];
 }
 
+/** Accent of a family header — tints its icon and the fold dot. */
+export type NavigationAccent = "brand" | "gold" | "neutral";
+
 /**
- * Navigation group structure
+ * Navigation group structure. A named group renders as a collapsible family
+ * header (OAK-style tree): icon + label + chevron, children hanging off a
+ * connecting line. `groupName: null` is the header-less home block.
  */
 export interface NavigationGroup {
   groupName: string | null;
   items: NavigationItem[];
+  /** Family icon, shown on the collapsible header. */
+  IconComponent?: ComponentType<{ className?: string }>;
+  accent?: NavigationAccent;
 }
 
 /**
@@ -62,167 +86,71 @@ export const getItemId = (name: string, href: string): string => {
  */
 export const defaultNavigationGroups: NavigationGroup[] = [
   {
-    groupName: null, // Home
+    // Header-less block: the two page-agnostic pins.
+    groupName: null,
     items: [
-      {
-        name: 'Home',
-        href: '/dashboard',
-        icon: null,
-        IconComponent: Home
-      },
-      {
-        name: 'HYPE',
-        href: '/hype',
-        icon: null,
-        tokenIcon: 'HYPE'
-      },
-    ]
+      { name: 'Home', href: '/dashboard', icon: null, IconComponent: Home },
+      { name: 'HYPE', href: '/hype', icon: null, tokenIcon: 'HYPE' },
+    ],
   },
   {
-    groupName: 'Liquid Explorer',
+    // What quotes, and what gets forced out — HyperCore order books plus the
+    // liquidation feed that runs off them. The /market hub keeps its
+    // MarketScopeBar (Overview/Spot/Perpetual/Auctions/...), so the rail lists
+    // the peer destinations, not the scope tabs.
+    groupName: 'Markets',
+    IconComponent: BarChart3,
+    accent: 'brand',
     items: [
-      {
-        name: 'Dashboard',
-        href: '/explorer',
-        icon: null,
-        IconComponent: Blocks
-      },
-      {
-        name: 'Validator',
-        href: '/explorer/validator',
-        icon: null,
-        IconComponent: Network
-      },
-      {
-        name: 'Vaults',
-        href: '/explorer/vaults',
-        icon: null,
-        IconComponent: Vault
-      },
-      {
-        name: 'Liquidations',
-        href: '/explorer/liquidations',
-        icon: null,
-        IconComponent: Zap
-      },
-      {
-        name: 'Priority Fees',
-        href: '/explorer/priority-fees',
-        icon: null,
-        IconComponent: Fuel
-      },
-    ]
+      { name: 'Market', href: '/market', icon: null, IconComponent: CandlestickChart },
+      { name: 'Perp DEXs', href: '/market/perpdex', icon: null, IconComponent: Layers, tag: 'HIP-3' },
+      { name: 'Outcomes', href: '/market/hip4', icon: null, IconComponent: Sparkles, tag: 'HIP-4' },
+      { name: 'Liquidations', href: '/explorer/liquidations', icon: null, IconComponent: Zap },
+    ],
   },
   {
-    groupName: 'Liquid Market',
-    // Verdict IA: Spot/Perpetual entered via the /market hub + MarketScopeBar,
-    // USDH Swap dropped. 7 entries + 3 submenus became 5 entries.
+    // Where value sits and what it earns: pooled (vaults), staked (validators),
+    // tracked (personal), plus the two revenue rails — builder codes and the
+    // priority-fee auction.
+    groupName: 'Capital',
+    IconComponent: Landmark,
+    accent: 'gold',
     items: [
-      {
-        name: 'Market',
-        href: '/market',
-        icon: null,
-        IconComponent: CandlestickChart
-      },
-      {
-        name: 'PerpDexs (HIP-3)',
-        href: '/market/perpdex',
-        icon: null,
-        IconComponent: Layers
-      },
-      {
-        name: 'Builders',
-        href: '/market/builders',
-        icon: null,
-        IconComponent: Hammer
-      },
-      {
-        name: 'HIP-4',
-        href: '/market/hip4',
-        icon: null,
-        IconComponent: Sparkles
-      },
-      {
-        name: 'Tracker',
-        href: '/market/tracker',
-        icon: null,
-        IconComponent: Wallet,
-        children: [
-          {
-            name: 'My Wallets',
-            href: '/market/tracker/my-wallets',
-            icon: null,
-            IconComponent: Wallet
-          },
-          {
-            name: 'Public Lists',
-            href: '/market/tracker/public-lists',
-            icon: null,
-            IconComponent: Globe
-          }
-        ]
-      },
-    ]
+      { name: 'Vaults', href: '/explorer/vaults', icon: null, IconComponent: Vault },
+      { name: 'Validators', href: '/explorer/validator', icon: null, IconComponent: Network },
+      { name: 'Tracker', href: '/market/tracker', icon: null, IconComponent: Wallet },
+      { name: 'Builders', href: '/market/builders', icon: null, IconComponent: Hammer },
+      { name: 'Priority Fees', href: '/explorer/priority-fees', icon: null, IconComponent: Fuel },
+    ],
   },
   {
-    groupName: 'Liquid Ecosystem',
+    // How the machine runs. Two execution layers on one consensus: the HyperCore
+    // L1 (Explorer) and the HyperEVM.
+    groupName: 'Chain',
+    IconComponent: Boxes,
+    accent: 'neutral',
     items: [
-      {
-        name: 'Project',
-        href: '/ecosystem/project',
-        icon: null,
-        IconComponent: Boxes
-      },
-      {
-        name: 'Public Goods',
-        href: '/ecosystem/publicgoods',
-        icon: null,
-        IconComponent: Heart,
-        children: [
-          {
-            name: 'All Projects',
-            href: '/ecosystem/publicgoods',
-            icon: null,
-            IconComponent: Heart
-          },
-          {
-            name: 'My Submissions',
-            href: '/ecosystem/publicgoods/my-submissions',
-            icon: null,
-            IconComponent: ClipboardList
-          },
-          {
-            name: 'Pending Review',
-            href: '/ecosystem/publicgoods/pending',
-            icon: null,
-            IconComponent: Clock
-          }
-        ]
-      }
-    ]
+      { name: 'Explorer', href: '/explorer', icon: null, IconComponent: Blocks, badge: { label: 'Core', tone: 'core' } },
+      { name: 'HyperEVM', href: '/evm', icon: null, IconComponent: Cpu, badge: { label: 'new', tone: 'new' } },
+    ],
   },
   {
-    groupName: 'Liquid Wiki',
+    groupName: 'Ecosystem',
+    IconComponent: Globe,
+    accent: 'neutral',
     items: [
-      {
-        name: 'App',
-        href: '/wiki',
-        icon: null,
-        IconComponent: Library,
-      },
-      {
-        name: 'Read List',
-        href: '/wiki/readlist',
-        icon: null,
-        IconComponent: BookOpen,
-      },
-      {
-        name: 'Public Read Lists',
-        href: '/wiki/readlist/public-readlists',
-        icon: null,
-        IconComponent: Globe,
-      }
-    ]
+      { name: 'Projects', href: '/ecosystem/project', icon: null, IconComponent: Boxes },
+      { name: 'Public Goods', href: '/ecosystem/publicgoods', icon: null, IconComponent: Heart },
+    ],
+  },
+  {
+    groupName: 'Learn',
+    IconComponent: GraduationCap,
+    accent: 'neutral',
+    items: [
+      { name: 'Wiki', href: '/wiki', icon: null, IconComponent: Library },
+      { name: 'Read Lists', href: '/wiki/readlist', icon: null, IconComponent: BookOpen },
+    ],
   },
 ];
 
@@ -248,7 +176,10 @@ const navigationGroupsToPreferences = (groups: NavigationGroup[]): SidebarPrefer
   });
 
   return {
-    version: 1,
+    // v2: the families were renamed (Markets/Capital/Chain/Ecosystem/Learn) and
+    // resegmented. v1 prefs key off the old group ids, so they must be discarded
+    // rather than merged — else a renamed group has no matching pref and hides.
+    version: 2,
     groups: groupPreferences
   };
 };

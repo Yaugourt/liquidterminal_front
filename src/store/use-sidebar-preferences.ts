@@ -35,7 +35,7 @@ interface SidebarPreferencesState {
   getPreferences: () => SidebarPreferences | null;
 }
 
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 2;
 
 export const useSidebarPreferences = create<SidebarPreferencesState>()(
   persist(
@@ -174,6 +174,8 @@ export const useSidebarPreferences = create<SidebarPreferencesState>()(
     {
       name: "sidebar-preferences-storage",
       storage: createJSONStorage(() => localStorage),
+      // Bumped with the family rename; persist drops the old v1 blob, then
+      // `initializePreferences` seeds the new defaults.
       version: CURRENT_VERSION,
       /**
        * Same trap as `use-sidebar-ui`: a versioned store without a migrate makes
