@@ -30,12 +30,97 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useSidebarPreferences, type SidebarGroupPreference } from "@/store/use-sidebar-preferences";
+import { useSidebarUi, type SidebarNavMode } from "@/store/use-sidebar-ui";
 import { defaultNavigationGroups, getDefaultSidebarPreferences, getGroupId, getItemId } from "@/lib/sidebar-config";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface CustomizeSidebarModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+/** One bar of a layout preview: family header (open or shut) vs nav item. */
+type PreviewRow = "head-open" | "head" | "item";
+
+/**
+ * The three layouts, each with a schematic of what the rail looks like — the
+ * behaviour is hard to name but obvious to see, so the preview does the
+ * explaining and the copy only confirms it.
+ */
+const NAV_MODES: { id: SidebarNavMode; label: string; hint: string; rows: PreviewRow[] }[] = [
+  {
+    id: "collapsible",
+    label: "Collapsible",
+    hint: "Fold families in and out. Several can stay open.",
+    rows: ["head-open", "item", "item", "head-open", "item", "head"],
+  },
+  {
+    id: "focus",
+    label: "Focus",
+    hint: "One family open at a time, the others fold away.",
+    rows: ["head-open", "item", "item", "head", "head", "head"],
+  },
+  {
+    id: "expanded",
+    label: "Expanded",
+    hint: "Everything visible at once, nothing to unfold.",
+    rows: ["head-open", "item", "item", "head-open", "item", "item"],
+  },
+];
+
+function NavModePicker() {
+  const { navMode, setNavMode } = useSidebarUi();
+
+  return (
+    <div className="space-y-2">
+      <div>
+        <h3 className="text-text-primary font-medium text-sm">Menu layout</h3>
+        <p className="text-text-tertiary text-xs mt-0.5">How the families behave in the expanded sidebar</p>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        {NAV_MODES.map((mode) => {
+          const isSelected = navMode === mode.id;
+          return (
+            <button
+              key={mode.id}
+              type="button"
+              onClick={() => setNavMode(mode.id)}
+              aria-pressed={isSelected}
+              className={cn(
+                // flex-col, else the button quirk centres its content vertically
+                // and the previews stop lining up when a hint wraps differently.
+                "flex flex-col text-left rounded-lg border p-3 transition-colors",
+                isSelected
+                  ? "border-brand bg-brand/5"
+                  : "border-border-default bg-base hover:border-border-default hover:bg-surface-2"
+              )}
+            >
+              <div className="rounded border border-border-subtle bg-base p-2 space-y-[3px]">
+                {mode.rows.map((row, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "h-[3px] rounded-full transition-colors",
+                      row === "item"
+                        ? "ml-2.5 w-[58%] bg-text-tertiary/40"
+                        : row === "head-open"
+                          ? cn("w-[80%]", isSelected ? "bg-brand" : "bg-text-secondary")
+                          : "w-[80%] bg-text-tertiary/50"
+                    )}
+                  />
+                ))}
+              </div>
+              <div className={cn("text-xs font-medium mt-2", isSelected ? "text-brand" : "text-text-primary")}>
+                {mode.label}
+              </div>
+              <div className="text-[11px] text-text-tertiary leading-snug mt-0.5">{mode.hint}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 interface SortableGroupItemProps {
@@ -112,6 +197,7 @@ function SortableGroupItem({ group, groupName, onToggleGroup, onToggleItem }: So
 
 export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModalProps) {
   const { preferences, updateGroupVisibility, updateItemVisibility, reorderGroups, resetToDefault } = useSidebarPreferences();
+  const { setNavMode } = useSidebarUi();
   const [localGroups, setLocalGroups] = useState<SidebarGroupPreference[]>([]);
 
   const sensors = useSensors(
@@ -159,6 +245,9 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
   const handleReset = () => {
     const defaultPrefs = getDefaultSidebarPreferences();
     resetToDefault(defaultPrefs);
+    // The layout lives in the UI store, so the reset has to cover it too —
+    // otherwise "default" would leave the sidebar in a mode the user picked.
+    setNavMode("collapsible");
     toast.success("Sidebar reset to default");
   };
 
@@ -171,39 +260,47 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
             <div>
               <DialogTitle className="text-xl font-bold text-text-primary">Customize Sidebar</DialogTitle>
               <DialogDescription className="text-sm text-text-secondary mt-1">
-                Toggle visibility and drag to reorder sections
+                Pick a layout, then choose what shows up and in which order
               </DialogDescription>
             </div>
             {/* Close button is handled by DialogContent's defaulting close button or we can keep this custom one if we hide the default */}
           </DialogHeader>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={localGroups.map(g => g.id)}
-                strategy={verticalListSortingStrategy}
+          <div className="flex-1 overflow-y-auto p-6 space-y-5">
+            <NavModePicker />
+
+            <div className="space-y-2">
+              <div>
+                <h3 className="text-text-primary font-medium text-sm">Sections</h3>
+                <p className="text-text-tertiary text-xs mt-0.5">Toggle visibility and drag to reorder</p>
+              </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
               >
-                <div className="space-y-3">
-                  {localGroups.map(group => {
-                    const navGroup = defaultNavigationGroups.find(g => getGroupId(g.groupName) === group.id);
-                    return (
-                      <SortableGroupItem
-                        key={group.id}
-                        group={group}
-                        groupName={navGroup?.groupName || null}
-                        onToggleGroup={handleToggleGroup}
-                        onToggleItem={handleToggleItem}
-                      />
-                    );
-                  })}
-                </div>
-              </SortableContext>
-            </DndContext>
+                <SortableContext
+                  items={localGroups.map(g => g.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    {localGroups.map(group => {
+                      const navGroup = defaultNavigationGroups.find(g => getGroupId(g.groupName) === group.id);
+                      return (
+                        <SortableGroupItem
+                          key={group.id}
+                          group={group}
+                          groupName={navGroup?.groupName || null}
+                          onToggleGroup={handleToggleGroup}
+                          onToggleItem={handleToggleItem}
+                        />
+                      );
+                    })}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            </div>
           </div>
 
           {/* Footer */}

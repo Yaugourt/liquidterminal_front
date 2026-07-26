@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Terminal · Navigation, cinq propositions</title>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  LIQUID TERMINAL DESIGN KIT — the single design vocabulary.
+
+  Every block below maps 1:1 to a React primitive (labelled "React: <X>").
+  Each block uses the EXACT Tailwind classes the primitive emits, on the EXACT
+  app tokens (copied from globals.css). So:
+
+    • To DESIGN a page  → copy blocks from this kit into a new mockup file
+      (load the same Tailwind config header). Compose, don't invent classes.
+    • To SHIP a page     → replace each block's wrapper with its <Primitive>
+      (it emits the same classes) and wire real data. Near-zero translation.
+    • Missing a block?   → that means a PRIMITIVE is missing. Build the
+      primitive in src/components/common/, then add its block here. Never
+      hand-roll a one-off class in a page.
+
+  Rule: a mockup may only use blocks that exist here. New pattern = new
+  primitive + new kit block, in the same PR.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Tokens are a verbatim copy of src/app/globals.css :root — keep in sync.
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base: "#08101A", surface: "#0F1421", "surface-2": "#141B2A", "surface-3": "#1C2436",
+          "border-subtle": "#1E2535", "border-default": "#2C354A", "border-strong": "#3D4760",
+          "text-primary": "#E8EAED", "text-secondary": "#9CA3AF", "text-tertiary": "#6B7280",
+          brand: { DEFAULT: "#83E9FF", hover: "#A8F0FF", deep: "#1692AD", "text-on": "#051728" },
+          gold: "#F9E370", success: "#1FB58E", danger: "#E53E3E",
+        },
+        fontFamily: {
+          sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          inter: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+          mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  body { background: #08101A; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  /* kit chrome only — not part of the DS */
+  .kit-label { font: 600 11px/1.4 "JetBrains Mono", monospace; color: #6B7280; }
+  .kit-jsx { font: 400 11px/1.5 "JetBrains Mono", monospace; color: #83E9FF; white-space: pre-wrap; }
+  .kit-sec { border-top: 1px dashed #2C354A; }
+
+  /* Liquid layer (DESIGN_SYSTEM §13) — verbatim copy of src/app/globals.css.
+     Keep in sync; the kit is only useful while it matches what ships. */
+  .liquid-bloom {
+    background: radial-gradient(circle,
+      rgb(131 233 255 / 0.20) 0%, rgb(131 233 255 / 0.07) 34%, transparent 72%);
+  }
+  .liquid-emit {
+    filter: drop-shadow(0 0 18px rgb(131 233 255 / 0.55))
+            drop-shadow(0 0 44px rgb(131 233 255 / 0.28));
+  }
+  @keyframes liquid-current { 0%, 100% { opacity: 1; } 50% { opacity: 0.42; } }
+  .liquid-current { animation: liquid-current 9s ease-in-out infinite; }
+  @keyframes liquid-pulse {
+    0%, 100% { filter: drop-shadow(0 0 14px rgb(131 233 255 / 0.38)) drop-shadow(0 0 36px rgb(131 233 255 / 0.18)); }
+    46%      { filter: drop-shadow(0 0 26px rgb(131 233 255 / 0.70)) drop-shadow(0 0 62px rgb(131 233 255 / 0.36)); }
+  }
+  .liquid-pulse { animation: liquid-pulse 7s ease-in-out infinite; }
+  @keyframes liquid-bloom-pulse {
+    0%, 100% { opacity: 0.72; transform: scale(0.94); }
+    46%      { opacity: 1; transform: scale(1.06); }
+  }
+  .liquid-bloom-pulse { animation: liquid-bloom-pulse 7s ease-in-out infinite; animation-delay: 0.45s; }
+  @media (max-width: 640px) {
+    .liquid-flow { opacity: 0.55; }
+    .liquid-flow polyline:nth-child(even) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .liquid-current, .liquid-pulse, .liquid-bloom-pulse { animation: none; }
+  }
+</style>
+</head>
+<body class="font-sans text-text-primary antialiased">
+<div class="max-w-[1280px] mx-auto px-6 py-10 space-y-12">
+
+  <!-- ═══════════════ 1 · Rappel de la demande ═══════════════ -->
+  <header class="space-y-5">
+    <div class="space-y-1.5">
+      <div class="mono text-[10px] uppercase tracking-[0.14em] text-text-tertiary">Liquid Terminal · refonte navigation</div>
+      <h1 class="font-inter text-2xl sm:text-3xl font-semibold text-text-primary tracking-tight">Cinq propositions de navigation</h1>
+      <p class="text-sm text-text-secondary max-w-3xl leading-relaxed">
+        Cinq organisations complètes du produit, chacune avec sa maquette. Aucune n'est recommandée ici :
+        la page sert à voir ce que chacune coûte et ce qu'elle refuse.
+      </p>
+    </div>
+
+    <div class="border border-border-subtle rounded-lg bg-surface">
+      <div class="px-4 py-2.5 border-b border-border-subtle">
+        <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">La demande, en quatre points</div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-border-subtle">
+        <div class="px-4 py-3.5 space-y-1.5">
+          <div class="mono text-[10px] text-brand">01</div>
+          <div class="text-[12px] font-medium text-text-primary">Deux navigations</div>
+          <p class="text-[11.5px] text-text-secondary leading-relaxed">Une à gauche, une à droite. La droite doit avoir une raison d'être propre, pas être un appendice de la gauche.</p>
+        </div>
+        <div class="px-4 py-3.5 space-y-1.5">
+          <div class="mono text-[10px] text-brand">02</div>
+          <div class="text-[12px] font-medium text-text-primary">Le patron /market</div>
+          <p class="text-[11.5px] text-text-secondary leading-relaxed">Hub plus scope bar persistante : c'est le modèle qui plaît aujourd'hui. Le généraliser, l'isoler ou le tuer est un choix.</p>
+        </div>
+        <div class="px-4 py-3.5 space-y-1.5">
+          <div class="mono text-[10px] text-brand">03</div>
+          <div class="text-[12px] font-medium text-text-primary">L'axe HyperCore / HyperEVM</div>
+          <p class="text-[11.5px] text-text-secondary leading-relaxed">Il doit être traité quelque part : branche de nav, attribut d'objet, facette ou portée. Pas ignoré.</p>
+        </div>
+        <div class="px-4 py-3.5 space-y-1.5">
+          <div class="mono text-[10px] text-brand">04</div>
+          <div class="text-[12px] font-medium text-text-primary">Aucune route orpheline</div>
+          <p class="text-[11.5px] text-text-secondary leading-relaxed">Les ~60 routes de l'inventaire doivent toutes avoir un domicile déclaré, et une seule place évidente.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════ 1.b · La sixième, issue du choix ═══════════════ -->
+  <section>
+    <a href="nav-F-mix.html" class="block rounded-lg border border-brand/30 bg-brand/[0.06] hover:bg-brand/10 transition-colors overflow-hidden">
+      <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
+        <span class="h-8 w-8 shrink-0 rounded-md border border-brand/40 bg-brand/10 flex items-center justify-center mono text-[13px] font-semibold text-brand">F</span>
+        <div class="min-w-0 space-y-1">
+          <div class="flex flex-wrap items-baseline gap-2">
+            <span class="text-[14px] font-medium text-text-primary">Le mélange : A à gauche, E à droite</span>
+            <span class="mono text-[10px] text-text-tertiary">nav-F-mix.html</span>
+            <span class="mono text-[9.5px] px-1.5 py-px rounded border border-brand/30 bg-brand/10 text-brand">retenu</span>
+          </div>
+          <p class="text-[12.5px] leading-relaxed text-text-secondary">
+            Le rail layer-first de A, ramené de dix-neuf à treize entrées, avec le plan du maintenant de E à droite.
+            Le premier créneau du plan droit est celui de A (la couche lue, puis le même objet vu de l'autre côté),
+            les six suivants sont ceux de E. Corrige les deux défauts mesurés : le rail de 1040px et les 532px de chrome.
+          </p>
+        </div>
+        <span class="mono text-[11.5px] text-brand shrink-0 sm:ml-auto">Ouvrir la maquette F →</span>
+      </div>
+    </a>
+  </section>
+
+  <!-- ═══════════════ 2 · Les cinq propositions ═══════════════ -->
+  <section class="space-y-4">
+    <div class="flex items-baseline gap-3">
+      <h2 class="font-inter text-lg font-semibold text-text-primary tracking-tight">Les cinq propositions</h2>
+      <span class="mono text-[10.5px] text-text-tertiary">notes sur 10 · coût : 10 = bon marché</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+
+      <!-- ───── A ───── -->
+      <article class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-start gap-3 px-4 py-3 border-b border-border-subtle">
+          <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center mono text-[12px] font-semibold bg-surface-2 text-brand">A</div>
+          <div class="min-w-0">
+            <h3 class="text-[13.5px] font-medium text-text-primary leading-tight">Layer-first (HyperCore / HyperEVM)</h3>
+            <div class="mono text-[10px] text-text-tertiary mt-1 truncate">nav-A-layers.html</div>
+          </div>
+        </div>
+        <div class="px-4 py-3.5 space-y-3.5 flex-1">
+          <p class="text-[12px] text-text-secondary leading-relaxed">
+            La nav épouse l'architecture réelle du protocole : HyperCore en haut, un groupe Cross-layer au milieu pour ce qui a un état des deux côtés, HyperEVM en bas, et un rail droit permanent qui montre toujours le même objet vu de l'autre couche.
+          </p>
+          <div class="rounded-md border border-border-subtle bg-surface-2/40 px-3 py-2.5 space-y-1.5">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Colonne droite · le pont entre couches</div>
+            <p class="text-[11.5px] text-text-secondary leading-relaxed">
+              280px sticky, jamais repliable, quatre créneaux fixes : LayerBadge (quelle couche), CounterpartCard (le même objet de l'autre côté), SeamGauge (flux Core ⇄ EVM sur 24h, identique partout), Related. Sans elle, l'organisation devient deux silos.
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Clarté</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:50%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">5</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Scalabilité</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:60%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">6</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Fidélité proto</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:70%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">7</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Valeur rail droit</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:40%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">4</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Coût</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">2</div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Concessions admises</div>
+            <ul class="space-y-1.5">
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Taxe le premier trajet : un trader croise le mot HyperCore avant les marchés.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>La moitié HyperEVM est un engagement : quatre entrées sur cinq restent à construire.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Cross-layer peut devenir le fourre-tout faute de discipline écrite.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>/explorer disparaît : marque interne, habitudes et liens externes cassés.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Dix-neuf entrées : la sidebar est réordonnée, pas raccourcie.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>HyperEVM hérite du token neutre : la moitié qui a besoin de crédibilité a la signature la plus faible.</span></li>
+            </ul>
+          </div>
+        </div>
+        <a href="nav-A-layers.html" class="block px-4 py-2.5 border-t border-border-subtle text-[11.5px] font-medium text-brand hover:text-brand-hover hover:bg-surface-2/50 transition-colors">Ouvrir la maquette A →</a>
+      </article>
+
+      <!-- ───── B ───── -->
+      <article class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-start gap-3 px-4 py-3 border-b border-border-subtle">
+          <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center mono text-[12px] font-semibold bg-surface-2 text-brand">B</div>
+          <div class="min-w-0">
+            <h3 class="text-[13.5px] font-medium text-text-primary leading-tight">Hub + scope bar généralisé</h3>
+            <div class="mono text-[10px] text-text-tertiary mt-1 truncate">nav-B-hubs.html</div>
+          </div>
+        </div>
+        <div class="px-4 py-3.5 space-y-3.5 flex-1">
+          <p class="text-[12px] text-text-secondary leading-relaxed">
+            Cinq hubs dans le rail gauche, jamais plus d'un niveau, et chaque hub porte sa propre scope bar persistante avec compteurs live, exactement comme /market : une seule mécanique de navigation à apprendre, répétée partout.
+          </p>
+          <div class="rounded-md border border-border-subtle bg-surface-2/40 px-3 py-2.5 space-y-1.5">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Colonne droite · le context rail</div>
+            <p class="text-[11.5px] text-text-secondary leading-relaxed">
+              280px sur toutes les pages, quatre slots dans un ordre fixe : Scope (le pouls de la section), Related (par défaut le cross-layer), Live (le flux de la scope), Pinned (identique sur les cinq hubs). Les hubs sont des silos, cette colonne est la seule surface qui les recoud.
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Clarté</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:60%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">6</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Scalabilité</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:40%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">4</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Fidélité proto</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:80%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">8</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Valeur rail droit</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:40%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">4</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Coût</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">2</div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Concessions admises</div>
+            <ul class="space-y-1.5">
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Le hub Ecosystem est maigre : deux entrées de scope bar face aux dix de Chain.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>La scope bar de Chain scrolle horizontalement dès 1280 : le niveau 2 n'est plus tout visible.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>La sidebar personnalisable perd son objet : il ne reste que cinq hubs à réordonner.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Le LayerSwitch est une entorse à la règle « une seule mécanique partout ».</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Trois pages de Chain sont neuves et minces : la barre annonce dix sections dont trois vides.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Home est un hub composite : quelqu'un peut légitimement chercher HYPE dans Markets.</span></li>
+            </ul>
+          </div>
+        </div>
+        <a href="nav-B-hubs.html" class="block px-4 py-2.5 border-t border-border-subtle text-[11.5px] font-medium text-brand hover:text-brand-hover hover:bg-surface-2/50 transition-colors">Ouvrir la maquette B →</a>
+      </article>
+
+      <!-- ───── C ───── -->
+      <article class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-start gap-3 px-4 py-3 border-b border-border-subtle">
+          <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center mono text-[12px] font-semibold bg-surface-2 text-brand">C</div>
+          <div class="min-w-0">
+            <h3 class="text-[13.5px] font-medium text-text-primary leading-tight">Intent-first (les verbes)</h3>
+            <div class="mono text-[10px] text-text-tertiary mt-1 truncate">nav-C-intent.html</div>
+          </div>
+        </div>
+        <div class="px-4 py-3.5 space-y-3.5 flex-1">
+          <p class="text-[12px] text-text-secondary leading-relaxed">
+            La nav gauche range par intention (cinq verbes : Trade, Track, Explore, Learn, Build), la nav droite suit l'objet en cours de lecture et le fait voyager d'un verbe à l'autre : à gauche les verbes, à droite les noms.
+          </p>
+          <div class="rounded-md border border-border-subtle bg-surface-2/40 px-3 py-2.5 space-y-1.5">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Colonne droite · le rail d'objet</div>
+            <p class="text-[11.5px] text-text-secondary leading-relaxed">
+              280px, jamais repliable même quand le rail gauche l'est : Watching (les épingles, invariant), On this page (le sommaire des pages longues), « X, other intents » (le même objet vu depuis les quatre autres verbes). Ranger par intention éclate un objet, cette colonne le recolle.
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Clarté</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:60%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">6</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Scalabilité</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:50%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">5</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Fidélité proto</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:70%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">7</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Valeur rail droit</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:40%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">4</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Coût</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:30%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">3</div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Concessions admises</div>
+            <ul class="space-y-1.5">
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Casse la famille /market : auctions, builder codes et tracker partent ailleurs.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Verbes asymétriques : Trade n'a que deux entrées, Track et Explore en ont six.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>« Trade » promet une action que le produit ne fournit pas : on ne passe aucun ordre.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Rien dans le rail gauche ne nomme HyperEVM : celui qui vient pour l'EVM n'a pas de porte.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Vingt-trois entrées visibles : Build passe sous la ligne de flottaison.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Frontières floues : liquidations dans Explore, auctions dans Build restent discutables.</span></li>
+            </ul>
+          </div>
+        </div>
+        <a href="nav-C-intent.html" class="block px-4 py-2.5 border-t border-border-subtle text-[11.5px] font-medium text-brand hover:text-brand-hover hover:bg-surface-2/50 transition-colors">Ouvrir la maquette C →</a>
+      </article>
+
+      <!-- ───── D ───── -->
+      <article class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-start gap-3 px-4 py-3 border-b border-border-subtle">
+          <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center mono text-[12px] font-semibold bg-surface-2 text-brand">D</div>
+          <div class="min-w-0">
+            <h3 class="text-[13.5px] font-medium text-text-primary leading-tight">Entity-first (le graphe des objets)</h3>
+            <div class="mono text-[10px] text-text-tertiary mt-1 truncate">nav-D-entities.html</div>
+          </div>
+        </div>
+        <div class="px-4 py-3.5 space-y-3.5 flex-1">
+          <p class="text-[12px] text-text-secondary leading-relaxed">
+            La nav gauche liste les classes d'objets du graphe Hyperliquid avec leur cardinalité, la nav droite est l'inspecteur de l'objet courant (identité, relations sortantes, pile de visite), et tout ce qui n'est ni une classe ni un objet devient une facette ou une relation.
+          </p>
+          <div class="rounded-md border border-border-subtle bg-surface-2/40 px-3 py-2.5 space-y-1.5">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Colonne droite · l'inspecteur</div>
+            <p class="text-[11.5px] text-text-secondary leading-relaxed">
+              280px, trois zones : Subject (carte d'identité et actions sur l'objet), Relations (les arêtes sortantes, un clic traverse le graphe), Trail (la pile typée des objets visités). Les chemins d'un terminal sont des arêtes de données, que ni le rail gauche ni le fil d'Ariane ne savent exprimer.
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Clarté</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:50%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">5</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Scalabilité</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:60%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">6</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Fidélité proto</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:80%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">8</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Valeur rail droit</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:50%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">5</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Coût</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">2</div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Concessions admises</div>
+            <ul class="space-y-1.5">
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Tuer /market est le pari le plus cher : on perd l'écran unique du marché et son référencement.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Seize entrées à plat : Ecosystem tombe sous la ligne de flottaison, le rail replié devient la norme.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Il faut penser en objets : qui pense en tâches dépend entièrement de Cmd+K.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Le Trail est un état local : un nouveau venu voit un tiers de la colonne vide.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Presque toutes les URLs changent : ce n'est pas un refactor de nav mais d'adressage.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Les Relations supposent un endpoint « arêtes de cet objet » qui n'existe pas côté back.</span></li>
+            </ul>
+          </div>
+        </div>
+        <a href="nav-D-entities.html" class="block px-4 py-2.5 border-t border-border-subtle text-[11.5px] font-medium text-brand hover:text-brand-hover hover:bg-surface-2/50 transition-colors">Ouvrir la maquette D →</a>
+      </article>
+
+      <!-- ───── E ───── -->
+      <article class="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div class="flex items-start gap-3 px-4 py-3 border-b border-border-subtle">
+          <div class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center mono text-[12px] font-semibold bg-surface-2 text-brand">E</div>
+          <div class="min-w-0">
+            <h3 class="text-[13.5px] font-medium text-text-primary leading-tight">Deux plans : les lieux, le temps réel</h3>
+            <div class="mono text-[10px] text-text-tertiary mt-1 truncate">nav-E-two-planes.html</div>
+          </div>
+        </div>
+        <div class="px-4 py-3.5 space-y-3.5 flex-1">
+          <p class="text-[12px] text-text-secondary leading-relaxed">
+            La colonne gauche est le plan des lieux (neuf entrées qui ne bougent jamais, apprises une fois), la colonne droite est le plan du maintenant (flux live, watchlist, wallets, alertes, marchés sous tension) : la gauche répond « où puis-je aller », la droite « où dois-je aller tout de suite ».
+          </p>
+          <div class="rounded-md border border-border-subtle bg-surface-2/40 px-3 py-2.5 space-y-1.5">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Colonne droite · le plan du maintenant</div>
+            <p class="text-[11.5px] text-text-secondary leading-relaxed">
+              300px, sept blocs invariants : Now bar, Tape (chaque ligne est un saut), Watchlist, My wallets, Alerts, Under tension, Pinned. Sur un terminal, « ce qui vient d'arriver » est une surface de navigation, pas un widget. Jamais un sommaire de page.
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Clarté</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:60%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">6</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Scalabilité</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:40%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">4</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Fidélité proto</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:70%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">7</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Valeur rail droit</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:50%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">5</div>
+            </div>
+            <div class="grid grid-cols-[104px_1fr_20px] items-center gap-2">
+              <div class="text-[9.5px] uppercase tracking-[0.06em] text-text-tertiary truncate">Coût</div>
+              <div class="relative h-1 w-full overflow-hidden rounded-full bg-surface-2"><div class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></div></div>
+              <div class="mono text-[10px] text-text-secondary text-right">2</div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-[9.5px] uppercase tracking-[0.1em] text-text-tertiary">Concessions admises</div>
+            <ul class="space-y-1.5">
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>532px de chrome sur 1440 : il reste environ 860px pour la donnée.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Démarrage à froid : sans configuration, cinq blocs sur sept restent vides.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Deux navigations à apprendre, et HYPE est joignable des deux côtés.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>La profondeur a migré dans les ScopeBars : priority fees et auctions perdent un clic.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Du mouvement permanent en vision périphérique : il faut un Freeze, donc une préférence de plus.</span></li>
+              <li class="flex gap-2 text-[11.5px] text-text-secondary leading-relaxed"><span class="text-text-tertiary shrink-0">·</span><span>Plus de place pour un rail interne de page : les leaderboards redescendent sous les tables.</span></li>
+            </ul>
+          </div>
+        </div>
+        <a href="nav-E-two-planes.html" class="block px-4 py-2.5 border-t border-border-subtle text-[11.5px] font-medium text-brand hover:text-brand-hover hover:bg-surface-2/50 transition-colors">Ouvrir la maquette E →</a>
+      </article>
+
+      <!-- ───── légende ───── -->
+      <article class="border border-dashed border-border-default rounded-lg flex flex-col">
+        <div class="px-4 py-3 border-b border-dashed border-border-default">
+          <h3 class="text-[13.5px] font-medium text-text-primary leading-tight">Comment lire ces cartes</h3>
+        </div>
+        <div class="px-4 py-3.5 space-y-3.5 flex-1">
+          <p class="text-[12px] text-text-secondary leading-relaxed">
+            Cinq axes notés sur 10, identiques pour les cinq propositions. Ce sont des repères de discussion, pas un classement : aucune note n'est agrégée et aucun total n'est calculé.
+          </p>
+          <ul class="space-y-2.5">
+            <li class="space-y-1">
+              <div class="text-[11px] uppercase tracking-[0.06em] text-text-tertiary">Clarté</div>
+              <p class="text-[11.5px] text-text-secondary leading-relaxed">Ce qu'un nouvel arrivant comprend du rail sans qu'on lui explique.</p>
+            </li>
+            <li class="space-y-1">
+              <div class="text-[11px] uppercase tracking-[0.06em] text-text-tertiary">Scalabilité</div>
+              <p class="text-[11.5px] text-text-secondary leading-relaxed">Où se rangent les vingt prochaines pages sans casser la règle.</p>
+            </li>
+            <li class="space-y-1">
+              <div class="text-[11px] uppercase tracking-[0.06em] text-text-tertiary">Fidélité protocole</div>
+              <p class="text-[11.5px] text-text-secondary leading-relaxed">Ce que l'organisation dit de vrai sur HyperCore, HyperEVM et les HIP.</p>
+            </li>
+            <li class="space-y-1">
+              <div class="text-[11px] uppercase tracking-[0.06em] text-text-tertiary">Valeur du rail droit</div>
+              <p class="text-[11.5px] text-text-secondary leading-relaxed">Ce que la colonne droite apporte que ni la page ni le rail gauche n'apportent.</p>
+            </li>
+            <li class="space-y-1">
+              <div class="text-[11px] uppercase tracking-[0.06em] text-text-tertiary">Coût</div>
+              <p class="text-[11.5px] text-text-secondary leading-relaxed">Note inversée : 10 signifie bon marché, 2 signifie un chantier de plusieurs mois.</p>
+            </li>
+          </ul>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════ 3 · Comparaison frontale ═══════════════ -->
+  <section class="space-y-4">
+    <div class="space-y-1.5">
+      <h2 class="font-inter text-lg font-semibold text-text-primary tracking-tight">Comparaison frontale</h2>
+      <p class="text-[12px] text-text-secondary max-w-3xl leading-relaxed">
+        Six axes de décision, cinq réponses. Les cases marquées <span class="mono text-gold text-[11px]">non tranché</span> signalent un point que la proposition ne traite pas explicitement.
+      </p>
+    </div>
+
+    <div class="border border-border-subtle rounded-lg bg-surface overflow-x-auto">
+      <table class="w-full border-collapse table-fixed min-w-[1120px]">
+        <colgroup>
+          <col style="width:168px"><col><col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="px-3 py-3 border-b border-border-subtle text-left align-bottom">
+              <span class="text-[9.5px] uppercase tracking-[0.1em] font-medium text-text-tertiary">Axe de décision</span>
+            </th>
+            <th class="px-3 py-3 border-b border-l border-border-subtle text-left align-bottom">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 shrink-0 rounded flex items-center justify-center mono text-[10px] font-semibold bg-surface-2 text-brand">A</span>
+                <span class="text-[11.5px] font-medium text-text-primary">Layer-first</span>
+              </div>
+            </th>
+            <th class="px-3 py-3 border-b border-l border-border-subtle text-left align-bottom">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 shrink-0 rounded flex items-center justify-center mono text-[10px] font-semibold bg-surface-2 text-brand">B</span>
+                <span class="text-[11.5px] font-medium text-text-primary">Hubs</span>
+              </div>
+            </th>
+            <th class="px-3 py-3 border-b border-l border-border-subtle text-left align-bottom">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 shrink-0 rounded flex items-center justify-center mono text-[10px] font-semibold bg-surface-2 text-brand">C</span>
+                <span class="text-[11.5px] font-medium text-text-primary">Intentions</span>
+              </div>
+            </th>
+            <th class="px-3 py-3 border-b border-l border-border-subtle text-left align-bottom">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 shrink-0 rounded flex items-center justify-center mono text-[10px] font-semibold bg-surface-2 text-brand">D</span>
+                <span class="text-[11.5px] font-medium text-text-primary">Objets</span>
+              </div>
+            </th>
+            <th class="px-3 py-3 border-b border-l border-border-subtle text-left align-bottom">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 shrink-0 rounded flex items-center justify-center mono text-[10px] font-semibold bg-surface-2 text-brand">E</span>
+                <span class="text-[11.5px] font-medium text-text-primary">Deux plans</span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Où vit HyperEVM -->
+          <tr class="border-b border-border-subtle align-top">
+            <th class="px-3 py-3.5 text-left bg-surface-2/30">
+              <div class="text-[11.5px] font-medium text-text-primary leading-snug">Où vit HyperEVM</div>
+              <div class="text-[10px] text-text-tertiary mt-1 leading-snug">branche, attribut ou filtre&nbsp;?</div>
+            </th>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Branche de premier niveau</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Un groupe HyperEVM face au groupe HyperCore, plus un groupe Cross-layer entre les deux. Le seul candidat qui en fait un axe de nav.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Attribut, via un LayerSwitch</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Un seul contrôle Core / EVM, dans la scope bar du seul hub Chain, là où les deux couches décrivent les mêmes objets.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Facette, jamais nommée à gauche</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Switch Core / EVM / Both par section, sous Explore. Rien dans le rail ne dit qu'HyperEVM existe : le reproche le plus légitime.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Propriété de l'objet</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Badges Core / EVM / Core+EVM sur chaque objet, filtre dans la FacetBar. Cette FacetBar est tronquée à 1024, donc le filtre disparaît.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Portée de lecture</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Sélecteur de portée dans les ScopeBars, badges C / E / C+E dans la watchlist du plan droit.</p>
+            </td>
+          </tr>
+
+          <!-- Colonne droite -->
+          <tr class="border-b border-border-subtle align-top">
+            <th class="px-3 py-3.5 text-left bg-surface-2/30">
+              <div class="text-[11.5px] font-medium text-text-primary leading-snug">Que fait la colonne droite</div>
+              <div class="text-[10px] text-text-tertiary mt-1 leading-snug">sa raison d'être propre</div>
+            </th>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Le pont entre les couches · 280px</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">LayerBadge, CounterpartCard, SeamGauge, Related. Correctif structurel de la thèse : sans elle, deux silos.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Le context rail · 280px</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Scope, Related (cross-layer), Live, Pinned. Seule surface transverse aux cinq hubs, et seul point d'ancrage de l'utilisateur.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Le rail d'objet · 280px</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Watching, sommaire de la page, cross-links verbés. C'est le prix payé pour avoir éclaté les objets sur cinq verbes.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">L'inspecteur · 280px</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Subject, Relations, Trail. Rend le modèle de données navigable : un clic suit une arête, pas une route.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Le plan du maintenant · 300px</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Tape, Watchlist, wallets, alertes, marchés sous tension. Le live devient une navigation, pas un module de page.</p>
+            </td>
+          </tr>
+
+          <!-- Profondeur -->
+          <tr class="border-b border-border-subtle align-top">
+            <th class="px-3 py-3.5 text-left bg-surface-2/30">
+              <div class="text-[11.5px] font-medium text-text-primary leading-snug">Profondeur max de la nav gauche</div>
+              <div class="text-[10px] text-text-tertiary mt-1 leading-snug">niveaux · entrées visibles</div>
+            </th>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="mono text-[13px] font-medium text-text-primary">2 niveaux · 19 entrées</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Cinq groupes, puis les entrées. Le rail mesure 1040px de haut : Ecosystem et Wiki passent sous la ligne de flottaison.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="mono text-[13px] font-medium text-text-primary">1 niveau · 5 hubs</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Le plus court des cinq. Tout le niveau 2 est reporté dans la scope bar, qui scrolle horizontalement dès 1280 sur Chain.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="mono text-[13px] font-medium text-text-primary">2 niveaux · 23 entrées</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Le plus long des cinq, et assumé comme tel : des pages jusqu'ici cachées remontent. Rail de 1094px, Build clippé.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="mono text-[13px] font-medium text-text-primary">1 niveau · 16 entrées</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Plat mais long, aucun sous-menu. Le rail replié à 56px devient le mode recommandé, donc la charge passe aux icônes.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="mono text-[13px] font-medium text-text-primary">1 niveau · 9 entrées</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Le rail le plus propre, financé par des ScopeBars qui débordent déjà de 12px à 1280 sans une seule page ajoutée.</p>
+            </td>
+          </tr>
+
+          <!-- /market/tracker -->
+          <tr class="border-b border-border-subtle align-top">
+            <th class="px-3 py-3.5 text-left bg-surface-2/30">
+              <div class="mono text-[11.5px] font-medium text-text-primary leading-snug">/market/tracker</div>
+              <div class="text-[10px] text-text-tertiary mt-1 leading-snug">où atterrit « ce qui est à moi »</div>
+            </th>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Sort de Market</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Portfolios passe dans Cross-layer, et la page adresse fusionnée n'a plus aucune entrée de nav : Cmd+K ou clic de ligne.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Fusionné dans Pinned</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">My wallets et les read lists deviennent un seul store, visible dans la colonne droite. /portfolio vit sous le hub Home.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Promu au rang de verbe</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">TRACK devient une des cinq entrées du rail (/track/wallet/[address]), et le module Watching l'injecte sur toutes les pages.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Éclaté en classe et facette</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Classe Wallets plus facette Watchlist, avec une remontée sur /home. Doublon admis dans une orga qui se vend sans doublon.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Devient /portfolio, et un bloc live</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">ScopeBar Overview · My Wallets · Watchlist · Public Lists, doublée par My wallets à droite. La watchlist finit à trois domiciles.</p>
+            </td>
+          </tr>
+
+          <!-- /hip4 -->
+          <tr class="border-b border-border-subtle align-top">
+            <th class="px-3 py-3.5 text-left bg-surface-2/30">
+              <div class="mono text-[11.5px] font-medium text-text-primary leading-snug">/hip4</div>
+              <div class="text-[10px] text-text-tertiary mt-1 leading-snug">les marchés Outcome</div>
+            </th>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="flex items-center gap-1.5">
+                <span class="mono text-[9.5px] uppercase tracking-[0.08em] text-gold border border-gold/40 rounded px-1.5 py-0.5">non tranché</span>
+              </div>
+              <p class="text-[11px] text-text-secondary mt-1.5 leading-relaxed">Traité comme une primitive HyperCore au même titre que HIP-1 à HIP-3, mais la proposition ne dit jamais à quel niveau la page se range.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Onglet Outcomes de Markets</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">L'URL reste /market/hip4. Trois noms pour une même chose (Outcomes, hip4, HIP-4) dans la proposition qui vend l'apprenabilité.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="flex items-center gap-1.5">
+                <span class="mono text-[9.5px] uppercase tracking-[0.08em] text-gold border border-gold/40 rounded px-1.5 py-0.5">non tranché</span>
+              </div>
+              <p class="text-[11px] text-text-secondary mt-1.5 leading-relaxed">Reste implicitement dans la ScopeBar Markets sous TRADE, qui passe de sept à cinq onglets. Aucune ligne de la proposition ne le nomme.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Compté deux fois</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Entrée de rail « Outcome Markets 87 » et facette « Outcome 87 » sous Tokens, les deux à l'écran simultanément.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="text-[11.5px] font-medium text-text-primary">Route tuée</div>
+              <p class="text-[11px] text-text-secondary mt-1 leading-relaxed">Absorbée par la ScopeBar de Markets. Les 301 amortissent, mais le référencement acquis sur /hip4 est perdu.</p>
+            </td>
+          </tr>
+
+          <!-- Coût -->
+          <tr class="align-top">
+            <th class="px-3 py-3.5 text-left bg-surface-2/30">
+              <div class="text-[11.5px] font-medium text-text-primary leading-snug">Coût d'implémentation</div>
+              <div class="text-[10px] text-text-tertiary mt-1 leading-snug">note sur 10 · 10 = bon marché</div>
+            </th>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="flex items-center gap-2">
+                <span class="mono text-[13px] font-medium text-text-primary">2</span>
+                <span class="relative h-1 flex-1 overflow-hidden rounded-full bg-surface-2"><span class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></span></span>
+              </div>
+              <p class="text-[11px] text-text-secondary mt-1.5 leading-relaxed">Huit des dix-neuf entrées pointent vers des pages inexistantes, toutes les URLs /explorer à rediriger, quatre créneaux de rail à construire.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="flex items-center gap-2">
+                <span class="mono text-[13px] font-medium text-text-primary">2</span>
+                <span class="relative h-1 flex-1 overflow-hidden rounded-full bg-surface-2"><span class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></span></span>
+              </div>
+              <p class="text-[11px] text-text-secondary mt-1.5 leading-relaxed">Huit primitives avant la première page, quatre entrées de scope bar Chain sur dix pointent vers du vide, /explorer devient /chain.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="flex items-center gap-2">
+                <span class="mono text-[13px] font-medium text-text-primary">3</span>
+                <span class="relative h-1 flex-1 overflow-hidden rounded-full bg-surface-2"><span class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:30%"></span></span>
+              </div>
+              <p class="text-[11px] text-text-secondary mt-1.5 leading-relaxed">Dix redirections permanentes, environ 250 cross-links à rédiger à la main, plus le chantier de données EVM que le switch promet.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="flex items-center gap-2">
+                <span class="mono text-[13px] font-medium text-text-primary">2</span>
+                <span class="relative h-1 flex-1 overflow-hidden rounded-full bg-surface-2"><span class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></span></span>
+              </div>
+              <p class="text-[11px] text-text-secondary mt-1.5 leading-relaxed">Espace d'adressage réécrit, sept primitives, un résolveur d'adresse jamais conçu, et un endpoint « relations » à créer côté back.</p>
+            </td>
+            <td class="px-3 py-3.5 border-l border-border-subtle">
+              <div class="flex items-center gap-2">
+                <span class="mono text-[13px] font-medium text-text-primary">2</span>
+                <span class="relative h-1 flex-1 overflow-hidden rounded-full bg-surface-2"><span class="absolute inset-y-0 left-0 rounded-full bg-brand/70" style="width:20%"></span></span>
+              </div>
+              <p class="text-[11px] text-text-secondary mt-1.5 leading-relaxed">Sept blocs live à alimenter en websocket avec Freeze global, préférences réécrites en store à deux plans, /usdh et /hip4 tués.</p>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══════════════ 4 · Ce qui les sépare vraiment ═══════════════ -->
+  <section class="space-y-4">
+    <div class="space-y-1.5">
+      <h2 class="font-inter text-lg font-semibold text-text-primary tracking-tight">Ce qui les sépare vraiment</h2>
+      <p class="text-[12px] text-text-secondary max-w-3xl leading-relaxed">
+        Les cinq maquettes ne diffèrent pas par le goût mais par quatre arbitrages. Trancher ces questions désigne la proposition ; comparer les maquettes sans les trancher ne mène nulle part.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+      <article class="bg-surface border border-border-subtle rounded-lg px-4 py-4 space-y-3 flex flex-col">
+        <div class="flex items-baseline gap-2.5">
+          <span class="mono text-[11px] text-brand shrink-0">Q1</span>
+          <h3 class="text-[14px] font-medium text-text-primary leading-snug">HyperEVM est-il un endroit où l'on va, ou une propriété de ce qu'on regarde&nbsp;?</h3>
+        </div>
+        <p class="text-[11.5px] text-text-secondary leading-relaxed">
+          Une seule proposition en fait une branche du rail, les quatre autres en font un attribut, une facette ou une portée. En faire une branche oblige l'utilisateur à choisir une couche avant de choisir un sujet, et engage à livrer une moitié d'application aujourd'hui vide. En faire un attribut rend la couche invisible dans la nav.
+        </p>
+        <div class="mt-auto pt-2.5 border-t border-border-subtle flex flex-wrap gap-x-4 gap-y-1.5">
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">A</span> branche</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">B</span> switch de hub</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">C</span> facette</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">D</span> propriété d'objet</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">E</span> portée</span>
+        </div>
+      </article>
+
+      <article class="bg-surface border border-border-subtle rounded-lg px-4 py-4 space-y-3 flex flex-col">
+        <div class="flex items-baseline gap-2.5">
+          <span class="mono text-[11px] text-brand shrink-0">Q2</span>
+          <h3 class="text-[14px] font-medium text-text-primary leading-snug">La colonne droite doit-elle expliquer la page, ou emmener ailleurs&nbsp;?</h3>
+        </div>
+        <p class="text-[11.5px] text-text-secondary leading-relaxed">
+          Trois réponses incompatibles : recoudre les deux couches, suivre le graphe de données, ou pousser le temps réel. La question corollaire est celle du jour 1 : que voit un visiteur déconnecté qui n'a rien épinglé, rien suivi, rien configuré&nbsp;? Deux propositions sur cinq laissent alors la moitié de la colonne vide.
+        </p>
+        <div class="mt-auto pt-2.5 border-t border-border-subtle flex flex-wrap gap-x-4 gap-y-1.5">
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">A</span> couture des couches</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">B</span> contexte et épingles</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">C</span> sommaire et intentions</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">D</span> graphe</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">E</span> temps réel</span>
+        </div>
+      </article>
+
+      <article class="bg-surface border border-border-subtle rounded-lg px-4 py-4 space-y-3 flex flex-col">
+        <div class="flex items-baseline gap-2.5">
+          <span class="mono text-[11px] text-brand shrink-0">Q3</span>
+          <h3 class="text-[14px] font-medium text-text-primary leading-snug">Combien de destinations acceptez-vous de reculer d'un clic pour raccourcir le rail&nbsp;?</h3>
+        </div>
+        <p class="text-[11.5px] text-text-secondary leading-relaxed">
+          Un rail court ne supprime pas la profondeur, il la déplace dans une scope bar qui déborde. Le rail à cinq hubs fait passer seize destinations de un clic à deux ; celui à neuf entrées en dégrade cinq. À l'inverse, les rails longs gardent tout à un clic mais enterrent leurs derniers groupes sous la ligne de flottaison d'un portable.
+        </p>
+        <div class="mt-auto pt-2.5 border-t border-border-subtle flex flex-wrap gap-x-4 gap-y-1.5">
+          <span class="text-[10.5px] text-text-tertiary">Rails courts <span class="mono text-text-secondary">B · E</span></span>
+          <span class="text-[10.5px] text-text-tertiary">Rails plats et longs <span class="mono text-text-secondary">D</span></span>
+          <span class="text-[10.5px] text-text-tertiary">Rails à deux niveaux <span class="mono text-text-secondary">A · C</span></span>
+        </div>
+      </article>
+
+      <article class="bg-surface border border-border-subtle rounded-lg px-4 py-4 space-y-3 flex flex-col">
+        <div class="flex items-baseline gap-2.5">
+          <span class="mono text-[11px] text-brand shrink-0">Q4</span>
+          <h3 class="text-[14px] font-medium text-text-primary leading-snug">Qu'est-ce qui a le droit de casser, et livre-t-on la nav avant ou après les pages&nbsp;?</h3>
+        </div>
+        <p class="text-[11.5px] text-text-secondary leading-relaxed">
+          Chaque proposition sacrifie autre chose : /explorer, /market, la sidebar personnalisable, ou tout l'espace d'adressage. Et chacune annonce dans son rail des pages qui n'existent pas encore. Livrer la nav en premier fait mentir la symétrie visuelle sur ce que l'app sait faire ; livrer les pages en premier repousse la refonte de plusieurs mois.
+        </p>
+        <div class="mt-auto pt-2.5 border-t border-border-subtle flex flex-wrap gap-x-4 gap-y-1.5">
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">A</span> /explorer</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">B</span> /explorer et la personnalisation</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">C</span> la famille /market</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">D</span> /market et l'adressage</span>
+          <span class="text-[10.5px] text-text-tertiary"><span class="mono text-text-secondary">E</span> /usdh et /hip4</span>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="text-[11px] text-text-tertiary leading-relaxed pt-1">
+      Aucune des cinq n'est recommandée ici. Les notes sont des repères de discussion, pas un classement.
+    </p>
+  </section>
+
+</div>
+</body>
+</html>
