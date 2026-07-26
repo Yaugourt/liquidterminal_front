@@ -20,6 +20,7 @@ import {
   Landmark,
   GraduationCap,
   Cpu,
+  Download,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -91,6 +92,10 @@ export const defaultNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Home', href: '/dashboard', icon: null, IconComponent: Home },
       { name: 'HYPE', href: '/hype', icon: null, tokenIcon: 'HYPE' },
+      // Page-agnostic like the two above: the export workbench serves every
+      // family rather than belonging to one, and a tool nobody can navigate to
+      // may as well not ship.
+      { name: 'Export', href: '/export', icon: null, IconComponent: Download },
     ],
   },
   {
