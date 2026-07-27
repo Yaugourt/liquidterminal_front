@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Application dependencies. The repo is pinned via pnpm-lock.yaml; Dependabot's
+  # npm ecosystem understands pnpm lockfiles.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      # Batch low-risk patch/minor bumps into one PR; majors stay individual.
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
