@@ -52,7 +52,7 @@
     "react-dom": "^19.2.0",
     "recharts": "^3.8.1",
     "sonner": "^2.0.6",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.6.0",
     "viem": "^2.48.7",
     "wagmi": "^3.6.9",
     "zod": "^4.1.13",
