@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader, PageFaq } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
   SpotKpiStrip,
@@ -50,6 +50,14 @@ export default function SpotPage() {
         title="Spot"
         titleQualifier="market on Hyperliquid"
         description="Hyperliquid spot markets — volume, stablecoin liquidity, fees & deploy auctions."
+        actions={
+          <DataStatus
+            variant="polled"
+            updatedAt={directory.dataUpdatedAt}
+            isRefreshing={directory.isRefreshing}
+            onRefresh={directory.refetch}
+          />
+        }
       />
 
       <section className="space-y-2.5">
