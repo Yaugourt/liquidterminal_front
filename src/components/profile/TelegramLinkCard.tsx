@@ -3,6 +3,7 @@
 import { memo, useMemo } from "react";
 import { useTelegramLink } from "@/services/auth/telegram";
 import { cn } from "@/lib/utils";
+import { safeHref } from "@/lib/safeUrl";
 import { Button } from "@/components/ui/button";
 import {
   ExternalLink,
@@ -134,7 +135,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
             className="flex-1 bg-brand-telegram hover:bg-brand-telegram/90 text-white font-semibold"
           >
             <a
-              href={deepLink || '#'}
+              href={safeHref(deepLink) || '#'}
               target="_blank"
               rel="noopener noreferrer"
             >

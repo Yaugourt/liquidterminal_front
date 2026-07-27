@@ -27,9 +27,33 @@ const nextConfig = {
         ignoreBuildErrors: false,
     },
     // ✅ Ne pas ignorer ESLint - on garde la détection des vraies erreurs de code
-    
+
+    // Remove the `X-Powered-By: Next.js` version-disclosure header.
+    poweredByHeader: false,
+
     // 🔒 Security Headers
     async headers() {
+        // Staged CSP: enforced structurally (clickjacking / plugins / base), and
+        // a script-src/connect-src policy shipped in REPORT-ONLY so it surfaces
+        // violations in the console WITHOUT risking the Privy/WalletConnect login
+        // flow. Flip this to an enforced `Content-Security-Policy` (ideally
+        // nonce + 'strict-dynamic') once a QA pass confirms wallet login, Privy
+        // iframe and WalletConnect all pass clean. The escaping in JsonLd.tsx is
+        // the primary fix; this is defence-in-depth.
+        const reportOnlyCsp = [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob: https:",
+            "font-src 'self' data:",
+            "frame-src 'self' https://auth.privy.io https://verify.walletconnect.com https://verify.walletconnect.org",
+            "connect-src 'self' https: wss:",
+            "frame-ancestors 'none'",
+            "object-src 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+        ].join('; ');
+
         return [
             {
                 source: '/:path*',
@@ -47,16 +71,28 @@ const nextConfig = {
                         value: 'strict-origin-when-cross-origin',
                     },
                     {
+                        // includeSubDomains added. `preload` is intentionally NOT
+                        // set — it is a hard-to-reverse commitment for every
+                        // subdomain and should be an explicit ops decision.
+                        key: 'Strict-Transport-Security',
+                        value: 'max-age=63072000; includeSubDomains',
+                    },
+                    {
+                        // interest-cohort opts out of FLoC. payment/usb left
+                        // enabled: hardware wallets (WebUSB) and payment flows.
                         key: 'Permissions-Policy',
-                        value: 'camera=(), microphone=(), geolocation=()',
+                        value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
                     },
                     {
                         // Structural CSP only: anti-clickjacking (complements
-                        // X-Frame-Options), no plugins, no <base> hijack. A full
-                        // script-src/connect-src policy needs a staged rollout
-                        // with QA against the Privy/WalletConnect stack (nonces).
+                        // X-Frame-Options), no plugins, no <base> hijack.
                         key: 'Content-Security-Policy',
                         value: "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+                    },
+                    {
+                        // Staged script/connect policy — reports, does not block.
+                        key: 'Content-Security-Policy-Report-Only',
+                        value: reportOnlyCsp,
                     },
                 ],
             },
