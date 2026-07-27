@@ -13,6 +13,7 @@ import {
   useExportPreview,
   runExport,
   readExportError,
+  estimateExportDuration,
   type ExportParamValues,
 } from "@/services/export";
 
@@ -144,6 +145,15 @@ export const ExportButton = memo(function ExportButton({
                 {dataset.maxRows.toLocaleString("en-US")}
               </span>
             </div>
+            {/* The card exports the whole dataset, so the wait is the same as
+                the workbench's — saying so here is the only warning this entry
+                point gets. */}
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-[11.5px] text-text-secondary">Est. time</span>
+              <span className="mono text-[12px] text-text-primary">
+                {estimateExportDuration(preview?.totalCount, dataset.maxRows)}
+              </span>
+            </div>
 
             <div className="rounded-md bg-surface-2 border border-border-subtle px-2.5 py-2">
               <div className="text-[9.5px] uppercase tracking-[0.08em] text-text-tertiary mb-1">
@@ -153,6 +163,13 @@ export const ExportButton = memo(function ExportButton({
                 {dataset.publicPath}
               </div>
             </div>
+
+            {running && (
+              <p className="text-[11px] text-text-tertiary leading-relaxed">
+                Paging the source and streaming the rows. Leave this tab open —
+                the download starts on its own.
+              </p>
+            )}
 
             {message && (
               <p

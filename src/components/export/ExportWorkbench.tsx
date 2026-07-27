@@ -12,6 +12,7 @@ import {
   useExportPreview,
   runExport,
   readExportError,
+  estimateExportDuration,
   type ExportDataset,
   type ExportParamSpec,
   type ExportParamValues,
@@ -45,19 +46,6 @@ function fromLocalInput(value: string): string {
   if (!value) return "";
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? "" : parsed.toISOString();
-}
-
-/**
- * Rough wall-clock for the download, from the measured ~1.5s per 500-row page.
- * Vague on purpose: it exists so a two-minute wait does not read as a hang.
- */
-function estimateDuration(totalCount: number | null | undefined, maxRows?: number): string {
-  const cap = maxRows ?? 50_000;
-  const rows = Math.min(totalCount ?? cap, cap);
-  const seconds = Math.ceil((rows / 500) * 1.5);
-  if (seconds < 20) return "a few seconds";
-  if (seconds < 90) return `~${Math.ceil(seconds / 10) * 10}s`;
-  return `~${Math.ceil(seconds / 60)} min`;
 }
 
 function formatReset(seconds: number): string {
@@ -428,7 +416,7 @@ export function ExportWorkbench() {
               label="Row cap"
               value={(dataset?.maxRows ?? catalog?.limits.maxRows ?? 0).toLocaleString("en-US")}
             />
-            <SummaryRow label="Est. time" value={estimateDuration(preview?.totalCount, dataset?.maxRows)} />
+            <SummaryRow label="Est. time" value={estimateExportDuration(preview?.totalCount, dataset?.maxRows ?? 0)} />
             <SummaryRow
               label="Columns"
               value={
