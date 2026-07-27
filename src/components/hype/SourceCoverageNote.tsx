@@ -41,10 +41,13 @@ export const SourceCoverageNote = memo(function SourceCoverageNote({
 }) {
   if (!meta) return null;
 
-  const frozen = WATCHED.filter((s) => meta.sourceStatus?.[s.key] === "stale").map((s) => ({
-    ...s,
-    through: meta.coverage?.[s.key] ?? null,
-  }));
+  // `error` and `stale` reach the reader the same way: the band drops to zero.
+  // The first is a fetch that failed, the second a feed that stopped moving,
+  // and neither is a quiet day.
+  const frozen = WATCHED.filter((s) => {
+    const status = meta.sourceStatus?.[s.key];
+    return status === "stale" || status === "error";
+  }).map((s) => ({ ...s, through: meta.coverage?.[s.key] ?? null }));
 
   if (frozen.length === 0) return null;
 
