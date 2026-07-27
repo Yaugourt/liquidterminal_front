@@ -16,7 +16,6 @@ interface ReadListSummaryResponse {
   creator: {
     id: number;
     name: string | null;
-    email: string | null;
   };
   itemsCount: number;
   /** Items marked as read; drives the progress bar. */
@@ -38,7 +37,6 @@ interface ReadListItemResponse {
     creator: {
       id: number;
       name: string | null;
-      email: string | null;
     };
     /** Inlined by the backend; no /link-preview call needed for item cards. */
     linkPreview?: WikiLinkPreview | null;
@@ -92,7 +90,6 @@ export interface PublicReadList {
   creator: {
     id: number;
     name: string;
-    email: string;
   };
   createdAt: string;
   updatedAt: string;

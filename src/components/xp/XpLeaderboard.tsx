@@ -121,7 +121,7 @@ export function XpLeaderboard({
             <div className="space-y-2">
               {leaderboard.map((entry) => (
                 <div
-                  key={entry.userId}
+                  key={entry.rank}
                   className={cn(
                     "flex items-center justify-between p-3 rounded-lg border transition-all",
                     getRankBg(entry.rank),

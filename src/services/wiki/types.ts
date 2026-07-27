@@ -7,7 +7,6 @@ export interface EducationalCategory {
   creator: {
     id: number;
     name: string | null;
-    email: string | null;
   };
   /** Present when fetched with withCounts=true (APPROVED resources only). */
   resourcesCount?: number;
@@ -35,7 +34,6 @@ export interface EducationalResource {
   creator: {
     id: number;
     name: string | null;
-    email: string | null;
   };
   categories: EducationalResourceCategory[];
   linkPreview?: WikiLinkPreview | null;

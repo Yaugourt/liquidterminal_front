@@ -156,7 +156,6 @@ export interface WalletList {
   creator: {
     id: number;
     name: string | null;
-    email: string | null;
   };
   items: WalletListItem[];
   itemsCount: number;
@@ -176,7 +175,6 @@ export interface WalletListItem {
     User: {
       id: number;
       name: string | null;
-      email: string | null;
     };
     Wallet: {
       id: number;
