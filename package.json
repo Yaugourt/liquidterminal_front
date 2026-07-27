@@ -35,7 +35,7 @@
     "@tanstack/react-query": "^5.100.7",
     "@usdh-kit/sdk": "0.2.0",
     "@usdh-kit/widget": "0.1.0",
-    "@vercel/analytics": "^1.5.0",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.17.0",
     "class-variance-authority": "^0.7.1",
