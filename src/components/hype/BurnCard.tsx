@@ -24,8 +24,12 @@ const BURN_MECHANISMS: { title: string; desc: string }[] = [
     desc: "Spot fees not routed to the AF or token deployers are burned at the protocol level.",
   },
   {
-    title: "Priority fees",
-    desc: "HyperCore priority fees, paid in HYPE from undelegated stake, are burned immediately.",
+    title: "Order priority",
+    desc: "Traders pay up to 8 bps of notional in HYPE to rank higher in the execution queue. Charged from undelegated stake and burned, whether or not a resting order fills.",
+  },
+  {
+    title: "Gossip priority",
+    desc: "Two Dutch auctions on a three-minute cycle sell faster market-data reads. Each resets at ten times its last winning bid, floors at 0.1 HYPE, and the winning bid is burned from spot balance.",
   },
 ];
 
@@ -33,6 +37,14 @@ const BURN_MECHANISMS: { title: string; desc: string }[] = [
  * BurnCard — HYPE deflation. The on-chain headline is the gap between max and
  * total supply (gas + spot/priority burns); the Assistance Fund's holdings are
  * shown alongside as supply removed from float. Mechanisms are listed below.
+ *
+ * The two priority mechanisms are listed separately because they are separate:
+ * both live on HyperCore and both burn, but order priority is charged from
+ * undelegated staking balance on notional, and gossip priority from spot balance
+ * through a slot auction. Only order priority reaches our revenue breakdown.
+ *
+ * Mechanics per the protocol docs:
+ * https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/priority-fees
  */
 export const BurnCard = memo(function BurnCard() {
   const { overview } = useHypeOverview();
