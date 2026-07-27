@@ -30,6 +30,9 @@ export { WelcomePrompt } from './WelcomePrompt';
 export { UserAccountCompact } from './UserAccountCompact';
 export { ThemeToggle } from './ThemeToggle';
 
+// Data freshness cue (live dot / "updated Xs ago" + refresh)
+export { DataStatus } from './DataStatus';
+
 // Tables
 export { TypedDataTable } from './DataTable';
 export type { Column, ColumnType } from './DataTable';
