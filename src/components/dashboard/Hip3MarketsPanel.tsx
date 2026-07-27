@@ -8,6 +8,7 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  DataStatus,
 } from "@/components/common";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import type { PerpDexWithMarketData } from "@/services/market/perpDex/types";
@@ -96,7 +97,7 @@ function fmtAssetPrice(p: number): string {
 }
 
 export const Hip3MarketsPanel = memo(function Hip3MarketsPanel() {
-  const { dexs, isLoading } = usePerpDexMarketData();
+  const { dexs, isLoading, wsConnected } = usePerpDexMarketData();
 
   const topMarkets = useMemo(
     () => aggregateMarkets(dexs).slice(0, TOP_MARKETS),
@@ -110,7 +111,12 @@ export const Hip3MarketsPanel = memo(function Hip3MarketsPanel() {
       tag="by 24h vol"
       viewAllLabel="All perp DEXs"
       href="/market/perpdex"
-      actions={<ExportButton datasetId="hip3-assets" />}
+      actions={
+        <>
+          <DataStatus variant="live" connected={wsConnected} />
+          <ExportButton datasetId="hip3-assets" />
+        </>
+      }
     >
       {/* Top markets — strict ModuleTable (each row links to its primary DEX) */}
       <ModuleTable
