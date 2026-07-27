@@ -10,6 +10,13 @@ import type { ReactNode } from "react";
 export interface DominanceSegment {
   key: string;
   label: string;
+  /**
+   * Shorter form used for the in-bar text only; the legend keeps `label`.
+   * A segment's width is its share, not its name length, so a long label on a
+   * narrow-but-significant slice truncates ("Locked / vesting · 24.1%" becomes
+   * "Locked / vestin…") while the legend below still has room to spell it out.
+   */
+  shortLabel?: string;
   /** Percentage of the whole, 0..100. */
   pct: number;
   /** Inline fill color (from chartPalette). Takes precedence over fillClassName. */
@@ -82,10 +89,14 @@ export function DominanceBar({
             title={`${seg.label} · ${seg.pct.toFixed(1)}%`}
           >
             {seg.pct >= labelThresholdPct && (
+              // Hidden below sm: a segment's width is a share of the bar, and on
+              // a 343px card even a 30% slice is ~100px, which truncates every
+              // label to an ellipsis. The legend underneath carries the same
+              // names and percentages, so nothing is lost by dropping them.
               <span
-                className={`mono text-[11px] font-medium px-2 truncate ${seg.labelClassName ?? "text-text-secondary"}`}
+                className={`hidden sm:inline-block mono text-[11px] font-medium px-2 truncate ${seg.labelClassName ?? "text-text-secondary"}`}
               >
-                {seg.label} · {seg.pct.toFixed(1)}%
+                {seg.shortLabel ?? seg.label} · {seg.pct.toFixed(1)}%
               </span>
             )}
           </div>
