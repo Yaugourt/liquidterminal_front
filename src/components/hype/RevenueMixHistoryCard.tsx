@@ -8,6 +8,7 @@ import { ChartError, ChartLoading, PeriodSelector, chartPalette } from "@/compon
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown, type RevenueWindow } from "@/services/market/revenue";
 import { SeriesLegend } from "./SeriesLegend";
+import { SourceCoverageNote } from "./SourceCoverageNote";
 
 /**
  * Where revenue comes from, over time.
@@ -265,6 +266,7 @@ export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
         <span>Source: our own six-source breakdown</span>
         <span className="opacity-50">·</span>
         <span>Percentages are the share of the whole window, not of the last day.</span>
+        <SourceCoverageNote meta={breakdown?.meta} />
       </div>
     </Card>
   );
