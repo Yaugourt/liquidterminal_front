@@ -28,7 +28,9 @@ const SOURCES = [
   { key: "hip1", label: "HIP-1 auctions", color: chartPalette.multiSeries[3] },
   { key: "hip3", label: "HIP-3 auctions", color: chartPalette.multiSeries[6] },
   { key: "hip4", label: "HIP-4", color: chartPalette.multiSeries[4] },
-  { key: "priority", label: "Priority fees", color: chartPalette.multiSeries[7] },
+  // Order priority only. Gossip priority is the other HyperCore burn and is not
+  // in this series; see RevenueSegmentsCard for the full note.
+  { key: "priority", label: "Order priority", color: chartPalette.multiSeries[7] },
 ] as const;
 
 type SourceKey = (typeof SOURCES)[number]["key"];
