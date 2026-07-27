@@ -10,6 +10,22 @@ interface Envelope<T> {
   data: T;
 }
 
+/**
+ * Rough wall-clock for a download, from the measured ~1.5s per 500-row page
+ * (5,000 rows took 12.7s). Vague on purpose and rounded up: it exists so a
+ * two-minute wait does not read as a hang.
+ */
+export const estimateExportDuration = (
+  totalCount: number | null | undefined,
+  maxRows: number
+): string => {
+  const rows = Math.min(totalCount ?? maxRows, maxRows);
+  const seconds = Math.ceil((rows / 500) * 1.5);
+  if (seconds < 20) return 'a few seconds';
+  if (seconds < 90) return `~${Math.ceil(seconds / 10) * 10}s`;
+  return `~${Math.ceil(seconds / 60)} min`;
+};
+
 /** Drops unset fields so the backend never sees `coin=` and treats it as a filter. */
 export const toQuery = (values: ExportParamValues): Record<string, string> => {
   const query: Record<string, string> = {};
