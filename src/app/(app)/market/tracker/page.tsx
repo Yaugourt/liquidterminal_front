@@ -9,7 +9,8 @@ import {
   ActiveUsersPreview,
   TrackerStatsBar
 } from "@/components/market/tracker/home";
-import { PageHeader, PageFaq } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus } from "@/components/common";
+import { useTopTraders } from "@/services/market/toptraders";
 import { TRACKER_FAQ } from "@/lib/page-faqs";
 
 /**
@@ -18,6 +19,9 @@ import { TRACKER_FAQ } from "@/lib/page-faqs";
  */
 export default function TrackerHome() {
   const { setTitle } = usePageTitle();
+  // Page-level freshness cue wired to the tracker's primary polled source (top
+  // traders); the same GET backs TrackerStatsBar/TopTradersPreview and is cached.
+  const topTraders = useTopTraders({ sort: "pnl_pos", limit: 50 });
 
   useEffect(() => {
     setTitle("Wallet Tracker");
@@ -29,6 +33,14 @@ export default function TrackerHome() {
         title="Wallet Tracker"
         titleQualifier="for Hyperliquid"
         description="Track wallets across Hyperliquid — top traders, public lists, most active users, and your personal watchlist."
+        actions={
+          <DataStatus
+            variant="polled"
+            updatedAt={topTraders.dataUpdatedAt}
+            isRefreshing={topTraders.isRefreshing}
+            onRefresh={topTraders.refetch}
+          />
+        }
       />
 
       {/* Stats Bar */}

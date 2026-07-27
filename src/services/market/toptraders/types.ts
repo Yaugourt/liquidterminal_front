@@ -33,6 +33,10 @@ export interface UseTopTradersResult {
   traders: TopTrader[];
   metadata: TopTradersResponse['metadata'] | null;
   isLoading: boolean;
+  /** True during a background/manual refresh — drives the page freshness cue. */
+  isRefreshing?: boolean;
+  /** Epoch ms of the last successful fetch — drives "updated Xs ago". */
+  dataUpdatedAt?: number | null;
   error: Error | null;
   refetch: () => Promise<void>;
 }

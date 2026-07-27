@@ -117,6 +117,10 @@ export interface UseBuildersGlobalStatsResult {
 export interface UseBuildersStatsAllTimeframesResult {
   stats: BuildersAllTimeframesPayload | null;
   isLoading: boolean;
+  /** True during a background/manual refresh — drives the page freshness cue. */
+  isRefreshing?: boolean;
+  /** Epoch ms of the last successful fetch — drives "updated Xs ago". */
+  dataUpdatedAt?: number | null;
   error: Error | null;
   refetch: () => void;
 }
@@ -133,6 +137,10 @@ export interface UseBuildersTopResult {
 export interface UseBuilderStatsResult {
   stats: BuilderDetailStatsPayload | null;
   isLoading: boolean;
+  /** True during a background/manual refresh — drives the page freshness cue. */
+  isRefreshing?: boolean;
+  /** Epoch ms of the last successful fetch — drives "updated Xs ago". */
+  dataUpdatedAt?: number | null;
   error: Error | null;
   refetch: () => void;
 }
