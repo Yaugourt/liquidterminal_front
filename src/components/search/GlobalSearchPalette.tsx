@@ -30,6 +30,7 @@ import {
 } from "@/services/search";
 import { useGlobalSearch } from "@/store/use-global-search";
 import { trackSearch } from "@/lib/analytics";
+import { safeHref } from "@/lib/safeUrl";
 import { Hypurr, HYPURR_MOODS, type HypurrMood } from "@/components/hypurr/Hypurr";
 
 /** Typing one of these summons a random Hypurr instead of results. */
@@ -158,7 +159,10 @@ export function GlobalSearchPalette() {
       saveRecent(result);
       setOpen(false);
       if (result.external) {
-        window.open(result.href, "_blank", "noopener,noreferrer");
+        // result.href is a user-submitted wiki-resource URL. Validate the
+        // scheme before opening — noopener does not neutralise `javascript:`.
+        const safe = safeHref(result.href);
+        if (safe) window.open(safe, "_blank", "noopener,noreferrer");
       } else {
         router.push(result.href);
       }

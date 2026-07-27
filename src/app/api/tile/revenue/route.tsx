@@ -281,6 +281,16 @@ export async function GET(request: NextRequest) {
         </div>
       </div>
     ),
-    { width: 1200, height: 630 }
+    {
+      width: 1200,
+      height: 630,
+      // The route is unauthenticated and re-renders a 1200×630 PNG on every
+      // hit. `window` is a 5-value allowlist, so cache each rendered image at
+      // the CDN: an attacker looping requests then hits the cache instead of
+      // burning render/Fluid-Compute time on every call.
+      headers: {
+        "Cache-Control": "public, max-age=300, s-maxage=900, stale-while-revalidate=3600",
+      },
+    }
   );
 }
