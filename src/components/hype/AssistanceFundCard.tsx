@@ -105,7 +105,10 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
 
       {/* on-chain position */}
       <div className="p-3.5 border-b border-border-subtle">
-        <KpiRibbon cells={stats} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-6" />
+        {/* Three columns at most. The card sits in a half-width grid, so a
+            six-column row leaves ~98px per cell and every label truncates
+            ("Unrealized PnL" renders as "UNREA…"). Two rows of three reads. */}
+        <KpiRibbon cells={stats} columns="grid-cols-2 sm:grid-cols-3" />
       </div>
 
       {/* real buyback rate */}
@@ -157,7 +160,8 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
                 data={chartData}
                 lineColor={chartPalette.gold}
                 height={150}
-                yAxisWidth={44}
+                // 56px: 44 clips the leading "$" off six-figure ticks ($776.3K).
+                yAxisWidth={56}
                 formatValue={(v) => fmtUsd(v)}
                 formatTime={(ts) => new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
               />

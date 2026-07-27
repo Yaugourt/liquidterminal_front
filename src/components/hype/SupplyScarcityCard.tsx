@@ -34,6 +34,7 @@ export const SupplyScarcityCard = memo(function SupplyScarcityCard() {
         {
           key: "emissions",
           label: "Future emissions",
+          shortLabel: "Emissions",
           pct: pctOfMax(overview.composition.futureEmissions),
           color: chartPalette.multiSeries[1],
           labelClassName: "text-text-primary",
@@ -41,6 +42,7 @@ export const SupplyScarcityCard = memo(function SupplyScarcityCard() {
         {
           key: "locked",
           label: "Locked / vesting",
+          shortLabel: "Locked",
           pct: pctOfMax(overview.composition.lockedExAf),
           color: chartPalette.violet,
           labelClassName: "text-text-primary",
