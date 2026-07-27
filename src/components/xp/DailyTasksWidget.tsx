@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useXpContext } from "@/services/xp";
+import { getDailyTaskRoute } from "@/services/xp/taskRoutes";
 import { cn } from "@/lib/utils";
 import {
   CheckCircle2,
@@ -143,9 +145,10 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
       <div className="space-y-2">
         {dailyTasks.map((task) => {
           const Icon = TASK_ICONS[task.type];
-          return (
+          // Route the row to the page where the task is completed (from taskRoutes.ts).
+          const route = getDailyTaskRoute(task.type);
+          const row = (
             <div
-              key={task.type}
               className={cn(
                 "flex items-center gap-3 p-3 rounded-lg transition-all",
                 task.completed
@@ -184,6 +187,15 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
                 <Circle className="h-5 w-5 text-text-tertiary shrink-0" />
               )}
             </div>
+          );
+
+          // Wrap in a Link when the task has a route; skip navigation otherwise.
+          return route ? (
+            <Link key={task.type} href={route} className="block">
+              {row}
+            </Link>
+          ) : (
+            <div key={task.type}>{row}</div>
           );
         })}
       </div>
