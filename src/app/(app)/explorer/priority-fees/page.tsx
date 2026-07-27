@@ -8,7 +8,7 @@ import {
   PriorityFeesWindowSelector,
 } from "@/components/explorer/priority-fees";
 import { usePriorityFeesStats, usePriorityFeesLeaderboard } from "@/services/explorer/priority-fees";
-import { PageHeader } from "@/components/common";
+import { PageHeader, DataStatus } from "@/components/common";
 
 export default function PriorityFeesPage() {
   const [hours, setHours] = useState(24);
@@ -21,6 +21,14 @@ export default function PriorityFeesPage() {
       <PageHeader
         title="Priority fees"
         description={<>Priority gas on fills (HypeDexer <code className="text-xs">priorityGas</code>), window aggregates, leaderboards, and recent activity.</>}
+        actions={
+          <DataStatus
+            variant="polled"
+            updatedAt={stats.dataUpdatedAt}
+            isRefreshing={stats.isRefreshing}
+            onRefresh={stats.refetch}
+          />
+        }
       >
         <div className="flex justify-end sm:justify-start">
           <PriorityFeesWindowSelector hours={hours} onHoursChange={setHours} />
