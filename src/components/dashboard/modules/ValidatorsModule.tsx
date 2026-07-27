@@ -7,6 +7,7 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  DataStatus,
 } from "@/components/common";
 import { useValidators } from "@/services/explorer/validator";
 import { formatStakeValue } from "@/lib/formatters/numberFormatting";
@@ -17,7 +18,7 @@ const asPercent = (value: number): number => (value <= 1 ? value * 100 : value);
 
 /** ValidatorsModule — résumé de /explorer/validator sur le Dashboard (table "Validators"). */
 export const ValidatorsModule = memo(function ValidatorsModule() {
-  const { validators, stats, isLoading } = useValidators();
+  const { validators, stats, isLoading, isRefreshing, refetch, dataUpdatedAt } = useValidators();
   const { format } = useNumberFormat();
 
   const topValidators = useMemo(
@@ -32,6 +33,14 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
       tag={`${formatStakeValue(stats.totalHypeStaked, format)} HYPE staked`}
       viewAllLabel="All validators"
       href="/explorer/validator"
+      actions={
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+        />
+      }
     >
       <ModuleTable
         // Declared widths make the table `table-fixed` so the validator name

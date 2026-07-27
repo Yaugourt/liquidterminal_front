@@ -16,7 +16,7 @@ import {
  * (USDC, USDH, USDT0, USDE) triés par supply décroissante.
  */
 export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsResult {
-  const { data, isLoading, error, refetch } = useDataFetching<SpotUsdcResponse>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<SpotUsdcResponse>({
     fetchFn: fetchSpotStablecoins,
     dependencies: [],
     refreshInterval,
@@ -71,7 +71,9 @@ export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsR
     supplyByCoinChart,
     lastUpdate: latest?.lastUpdate ?? null,
     isLoading,
+    isRefreshing,
     error,
     refetch,
+    dataUpdatedAt,
   };
 }

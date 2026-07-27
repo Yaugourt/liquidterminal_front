@@ -71,6 +71,8 @@ export interface UseValidatorsResult {
   validators: Validator[];
   stats: ValidatorStats;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 } 

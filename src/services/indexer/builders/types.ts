@@ -124,8 +124,10 @@ export interface UseBuildersStatsAllTimeframesResult {
 export interface UseBuildersTopResult {
   data: BuildersTopPayload | null;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => void;
+  dataUpdatedAt?: number | null;
 }
 
 export interface UseBuilderStatsResult {

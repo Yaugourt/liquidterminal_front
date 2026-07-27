@@ -8,6 +8,7 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  DataStatus,
 } from "@/components/common";
 import { useBuildersStatsAllTimeframes } from "@/services/indexer/builders/hooks/useBuildersStatsAllTimeframes";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
@@ -24,7 +25,7 @@ import { useNumberFormat } from "@/store/number-format.store";
  */
 export const BuildersModule = memo(function BuildersModule() {
   const { stats } = useBuildersStatsAllTimeframes();
-  const { data, isLoading } = useBuildersTop({
+  const { data, isLoading, isRefreshing, refetch, dataUpdatedAt } = useBuildersTop({
     timeframe: "24h",
     sort: "builder_fees",
     limit: 5,
@@ -51,7 +52,17 @@ export const BuildersModule = memo(function BuildersModule() {
       tag={`${compactUsd(current?.totalBuilderFees)} fees 24h`}
       viewAllLabel="All builders"
       href="/market/builders"
-      actions={<ExportButton datasetId="builders" />}
+      actions={
+        <>
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+          <ExportButton datasetId="builders" />
+        </>
+      }
     >
       <ModuleTable
         columns={[

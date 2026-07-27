@@ -5,8 +5,10 @@ import { EducationalResource, PopularResourcesResponse } from '../types';
 interface UsePopularWikiResourcesResult {
   resources: EducationalResource[];
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 }
 
 /**
@@ -14,7 +16,7 @@ interface UsePopularWikiResourcesResult {
  * ranked by the number of read lists that include them.
  */
 export function usePopularWikiResources(limit = 5): UsePopularWikiResourcesResult {
-  const { data, isLoading, error, refetch } = useDataFetching<PopularResourcesResponse>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<PopularResourcesResponse>({
     fetchFn: () => fetchPopularWikiResources(limit),
     dependencies: [limit],
     refreshInterval: 60000
@@ -23,7 +25,9 @@ export function usePopularWikiResources(limit = 5): UsePopularWikiResourcesResul
   return {
     resources: data?.data || [],
     isLoading,
+    isRefreshing,
     error,
-    refetch
+    refetch,
+    dataUpdatedAt
   };
 }
