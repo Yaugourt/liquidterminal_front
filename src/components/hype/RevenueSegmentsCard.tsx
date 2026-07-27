@@ -14,6 +14,7 @@ import {
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Timeframe } from "@/lib/timeframe";
 import { useRevenueBreakdown, type RevenueWindow } from "@/services/market/revenue";
+import { SourceCoverageNote } from "./SourceCoverageNote";
 
 /**
  * Revenue by segment.
@@ -26,6 +27,15 @@ import { useRevenueBreakdown, type RevenueWindow } from "@/services/market/reven
  * HIP-1 and HIP-3 stay separate here, unlike the dashboard chart which merges
  * them into one "Auctions" band: at segment level the distinction between spot
  * listings and perp-DEX slots is the interesting part.
+ *
+ * The priority line is order priority only, and is labelled as such. Hyperliquid
+ * runs two priority mechanisms on HyperCore and both burn HYPE: order priority,
+ * charged from undelegated staking balance as a fraction of filled notional
+ * (IOC) or resting notional (ALO), and gossip priority, charged from spot
+ * balance through two Dutch auctions on a three-minute cycle. Only the first is
+ * in this number. Calling the line "Priority fees" implied both.
+ *
+ * https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/priority-fees
  */
 
 interface Segment {
@@ -40,7 +50,7 @@ const SEGMENTS: Segment[] = [
   { key: "spot", label: "Spot", hint: "Spot trading fees, gross of the deployer share", color: chartPalette.multiSeries[2] },
   { key: "hip1", label: "HIP-1 auctions", hint: "Spot ticker deploy auctions", color: chartPalette.multiSeries[3] },
   { key: "hip3", label: "HIP-3 auctions", hint: "Perp DEX deploy auctions", color: chartPalette.multiSeries[7] },
-  { key: "priority", label: "Priority fees", hint: "Paid for write priority, burned", color: chartPalette.multiSeries[4] },
+  { key: "priority", label: "Order priority", hint: "Write priority, burned · gossip not counted", color: chartPalette.multiSeries[4] },
   { key: "hip4", label: "HIP-4", hint: "Outcome markets", color: chartPalette.multiSeries[6] },
 ];
 
@@ -151,6 +161,7 @@ export const RevenueSegmentsCard = memo(function RevenueSegmentsCard() {
             <span>Spot ×{breakdown.meta.spotMultiplier} to approximate gross-user</span>
           </>
         ) : null}
+        <SourceCoverageNote meta={breakdown?.meta} />
       </div>
     </Card>
   );

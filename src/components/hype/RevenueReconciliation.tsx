@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import { toIncomeStatement, useProtocolFundamentals } from "@/services/market/fundamentals";
+import { SourceCoverageNote } from "./SourceCoverageNote";
 
 /**
  * Why the two revenue figures on this page differ.
@@ -95,6 +96,12 @@ export const RevenueReconciliation = memo(function RevenueReconciliation() {
           the other: the segment view is the more granular, the DefiLlama line is the one other
           venues are quoted on, which is why the comparison uses it.
         </p>
+      </div>
+
+      {/* A frozen source shrinks our side of the comparison and would show up as
+          a narrower gap, which is the one reading this card must not invite. */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary empty:hidden">
+        <SourceCoverageNote meta={breakdown?.meta} />
       </div>
     </Card>
   );

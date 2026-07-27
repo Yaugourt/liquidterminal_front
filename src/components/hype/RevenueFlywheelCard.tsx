@@ -8,6 +8,7 @@ import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import type { RevenueWindow } from "@/services/market/revenue";
 import { fmtUsd } from "./format";
+import { SourceCoverageNote } from "./SourceCoverageNote";
 
 const WINDOWS: readonly RevenueWindow[] = ["7d", "30d", "90d"] as const;
 const WINDOW_LABELS: Record<RevenueWindow, string> = {
@@ -94,6 +95,7 @@ export const RevenueFlywheelCard = memo(function RevenueFlywheelCard() {
         <span title="Spot fees doubled to approximate gross-user (deployer takes 50% on HIP-1 pairs).">
           Spot ×{breakdown?.meta?.spotMultiplier ?? 2}
         </span>
+        <SourceCoverageNote meta={breakdown?.meta} />
       </div>
     </Card>
   );
