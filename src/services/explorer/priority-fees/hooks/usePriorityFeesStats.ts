@@ -21,7 +21,7 @@ export function usePriorityFeesStats(
     [params.hours, params.coin]
   );
 
-  const { data, isLoading, error, refetch } = useDataFetching({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching({
     fetchFn,
     refreshInterval: 45_000,
     dependencies: deps,
@@ -30,7 +30,9 @@ export function usePriorityFeesStats(
   return {
     data: data ?? null,
     isLoading,
+    isRefreshing,
     error,
     refetch,
+    dataUpdatedAt,
   };
 }

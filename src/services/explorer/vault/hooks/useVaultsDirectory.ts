@@ -37,9 +37,13 @@ export interface UseVaultsDirectoryResult {
   avgApr: number;
   totalFollowers: number;
   isLoading: boolean;
+  /** True while a background/manual vaults refresh is in flight (drives the refresh spinner). */
+  isRefreshing: boolean;
   error: Error | null;
   /** Epoch ms of the most recent successful vaults fetch (drives "updated Xs ago"). */
   dataUpdatedAt: number | null;
+  /** Force a fresh vaults fetch (manual refresh button). */
+  refetch: () => void;
   search: string;
   setSearch: (q: string) => void;
   statusFilter: StatusFilter;
@@ -63,8 +67,10 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
     totalTvl,
     totalCount,
     isLoading: vaultsLoading,
+    isRefreshing,
     error,
     dataUpdatedAt,
+    refetch,
   } = useVaults({ limit: 10000, sortBy: "tvl", includeClosed: true });
 
   const { summaries } = useVaultSummaries({ includeClosed: true, limit: 5000 });
@@ -138,8 +144,10 @@ export function useVaultsDirectory(): UseVaultsDirectoryResult {
     avgApr,
     totalFollowers,
     isLoading: vaultsLoading,
+    isRefreshing: isRefreshing ?? false,
     error,
     dataUpdatedAt,
+    refetch,
     search,
     setSearch,
     statusFilter,
