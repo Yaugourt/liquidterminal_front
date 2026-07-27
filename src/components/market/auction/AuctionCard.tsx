@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Gavel, Clock, ExternalLink, AlertCircle } from "lucide-react";
+import { Gavel, Clock, ExternalLink, AlertCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useAuctionTiming, usePerpAuctionTiming } from "@/services/market/auction";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -52,17 +52,27 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
           </div>
         </div>
 
-        <Link
-          href={marketType === "spot"
-            ? "https://app.hyperliquid.xyz/deploySpot"
-            : "https://app.hyperliquid.xyz/deployPerp"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-lg border border-brand/10 transition-colors"
-        >
-          Participate
-          <ExternalLink size={12} />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/market/${marketType}/auction`}
+            className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+          >
+            View all
+            <ArrowRight size={12} />
+          </Link>
+
+          <Link
+            href={marketType === "spot"
+              ? "https://app.hyperliquid.xyz/deploySpot"
+              : "https://app.hyperliquid.xyz/deployPerp"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-lg border border-brand/10 transition-colors"
+          >
+            Participate
+            <ExternalLink size={12} />
+          </Link>
+        </div>
       </div>
 
       {/* Main Content */}
