@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "16.2.9",
-    "@types/node": "^24.12.2",
+    "@types/node": "^26.1.1",
     "@types/papaparse": "^5.5.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
