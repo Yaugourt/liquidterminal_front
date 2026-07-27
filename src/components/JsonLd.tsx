@@ -1,10 +1,27 @@
 import { SITE_CONFIG } from "@/lib/site-config";
 
+/**
+ * `JSON.stringify` escapes `"` and `\` but leaves `<`, `>`, `&` and the two
+ * line-separator code points intact. Inside a `<script>` element that lets a
+ * route param carrying `</script>…` break out of the block and inject markup
+ * (reflected XSS — the CSP has no script-src to stop it). Escaping these to
+ * their `\uXXXX` forms is still valid JSON and parses identically for
+ * schema.org consumers, so it closes the hole with zero behaviour change.
+ */
+function safeJsonLd(data: Record<string, unknown>): string {
+  return JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}
+
 export function JsonLd({ data }: { data: Record<string, unknown> }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(data) }}
     />
   );
 }
@@ -64,4 +81,3 @@ export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
     })),
   };
 }
-

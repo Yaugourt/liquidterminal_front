@@ -3,13 +3,22 @@ import { SITE_CONFIG } from "@/lib/site-config";
 
 const siteUrl = SITE_CONFIG.url;
 
-/** Decode a dynamic route param for titles/canonicals (defensive length cap). */
+/**
+ * Decode a dynamic route param for titles/canonicals. These are tickers,
+ * addresses and dex/builder names, so we strip to a conservative charset
+ * BEFORE the length cap: this is defence-in-depth behind `JsonLd`'s escaping
+ * so a param can never carry markup into a title or a JSON-LD block, even if a
+ * future sink forgets to escape. Anything outside the set is dropped, not
+ * encoded.
+ */
 export function decodeEntityParam(raw: string): string {
+  let decoded: string;
   try {
-    return decodeURIComponent(raw).slice(0, 48).trim();
+    decoded = decodeURIComponent(raw);
   } catch {
-    return raw.slice(0, 48).trim();
+    decoded = raw;
   }
+  return decoded.replace(/[^A-Za-z0-9:_\-. ]/g, "").slice(0, 48).trim();
 }
 
 interface SEOProps {
