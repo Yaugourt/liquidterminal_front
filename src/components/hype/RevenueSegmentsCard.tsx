@@ -14,6 +14,7 @@ import {
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Timeframe } from "@/lib/timeframe";
 import { useRevenueBreakdown, type RevenueWindow } from "@/services/market/revenue";
+import { SourceCoverageNote } from "./SourceCoverageNote";
 
 /**
  * Revenue by segment.
@@ -160,6 +161,7 @@ export const RevenueSegmentsCard = memo(function RevenueSegmentsCard() {
             <span>Spot ×{breakdown.meta.spotMultiplier} to approximate gross-user</span>
           </>
         ) : null}
+        <SourceCoverageNote meta={breakdown?.meta} />
       </div>
     </Card>
   );

@@ -26,12 +26,26 @@ export interface RevenueLifetime {
   total: number;
 }
 
-type RevenueSourceStatus = "ok" | "stale" | "error" | "not_yet_live";
+export type RevenueSourceStatus = "ok" | "stale" | "error" | "not_yet_live";
 
-interface RevenueMeta {
+/**
+ * Newest UTC day each series actually populates. A frozen upstream feed keeps
+ * answering with a stale payload, which bucketing turns into zeros that read
+ * exactly like a quiet day, so a series has to be stopped at its real end
+ * rather than drawn down to the floor.
+ *
+ * Absent on responses from a backend older than the coverage field.
+ */
+export interface RevenueCoverage {
+  perpSpot: string | null;
+  priority: string | null;
+}
+
+export interface RevenueMeta {
   spotMultiplier: number;
   hypeUsd: number | null;
   lastUpdate: number;
+  coverage?: RevenueCoverage;
   sourceStatus: {
     perpSpot: RevenueSourceStatus;
     hip1: RevenueSourceStatus;
