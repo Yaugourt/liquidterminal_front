@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/loading-state";
-import { chartPalette } from "@/components/common";
+import { chartPalette, DataStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import {
   useProject,
@@ -35,7 +35,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const projectId = parseInt(id);
   const router = useRouter();
 
-  const { project, isLoading } = useProject(projectId);
+  const { project, isLoading, isRefreshing, refetch, dataUpdatedAt } = useProject(projectId);
   const { metrics, fees, revenue, tokenSymbol } = useProjectMetrics(projectId);
   const { context } = useProjectContext(projectId);
   const { history } = useTvlHistory(project?.defillamaSlug ?? null);
@@ -112,6 +112,13 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
         </Link>
         <span>/</span>
         <span className="text-text-secondary">{project.title}</span>
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+          className="ml-auto"
+        />
       </nav>
 
       <ProjectDetailHeader

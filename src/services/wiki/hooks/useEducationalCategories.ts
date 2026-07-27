@@ -20,7 +20,7 @@ export const useEducationalCategories = (
     ...initialParams
   });
 
-  const { data, isLoading, error, refetch } = useDataFetching<CategoriesResponse>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<CategoriesResponse>({
     fetchFn: () => fetchEducationalCategories(params),
     initialData: options.initialData ? {
       success: true,
@@ -43,8 +43,10 @@ export const useEducationalCategories = (
   return {
     categories: data?.data || [],
     isLoading,
+    isRefreshing,
     error,
     refetch,
+    dataUpdatedAt,
     pagination: data?.pagination,
     updateParams
   };
