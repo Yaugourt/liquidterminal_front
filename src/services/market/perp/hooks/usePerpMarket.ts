@@ -20,11 +20,13 @@ export function usePerpMarkets({
     ...defaultParams,
   }));
 
-  const { 
-    data: response, 
-    isLoading, 
+  const {
+    data: response,
+    isLoading,
+    isRefreshing,
     error,
-    refetch
+    refetch,
+    dataUpdatedAt
   } = useDataFetching<PerpMarketResponse>({
     fetchFn: async () => {
 
@@ -57,16 +59,18 @@ export function usePerpMarkets({
     page: response?.page || 1,
     totalPages: response?.totalPages || 0,
     isLoading,
+    isRefreshing,
     error,
     updateParams,
     refetch,
+    dataUpdatedAt,
     totalVolume: response?.totalVolume || 0
   };
 }
 
 // Hook spécifique pour les tokens tendance (top 5)
 export function useTrendingPerpMarkets(limit: number = 5, sortBy: PerpSortableFields = 'change24h', sortOrder: 'asc' | 'desc' = 'desc') {
-  const { data, isLoading, error, refetch, updateParams, totalVolume } = usePerpMarkets({
+  const { data, isLoading, isRefreshing, error, refetch, updateParams, totalVolume, dataUpdatedAt } = usePerpMarkets({
     limit,
     defaultParams: {
       sortBy,
@@ -77,9 +81,11 @@ export function useTrendingPerpMarkets(limit: number = 5, sortBy: PerpSortableFi
   return {
     data,
     isLoading,
+    isRefreshing,
     error,
     refetch,
     updateParams,
-    totalVolume
+    totalVolume,
+    dataUpdatedAt
   };
 } 

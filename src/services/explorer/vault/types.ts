@@ -108,6 +108,7 @@ export interface UseVaultsResult {
   totalTvl: number;
   totalCount: number;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
   updateParams: (params: Partial<VaultsParams>) => void;

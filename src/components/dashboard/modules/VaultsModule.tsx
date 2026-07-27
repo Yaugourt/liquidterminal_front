@@ -8,6 +8,7 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  DataStatus,
 } from "@/components/common";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import {
@@ -17,7 +18,7 @@ import {
 
 /** VaultsModule — résumé de /explorer/vaults sur le Dashboard (table "Top Vaults"). */
 export const VaultsModule = memo(function VaultsModule() {
-  const { vaults, totalTvl, isLoading } = useVaults({
+  const { vaults, totalTvl, isLoading, isRefreshing, refetch, dataUpdatedAt } = useVaults({
     limit: 1000,
     sortBy: "tvl",
   });
@@ -31,7 +32,17 @@ export const VaultsModule = memo(function VaultsModule() {
       tag={`${compactUsd(totalTvl)} TVL`}
       viewAllLabel="All vaults"
       href="/explorer/vaults"
-      actions={<ExportButton datasetId="vault-summaries" />}
+      actions={
+        <>
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+          <ExportButton datasetId="vault-summaries" />
+        </>
+      }
     >
       {/* Three columns, leader folded into the vault identity: a fourth dense
           column needs ~86px for an address, which a half-width card (and every

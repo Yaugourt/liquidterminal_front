@@ -51,6 +51,8 @@ export interface RevenueBreakdown {
 export interface UseRevenueBreakdownResult {
   breakdown: RevenueBreakdown | null;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 }
