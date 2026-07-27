@@ -53,7 +53,6 @@ export interface XpHistoryResponse {
 
 export interface LeaderboardEntry {
   rank: number;
-  userId: number;
   name: string;
   totalXp: number;
   level: number;
