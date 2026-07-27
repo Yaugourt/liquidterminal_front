@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { DataStatus } from "@/components/common";
 import { Breadcrumb, RailSearch } from "../primitives";
 import { chapterHref, categoryHref } from "../hub/topics";
 import { useWikiTopics } from "./useWikiTopics";
@@ -12,7 +13,7 @@ import { useWikiTopics } from "./useWikiTopics";
  * page the rails link to instead of a "Show N more" toggle.
  */
 export function TopicsIndex() {
-  const { chapterTopics, communityCategories, isLoading } = useWikiTopics();
+  const { chapterTopics, communityCategories, isLoading, isRefreshing, refetch, dataUpdatedAt } = useWikiTopics();
   const [q, setQ] = useState("");
 
   const query = q.trim().toLowerCase();
@@ -29,11 +30,20 @@ export function TopicsIndex() {
     <div className="space-y-4">
       <Breadcrumb items={[{ label: "Wiki", href: "/wiki" }, { label: "Topics" }]} />
 
-      <div className="space-y-1">
-        <h1 className="font-inter text-2xl font-semibold tracking-tight text-text-primary">Topics</h1>
-        <p className="text-sm text-text-secondary">
-          Every Learn chapter and community category in one place.
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <h1 className="font-inter text-2xl font-semibold tracking-tight text-text-primary">Topics</h1>
+          <p className="text-sm text-text-secondary">
+            Every Learn chapter and community category in one place.
+          </p>
+        </div>
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+          className="mt-1 shrink-0"
+        />
       </div>
 
       <RailSearch

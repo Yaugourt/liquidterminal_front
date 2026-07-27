@@ -4,17 +4,20 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Download } from "lucide-react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader, ProtectedAction } from "@/components/common";
+import { PageHeader, ProtectedAction, DataStatus } from "@/components/common";
 import { ChapterView } from "@/components/wiki/atlas/ChapterView";
 import { EducationModal } from "@/components/wiki/EducationModal";
 import { UserSubmissionModal } from "@/components/wiki/UserSubmissionModal";
 import { useAuthContext } from "@/contexts/auth.context";
+import { useEducationalCategories } from "@/services/wiki";
 
 export default function WikiPage() {
   // Bumped after a submission/creation so the home refetches without a reload
   const [refreshToken, setRefreshToken] = useState(0);
   const { user, authenticated } = useAuthContext();
   const { setTitle } = usePageTitle();
+  // Page-level freshness cue wired to the categories poll that powers the wiki.
+  const { isRefreshing, refetch, dataUpdatedAt } = useEducationalCategories({ withCounts: true });
 
   useEffect(() => {
     setTitle("Wiki");
@@ -30,6 +33,12 @@ export default function WikiPage() {
         description="The Hyperliquid curriculum and what the community writes about it."
         actions={
           <div className="flex items-center gap-2">
+            <DataStatus
+              variant="polled"
+              updatedAt={dataUpdatedAt}
+              isRefreshing={isRefreshing}
+              onRefresh={refetch}
+            />
             <a
               href="/hyperliquid-house-of-all-finance.pdf"
               download
