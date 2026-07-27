@@ -1,7 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Gavel, Clock } from "lucide-react";
+import Link from "next/link";
+import { Gavel, Clock, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   useAuctionTiming,
@@ -281,6 +282,10 @@ export const AuctionsPanel = memo(function AuctionsPanel({
           initials: "P3",
         };
 
+  // Full auction record (history + Dutch curve) lives on the dedicated page.
+  const auctionHref =
+    market === "spot" ? "/market/spot/auction" : "/market/perp/auction";
+
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* card-head V4 — badge LIVE si l'auction est active */}
@@ -297,6 +302,13 @@ export const AuctionsPanel = memo(function AuctionsPanel({
             LIVE
           </span>
         )}
+        <Link
+          href={auctionHref}
+          className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+        >
+          View all
+          <ArrowRight size={12} />
+        </Link>
       </div>
 
       <AuctionRow entry={entry} />

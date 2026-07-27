@@ -1,7 +1,8 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { PieChart as PieIcon } from "lucide-react";
+import Link from "next/link";
+import { PieChart as PieIcon, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useBuildersGlobalStats } from "@/services/indexer/builders/hooks/useBuildersGlobalStats";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
@@ -123,6 +124,13 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
             </span>
           </span>
         </div>
+        <Link
+          href="/market/builders"
+          className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+        >
+          View all
+          <ArrowRight size={12} />
+        </Link>
       </div>
 
       {!hasData ? (
