@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { DeleteConfirmDialog } from "@/components/common";
+import { DeleteConfirmDialog, DataStatus } from "@/components/common";
 import { ProjectHeader } from "@/components/ecosystem/publicgoods/ProjectHeader";
 import { ProjectContent } from "@/components/ecosystem/publicgoods/ProjectContent";
 import { ProjectInfoSidebar } from "@/components/ecosystem/publicgoods/ProjectInfoSidebar";
@@ -40,7 +40,7 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const { user } = useAuthContext();
 
   // Fetch project from API
-  const { publicGood: project, isLoading, refetch } = usePublicGood(parseInt(resolvedParams.id));
+  const { publicGood: project, isLoading, isRefreshing, refetch, dataUpdatedAt } = usePublicGood(parseInt(resolvedParams.id));
   const { deletePublicGood, isLoading: isDeleting } = useDeletePublicGood();
 
   // Check permissions
@@ -109,13 +109,21 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
-      <Link
-        href="/ecosystem/publicgoods"
-        className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
-      >
-        <ArrowLeft className="w-3.5 h-3.5" />
-        Back to projects
-      </Link>
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          href="/ecosystem/publicgoods"
+          className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Back to projects
+        </Link>
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+        />
+      </div>
 
       {/* Project header */}
       <ProjectHeader project={project} />

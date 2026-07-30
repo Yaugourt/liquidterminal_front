@@ -1,6 +1,7 @@
 "use client";
 
-import { Gavel } from "lucide-react";
+import { Gavel, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { TypedDataTable, type Column } from "@/components/common";
 import { useAuctions } from "@/services/market/auction/hooks/useAuctions";
@@ -66,6 +67,13 @@ export function RecentAuctionsCard() {
         <h3 className="text-xs font-medium text-text-primary tracking-tight">
           Recent Auctions
         </h3>
+        <Link
+          href="/market/perp/auction"
+          className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+        >
+          View all
+          <ArrowRight size={12} />
+        </Link>
       </div>
 
       <TypedDataTable<AuctionInfo>

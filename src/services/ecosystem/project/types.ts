@@ -290,7 +290,10 @@ export interface UseTvlHistoryResult {
 export interface UseChainStatsResult {
   stats: DefiLlamaChainStats | undefined;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
+  refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 }
 
 // Types pour les mutations
@@ -394,6 +397,8 @@ export type ProjectCsvUploadApiResponse = ProjectCsvUploadResponse | ProjectCsvU
 export interface UseProjectResult {
   project: Project | undefined;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 }

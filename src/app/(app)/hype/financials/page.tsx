@@ -1,5 +1,6 @@
 "use client";
 
+import { DataStatus } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
   FeesRevenueHistoryCard,
@@ -9,6 +10,7 @@ import {
   RevenueReconciliation,
   RevenueSegmentsCard,
 } from "@/components/hype";
+import { useProtocolFundamentals } from "@/services/market/fundamentals";
 
 /**
  * HYPE · Financials — Hyperliquid read as a business.
@@ -31,13 +33,25 @@ import {
  * to notice.
  */
 export default function HypeFinancialsPage() {
+  // Page-level freshness cue wired to the fundamentals feeding the income
+  // statement (the leading card). Same default slug, so it shares that fetch.
+  const { dataUpdatedAt, isRefreshing, refetch } = useProtocolFundamentals();
+
   return (
     <div className="space-y-8">
       <section className="space-y-2.5">
-        <SectionHead
-          title="Statements"
-          subtitle="What users paid, what was redistributed, what the protocol kept"
-        />
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+          <SectionHead
+            title="Statements"
+            subtitle="What users paid, what was redistributed, what the protocol kept"
+          />
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        </div>
         {/* Two columns only from xl: at 1024 a 364px card cannot hold its own
             header (title + total pill + timeframe tabs) without clipping. */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">

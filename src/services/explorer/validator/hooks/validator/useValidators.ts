@@ -3,7 +3,7 @@ import { UseValidatorsResult, Validator, ValidatorStats } from '../../types/vali
 import { useDataFetching } from '@/hooks/useDataFetching';
 
 export const useValidators = (initialData?: Validator[]): UseValidatorsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<{ validators: Validator[], stats: ValidatorStats }>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<{ validators: Validator[], stats: ValidatorStats }>({
     fetchFn: fetchAllValidators,
     refreshInterval: 30000 // 30 seconds
   });
@@ -20,7 +20,9 @@ export const useValidators = (initialData?: Validator[]): UseValidatorsResult =>
     validators,
     stats,
     isLoading,
+    isRefreshing,
     error,
-    refetch
+    refetch,
+    dataUpdatedAt
   };
 }; 

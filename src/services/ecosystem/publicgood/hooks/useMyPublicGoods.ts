@@ -6,8 +6,10 @@ import { PublicGoodsResponse, PublicGoodQueryParams, PublicGood } from '../types
 export interface UseMyPublicGoodsResult {
   myPublicGoods: PublicGood[];
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => void;
+  dataUpdatedAt?: number | null;
   pagination?: {
     total: number;
     page: number;
@@ -32,7 +34,7 @@ export const useMyPublicGoods = (params?: Omit<PublicGoodQueryParams, 'status'>)
     return cleaned;
   }, [params]);
 
-  const { data, isLoading, error, refetch } = useDataFetching<PublicGoodsResponse>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<PublicGoodsResponse>({
     fetchFn: async () => {
       return await fetchMyPublicGoods(cleanParams);
     },
@@ -44,8 +46,10 @@ export const useMyPublicGoods = (params?: Omit<PublicGoodQueryParams, 'status'>)
   return {
     myPublicGoods: data?.data || [],
     isLoading,
+    isRefreshing,
     error,
     refetch,
+    dataUpdatedAt,
     pagination: data?.pagination
   };
 };

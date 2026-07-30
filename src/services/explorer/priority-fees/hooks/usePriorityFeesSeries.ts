@@ -16,11 +16,12 @@ import type {
 export function usePriorityFeesSeries(
   window: PriorityFeesSeriesWindow,
 ): UsePriorityFeesSeriesResult {
-  const { data, isLoading, error, refetch } = useDataFetching<PriorityFeesSeries>({
-    fetchFn: () => fetchPriorityFeesSeries(window),
-    refreshInterval: 60000,
-    dependencies: [window],
-  });
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } =
+    useDataFetching<PriorityFeesSeries>({
+      fetchFn: () => fetchPriorityFeesSeries(window),
+      refreshInterval: 60000,
+      dependencies: [window],
+    });
 
-  return { series: data, isLoading, error, refetch };
+  return { series: data, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
 }

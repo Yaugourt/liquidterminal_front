@@ -31,7 +31,10 @@ export interface UseRankedProjectsResult {
   /** Whole catalog, tracked or listing-only. */
   totalCount: number;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
+  refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 }
 
 /**
@@ -48,7 +51,10 @@ export const useRankedProjects = (): UseRankedProjectsResult => {
   const {
     data: catalog,
     isLoading: catalogLoading,
+    isRefreshing: catalogRefreshing,
     error: catalogError,
+    refetch,
+    dataUpdatedAt,
   } = useDataFetching<Project[]>({
     fetchFn: () => fetchAllProjects(),
     refreshInterval: 300000,
@@ -117,6 +123,9 @@ export const useRankedProjects = (): UseRankedProjectsResult => {
     trackedCount: tracked.length,
     totalCount: catalog?.length ?? 0,
     isLoading: catalogLoading || metricsLoading,
+    isRefreshing: catalogRefreshing,
     error: catalogError ?? metricsError,
+    refetch,
+    dataUpdatedAt,
   };
 };

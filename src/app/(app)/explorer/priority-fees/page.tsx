@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PageHeader, TimeframeTabs } from "@/components/common";
+import { DataStatus, PageHeader, TimeframeTabs } from "@/components/common";
 import {
   PriorityBurnChart,
   PriorityFeesRibbon,
@@ -25,7 +25,8 @@ const LEADERBOARD_LIMIT = 100;
 export default function PriorityFeesPage() {
   const [window, setWindow] = useState<PriorityFeesSeriesWindow>("24h");
 
-  const { series, isLoading, error } = usePriorityFeesSeries(window);
+  const { series, isLoading, isRefreshing, error, refetch, dataUpdatedAt } =
+    usePriorityFeesSeries(window);
   const leaderboard = usePriorityFeesLeaderboard({
     hours: seriesWindowToHours(window),
     limit: LEADERBOARD_LIMIT,
@@ -39,6 +40,14 @@ export default function PriorityFeesPage() {
       <PageHeader
         title="Priority fees"
         description="HYPE burned to jump the queue on HyperCore, by hour, by payer and by fill."
+        actions={
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        }
       >
         <div className="flex justify-end sm:justify-start">
           <TimeframeTabs

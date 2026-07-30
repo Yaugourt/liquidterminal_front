@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { PageHeader, PageFaq } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { OperatorLens } from "@/components/explorer/validator/lens/OperatorLens";
 import { CapitalLens } from "@/components/explorer/validator/lens/CapitalLens";
 import { GovernanceLens } from "@/components/explorer/validator/lens/GovernanceLens";
+import { useValidators } from "@/services/explorer/validator/hooks";
 import { VALIDATORS_FAQ } from "@/lib/page-faqs";
 
 type Lens = "operator" | "capital" | "governance";
@@ -25,6 +26,8 @@ const LENS_DESCRIPTION: Record<Lens, string> = {
 
 export default function ValidatorPage() {
   const [lens, setLens] = useState<Lens>("operator");
+  // Page-level freshness cue for the validator set (shared across lenses).
+  const { dataUpdatedAt, isRefreshing, refetch } = useValidators();
 
   return (
     <div className="space-y-6">
@@ -32,6 +35,14 @@ export default function ValidatorPage() {
         title="Validators"
         titleQualifier="· Hyperliquid staking"
         description={LENS_DESCRIPTION[lens]}
+        actions={
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        }
       >
         <PillTabs
           tabs={LENS_TABS}

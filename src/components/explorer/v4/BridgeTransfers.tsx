@@ -1,8 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import Link from "next/link";
-import { ArrowLeftRight, ArrowRight } from "lucide-react";
+import { ArrowLeftRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useEvmBridgeEvents } from "@/services/indexer/evm";
 import {
@@ -90,13 +89,6 @@ export const BridgeTransfers = memo(function BridgeTransfers() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           Last {ROWS}
         </span>
-        <Link
-          href="/explorer"
-          className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-        >
-          View all
-          <ArrowRight size={12} />
-        </Link>
       </div>
 
       {isLoading && rows.length === 0 ? (

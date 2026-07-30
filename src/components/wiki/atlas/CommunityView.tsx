@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import { DataStatus } from "@/components/common";
 import { Breadcrumb } from "../primitives";
 import { categoryHref, slugify } from "../hub/topics";
 import { useWikiTopics } from "./useWikiTopics";
@@ -20,7 +21,7 @@ interface CommunityViewProps {
  * category's articles as a table (density on the tail).
  */
 export function CommunityView({ categorySlug }: CommunityViewProps) {
-  const { chapterTopics, communityCategories, categories, isLoading } = useWikiTopics();
+  const { chapterTopics, communityCategories, categories, isLoading, isRefreshing, refetch, dataUpdatedAt } = useWikiTopics();
 
   if (isLoading) {
     return (
@@ -63,9 +64,17 @@ export function CommunityView({ categorySlug }: CommunityViewProps) {
           <div className="space-y-3 rounded-lg border border-border-subtle bg-surface p-4">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
               <h1 className="min-w-0 truncate text-[20px] font-semibold text-text-primary">{category.name}</h1>
-              <span className="shrink-0 text-[11px] uppercase tracking-wide text-text-tertiary">
-                Community category · no Learn primer
-              </span>
+              <div className="flex shrink-0 items-center gap-2">
+                <DataStatus
+                  variant="polled"
+                  updatedAt={dataUpdatedAt}
+                  isRefreshing={isRefreshing}
+                  onRefresh={refetch}
+                />
+                <span className="text-[11px] uppercase tracking-wide text-text-tertiary">
+                  Community category · no Learn primer
+                </span>
+              </div>
             </div>
             <div className="flex items-baseline gap-2">
               <p className="text-[12.5px] text-text-secondary">

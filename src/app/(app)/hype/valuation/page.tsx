@@ -1,7 +1,9 @@
 "use client";
 
+import { DataStatus } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import { MultipleHistoryCard, ValuationMultiplesCard } from "@/components/hype";
+import { useFeeRevenueHistory } from "@/services/market/fundamentals";
 
 /**
  * HYPE · Valuation — what the market is paying for the earnings.
@@ -20,13 +22,25 @@ import { MultipleHistoryCard, ValuationMultiplesCard } from "@/components/hype";
  * together we are publishing an opinion with a number attached to it.
  */
 export default function HypeValuationPage() {
+  // Page-level freshness cue wired to the fee/revenue history the multiples are
+  // built from (both cards read the same series).
+  const { dataUpdatedAt, isRefreshing, refetch } = useFeeRevenueHistory();
+
   return (
     <div className="space-y-8">
       <section className="space-y-2.5">
-        <SectionHead
-          title="Multiples"
-          subtitle="Price against trailing twelve months of fees and earnings · both supply bases"
-        />
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+          <SectionHead
+            title="Multiples"
+            subtitle="Price against trailing twelve months of fees and earnings · both supply bases"
+          />
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        </div>
         <ValuationMultiplesCard />
       </section>
 

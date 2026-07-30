@@ -13,7 +13,7 @@ import {
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks/usePerpDexMarketData";
 import { extractPerpDexAssetTicker } from "@/services/market/perpDex/utils";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { TokenAvatar } from "@/components/common";
+import { TokenAvatar, DataStatus } from "@/components/common";
 
 /**
  * TwapPanel — carte « Active TWAP Orders » du Dashboard (Variant A).
@@ -180,7 +180,8 @@ export const TwapPanel = memo(function TwapPanel() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           {count} active
         </span>
-        <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/25 mono">
+        <DataStatus variant="live" className="ml-auto" />
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/25 mono">
           {compactUsd(totalVolume)} vol
         </span>
       </div>

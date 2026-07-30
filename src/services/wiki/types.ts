@@ -145,8 +145,10 @@ export interface PopularResourcesResponse {
 export interface UseEducationalCategoriesResult {
   categories: EducationalCategory[];
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
   pagination?: {
     total: number;
     page: number;

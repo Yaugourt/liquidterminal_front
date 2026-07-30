@@ -9,6 +9,7 @@ import {
   CapitalEvolution,
   TokenDeploys,
   UpcomingUnstaking,
+  ExplorerFreshness,
 } from "@/components/explorer/v4";
 import { VaultsModule } from "@/components/dashboard/modules/VaultsModule";
 import { ValidatorsModule } from "@/components/dashboard/modules/ValidatorsModule";
@@ -36,6 +37,7 @@ export default function Explorer() {
         title="Explorer"
         titleQualifier="· Hyperliquid on-chain data"
         description="Hyperliquid on-chain explorer — HyperCore (L1) state, cross-chain capital, and live network activity."
+        actions={<ExplorerFreshness />}
       />
 
       <section className="space-y-2.5">
