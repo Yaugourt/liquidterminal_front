@@ -1,22 +1,54 @@
-/** Preset window lengths (hours) for stats and leaderboard. */
-export const PRIORITY_FEES_WINDOW_HOURS = [1, 6, 24, 72, 168] as const;
+import type { PriorityFeesBucket, PriorityFeesSeriesWindow } from "@/services/explorer/priority-fees";
 
-/** UI label: short hours stay "Nh"; 24/72/168 use day wording. */
-export function formatPriorityFeesWindowLabel(hours: number): string {
-  switch (hours) {
-    case 1:
-      return "1h";
-    case 6:
-      return "6h";
-    case 24:
-      return "1 day";
-    case 72:
-      return "3 days";
-    case 168:
-      return "7 days";
-    default:
-      return `${hours}h`;
-  }
+const MS_PER_HOUR = 3_600_000;
+const HOURS_PER_YEAR = 8_760;
+
+/** Lookback each series window covers, in hours. Mirrors the backend ladder. */
+const SERIES_WINDOW_HOURS: Record<PriorityFeesSeriesWindow, number> = {
+  "24h": 24,
+  "7d": 168,
+};
+
+/** Leaderboard hours matching a series window, so both read the same period. */
+export function seriesWindowToHours(window: PriorityFeesSeriesWindow): number {
+  return SERIES_WINDOW_HOURS[window];
+}
+
+/**
+ * Hours a bucket actually spans.
+ *
+ * Not always the nominal width: the upstream sometimes clamps a lookback short,
+ * which widens the neighbouring slice. Charting the raw amount would then draw
+ * a four-hour bar and a seven-hour bar at the same width, so every rate on this
+ * page divides by the span rather than by the bucket size.
+ */
+export function bucketSpanHours(bucket: PriorityFeesBucket): number {
+  const hours = (bucket.end - bucket.start) / MS_PER_HOUR;
+  return hours > 0 ? hours : 1;
+}
+
+/** Convert a HYPE amount to USD, or null when no price is available. */
+export function hypeToUsd(hype: number | null | undefined, hypeUsd: number | null): number | null {
+  if (hype === null || hype === undefined || !Number.isFinite(hype)) return null;
+  if (hypeUsd === null || !Number.isFinite(hypeUsd) || hypeUsd <= 0) return null;
+  return hype * hypeUsd;
+}
+
+/**
+ * Straight-line extrapolation of a window's burn to a year. Not a forecast:
+ * priority demand tracks volatility, which does not hold still for 365 days.
+ */
+export function annualizeHype(gas: number, spanHours: number): number | null {
+  if (!Number.isFinite(gas) || !Number.isFinite(spanHours) || spanHours <= 0) return null;
+  return (gas / spanHours) * HOURS_PER_YEAR;
+}
+
+/** Share of `total` held by `part`, as a percentage string. */
+export function formatShare(part: number, total: number | null | undefined): string {
+  if (!Number.isFinite(part) || total == null || !Number.isFinite(total) || total <= 0) return "—";
+  const pct = (part / total) * 100;
+  if (pct > 0 && pct < 0.01) return "<0.01%";
+  return `${pct.toFixed(pct >= 10 ? 1 : 2)}%`;
 }
 
 /**
@@ -56,15 +88,6 @@ export function toFiniteNumber(value: unknown): number {
     return Number.isFinite(n) ? n : 0;
   }
   return 0;
-}
-
-/**
- * Compact HYPE display for linear annualized burn (e.g. `5.12K` for thousands).
- */
-export function formatAnnualizedLinearHype(hype: number): string {
-  if (!Number.isFinite(hype)) return "—";
-  if (hype >= 1000) return `${(hype / 1000).toFixed(2)}K`;
-  return formatPriorityFeeNumber(hype);
 }
 
 /**

@@ -12,7 +12,7 @@ interface StaggeredCardVariantsOptions {
 /**
  * Variants for the "cards arrive one after the other" entrance pattern.
  *
- * Used by KPI grids and card lists (PriorityFeesKpiRow, BuilderIntelligenceKpis,
+ * Used by KPI grids and card lists (BuilderIntelligenceKpis,
  * BuilderDetailStatsGrid, BuildersGlobalStatsStrip, BuildersTopTable,
  * ReadListContent, ReadListSidebar, ExplorerKpiBar, VaultDetailKpiRow).
  *

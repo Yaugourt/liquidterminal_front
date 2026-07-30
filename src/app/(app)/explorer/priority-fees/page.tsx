@@ -1,49 +1,76 @@
 "use client";
 
 import { useState } from "react";
+import { PageHeader, TimeframeTabs } from "@/components/common";
 import {
-  PriorityFeesKpiRow,
-  PriorityFeesLeaderboardCard,
-  PriorityFeesHistoryTable,
-  PriorityFeesWindowSelector,
+  PriorityBurnChart,
+  PriorityFeesRibbon,
+  PriorityFillsCard,
+  PriorityMechanismsCard,
+  PriorityPayersCard,
+  seriesWindowToHours,
 } from "@/components/explorer/priority-fees";
-import { usePriorityFeesStats, usePriorityFeesLeaderboard } from "@/services/explorer/priority-fees";
-import { PageHeader } from "@/components/common";
+import {
+  useGossipFreshness,
+  usePriorityFeesLeaderboard,
+  usePriorityFeesSeries,
+  type PriorityFeesSeriesWindow,
+} from "@/services/explorer/priority-fees";
+import type { Timeframe } from "@/lib/timeframe";
+
+const WINDOW_OPTIONS: Timeframe[] = ["24h", "7d"];
+/** Deep enough that the concentration bar's tail is real, not a truncation. */
+const LEADERBOARD_LIMIT = 100;
 
 export default function PriorityFeesPage() {
-  const [hours, setHours] = useState(24);
+  const [window, setWindow] = useState<PriorityFeesSeriesWindow>("24h");
 
-  const stats = usePriorityFeesStats({ hours });
-  const leaderboard = usePriorityFeesLeaderboard({ hours, limit: 11 });
+  const { series, isLoading, error } = usePriorityFeesSeries(window);
+  const leaderboard = usePriorityFeesLeaderboard({
+    hours: seriesWindowToHours(window),
+    limit: LEADERBOARD_LIMIT,
+  });
+  const gossip = useGossipFreshness();
+
+  const hypeUsd = series?.meta.hypeUsd ?? null;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <PageHeader
         title="Priority fees"
-        description={<>Priority gas on fills (HypeDexer <code className="text-xs">priorityGas</code>), window aggregates, leaderboards, and recent activity.</>}
+        description="HYPE burned to jump the queue on HyperCore, by hour, by payer and by fill."
       >
         <div className="flex justify-end sm:justify-start">
-          <PriorityFeesWindowSelector hours={hours} onHoursChange={setHours} />
+          <TimeframeTabs
+            options={WINDOW_OPTIONS}
+            value={window}
+            onChange={(value) => setWindow(value as PriorityFeesSeriesWindow)}
+          />
         </div>
       </PageHeader>
 
-      {stats.error && (
-        <div className="rounded-lg border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger">
-          {stats.error.message}
-        </div>
-      )}
+      <PriorityFeesRibbon series={series} window={window} isLoading={isLoading} />
 
-      <PriorityFeesKpiRow stats={stats.data} isLoading={stats.isLoading} />
+      <PriorityBurnChart series={series} window={window} isLoading={isLoading} error={error} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
-        <PriorityFeesLeaderboardCard
+      {/* Both tables carry six columns; below xl a half-width card would force
+          them to scroll sideways, so they only pair up once there is room. */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 xl:items-stretch">
+        <PriorityPayersCard
           entries={leaderboard.data}
+          windowGas={series?.totals.gas ?? null}
+          hypeUsd={hypeUsd}
           isLoading={leaderboard.isLoading}
           error={leaderboard.error}
           onRetry={() => leaderboard.refetch()}
         />
-        <PriorityFeesHistoryTable />
+        <PriorityFillsCard hypeUsd={hypeUsd} />
       </div>
+
+      <PriorityMechanismsCard
+        gossipLastSnapshotMs={gossip.lastSnapshotMs}
+        isLoading={gossip.isLoading}
+      />
     </div>
   );
 }
