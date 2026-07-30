@@ -8,6 +8,7 @@ import {
   ModuleTableRow,
   ModuleAsset,
   HypeMark,
+  DataStatus,
 } from "@/components/common";
 import {
   usePastAuctionsPerp,
@@ -95,7 +96,7 @@ export const Hip3PastAuctionsCard = memo(function Hip3PastAuctionsCard() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const Hip3TopDeployersCard = memo(function Hip3TopDeployersCard() {
-  const { dexs, isLoading } = usePerpDexMarketData();
+  const { dexs, isLoading, wsConnected } = usePerpDexMarketData();
 
   const top = useMemo(
     () =>
@@ -112,6 +113,7 @@ export const Hip3TopDeployersCard = memo(function Hip3TopDeployersCard() {
       tag="by 24h vol"
       viewAllLabel="View all"
       href="/market/perpdex"
+      actions={<DataStatus variant="live" connected={wsConnected} />}
     >
       <ModuleTable
         // Declared widths make the table `table-fixed` so deployer names

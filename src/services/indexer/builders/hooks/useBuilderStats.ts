@@ -8,7 +8,7 @@ export function useBuilderStats(
   address: string | undefined,
   timeframe?: BuildersTimeframe
 ): UseBuilderStatsResult {
-  const { data, isLoading, error, refetch } = useDataFetching<BuilderDetailStatsPayload | null>({
+  const { data, isLoading, isRefreshing, dataUpdatedAt, error, refetch } = useDataFetching<BuilderDetailStatsPayload | null>({
     fetchFn: async () => {
       if (!address || !ETH_ADDRESS.test(address)) return null;
       return fetchBuilderStats(address, { timeframe });
@@ -22,6 +22,8 @@ export function useBuilderStats(
   return {
     stats: data ?? null,
     isLoading,
+    isRefreshing,
+    dataUpdatedAt,
     error,
     refetch,
   };

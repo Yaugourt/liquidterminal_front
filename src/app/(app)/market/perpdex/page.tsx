@@ -11,11 +11,17 @@ import {
   PastAuctionsPerpTable,
 } from "@/components/market/perpDex";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { PageHeader, PageFaq } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus } from "@/components/common";
+import { usePerpDexMarketDataStore } from "@/services/market/perpDex/websocket.service";
 import { PERPDEX_FAQ } from "@/lib/page-faqs";
 
 export default function PerpDexsPage() {
   const { setTitle } = usePageTitle();
+  // Market figures (vol/OI/funding/price) are WebSocket-pushed — surface a
+  // single page-level live cue. Read the connection flag straight from the
+  // shared store (the cards below drive the actual connection): a pure read,
+  // no duplicate REST poll and no re-render on every market tick.
+  const wsConnected = usePerpDexMarketDataStore((s) => s.isConnected);
 
   useEffect(() => {
     setTitle("Perp DEX - Market");
@@ -33,6 +39,7 @@ export default function PerpDexsPage() {
         title="Perp DEX"
         titleQualifier="· HIP-3 builder markets"
         description="Builder-deployed perp DEXs on Hyperliquid — ecosystem stats, top venues, HIP-3 markets, and auction pairs."
+        actions={<DataStatus variant="live" connected={wsConnected} />}
       />
 
       {/* Stats strip */}

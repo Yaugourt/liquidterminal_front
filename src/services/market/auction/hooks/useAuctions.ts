@@ -81,7 +81,7 @@ export function useLatestAuctions(
   currency: "HYPE" | "USDC" | "ALL" = "ALL",
   initialData?: AuctionInfo[]
 ) {
-  const { data, isLoading, error, refetch } = useDataFetching<AuctionPaginatedResponse>({
+  const { data, isLoading, isRefreshing, dataUpdatedAt, error, refetch } = useDataFetching<AuctionPaginatedResponse>({
     fetchFn: () => fetchLatestAuctions(limit, currency),
     initialData: initialData ? {
       data: initialData,
@@ -99,6 +99,8 @@ export function useLatestAuctions(
   return {
     auctions: data?.data || [],
     isLoading,
+    isRefreshing,
+    dataUpdatedAt,
     error,
     refetch,
     splitTimestamp: data?.metadata?.splitTimestamp,

@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { PageHeader, SearchBar } from "@/components/common";
+import { PageHeader, SearchBar, DataStatus } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { toast } from "sonner";
@@ -27,7 +27,7 @@ export default function PublicGoodsPage() {
   const { user, login } = useAuthContext();
 
   // Fetch projects from API
-  const { publicGoods, isLoading, refetch } = usePublicGoods({
+  const { publicGoods, isLoading, isRefreshing, refetch, dataUpdatedAt } = usePublicGoods({
     status: activeTab as 'all' | 'pending' | 'approved' | 'rejected',
     limit: 50
   });
@@ -83,6 +83,12 @@ export default function PublicGoodsPage() {
         description="Discover and support projects building on HyperEVM. Direct funding, transparent tracking, and community-driven development."
         actions={
           <>
+            <DataStatus
+              variant="polled"
+              updatedAt={dataUpdatedAt}
+              isRefreshing={isRefreshing}
+              onRefresh={refetch}
+            />
             <Button
               className="bg-brand text-brand-text-on hover:bg-brand/90"
               onClick={handleSubmitClick}

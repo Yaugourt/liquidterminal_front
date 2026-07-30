@@ -7,6 +7,7 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  DataStatus,
 } from "@/components/common";
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useTrendingPerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
@@ -68,7 +69,8 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
   const spot = useTrendingSpotTokens(TOP_N, "volume", "desc");
   const perp = useTrendingPerpMarkets(TOP_N, "volume", "desc");
 
-  const { data, isLoading } = market === "spot" ? spot : perp;
+  const { data, isLoading, isRefreshing, refetch, dataUpdatedAt } =
+    market === "spot" ? spot : perp;
   const rows = useMemo(() => (data ?? []).slice(0, TOP_N), [data]);
 
   const isSpot = market === "spot";
@@ -80,6 +82,14 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
       tag={`${rows.length} markets`}
       viewAllLabel={isSpot ? "All spot" : "All perp"}
       href={`/market/${market}`}
+      actions={
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+        />
+      }
     >
       {/* Declared widths switch the table to `table-fixed`: the asset name
           truncates rather than widening the table past its card. */}

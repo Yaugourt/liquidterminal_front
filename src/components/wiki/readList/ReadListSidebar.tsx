@@ -1,4 +1,5 @@
-import { Plus, BookOpen, Trash2, GripVertical, Globe } from "lucide-react";
+import { Plus, BookOpen, Trash2, GripVertical, Globe, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/common";
@@ -260,6 +261,18 @@ export function ReadListSidebar({
             </DndContext>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Footer — jump to the public read list directory */}
+      <div className="px-4 py-3 border-t border-border-subtle">
+        <Link
+          href="/wiki/readlist/public-readlists"
+          className="flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+        >
+          <Globe className="w-3 h-3" />
+          Browse public lists
+          <ArrowRight size={12} />
+        </Link>
       </div>
     </Card>
   );

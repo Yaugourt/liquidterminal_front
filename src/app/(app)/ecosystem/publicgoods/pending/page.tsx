@@ -8,7 +8,7 @@ import { ArrowLeft, AlertCircle } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
-import { PageHeader, SearchBar } from "@/components/common";
+import { PageHeader, SearchBar, DataStatus } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePendingPublicGoods, PublicGood } from "@/services/ecosystem/publicgood";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ export default function PendingReviewPage() {
   const canReview = user ? hasRole(user, 'MODERATOR') : false;
 
   // Fetch pending projects from API
-  const { pendingPublicGoods, isLoading, refetch } = usePendingPublicGoods({ limit: 50 });
+  const { pendingPublicGoods, isLoading, isRefreshing, refetch, dataUpdatedAt } = usePendingPublicGoods({ limit: 50 });
 
   // Filter by search query
   const filteredProjects = useMemo(() => {
@@ -102,6 +102,14 @@ export default function PendingReviewPage() {
         }
         title="Pending Submissions"
         description="Review and vote on new project submissions. Community approval is required before projects are listed."
+        actions={
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        }
       >
         {pendingPublicGoods.length > 0 && (
           <div className="flex justify-end">

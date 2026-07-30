@@ -12,7 +12,7 @@ import {
   marketIndexToCoinId,
 } from "@/services/market/token";
 import { Card } from "@/components/ui/card";
-import { TokenAvatar } from "@/components/common";
+import { TokenAvatar, DataStatus } from "@/components/common";
 
 export const TokenCard = memo(function TokenCard({ token, className, perpCoinId }: TokenCardProps) {
   // Get user's number format preference
@@ -21,7 +21,9 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   // Connect to WebSocket for real-time data
   // Use perpCoinId directly for perpetuals, or convert marketIndex for spot tokens
   const coinId = perpCoinId || (token.marketIndex !== undefined ? marketIndexToCoinId(token.marketIndex, token.name) : '');
-  const { price: livePrice, lastSide } = useTokenWebSocket(coinId);
+  // Price/orderbook/trades are WebSocket-pushed. The hook surfaces the socket
+  // state as `isLoading` (== !isConnected); invert it for the live cue.
+  const { price: livePrice, lastSide, isLoading: wsLoading } = useTokenWebSocket(coinId);
 
   const formatPriceValue = (value: number) => {
     return formatPrice(value, format);
@@ -73,6 +75,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             )}>
               {token.type === 'spot' ? 'Spot' : 'Perp'}
             </span>
+            <DataStatus variant="live" connected={!wsLoading} className="ml-1" />
           </div>
         </div>
 

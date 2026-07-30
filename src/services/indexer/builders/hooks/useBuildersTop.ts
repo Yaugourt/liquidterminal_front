@@ -8,7 +8,7 @@ export function useBuildersTop(params?: {
   limit?: number;
 }): UseBuildersTopResult {
   const { timeframe, sort, limit } = params ?? {};
-  const { data, isLoading, error, refetch } = useDataFetching<BuildersTopPayload>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<BuildersTopPayload>({
     fetchFn: () => fetchBuildersTop({ timeframe, sort, limit }),
     dependencies: [timeframe, sort, limit],
     refreshInterval: 30_000,
@@ -18,7 +18,9 @@ export function useBuildersTop(params?: {
   return {
     data: data ?? null,
     isLoading,
+    isRefreshing,
     error,
     refetch,
+    dataUpdatedAt,
   };
 }

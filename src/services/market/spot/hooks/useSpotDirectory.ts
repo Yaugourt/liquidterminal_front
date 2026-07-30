@@ -40,6 +40,10 @@ export interface UseSpotDirectoryResult {
   tab: SpotDirectoryTab;
   setTab: (t: SpotDirectoryTab) => void;
   isLoading: boolean;
+  /** True during a background/manual refresh — drives the page freshness cue. */
+  isRefreshing?: boolean;
+  /** Epoch ms of the last successful fetch — forwarded from `useSpotTokens`. */
+  dataUpdatedAt?: number | null;
   error: Error | null;
   refetch: () => void;
 }
@@ -54,7 +58,7 @@ export function useSpotDirectory(): UseSpotDirectoryResult {
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState<SpotDirectoryTab>('all');
 
-  const { data, isLoading, error, refetch, totalVolume } = useSpotTokens({
+  const { data, isLoading, isRefreshing, dataUpdatedAt, error, refetch, totalVolume } = useSpotTokens({
     limit: 1000,
     page: 1,
     sortBy: 'volume',
@@ -142,6 +146,8 @@ export function useSpotDirectory(): UseSpotDirectoryResult {
     tab,
     setTab,
     isLoading,
+    isRefreshing,
+    dataUpdatedAt,
     error,
     refetch,
   };
