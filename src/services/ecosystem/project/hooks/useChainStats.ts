@@ -8,12 +8,12 @@ import { DefiLlamaChainStats, UseChainStatsResult } from '../types';
  * list page and unlinked project pages.
  */
 export const useChainStats = (): UseChainStatsResult => {
-  const { data, isLoading, error } = useDataFetching<DefiLlamaChainStats>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<DefiLlamaChainStats>({
     fetchFn: () => fetchChainStats(),
     refreshInterval: 300000,
     dependencies: [],
     maxRetries: 2,
   });
 
-  return { stats: data ?? undefined, isLoading, error };
+  return { stats: data ?? undefined, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
 };

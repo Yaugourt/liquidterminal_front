@@ -66,8 +66,12 @@ export interface IncomeStatement {
 export interface UseProtocolFundamentalsResult {
   fundamentals: ProtocolFundamentals | null;
   isLoading: boolean;
+  /** True during a background/manual refresh (drives the freshness cue spinner). */
+  isRefreshing: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  /** Epoch ms of the last successful fetch, or null before the first. */
+  dataUpdatedAt: number | null;
 }
 
 /**
@@ -117,8 +121,12 @@ export interface RevenueQuarter {
 export interface UseFeeRevenueHistoryResult {
   days: FeeRevenueDay[];
   isLoading: boolean;
+  /** True during a background/manual refresh (drives the freshness cue spinner). */
+  isRefreshing: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  /** Epoch ms of the last successful fetch, or null before the first. */
+  dataUpdatedAt: number | null;
 }
 
 /**

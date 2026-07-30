@@ -97,6 +97,10 @@ export interface UseAuctionsOptions {
 export interface UseAuctionTimingResult {
   auctionState: AuctionState;
   isLoading: boolean;
+  /** True during a background/manual refresh — drives the page freshness cue. */
+  isRefreshing?: boolean;
+  /** Epoch ms of the last successful timing fetch — drives "updated Xs ago". */
+  dataUpdatedAt?: number | null;
   error: Error | null;
   refetch: () => Promise<void>;
 }

@@ -60,6 +60,8 @@ export interface UseSpotStablecoinsResult {
   /** Horodatage (s) de la dernière mise à jour Hypurrscan. */
   lastUpdate: number | null;
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 }

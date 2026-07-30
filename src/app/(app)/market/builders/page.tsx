@@ -17,7 +17,7 @@ import {
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
-import { PageHeader, TimeframeTabs, PageFaq } from "@/components/common";
+import { PageHeader, TimeframeTabs, PageFaq, DataStatus } from "@/components/common";
 import { BUILDERS_FAQ } from "@/lib/page-faqs";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
@@ -56,11 +56,19 @@ export default function MarketBuildersPage() {
         titleQualifier="· Hyperliquid builder codes"
         description="Referral builders on Hyperliquid — global activity, top builders by volume, and the full directory."
         actions={
-          <TimeframeTabs
-            options={TIMEFRAMES}
-            value={tf}
-            onChange={(v) => setTf(v as BuildersTimeframe)}
-          />
+          <>
+            <DataStatus
+              variant="polled"
+              updatedAt={allTf.dataUpdatedAt}
+              isRefreshing={allTf.isRefreshing}
+              onRefresh={allTf.refetch}
+            />
+            <TimeframeTabs
+              options={TIMEFRAMES}
+              value={tf}
+              onChange={(v) => setTf(v as BuildersTimeframe)}
+            />
+          </>
         }
       />
 

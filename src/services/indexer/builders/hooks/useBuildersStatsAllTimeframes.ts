@@ -3,7 +3,7 @@ import { fetchBuildersStatsAllTimeframes } from "../api";
 import type { BuildersAllTimeframesPayload, UseBuildersStatsAllTimeframesResult } from "../types";
 
 export function useBuildersStatsAllTimeframes(): UseBuildersStatsAllTimeframesResult {
-  const { data, isLoading, error, refetch } = useDataFetching<BuildersAllTimeframesPayload>({
+  const { data, isLoading, isRefreshing, dataUpdatedAt, error, refetch } = useDataFetching<BuildersAllTimeframesPayload>({
     fetchFn: () => fetchBuildersStatsAllTimeframes(),
     dependencies: [],
     refreshInterval: 60_000,
@@ -13,6 +13,8 @@ export function useBuildersStatsAllTimeframes(): UseBuildersStatsAllTimeframesRe
   return {
     stats: data ?? null,
     isLoading,
+    isRefreshing,
+    dataUpdatedAt,
     error,
     refetch,
   };

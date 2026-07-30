@@ -1,8 +1,9 @@
 "use client";
 
-import { PageFaq } from "@/components/common";
+import { DataStatus, PageFaq } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import { HypeHeroRibbon, HypePriceChart, RevenueFlywheelCard } from "@/components/hype";
+import { useRevenueBreakdown } from "@/services/market/revenue";
 import { HYPE_FAQ } from "@/lib/page-faqs";
 
 /**
@@ -18,10 +19,22 @@ import { HYPE_FAQ } from "@/lib/page-faqs";
  * mechanics nobody scrolled to.
  */
 export default function HypePage() {
+  // Page-level freshness cue for the polled fundamentals (revenue/valuation).
+  // "7d" matches the hero ribbon's own window so the two share one fetch.
+  const { dataUpdatedAt, isRefreshing, refetch } = useRevenueBreakdown("7d");
+
   return (
     <div className="space-y-8">
       <section className="space-y-2.5">
-        <SectionHead title="Overview" subtitle="Live price, valuation & headline supply" />
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+          <SectionHead title="Overview" subtitle="Live price, valuation & headline supply" />
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        </div>
         <HypeHeroRibbon />
         <HypePriceChart />
       </section>

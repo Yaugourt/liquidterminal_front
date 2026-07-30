@@ -132,8 +132,12 @@ export interface UseGossipFreshnessResult {
 export interface UsePriorityFeesSeriesResult {
   series: PriorityFeesSeries | null;
   isLoading: boolean;
+  /** True while a background/manual refresh is in flight (drives the refresh spinner). */
+  isRefreshing: boolean;
   error: Error | null;
   refetch: () => void;
+  /** Epoch ms of the most recent successful fetch (drives "updated Xs ago"). */
+  dataUpdatedAt: number | null;
 }
 
 export interface UsePriorityFeesLeaderboardResult {

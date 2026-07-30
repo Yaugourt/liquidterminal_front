@@ -6,7 +6,7 @@ import { Project, UseProjectResult } from '../types';
  * Fetches a single project by id.
  */
 export const useProject = (id: number): UseProjectResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<Project>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<Project>({
     fetchFn: () => fetchProject(id),
     refreshInterval: 60000,
     dependencies: [id],
@@ -16,7 +16,9 @@ export const useProject = (id: number): UseProjectResult => {
   return {
     project: data ?? undefined,
     isLoading,
+    isRefreshing,
     error,
     refetch,
+    dataUpdatedAt,
   };
 };

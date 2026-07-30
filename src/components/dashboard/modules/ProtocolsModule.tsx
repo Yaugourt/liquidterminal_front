@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { Boxes } from "lucide-react";
-import { OverviewModule, ModuleTable, ModuleTableRow } from "@/components/common";
+import { OverviewModule, ModuleTable, ModuleTableRow, DataStatus } from "@/components/common";
 import { ProjectLogo } from "@/components/ecosystem/project/ProjectLogo";
 import { useRankedProjects, useChainStats } from "@/services/ecosystem/project";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
@@ -22,7 +22,7 @@ function Change7d({ value }: { value: number | null }) {
 
 /** ProtocolsModule — ecosystem signal on the Dashboard: top protocols by TVL on HL. */
 export const ProtocolsModule = memo(function ProtocolsModule() {
-  const { byTvl, isLoading } = useRankedProjects();
+  const { byTvl, isLoading, isRefreshing, refetch, dataUpdatedAt } = useRankedProjects();
   const { stats } = useChainStats();
 
   const rows = useMemo(() => byTvl.slice(0, TOP_N), [byTvl]);
@@ -34,6 +34,14 @@ export const ProtocolsModule = memo(function ProtocolsModule() {
       tag={stats?.tvl != null ? `${compactUsd(stats.tvl)} TVL` : undefined}
       viewAllLabel="All projects"
       href="/ecosystem/project"
+      actions={
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+        />
+      }
     >
       <ModuleTable
         columns={[{ header: "Project" }, { header: "TVL on HL" }, { header: "7d" }]}

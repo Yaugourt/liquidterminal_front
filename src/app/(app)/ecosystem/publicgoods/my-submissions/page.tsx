@@ -11,7 +11,7 @@ import { Plus, ArrowLeft, LogIn } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
-import { DeleteConfirmDialog, KpiRibbon, PageHeader, SearchBar } from "@/components/common";
+import { DeleteConfirmDialog, KpiRibbon, PageHeader, SearchBar, DataStatus } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useMyPublicGoods, useDeletePublicGood, PublicGood } from "@/services/ecosystem/publicgood";
 import { toast } from "sonner";
@@ -39,7 +39,7 @@ export default function MySubmissionsPage() {
   const { ready, authenticated } = usePrivy();
 
   // Fetch user's projects from API
-  const { myPublicGoods, isLoading, refetch } = useMyPublicGoods({ limit: 50 });
+  const { myPublicGoods, isLoading, isRefreshing, refetch, dataUpdatedAt } = useMyPublicGoods({ limit: 50 });
   const { deletePublicGood, isLoading: isDeleting } = useDeletePublicGood();
 
   // Filter projects based on active tab and search
@@ -166,13 +166,21 @@ export default function MySubmissionsPage() {
         title="My Submissions"
         description="Track the status of your submitted projects and manage your applications."
         actions={
-          <Button
-            onClick={handleSubmitClick}
-            className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Submit New Project
-          </Button>
+          <>
+            <DataStatus
+              variant="polled"
+              updatedAt={dataUpdatedAt}
+              isRefreshing={isRefreshing}
+              onRefresh={refetch}
+            />
+            <Button
+              onClick={handleSubmitClick}
+              className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Submit New Project
+            </Button>
+          </>
         }
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

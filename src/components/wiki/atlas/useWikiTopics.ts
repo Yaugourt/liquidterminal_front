@@ -11,6 +11,10 @@ interface UseWikiTopicsResult {
   communityCategories: EducationalCategory[];
   categories: EducationalCategory[];
   isLoading: boolean;
+  /** Freshness of the underlying categories poll — drives the page-level cue. */
+  isRefreshing?: boolean;
+  refetch: () => Promise<void>;
+  dataUpdatedAt?: number | null;
 }
 
 /**
@@ -20,7 +24,13 @@ interface UseWikiTopicsResult {
  */
 export function useWikiTopics(): UseWikiTopicsResult {
   const { education, loading: educationLoading } = useHyperliquidEducation();
-  const { categories, isLoading: categoriesLoading } = useEducationalCategories({
+  const {
+    categories,
+    isLoading: categoriesLoading,
+    isRefreshing,
+    refetch,
+    dataUpdatedAt,
+  } = useEducationalCategories({
     limit: 100,
     withCounts: true,
     sortBy: "name",
@@ -37,5 +47,8 @@ export function useWikiTopics(): UseWikiTopicsResult {
     communityCategories,
     categories,
     isLoading: (educationLoading || categoriesLoading) && (chapterTopics.length === 0 || categories.length === 0),
+    isRefreshing,
+    refetch,
+    dataUpdatedAt,
   };
 }

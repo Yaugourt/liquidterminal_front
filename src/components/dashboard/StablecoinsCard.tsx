@@ -18,6 +18,7 @@ import {
   KpiRibbon,
   TokenAvatar,
   chartPalette,
+  DataStatus,
 } from "@/components/common";
 import { compactCount, compactUsd, fullUsd } from "@/lib/formatters/numberFormatting";
 import type { StablecoinSupplyByCoinPoint } from "@/services/market/stablecoins";
@@ -80,7 +81,15 @@ const fmtTickDate = (ts: number) =>
 export const StablecoinsCard = memo(function StablecoinsCard() {
   const [window, setWindow] = useState<SupplyWindow>("30d");
   const [chartType, setChartType] = useState<ChartType>("bar");
-  const { stablecoins, supplyChart, supplyByCoinChart, isLoading } = useSpotStablecoins();
+  const {
+    stablecoins,
+    supplyChart,
+    supplyByCoinChart,
+    isLoading,
+    isRefreshing,
+    refetch,
+    dataUpdatedAt,
+  } = useSpotStablecoins();
 
   const totalSupply = useMemo(
     () => stablecoins.reduce((acc, s) => acc + s.supply, 0),
@@ -125,7 +134,7 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* 1. card-head — same min-h as FeesRevenuePanel for hairline alignment. */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Wallet size={13} className="text-brand" />
         </span>
@@ -135,7 +144,14 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           spot supply
         </span>
-        <div className="ml-auto flex items-center gap-1 text-[11px] font-semibold">
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+          className="ml-auto"
+        />
+        <div className="flex items-center gap-1 text-[11px] font-semibold">
           {SUPPLY_WINDOWS.map((w, i) => (
             <Fragment key={w}>
               {i > 0 && <span className="text-text-tertiary/40">·</span>}

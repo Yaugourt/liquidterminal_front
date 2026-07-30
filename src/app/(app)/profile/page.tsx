@@ -417,7 +417,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                 </div>
                                             ))}
                                             <Button variant="outline" className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg" asChild>
-                                                <a href="/wiki">Go to Wiki</a>
+                                                <a href="/wiki/readlist">Go to Wiki</a>
                                             </Button>
                                         </div>
                                     ) : (

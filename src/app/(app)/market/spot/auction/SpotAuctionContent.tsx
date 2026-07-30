@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { ExternalLink } from "lucide-react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader, PageFaq } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus } from "@/components/common";
 import { SPOT_AUCTION_FAQ } from "@/lib/page-faqs";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
@@ -34,15 +34,23 @@ export function SpotAuctionContent() {
         titleQualifier="· HIP-1 spot deploys"
         description="Every spot ticker sold through the HIP-1 dutch auction since genesis — live state, gas history & full record."
         actions={
-          <a
-            href="https://app.hyperliquid.xyz/deploySpot"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-lg border border-brand/10 transition-colors"
-          >
-            Participate
-            <ExternalLink size={12} />
-          </a>
+          <>
+            <DataStatus
+              variant="polled"
+              updatedAt={history.dataUpdatedAt}
+              isRefreshing={history.isRefreshing}
+              onRefresh={history.refetch}
+            />
+            <a
+              href="https://app.hyperliquid.xyz/deploySpot"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-lg border border-brand/10 transition-colors"
+            >
+              Participate
+              <ExternalLink size={12} />
+            </a>
+          </>
         }
       />
 
