@@ -98,6 +98,8 @@ export const ENDPOINTS = {
   INDEXER_HIP3_PRIORITY_FEES_GOSSIP_HISTORY: '/indexer/hip3/priority-fees/gossip/history',
   /** Recent fills (supports `has_priority_gas`) */
   INDEXER_FILLS_RECENT: '/indexer/fills/recent',
+  /** Priority gas burned per bucket, rebuilt by our backend (`window=24h|7d`) */
+  PRIORITY_FEES_SERIES: '/market/priority-fees/series',
 } as const;
 
 // Helper functions pour construire les URLs complètes
