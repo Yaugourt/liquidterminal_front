@@ -21,7 +21,7 @@ export const useVaults = ({
 }: UseVaultsOptions & { initialData?: VaultSummary[] } = {}): UseVaultsResult => {
   const [params, setParams] = useState({ page, limit, sortBy, includeClosed });
 
-  const { data, isLoading, error, refetch, dataUpdatedAt } = useDataFetching<VaultsResponse>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<VaultsResponse>({
     fetchFn: () => fetchVaults(params),
     dependencies: [params],
     initialData: initialData ? {
@@ -55,6 +55,7 @@ export const useVaults = ({
     totalTvl: data?.pagination?.totalTvl || 0,
     totalCount: data?.pagination?.total || 0,
     isLoading,
+    isRefreshing,
     error,
     refetch,
     updateParams,

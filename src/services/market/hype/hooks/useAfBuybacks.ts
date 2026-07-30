@@ -20,7 +20,7 @@ interface RawBuybacks {
  * daily / weekly / monthly buyback from the completed days.
  */
 export function useAfBuybacks(): UseAfBuybacksResult {
-  const { data, isLoading, error, refetch } = useDataFetching<RawBuybacks>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<RawBuybacks>({
     fetchFn: async () => {
       const now = Date.now();
       const todayStart = Math.floor(now / DAY_MS) * DAY_MS;
@@ -74,5 +74,5 @@ export function useAfBuybacks(): UseAfBuybacksResult {
     };
   }, [data]);
 
-  return { data: aggregated, isLoading, error, refetch };
+  return { data: aggregated, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
 }

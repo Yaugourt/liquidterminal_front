@@ -17,7 +17,7 @@ import {
   BuilderIntelligenceSecondaryStats,
   isBuilderWindowEmpty,
 } from "@/components/market/builders";
-import { PageHeader, TimeframeTabs } from "@/components/common";
+import { PageHeader, TimeframeTabs, DataStatus } from "@/components/common";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 const ETH = /^0x[a-fA-F0-9]{40}$/i;
@@ -58,11 +58,19 @@ export default function BuildersIntelligencePage() {
         title="Builder Analytics"
         description="Deep analytics on users trading via builder codes — revenue, behavior, and coin exposure."
         actions={
-          <TimeframeTabs
-            options={TIMEFRAMES}
-            value={tf}
-            onChange={(v) => setTf(v as BuildersTimeframe)}
-          />
+          <>
+            <DataStatus
+              variant="polled"
+              updatedAt={stats.dataUpdatedAt}
+              isRefreshing={stats.isRefreshing}
+              onRefresh={stats.refetch}
+            />
+            <TimeframeTabs
+              options={TIMEFRAMES}
+              value={tf}
+              onChange={(v) => setTf(v as BuildersTimeframe)}
+            />
+          </>
         }
       />
 

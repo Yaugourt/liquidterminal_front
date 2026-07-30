@@ -15,12 +15,13 @@ const EMPTY: FeeRevenueDay[] = [];
 export function useFeeRevenueHistory(
   slug: string = HYPERLIQUID_SLUG
 ): UseFeeRevenueHistoryResult {
-  const { data, isLoading, error, refetch } = useDataFetching<FeeRevenueDay[]>({
-    fetchFn: () => getFeeRevenueHistory(slug),
-    refreshInterval: REFRESH_INTERVALS.HOURLY,
-    dependencies: [slug],
-    maxRetries: 2,
-  });
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } =
+    useDataFetching<FeeRevenueDay[]>({
+      fetchFn: () => getFeeRevenueHistory(slug),
+      refreshInterval: REFRESH_INTERVALS.HOURLY,
+      dependencies: [slug],
+      maxRetries: 2,
+    });
 
-  return { days: data ?? EMPTY, isLoading, error, refetch };
+  return { days: data ?? EMPTY, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
 }

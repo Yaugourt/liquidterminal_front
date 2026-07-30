@@ -81,7 +81,7 @@ const calculateProgress = (timing: PerpAuctionTiming): number => {
 export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
 
   // Récupérer les données d'auction timing depuis Hyperliquid
-  const { data: timingData, isLoading: timingLoading, error: timingError, refetch } = useDataFetching<PerpAuctionTiming>({
+  const { data: timingData, isLoading: timingLoading, isRefreshing, dataUpdatedAt, error: timingError, refetch } = useDataFetching<PerpAuctionTiming>({
     fetchFn: fetchPerpAuctionTiming,
     refreshInterval: 30000, // Refetch data every 30 seconds
     maxRetries: 3,
@@ -206,6 +206,8 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
   return {
     auctionState,
     isLoading: timingLoading,
+    isRefreshing,
+    dataUpdatedAt,
     error: timingError,
     refetch
   };

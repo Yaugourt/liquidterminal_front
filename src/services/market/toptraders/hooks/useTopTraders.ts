@@ -20,7 +20,7 @@ export const useTopTraders = ({
   // Mémoriser les paramètres pour éviter les re-renders inutiles
   const params = useMemo(() => ({ sort, limit }), [sort, limit]);
 
-  const { data, isLoading, error, refetch } = useDataFetching<TopTradersResponse>({
+  const { data, isLoading, isRefreshing, dataUpdatedAt, error, refetch } = useDataFetching<TopTradersResponse>({
     fetchFn: () => fetchTopTraders(params),
     dependencies: [params.sort, params.limit],
     refreshInterval: 60000, // 60s - aligné avec le cache backend (55s) + marge
@@ -41,6 +41,8 @@ export const useTopTraders = ({
     traders: data?.data || [],
     metadata: data?.metadata || null,
     isLoading,
+    isRefreshing,
+    dataUpdatedAt,
     error,
     refetch
   };

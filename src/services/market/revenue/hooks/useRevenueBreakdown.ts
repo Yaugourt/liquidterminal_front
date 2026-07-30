@@ -15,7 +15,7 @@ import type {
 export function useRevenueBreakdown(
   window: RevenueWindow,
 ): UseRevenueBreakdownResult {
-  const { data, isLoading, error, refetch } = useDataFetching<RevenueBreakdown>({
+  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<RevenueBreakdown>({
     fetchFn: () => getRevenueBreakdown(window),
     refreshInterval: 60000,
     dependencies: [window],
@@ -24,7 +24,9 @@ export function useRevenueBreakdown(
   return {
     breakdown: data,
     isLoading,
+    isRefreshing,
     error,
     refetch,
+    dataUpdatedAt,
   };
 }

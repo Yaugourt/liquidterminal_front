@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { OverviewModule, ModuleRow, Skeleton } from "@/components/common";
+import { OverviewModule, ModuleRow, Skeleton, DataStatus } from "@/components/common";
 import { safeHref } from "@/lib/safeUrl";
 import { usePopularWikiResources } from "@/services/wiki";
 import type { EducationalResource } from "@/services/wiki/types";
@@ -31,7 +31,8 @@ export const PopularArticlesModule = memo(function PopularArticlesModule({
   limit?: number;
   className?: string;
 }) {
-  const { resources, isLoading } = usePopularWikiResources(limit);
+  const { resources, isLoading, isRefreshing, refetch, dataUpdatedAt } =
+    usePopularWikiResources(limit);
 
   return (
     <OverviewModule
@@ -41,6 +42,14 @@ export const PopularArticlesModule = memo(function PopularArticlesModule({
       viewAllLabel="Open wiki"
       href="/wiki"
       className={className}
+      actions={
+        <DataStatus
+          variant="polled"
+          updatedAt={dataUpdatedAt}
+          isRefreshing={isRefreshing}
+          onRefresh={refetch}
+        />
+      }
     >
       {isLoading && resources.length === 0 ? (
         <div className="space-y-2 p-3.5">

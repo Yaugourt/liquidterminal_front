@@ -39,6 +39,10 @@ export interface UseAuctionHistoryResult {
   tab: AuctionEraTab;
   setTab: (v: AuctionEraTab) => void;
   isLoading: boolean;
+  /** True during a background/manual refresh — drives the page freshness cue. */
+  isRefreshing?: boolean;
+  /** Epoch ms of the last successful fetch — drives "updated Xs ago". */
+  dataUpdatedAt?: number | null;
   error: Error | null;
   refetch: () => Promise<void>;
 }
@@ -53,7 +57,7 @@ export interface UseAuctionHistoryResult {
  * deliberately not reused.
  */
 export function useAuctionHistory(): UseAuctionHistoryResult {
-  const { auctions, isLoading, error, refetch, splitTimestamp } =
+  const { auctions, isLoading, isRefreshing, dataUpdatedAt, error, refetch, splitTimestamp } =
     useLatestAuctions(10_000, "ALL");
 
   const [search, setSearch] = useState("");
@@ -127,6 +131,8 @@ export function useAuctionHistory(): UseAuctionHistoryResult {
     tab,
     setTab,
     isLoading,
+    isRefreshing,
+    dataUpdatedAt,
     error,
     refetch,
   };
