@@ -2,12 +2,13 @@ import { get } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
 import { ENDPOINTS } from "@/services/api/constants";
 import type {
-  PriorityFeesStats,
-  PriorityFeesStatsQuery,
   PriorityFeesLeaderboardEntry,
   PriorityFeesLeaderboardQuery,
   PriorityFeesRecentFillsQuery,
   PriorityFeesFillRow,
+  PriorityFeesSeries,
+  PriorityFeesSeriesWindow,
+  GossipAuctionSnapshot,
 } from "./types";
 
 function unwrapIndexerData<T>(body: unknown): T {
@@ -86,17 +87,6 @@ function filterPositivePriorityGasRows(
   });
 }
 
-function buildStatsQuery(params: PriorityFeesStatsQuery): Record<string, string> {
-  const q: Record<string, string> = {};
-  if (params.hours !== undefined && params.hours !== null) {
-    q.hours = String(params.hours);
-  }
-  if (params.coin !== undefined && params.coin !== null && params.coin !== "") {
-    q.coin = params.coin;
-  }
-  return q;
-}
-
 function buildLeaderboardQuery(params: PriorityFeesLeaderboardQuery): Record<string, string> {
   const q: Record<string, string> = {
     by: "priority_fees",
@@ -119,19 +109,40 @@ function buildFillsQuery(params: PriorityFeesRecentFillsQuery): Record<string, s
 }
 
 /**
- * Priority gas statistics for the selected window (and optional coin).
+ * Priority gas burned per bucket over the window.
+ *
+ * Served by our own backend rather than by the indexer directly: the series is
+ * rebuilt there from cumulative rollups, because the upstream's pre-aggregated
+ * daily chart stopped advancing on 2026-07-11 and still answers 200.
  */
-export const fetchPriorityFeesStats = async (
-  params: PriorityFeesStatsQuery = {}
-): Promise<PriorityFeesStats> => {
+export const fetchPriorityFeesSeries = async (
+  window: PriorityFeesSeriesWindow,
+): Promise<PriorityFeesSeries> => {
   return withErrorHandling(async () => {
-    const raw = await get<unknown>(ENDPOINTS.INDEXER_ANALYTICS_PRIORITY_FEES_STATS, buildStatsQuery(params));
-    const data = unwrapIndexerData<unknown>(raw);
-    if (data && typeof data === "object" && !Array.isArray(data)) {
-      return data as PriorityFeesStats;
-    }
-    return {};
-  }, "fetching priority fees stats");
+    const raw = await get<unknown>(ENDPOINTS.PRIORITY_FEES_SERIES, { window });
+    return unwrapIndexerData<PriorityFeesSeries>(raw);
+  }, "fetching priority fees series");
+};
+
+/**
+ * Newest gossip-auction snapshot, used only to date the read-priority feed.
+ *
+ * A frozen feed keeps answering 200, so the age of its newest row is the only
+ * way to tell a quiet auction from a dead pipeline.
+ */
+export const fetchGossipLastSnapshot = async (): Promise<number | null> => {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(ENDPOINTS.INDEXER_HIP3_PRIORITY_FEES_GOSSIP_HISTORY, {
+      limit: "1",
+      order: "DESC",
+    });
+    const data = unwrapIndexerData<{ rows?: GossipAuctionSnapshot[] }>(raw);
+    const stamp = data?.rows?.[0]?.snapshotTs;
+    if (typeof stamp !== "string" || stamp === "") return null;
+    // Upstream stamps are UTC but not always suffixed.
+    const ms = Date.parse(stamp.endsWith("Z") ? stamp : `${stamp}Z`);
+    return Number.isFinite(ms) ? ms : null;
+  }, "fetching gossip auction freshness");
 };
 
 /**
