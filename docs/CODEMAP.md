@@ -35,7 +35,7 @@ Format: route · key components · data sources · gotchas. Components live in `
 - `/explorer/address/[address]` — `AddressAnalyticsLayout` (also reused by `/market/tracker/wallet/[address]`) · per-tab sources (RPC, indexer, backend staking).
 - `/explorer/block/[number]`, `/explorer/transaction/[hash]` — RPC POST `/explorer` (blockDetails/txDetails).
 - `/explorer/liquidations` — LiquidationsProvider + stats/chart/table · WS `env.NEXT_PUBLIC_API/ws` type:liquidation (`websocket.store.ts`, max 100 buffered) + backend unified `/liquidations` (multi-window stats from one call).
-- `/explorer/priority-fees` — KpiRow, Leaderboard, HistoryTable · all Hypedexer `/indexer/...` (multiple payload-shape unwrappers — fragile on schema drift).
+- `/explorer/priority-fees` — Ribbon, BurnChart, PayersCard, FillsCard, MechanismsCard · backend `/market/priority-fees/series` (rebuilt there by differencing cumulative rollups, because the indexer's pre-aggregated daily chart stopped advancing on 2026-07-11) + Hypedexer `/indexer/users/leaderboard?by=priority_fees` and `/indexer/fills/recent?has_priority_gas=true` (payload-shape unwrappers — fragile on schema drift). Covers order priority only: the gossip auction feed is frozen, so the read-path burn cannot be sized.
 - `/explorer/validator` — stats/chart/table tabs · backend `/staking/*` + HL API.
 - `/explorer/vaults` (+`[address]`) — directory + detail · backend `/market/vaults` + Hypedexer `/indexer/vaults/*` with fallback chain indexer → summaries → address-only.
 

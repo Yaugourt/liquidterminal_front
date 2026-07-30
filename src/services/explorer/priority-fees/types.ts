@@ -1,44 +1,3 @@
-/**
- * Query for GET /indexer/analytics/priority-fees/stats
- */
-export interface PriorityFeesStatsQuery {
-  hours?: number;
-  coin?: string | null;
-}
-
-/**
- * Upstream priority-fees stats payload (HypeDexer shape may vary).
- * Known keys are optional so the UI stays resilient.
- */
-export interface PriorityFeesStats {
-  total_priority_gas?: number | string;
-  total_fills_with_priority?: number;
-  fills_with_priority?: number;
-  avg_priority_gas?: number | string;
-  min_priority_gas?: number | string;
-  max_priority_gas?: number | string;
-  unique_users?: number;
-  window_hours?: number;
-  /** HypeDexer: effective window for aggregates (no hourly buckets on this endpoint). */
-  time_range?: { start?: string; end?: string };
-  /** Hourly or bucketed series if upstream adds them later */
-  buckets?: PriorityFeesStatsBucket[];
-  hourly?: PriorityFeesStatsBucket[];
-  by_hour?: PriorityFeesStatsBucket[];
-  time_series?: PriorityFeesStatsBucket[];
-}
-
-interface PriorityFeesStatsBucket {
-  hour?: string;
-  time?: string;
-  timestamp?: number;
-  t?: number;
-  total_priority_gas?: number;
-  count?: number;
-  fills?: number;
-  value?: number;
-}
-
 export interface PriorityFeesLeaderboardQuery {
   hours?: number;
   limit?: number;
@@ -86,9 +45,92 @@ export interface PriorityFeesFillRow {
   tid?: string | number;
 }
 
+/**
+ * Windows the burn series accepts. Capped at 7d because 168 h is the widest
+ * lookback the upstream rollup answers, and the pre-aggregated daily chart it
+ * would otherwise come from stopped advancing on 2026-07-11.
+ */
+export type PriorityFeesSeriesWindow = "24h" | "7d";
+
+/**
+ * One slice of the burn, differenced out of two cumulative rollups.
+ *
+ * `start`/`end` are the span the slice really covers, which is not always the
+ * nominal bucket width: the upstream occasionally clamps a window short, and
+ * the bucket inherits that rather than shifting every later bucket onto the
+ * wrong hour.
+ */
+export interface PriorityFeesBucket {
+  /** Unix ms, UTC. */
+  start: number;
+  /** Unix ms, UTC. */
+  end: number;
+  /** HYPE burned inside the span. */
+  gas: number;
+  /** Fills that paid priority inside the span. */
+  fills: number;
+}
+
+/**
+ * Window-wide aggregates. Read straight from the widest rollup, never summed
+ * across buckets: payers, average, min and max are not additive.
+ */
+export interface PriorityFeesSeriesTotals {
+  gas: number;
+  fills: number;
+  uniqueUsers: number;
+  avgGas: number;
+  minGas: number;
+  maxGas: number;
+  /** Every fill on the venue in the same window, priority-paying or not. */
+  allFills: number | null;
+  /** Every trader on the venue in the same window. */
+  allUsers: number | null;
+}
+
+export interface PriorityFeesSeries {
+  window: PriorityFeesSeriesWindow;
+  /** Nominal bucket width in seconds. */
+  bucketSeconds: number;
+  /** Chronological, oldest first. */
+  buckets: PriorityFeesBucket[];
+  totals: PriorityFeesSeriesTotals;
+  meta: {
+    hypeUsd: number | null;
+    generatedAt: number;
+    maxWindowHours: number;
+    /** Slices the upstream failed to answer for and that were left out. */
+    missingBuckets: number;
+  };
+}
+
+/**
+ * A gossip priority auction snapshot.
+ *
+ * Quirk worth keeping in mind before rendering any of it: `winner` is the
+ * gossip node's IPv4 address, not a wallet, so it must never be shown as one.
+ * Only `snapshotTs` is used today, to say how current the feed is.
+ */
+export interface GossipAuctionSnapshot {
+  slotId?: number;
+  startTime?: string;
+  durationSeconds?: number;
+  startGas?: number | null;
+  endGas?: number | null;
+  winner?: string | null;
+  snapshotTs?: string;
+}
+
+export interface UseGossipFreshnessResult {
+  /** Newest snapshot the feed carries, or null when it has none. */
+  lastSnapshotMs: number | null;
+  isLoading: boolean;
+  error: Error | null;
+}
+
 /** Hook result shapes */
-export interface UsePriorityFeesStatsResult {
-  data: PriorityFeesStats | null;
+export interface UsePriorityFeesSeriesResult {
+  series: PriorityFeesSeries | null;
   isLoading: boolean;
   /** True while a background/manual refresh is in flight (drives the refresh spinner). */
   isRefreshing: boolean;
