@@ -3,10 +3,9 @@
 import { useRouter } from "next/navigation";
 import { TypedDataTable, type Column } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { avatarColor } from "@/lib/avatarColor";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
-import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
+import { BuilderIdentity, resolveBuilderLabel } from "./BuilderIdentity";
 
 interface BuildersTopTableProps {
   rows: BuilderTopRow[];
@@ -33,39 +32,10 @@ function buildColumns(format: NumberFormatType): Column<BuilderTopRow>[] {
       key: "name",
       header: "Builder",
       sortable: true,
-      getSortValue: (row) => formatBuilderDisplayName(row.builderName).toLowerCase(),
-      accessor: (row) => {
-        const label = formatBuilderDisplayName(row.builderName);
-        const isAnonymous = label === "—";
-        const displayName = isAnonymous
-          ? `${row.builder.slice(0, 6)}…${row.builder.slice(-4)}`
-          : label;
-        const initial = isAnonymous ? "?" : label.charAt(0).toUpperCase();
-        const color = isAnonymous ? null : avatarColor(row.builder);
-        return (
-          <div className="flex items-center gap-2 min-w-0">
-            {color ? (
-              <div
-                className="w-5 h-5 rounded shrink-0 flex items-center justify-center text-[10px] font-semibold"
-                style={{ background: `${color}22`, color }}
-              >
-                {initial}
-              </div>
-            ) : (
-              <div className="w-5 h-5 rounded shrink-0 flex items-center justify-center text-[10px] font-semibold bg-surface-3 text-text-secondary">
-                {initial}
-              </div>
-            )}
-            <span
-              className={`text-xs truncate ${
-                isAnonymous ? "mono text-text-secondary" : "text-text-primary font-medium"
-              }`}
-            >
-              {displayName}
-            </span>
-          </div>
-        );
-      },
+      // Sort on what the row actually reads as — the curated brand when we have
+      // one, so "Phantom" no longer sorts under the raw PURPS code.
+      getSortValue: (row) => resolveBuilderLabel(row.builder, row.builderName).label.toLowerCase(),
+      accessor: (row) => <BuilderIdentity address={row.builder} name={row.builderName} />,
     },
     {
       key: "totalVolume",

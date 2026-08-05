@@ -3,9 +3,9 @@
 import { useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { TypedDataTable, type Column, SearchBar } from "@/components/common";
-import { avatarColor } from "@/lib/avatarColor";
+import { builderBrand } from "@/lib/builderBrands";
 import type { BuilderListRow } from "@/services/indexer/builders/types";
-import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
+import { BuilderIdentity, resolveBuilderLabel } from "./BuilderIdentity";
 
 interface BuildersAllTableProps {
   builders: BuilderListRow[];
@@ -22,39 +22,8 @@ const COLUMNS: Column<BuilderListRow>[] = [
     key: "name",
     header: "Builder",
     sortable: true,
-    getSortValue: (row) => formatBuilderDisplayName(row.name).toLowerCase(),
-    accessor: (row) => {
-      const label = formatBuilderDisplayName(row.name);
-      const isAnonymous = label === "—";
-      const displayName = isAnonymous
-        ? `${row.address.slice(0, 6)}…${row.address.slice(-4)}`
-        : label;
-      const initial = isAnonymous ? "?" : label.charAt(0).toUpperCase();
-      const color = isAnonymous ? null : avatarColor(row.address);
-      return (
-        <div className="flex items-center gap-2 min-w-0">
-          {color ? (
-            <div
-              className="w-5 h-5 rounded shrink-0 flex items-center justify-center text-[10px] font-semibold"
-              style={{ background: `${color}22`, color }}
-            >
-              {initial}
-            </div>
-          ) : (
-            <div className="w-5 h-5 rounded shrink-0 flex items-center justify-center text-[10px] font-semibold bg-surface-3 text-text-secondary">
-              {initial}
-            </div>
-          )}
-          <span
-            className={`text-xs truncate ${
-              isAnonymous ? "mono text-text-secondary" : "text-text-primary font-medium"
-            }`}
-          >
-            {displayName}
-          </span>
-        </div>
-      );
-    },
+    getSortValue: (row) => resolveBuilderLabel(row.address, row.name).label.toLowerCase(),
+    accessor: (row) => <BuilderIdentity address={row.address} name={row.name} />,
   },
   {
     key: "address",
@@ -95,7 +64,9 @@ export function BuildersAllTable({ builders, isLoading, error, onRetry }: Builde
       (b) =>
         (b.name ?? "").toLowerCase().includes(s) ||
         (b.address ?? "").toLowerCase().includes(s) ||
-        (b.referredBy ?? "").toLowerCase().includes(s)
+        (b.referredBy ?? "").toLowerCase().includes(s) ||
+        // Searching "phantom" must find the builder registered as PURPS.
+        (builderBrand(b.address)?.name.toLowerCase().includes(s) ?? false)
     );
   }, [builders, q]);
 

@@ -11,4 +11,5 @@ export { BuilderIntelligenceKpis } from "./BuilderIntelligenceKpis";
 export { BuilderIntelligenceUsersTable } from "./BuilderIntelligenceUsersTable";
 export { BuilderIntelligenceSecondaryStats } from "./BuilderIntelligenceSecondaryStats";
 export { formatBuilderDisplayName } from "./formatBuilderDisplayName";
+export { BuilderAvatar, BuilderIdentity, resolveBuilderLabel } from "./BuilderIdentity";
 export { isBuilderWindowEmpty } from "./builderStatsWindow";

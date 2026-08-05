@@ -12,7 +12,7 @@ import {
 } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
-import { formatBuilderDisplayNameOrAddress } from "./formatBuilderDisplayName";
+import { BuilderAvatar, resolveBuilderLabel } from "./BuilderIdentity";
 
 interface BuildersFlowChartProps {
   rows: BuilderTopRow[];
@@ -92,21 +92,24 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                 },
                 {
                   header: "Builder",
-                  width: 80,
+                  width: 104,
                   render: (row) => {
-                    const name = formatBuilderDisplayNameOrAddress(
-                      row.builderName,
-                      row.builder,
-                    );
-                    const isAnonymous = name.startsWith("0x");
+                    const { label, isAnonymous } = resolveBuilderLabel(row.builder, row.builderName);
                     return (
-                      <span
-                        className={`text-[11px] truncate ${
-                          isAnonymous ? "mono text-text-secondary" : "font-medium text-text-primary"
-                        }`}
-                      >
-                        {name}
-                      </span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <BuilderAvatar
+                          address={row.builder}
+                          label={isAnonymous ? "—" : label}
+                          size={16}
+                        />
+                        <span
+                          className={`text-[11px] truncate ${
+                            isAnonymous ? "mono text-text-secondary" : "font-medium text-text-primary"
+                          }`}
+                        >
+                          {label}
+                        </span>
+                      </div>
                     );
                   },
                 },
@@ -169,7 +172,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
               <span>
                 <span className="mono text-text-secondary">#{hoverIdx + 1}</span>{" "}
                 <span className="text-text-primary">
-                  {formatBuilderDisplayNameOrAddress(top[hoverIdx].builderName, top[hoverIdx].builder)}
+                  {resolveBuilderLabel(top[hoverIdx].builder, top[hoverIdx].builderName).label}
                 </span>
               </span>
               <span>

@@ -12,7 +12,7 @@ import {
 } from "@/components/common";
 import { useBuildersStatsAllTimeframes } from "@/services/indexer/builders/hooks/useBuildersStatsAllTimeframes";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
-import { formatBuilderDisplayNameOrAddress } from "@/components/market/builders/formatBuilderDisplayName";
+import { BuilderAvatar, resolveBuilderLabel } from "@/components/market/builders";
 import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -80,9 +80,9 @@ export const BuildersModule = memo(function BuildersModule() {
           </tr>
         )}
         {topBuilders.map((b) => {
-          const displayName = formatBuilderDisplayNameOrAddress(
-            b.builderName,
-            b.builder
+          const { label: displayName, isAnonymous } = resolveBuilderLabel(
+            b.builder,
+            b.builderName
           );
           return (
             <ModuleTableRow
@@ -91,7 +91,14 @@ export const BuildersModule = memo(function BuildersModule() {
               cells={[
                 <ModuleAsset
                   key="builder"
-                  logo={displayName.slice(0, 2).toUpperCase()}
+                  logo={
+                    <BuilderAvatar
+                      address={b.builder}
+                      label={isAnonymous ? "—" : displayName}
+                      size={24}
+                      className="w-full h-full rounded-none"
+                    />
+                  }
                   name={displayName}
                 />,
                 <span key="fees" className="mono font-semibold text-gold">

@@ -14,10 +14,11 @@ import {
   type BuildersTimeframe,
 } from "@/services/indexer/builders";
 import {
+  BuilderAvatar,
   BuilderDetailStatsGrid,
   BuilderUsersTable,
-  formatBuilderDisplayName,
   isBuilderWindowEmpty,
+  resolveBuilderLabel,
 } from "@/components/market/builders";
 import { KpiRibbon, Skeleton, TimeframeTabs, DataStatus } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -39,10 +40,12 @@ export default function BuilderDetailPage() {
   const stats = useBuilderStats(valid ? address : undefined, tf);
   const users = useBuilderUsers(valid ? address : undefined, { timeframe: tf, limit: 25 });
 
-  const displayName = useMemo(
-    () => (stats.stats ? formatBuilderDisplayName(stats.stats.builderName) : null),
-    [stats.stats]
-  );
+  // Curated brand when we know it (PURPS → Phantom), raw builder code otherwise.
+  const { displayName, builderCode } = useMemo(() => {
+    if (!stats.stats) return { displayName: null, builderCode: null };
+    const { label, code, isAnonymous } = resolveBuilderLabel(address, stats.stats.builderName);
+    return { displayName: isAnonymous ? "—" : label, builderCode: code };
+  }, [stats.stats, address]);
 
   useEffect(() => {
     if (displayName && displayName !== "—") setTitle(`${displayName} · Builder`);
@@ -107,14 +110,23 @@ export default function BuilderDetailPage() {
       ) : (
         <Card className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-2xl font-bold text-brand shrink-0">
-              {(displayName && displayName !== "—" ? displayName.charAt(0) : address.slice(2, 3)).toUpperCase()}
-            </div>
+            <BuilderAvatar
+              address={address}
+              label={displayName ?? "—"}
+              size={64}
+              className="rounded-lg"
+            />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="text-xl font-bold text-text-primary">
                   {displayName && displayName !== "—" ? displayName : "Builder"}
                 </h1>
+                {/* On-chain builder code, kept visible next to the brand name. */}
+                {builderCode && (
+                  <span className="mono text-[10px] px-2 py-0.5 rounded bg-surface-2 text-text-tertiary">
+                    {builderCode}
+                  </span>
+                )}
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 text-brand border border-brand/20">
                   {tf}
                 </span>

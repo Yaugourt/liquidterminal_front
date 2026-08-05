@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { SearchBar } from "@/components/common";
-import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
+import { builderBrand } from "@/lib/builderBrands";
+import { BuilderAvatar, resolveBuilderLabel } from "./BuilderIdentity";
 import type { BuilderListRow } from "@/services/indexer/builders/types";
 
 interface BuilderSelectorProps {
@@ -17,14 +18,15 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
   const [search, setSearch] = useState("");
 
   const selected = builders.find((b) => b.address === selectedAddress);
-  const displayName = selected ? formatBuilderDisplayName(selected.name) : "—";
+  const displayName = selected ? resolveBuilderLabel(selected.address, selected.name).label : "—";
 
   const filtered = builders.filter((b) => {
     if (!search) return true;
     const s = search.toLowerCase();
     const name = (b.name ?? "").toLowerCase();
     const addr = (b.address ?? "").toLowerCase();
-    return name.includes(s) || addr.includes(s);
+    const brand = builderBrand(b.address)?.name.toLowerCase() ?? "";
+    return name.includes(s) || addr.includes(s) || brand.includes(s);
   });
 
   return (
@@ -33,9 +35,18 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
         onClick={() => setOpen((v) => !v)}
         className="bg-surface border border-border-subtle rounded-lg px-4 py-3 flex items-center gap-3 min-w-64 hover:border-border-default transition-all text-left"
       >
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-xs font-bold text-brand shrink-0">
-          {displayName !== "—" ? displayName.charAt(0).toUpperCase() : "?"}
-        </div>
+        {selectedAddress ? (
+          <BuilderAvatar
+            address={selectedAddress}
+            label={displayName}
+            size={32}
+            className="rounded-full"
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-xs font-bold text-brand shrink-0">
+            ?
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <p className="text-text-primary font-medium text-sm truncate">{displayName}</p>
           <p className="text-text-tertiary text-xs font-mono truncate">
@@ -56,7 +67,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
           </div>
           <div className="max-h-64 overflow-y-auto">
             {filtered.slice(0, 50).map((b) => {
-              const name = formatBuilderDisplayName(b.name);
+              const { label: name } = resolveBuilderLabel(b.address, b.name);
               return (
                 <button
                   key={b.address}
@@ -69,9 +80,12 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
                     setSearch("");
                   }}
                 >
-                  <div className="w-6 h-6 rounded-full bg-brand/10 flex items-center justify-center text-[10px] font-bold text-brand shrink-0">
-                    {name !== "—" ? name.charAt(0).toUpperCase() : "?"}
-                  </div>
+                  <BuilderAvatar
+                    address={b.address}
+                    label={name}
+                    size={24}
+                    className="rounded-full"
+                  />
                   <div className="min-w-0">
                     <p className="text-text-primary text-sm truncate">{name}</p>
                     <p className="text-text-tertiary text-xs font-mono">{b.address.slice(0, 12)}…</p>
