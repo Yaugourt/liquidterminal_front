@@ -6,7 +6,7 @@ import { PieChart as PieIcon, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useBuildersGlobalStats } from "@/services/indexer/builders/hooks/useBuildersGlobalStats";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
-import { formatBuilderDisplayNameOrAddress } from "@/components/market/builders/formatBuilderDisplayName";
+import { resolveBuilderLabel } from "@/components/market/builders";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { chartPalette, DonutTopN } from "@/components/common";
 import type { DonutSlice } from "@/components/common";
@@ -64,7 +64,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
 
     const segs: Segment[] = topBuilders.map((b, i) => ({
       key: b.builder ?? `top-${i}`,
-      name: formatBuilderDisplayNameOrAddress(b.builderName, b.builder),
+      name: resolveBuilderLabel(b.builder, b.builderName).label,
       value: b.totalBuilderFees ?? 0,
       color: SEGMENT_COLORS[i] ?? chartPalette.accent,
       isRest: false,

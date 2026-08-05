@@ -13,7 +13,7 @@ import {
 import type { DonutSlice } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import type { BuilderTopRow } from "@/services/indexer/builders/types";
-import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
+import { BuilderAvatar, resolveBuilderLabel } from "./BuilderIdentity";
 
 type Metric = "totalVolume" | "totalBuilderFees" | "fillCount";
 
@@ -53,7 +53,7 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
 
     const slices: Slice[] = top.map((r, i) => ({
       key: r.builder,
-      name: formatBuilderDisplayName(r.builderName),
+      name: resolveBuilderLabel(r.builder, r.builderName).label,
       address: r.builder,
       value: (r[metric] as number) ?? 0,
       color: SLICE_PALETTE[i] ?? SLICE_FALLBACK,
@@ -188,7 +188,7 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
                     key={s.key}
                     onMouseEnter={() => setActiveIdx(i)}
                     onMouseLeave={() => setActiveIdx(null)}
-                    className={`grid grid-cols-[14px_8px_1fr_auto] gap-2 items-center px-2 py-1.5 rounded-md text-left transition-colors ${
+                    className={`grid grid-cols-[14px_8px_16px_1fr_auto] gap-2 items-center px-2 py-1.5 rounded-md text-left transition-colors ${
                       isActive ? "bg-surface-2" : "hover:bg-surface-2"
                     }`}
                   >
@@ -197,6 +197,15 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
                       className="h-2 w-2 rounded-[2px] shrink-0"
                       style={{ background: s.color }}
                     />
+                    {isOthers ? (
+                      <span aria-hidden />
+                    ) : (
+                      <BuilderAvatar
+                        address={s.address}
+                        label={isAnonymous ? "—" : s.name}
+                        size={16}
+                      />
+                    )}
                     <span
                       className={`text-[12px] truncate ${
                         isAnonymous || isOthers ? "text-text-secondary" : "font-medium text-text-primary"

@@ -6,7 +6,7 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { Hip3Overview } from "@/services/indexer/hip3";
 import { useHip4QuestionsWithOutcomes } from "@/services/indexer/hip4/hooks/useHip4QuestionsWithOutcomes";
 import { useBuildersTop, useBuildersStatsAllTimeframes } from "@/services/indexer/builders";
-import { formatBuilderDisplayNameOrAddress } from "@/components/market/builders/formatBuilderDisplayName";
+import { BuilderAvatar, resolveBuilderLabel } from "@/components/market/builders";
 import { AuctionStrip } from "./AuctionStrip";
 
 function LaneShell({
@@ -152,8 +152,13 @@ export function BuildersLane() {
         {rows.map((b, i) => (
           <div key={b.builder} className="flex items-center gap-2.5">
             <span className="mono text-[10.5px] text-text-tertiary w-4 shrink-0">{i + 1}</span>
+            <BuilderAvatar
+              address={b.builder}
+              label={resolveBuilderLabel(b.builder, b.builderName).label}
+              size={16}
+            />
             <span className="text-[12.5px] text-text-primary truncate flex-1">
-              {formatBuilderDisplayNameOrAddress(b.builderName, b.builder)}
+              {resolveBuilderLabel(b.builder, b.builderName).label}
             </span>
             <span className="mono text-[12px] text-text-secondary shrink-0">{compactUsd(b.totalVolume ?? 0)}</span>
             <span className="mono text-[11px] text-gold shrink-0">{compactUsd(b.totalBuilderFees ?? 0)}</span>
