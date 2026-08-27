@@ -315,7 +315,7 @@ export function CustomizeSidebarModal({ isOpen, onClose }: CustomizeSidebarModal
             </Button>
             <Button
               onClick={onClose}
-              className="bg-gold text-black hover:bg-gold/90"
+              className="bg-gold text-brand-text-on hover:bg-gold/90"
             >
               Done
             </Button>

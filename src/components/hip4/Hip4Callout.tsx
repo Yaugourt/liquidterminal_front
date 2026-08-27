@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 
 const variants = {
   danger: {
-    wrap: "border-red-500/25 bg-red-500/5",
+    wrap: "border-danger/25 bg-danger/5",
     icon: AlertTriangle,
-    iconClass: "text-red-400",
+    iconClass: "text-danger",
     titleClass: "text-text-primary",
   },
   emphasis: {

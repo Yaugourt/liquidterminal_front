@@ -172,13 +172,13 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
               <Flame
                 className={cn(
                   "h-5 w-5",
-                  stats.loginStreak > 0 ? "text-orange-500" : "text-text-tertiary"
+                  stats.loginStreak > 0 ? "text-gold" : "text-text-tertiary"
                 )}
               />
               <span
                 className={cn(
                   "text-lg font-bold",
-                  stats.loginStreak > 0 ? "text-orange-400" : "text-text-tertiary"
+                  stats.loginStreak > 0 ? "text-gold" : "text-text-tertiary"
                 )}
               >
                 {stats.loginStreak}

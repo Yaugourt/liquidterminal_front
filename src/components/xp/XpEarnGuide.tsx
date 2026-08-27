@@ -59,8 +59,8 @@ const MISSIONS: MissionItem[] = [
         title: "Daily Login",
         description: "Log in every day. Bonus for streaks!",
         xp: "+10 - 200 XP",
-        color: "text-emerald-400",
-        bgColor: "bg-emerald-500/10"
+        color: "text-success",
+        bgColor: "bg-success/10"
     },
     {
         icon: ShieldCheck,
@@ -97,7 +97,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
             className
         )}>
             <div className="flex items-center gap-2 mb-6">
-                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-gold/20 to-orange-500/20 flex items-center justify-center border border-gold/30">
+                <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-gold/20 to-gold/20 flex items-center justify-center border border-gold/30">
                     <Zap className="h-4 w-4 text-gold" />
                 </div>
                 <div>

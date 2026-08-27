@@ -55,7 +55,7 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
               <p className="text-sm text-text-secondary">
                 Daily login bonus
                 {lastLoginResult.streakBonus > 0 && (
-                  <span className="text-orange-400">
+                  <span className="text-gold">
                     {" "}(+{lastLoginResult.streakBonus} streak bonus!)
                   </span>
                 )}
@@ -63,8 +63,8 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
             </div>
             {lastLoginResult.newStreak > 1 && (
               <div className="flex items-center gap-1 ml-auto">
-                <Flame className="h-4 w-4 text-orange-500" />
-                <span className="text-sm font-bold text-orange-400">
+                <Flame className="h-4 w-4 text-gold" />
+                <span className="text-sm font-bold text-gold">
                   {lastLoginResult.newStreak}
                 </span>
               </div>

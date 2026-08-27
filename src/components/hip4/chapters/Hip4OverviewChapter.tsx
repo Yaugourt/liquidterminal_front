@@ -96,7 +96,7 @@ export function Hip4OverviewChapter() {
             </ul>
           </div>
           <div>
-            <div className="mb-2 text-xs font-bold text-emerald-400/90">Public</div>
+            <div className="mb-2 text-xs font-bold text-success/90">Public</div>
             <ul className="space-y-2 text-xs">
               {V1_PUBLIC.map(([sel, sig]) => (
                 <li key={sel} className="flex flex-wrap items-center gap-2">

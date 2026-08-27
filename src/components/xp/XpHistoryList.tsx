@@ -43,9 +43,9 @@ const ACTION_ICONS: Record<string, React.ElementType> = {
 
 const ACTION_COLORS: Record<string, string> = {
   REGISTRATION: "text-purple-400 bg-purple-400/10",
-  DAILY_LOGIN: "text-emerald-400 bg-emerald-400/10",
-  LOGIN_STREAK_7: "text-orange-400 bg-orange-400/10",
-  LOGIN_STREAK_30: "text-orange-500 bg-orange-500/10",
+  DAILY_LOGIN: "text-success bg-success/10",
+  LOGIN_STREAK_7: "text-gold bg-gold/10",
+  LOGIN_STREAK_30: "text-gold bg-gold/10",
   REFERRAL_SUCCESS: "text-blue-400 bg-blue-400/10",
   CREATE_READLIST: "text-cyan-400 bg-cyan-400/10",
   MARK_RESOURCE_READ: "text-teal-400 bg-teal-400/10",

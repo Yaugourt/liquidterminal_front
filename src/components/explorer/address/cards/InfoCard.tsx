@@ -54,7 +54,7 @@ const InfoCardComponent = ({ onAddClick, transactions, isLoadingTransactions }: 
                         <Button
                             variant="outline"
                             size="sm"
-                            className="bg-gold text-black px-2 py-1 h-7 rounded-md text-xs font-medium hover:bg-gold/90 transition-colors border-none"
+                            className="bg-gold text-brand-text-on px-2 py-1 h-7 rounded-md text-xs font-medium hover:bg-gold/90 transition-colors border-none"
                             onClick={onAddClick}
                         >
                             <Plus className="h-3.5 w-3.5 mr-1" /> Add

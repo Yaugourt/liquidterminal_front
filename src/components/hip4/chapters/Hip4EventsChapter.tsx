@@ -60,7 +60,7 @@ export function Hip4EventsChapter() {
         <p className="mb-4 text-xs text-text-secondary leading-relaxed">
           <strong className="text-brand">V1</strong> on{" "}
           <code className="text-[11px]">{HIP4_CONFIG.contracts.v1.address}</code>.{" "}
-          <strong className="text-emerald-400">V2</strong> renames{" "}
+          <strong className="text-success">V2</strong> renames{" "}
           <code>DepositReceived</code> → <code>Deposit</code> (new topic0) and adds{" "}
           <code>FeesWithdrawn</code>. <code>Claimed</code> signature types align; layout may differ.
         </p>
@@ -69,7 +69,7 @@ export function Hip4EventsChapter() {
       <Hip4GlassPanel>
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <Hip4SectionTitle className="!mb-0">V1 — DepositReceived</Hip4SectionTitle>
-          <Badge className="bg-emerald-500/15 text-emerald-300">topic0 on-chain</Badge>
+          <Badge className="bg-success/15 text-success">topic0 on-chain</Badge>
         </div>
         <p className="mb-2 font-mono text-[11px] text-brand">
           DepositReceived(uint256 indexed contestId, uint256 indexed sideId, address depositor, uint256

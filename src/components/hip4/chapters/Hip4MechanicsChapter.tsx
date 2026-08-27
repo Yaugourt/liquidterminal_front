@@ -12,7 +12,7 @@ function FlowStep({ n, children, warn }: { n: string | number; children: ReactNo
       <div
         className={
           warn
-            ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-500/15 text-xs font-bold text-red-300"
+            ? "flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-danger/15 text-xs font-bold text-danger"
             : "flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/15 text-xs font-bold text-brand"
         }
       >
@@ -88,8 +88,8 @@ export function Hip4MechanicsChapter() {
             <div className="mb-1 text-[10px] font-bold uppercase text-gold">priceBinary</div>
             Yes/No threshold markets.
           </div>
-          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-text-secondary">
-            <div className="mb-1 text-[10px] font-bold uppercase text-emerald-400">Recurring</div>
+          <div className="rounded-lg border border-success/20 bg-success/5 p-3 text-xs text-text-secondary">
+            <div className="mb-1 text-[10px] font-bold uppercase text-success">Recurring</div>
             15m / 1h / 1d periods.
           </div>
         </div>

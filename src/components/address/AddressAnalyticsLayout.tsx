@@ -113,7 +113,7 @@ export function AddressAnalyticsLayout({
           </p>
           <Button
             onClick={() => window.history.back()}
-            className="bg-brand font-semibold text-black hover:bg-brand/90"
+            className="bg-brand font-semibold text-brand-text-on hover:bg-brand/90"
           >
             Go Back
           </Button>
