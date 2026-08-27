@@ -61,7 +61,7 @@ export function CsvUpload({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploadingCsv}
-            className="bg-brand hover:bg-brand/90 text-black"
+            className="bg-brand hover:bg-brand/90 text-brand-text-on"
           >
             {uploadingCsv ? "Uploading..." : "Choose CSV File"}
           </Button>
@@ -126,7 +126,7 @@ export function CsvUpload({
             <Button
               type="button"
               onClick={handleCsvSuccessInternal}
-              className="bg-brand hover:bg-brand/90 text-black"
+              className="bg-brand hover:bg-brand/90 text-brand-text-on"
             >
               Done
             </Button>

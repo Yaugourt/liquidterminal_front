@@ -19,7 +19,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           description: "group-[.toast]:text-white/50 group-[.toast]:font-sans",
           title: "group-[.toast]:font-sans",
           actionButton:
-            "group-[.toast]:bg-brand group-[.toast]:text-black group-[.toast]:hover:bg-brand/90",
+            "group-[.toast]:bg-brand group-[.toast]:text-brand-text-on group-[.toast]:hover:bg-brand/90",
           cancelButton:
             "group-[.toast]:bg-surface group-[.toast]:text-white group-[.toast]:hover:bg-surface/80",
         },

@@ -76,7 +76,7 @@ export function WelcomePrompt() {
                         <Button
                             onClick={handleLogin}
                             size="sm"
-                            className="w-full bg-gradient-to-r from-brand to-gold text-black font-medium hover:opacity-90 transition-opacity"
+                            className="w-full bg-gradient-to-r from-brand to-gold text-brand-text-on font-medium hover:opacity-90 transition-opacity"
                         >
                             <LogIn className="w-4 h-4 mr-2" />
                             Get Started

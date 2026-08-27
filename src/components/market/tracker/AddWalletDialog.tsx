@@ -131,7 +131,7 @@ export function AddWalletDialog({ isOpen, onOpenChange, onSuccess, walletListId,
           <Button 
             onClick={handleAddWallet}
             disabled={isLoading || hasReachedWalletLimit}
-            className="bg-gold hover:bg-gold/90 text-black font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gold hover:bg-gold/90 text-brand-text-on font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading 
               ? "Adding..." 

@@ -36,7 +36,7 @@ const STATS = [
   { label: "Platform fee", value: "0.9% / implicit", sub: "V1: 90 bps view · V2: from pools", accent: "text-gold" },
   { label: "Active contests", value: HIP4_CONFIG.snapshot.activeContests, sub: HIP4_CONFIG.snapshot.activeContestIds, dynamic: true },
   { label: "Ownership", value: "0xe21c…0d135", sub: "Renounce disabled", small: true },
-  { label: "Mainnet", value: "Not deployed", sub: "Testnet only", accent: "text-red-400" },
+  { label: "Mainnet", value: "Not deployed", sub: "Testnet only", accent: "text-danger" },
   { label: "Versions", value: "2", sub: "V1 reverse-engineered · V2 source + bytecode", accent: "text-brand" },
 ];
 
@@ -82,7 +82,7 @@ export function Hip4PageHeader({
           <h1 className="font-inter text-lg font-semibold text-text-primary sm:text-xl">
             HIP-4 Contest Contract
           </h1>
-          <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
+          <span className="rounded-md border border-success/30 bg-success/10 px-2 py-0.5 text-[11px] font-medium text-success">
             HyperEVM Mainnet
           </span>
         </div>
@@ -92,7 +92,7 @@ export function Hip4PageHeader({
             <span>{HIP4_CONFIG.contracts.v1.address}</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-emerald-400/90">V2</span>
+            <span className="text-success/90">V2</span>
             <span>{HIP4_CONFIG.contracts.v2.address}</span>
           </div>
         </div>

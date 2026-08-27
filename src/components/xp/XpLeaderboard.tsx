@@ -91,7 +91,7 @@ export function XpLeaderboard({
       case 2:
         return "bg-surface-2 border-border-default";
       case 3:
-        return "bg-gradient-to-r from-amber-600/10 to-orange-500/10 border-amber-600/30";
+        return "bg-gradient-to-r from-amber-600/10 to-gold/10 border-amber-600/30";
       default:
         return "bg-base border-border-subtle";
     }

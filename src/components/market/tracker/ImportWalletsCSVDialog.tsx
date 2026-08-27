@@ -337,7 +337,7 @@ export function ImportWalletsCSVDialog({
           <Button
             onClick={handleImport}
             disabled={isImporting || validCount === 0}
-            className="bg-gold text-black hover:bg-gold/90 disabled:opacity-50"
+            className="bg-gold text-brand-text-on hover:bg-gold/90 disabled:opacity-50"
           >
             {isImporting
               ? "Importing..."

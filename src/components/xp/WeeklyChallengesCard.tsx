@@ -45,9 +45,9 @@ const CHALLENGE_COLORS: Record<WeeklyChallengeType, { text: string; bg: string; 
     border: "border-purple-500/30"
   },
   LOGIN_7_DAYS: {
-    text: "text-emerald-400",
-    bg: "bg-emerald-500/20",
-    border: "border-emerald-500/30"
+    text: "text-success",
+    bg: "bg-success/20",
+    border: "border-success/30"
   },
   ADD_15_WALLETS: {
     text: "text-brand",
@@ -156,14 +156,14 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
                 {/* Icon */}
                 <div className={cn(
                   "h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-                  challenge.completed ? "bg-emerald-500/20" : colors.bg,
+                  challenge.completed ? "bg-success/20" : colors.bg,
                   "border",
-                  challenge.completed ? "border-emerald-500/30" : colors.border,
+                  challenge.completed ? "border-success/30" : colors.border,
                   !challenge.completed && "group-hover:border-brand/50"
                 )}>
                   <Icon className={cn(
                     "h-5 w-5 transition-colors",
-                    challenge.completed ? "text-emerald-400" : colors.text,
+                    challenge.completed ? "text-success" : colors.text,
                     !challenge.completed && "group-hover:text-brand"
                   )} />
                 </div>
@@ -174,14 +174,14 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
                     <p className={cn(
                       "text-sm font-medium transition-colors",
                       challenge.completed
-                        ? "text-emerald-300"
+                        ? "text-success"
                         : "text-text-primary group-hover:text-brand"
                     )}>
                       {challenge.description}
                     </p>
                     <div className="flex items-center gap-2 shrink-0">
                       {challenge.completed ? (
-                        <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                        <CheckCircle2 className="h-5 w-5 text-success" />
                       ) : (
                         <>
                           <span className="text-xs font-bold text-gold">
@@ -204,7 +204,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
                 value={challenge.progressPercent}
                 className={cn(
                   "h-2 bg-base border border-border-subtle",
-                  challenge.completed && "[&>div]:bg-emerald-500",
+                  challenge.completed && "[&>div]:bg-success",
                   !challenge.completed && "group-hover:border-brand/30"
                 )}
               />
@@ -217,7 +217,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
                 key={challenge.type}
                 className={cn(
                   "p-4 rounded-lg transition-all",
-                  "bg-emerald-500/10 border border-emerald-500/20 cursor-default"
+                  "bg-success/10 border border-success/20 cursor-default"
                 )}
               >
                 {challengeContent}

@@ -86,7 +86,7 @@ export function TrackedWalletsPreview() {
 
             <Button
               onClick={() => login()}
-              className="bg-gold hover:bg-gold/90 text-black font-semibold"
+              className="bg-gold hover:bg-gold/90 text-brand-text-on font-semibold"
             >
               <LogIn className="mr-2 h-4 w-4" />
               Login to Get Started
@@ -107,7 +107,7 @@ export function TrackedWalletsPreview() {
               Start tracking wallets to monitor their performance
             </p>
             <Link href="/market/tracker/my-wallets">
-              <Button className="bg-brand hover:bg-brand/90 text-black font-semibold">
+              <Button className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold">
                 <Wallet className="mr-2 h-4 w-4" />
                 Add Your First Wallet
               </Button>
@@ -135,7 +135,7 @@ export function TrackedWalletsPreview() {
             {/* CTA */}
             <div className="pt-4 border-t border-border-subtle">
               <Link href="/market/tracker/my-wallets">
-                <Button className="w-full bg-brand hover:bg-brand/90 text-black font-semibold">
+                <Button className="w-full bg-brand hover:bg-brand/90 text-brand-text-on font-semibold">
                   Go to My Wallets
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

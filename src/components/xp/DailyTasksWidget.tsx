@@ -34,7 +34,7 @@ const TASK_ICONS: Record<DailyTaskType, React.ElementType> = {
 };
 
 const TASK_COLORS: Record<DailyTaskType, string> = {
-  LOGIN: "text-emerald-400",
+  LOGIN: "text-success",
   READ_RESOURCE: "text-cyan-400",
   ADD_WALLET: "text-brand",
   EXPLORE_LEADERBOARD: "text-gold",
@@ -78,12 +78,12 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
                 className={cn(
                   "h-6 w-6 rounded-full flex items-center justify-center",
                   task.completed
-                    ? "bg-emerald-500/20 border border-emerald-500/40"
+                    ? "bg-success/20 border border-success/40"
                     : "bg-white/5 border border-border-default"
                 )}
               >
                 {task.completed ? (
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                 ) : (
                   <Icon className={cn("h-3.5 w-3.5", TASK_COLORS[task.type], "opacity-50")} />
                 )}
@@ -112,8 +112,8 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 flex items-center justify-center border border-emerald-500/30">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success/20 to-cyan-500/20 flex items-center justify-center border border-success/30">
+            <CheckCircle2 className="h-4 w-4 text-success" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-text-primary">Daily Tasks</h3>
@@ -134,9 +134,9 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
           </div>
         )}
         {dailyBonusClaimed && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40">
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-            <span className="text-xs font-bold text-emerald-400">Bonus claimed!</span>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/20 border border-success/40">
+            <CheckCircle2 className="h-3.5 w-3.5 text-success" />
+            <span className="text-xs font-bold text-success">Bonus claimed!</span>
           </div>
         )}
       </div>
@@ -152,7 +152,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
               className={cn(
                 "flex items-center gap-3 p-3 rounded-lg transition-all",
                 task.completed
-                  ? "bg-emerald-500/10 border border-emerald-500/20"
+                  ? "bg-success/10 border border-success/20"
                   : "bg-white/5 border border-border-subtle hover:border-border-default"
               )}
             >
@@ -160,12 +160,12 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
               <div className={cn(
                 "h-9 w-9 rounded-lg flex items-center justify-center shrink-0",
                 task.completed
-                  ? "bg-emerald-500/20"
+                  ? "bg-success/20"
                   : "bg-white/5"
               )}>
                 <Icon className={cn(
                   "h-4.5 w-4.5",
-                  task.completed ? "text-emerald-400" : TASK_COLORS[task.type]
+                  task.completed ? "text-success" : TASK_COLORS[task.type]
                 )} />
               </div>
 
@@ -173,7 +173,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
               <div className="flex-1 min-w-0">
                 <p className={cn(
                   "text-sm font-medium",
-                  task.completed ? "text-emerald-300" : "text-text-primary"
+                  task.completed ? "text-success" : "text-text-primary"
                 )}>
                   {task.description}
                 </p>
@@ -182,7 +182,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
 
               {/* Status */}
               {task.completed ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
               ) : (
                 <Circle className="h-5 w-5 text-text-tertiary shrink-0" />
               )}
@@ -210,7 +210,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
         </div>
         <div className="h-2 bg-base rounded-full overflow-hidden border border-border-subtle">
           <div
-            className="h-full bg-gradient-to-r from-emerald-500 to-gold transition-all duration-500"
+            className="h-full bg-gradient-to-r from-success to-gold transition-all duration-500"
             style={{ width: `${(dailyTasksCompletedCount / Math.max(dailyTasks.length, 1)) * 100}%` }}
           />
         </div>

@@ -119,7 +119,7 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
                 awaitingLoginRef.current = true;
                 login();
               }}
-              className="bg-brand hover:bg-brand/90 text-black font-semibold"
+              className="bg-brand hover:bg-brand/90 text-brand-text-on font-semibold"
             >
               <LogIn className="w-5 h-5 mr-2" />
               Login
@@ -132,7 +132,7 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
       <Button
         onClick={handleAddToTrackList}
         disabled={isAdding}
-        className={`bg-gold hover:bg-gold/90 text-black font-semibold ${className}`}
+        className={`bg-gold hover:bg-gold/90 text-brand-text-on font-semibold ${className}`}
       >
         <Plus className="w-4 h-4 mr-2" />
         {isAdding ? "Adding..." : "Add to Track List"}
