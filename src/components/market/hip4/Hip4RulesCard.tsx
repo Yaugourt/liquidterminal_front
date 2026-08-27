@@ -81,7 +81,7 @@ export function Hip4RulesCard({ market, layout }: Hip4RulesCardProps) {
 
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 border-b border-border-subtle px-3.5 py-2.5">
+      <div className="flex items-center gap-2.5 border-b border-border-subtle min-h-[44px] px-3.5 py-2.5">
         <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-brand/10">
           <Scale size={13} className="text-brand" />
         </span>

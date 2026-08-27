@@ -177,7 +177,7 @@ export function ExportWorkbench() {
     <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,240px)_minmax(0,1fr)] gap-4 items-start">
       {/* Dataset picker */}
       <div className="bg-surface border border-border-subtle rounded-lg flex flex-col">
-        <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+        <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
           <h3 className="text-[13px] font-semibold text-text-primary">Dataset</h3>
           <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">
             {datasets.length || "…"}
@@ -229,7 +229,7 @@ export function ExportWorkbench() {
       {/* Parameters + preview */}
       <div className="min-w-0 space-y-4">
         <div className="bg-surface border border-border-subtle rounded-lg">
-          <div className="flex flex-wrap items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+          <div className="flex flex-wrap items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
             <h3 className="text-[13px] font-semibold text-text-primary">
               {dataset?.label ?? "…"}
             </h3>
@@ -339,7 +339,7 @@ export function ExportWorkbench() {
 
         {/* Preview */}
         <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-          <div className="flex flex-wrap items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+          <div className="flex flex-wrap items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
             <h3 className="text-[13px] font-semibold text-text-primary">Preview</h3>
             <span className="text-[11px] text-text-tertiary">
               first rows · free, does not spend your export
@@ -400,7 +400,7 @@ export function ExportWorkbench() {
       {/* Summary rail */}
       <div className="space-y-4">
         <div className="bg-surface border border-border-subtle rounded-lg flex flex-col">
-          <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+          <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
             <h3 className="text-[13px] font-semibold text-text-primary">Your export</h3>
           </div>
           <div className="px-3.5 py-3 space-y-3">

@@ -24,7 +24,7 @@ export default function DashboardMarket() {
   return (
     <div className="space-y-8">
       {/* Perpetuals & HIP-3 : trending + markets, then auctions & deployers */}
-      <section className="space-y-4">
+      <section className="space-y-2.5">
         <SectionHead
           title="Perpetuals & HIP-3"
           subtitle="Trending perpetuals · HIP-3 markets · auctions & deployers"

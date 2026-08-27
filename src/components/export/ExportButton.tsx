@@ -117,7 +117,7 @@ export const ExportButton = memo(function ExportButton({
       </PopoverTrigger>
 
       <PopoverContent align="end" className="w-[320px] p-0">
-        <div className="flex items-center gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+        <div className="flex items-center gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
           <span className="text-[12.5px] font-semibold text-text-primary truncate">
             Export · {dataset.label}
           </span>
@@ -181,7 +181,7 @@ export const ExportButton = memo(function ExportButton({
           </div>
         )}
 
-        <div className="flex items-center gap-2 px-3.5 py-2.5 border-t border-border-subtle">
+        <div className="flex items-center gap-2 px-3.5 py-2.5 border-t border-border-subtle min-h-[44px]">
           {authenticated && quota && (
             <span className="text-[11px] text-text-tertiary">
               {exhausted ? (

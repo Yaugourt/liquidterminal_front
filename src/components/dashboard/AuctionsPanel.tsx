@@ -289,7 +289,7 @@ export const AuctionsPanel = memo(function AuctionsPanel({
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* card-head V4 — badge LIVE si l'auction est active */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Gavel size={13} className="text-brand" />
         </span>

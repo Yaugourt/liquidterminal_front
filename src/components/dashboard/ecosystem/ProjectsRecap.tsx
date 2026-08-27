@@ -161,7 +161,7 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
 
         {/* Category split — DefiLlama categories, summed over tracked projects */}
         <div className="bg-surface border border-border-subtle rounded-lg flex flex-col">
-          <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle">
+          <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
             <h3 className="text-[13px] font-semibold text-text-primary truncate">Categories</h3>
             <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">by TVL</span>
           </div>
