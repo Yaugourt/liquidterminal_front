@@ -87,7 +87,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
               <div>
                 <p className="text-xs text-text-tertiary font-medium mb-1">Current Price</p>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-text-primary tracking-tight">
+                  <span className="text-lg font-bold text-text-primary tracking-tight tabular-nums">
                     {formatNumber(auctionState.currentPrice, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     <HypeMark size="xs" className="text-xs font-medium text-text-secondary ml-1" />
                   </span>
@@ -103,7 +103,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
                 </p>
                 <div className="flex items-center justify-end gap-2 text-text-primary">
                   <Clock className="w-4 h-4 text-gold" />
-                  <span className="text-lg font-medium tracking-tight">
+                  <span className="text-lg font-medium tracking-tight tabular-nums">
                     {auctionState.isActive ? auctionState.timeRemaining : auctionState.nextAuctionStart}
                   </span>
                 </div>

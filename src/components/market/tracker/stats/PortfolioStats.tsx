@@ -202,23 +202,23 @@ export function PortfolioStats({
             <div className="space-y-2">
               <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Spot Balance</p>
-                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
+                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
               </div>
               <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Perp Balance</p>
-                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
+                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
               </div>
               <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Vault Balance</p>
-                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
+                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
               </div>
               <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Staked Balance</p>
-                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
+                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
               </div>
               <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Total Balance</p>
-                <p className="text-text-primary text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
+                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
               </div>
             </div>
 
@@ -238,15 +238,15 @@ export function PortfolioStats({
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <p className="text-text-secondary text-xs">Perp:</p>
-                      <p className="text-text-primary text-sm font-bold">{formatCurrency(volumeData.perpVolume)}</p>
+                      <p className="mono text-text-primary text-sm font-bold">{formatCurrency(volumeData.perpVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
                       <p className="text-text-secondary text-xs">Spot + Vault:</p>
-                      <p className="text-text-primary text-sm font-bold">{formatCurrency(volumeData.spotVaultVolume)}</p>
+                      <p className="mono text-text-primary text-sm font-bold">{formatCurrency(volumeData.spotVaultVolume)}</p>
                     </div>
                     <div className="flex justify-between items-center">
                       <p className="text-text-secondary text-xs">Total:</p>
-                      <p className="text-text-primary text-sm font-bold">{formatCurrency(volumeData.totalVolume)}</p>
+                      <p className="mono text-text-primary text-sm font-bold">{formatCurrency(volumeData.totalVolume)}</p>
                     </div>
                   </div>
                 </div>
@@ -291,7 +291,7 @@ export function PortfolioStats({
                   {/* Withdrawable */}
                   <div className="flex justify-between items-center pt-2 border-t border-border-subtle">
                     <p className="text-text-secondary text-xs">Withdrawable:</p>
-                    <p className="text-text-primary text-sm font-bold">{formatCurrency(0)}</p>
+                    <p className="mono text-text-primary text-sm font-bold">{formatCurrency(0)}</p>
                   </div>
                 </div>
               </div>

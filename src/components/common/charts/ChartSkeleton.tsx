@@ -4,9 +4,12 @@
  * ChartSkeleton - Loading placeholder for lazy-loaded chart components
  * Provides visual feedback while chart components are being loaded
  */
-export function ChartSkeleton({ className = "" }: { className?: string }) {
+export function ChartSkeleton({
+    className = "",
+    minHeight = "min-h-[300px]",
+}: { className?: string; minHeight?: string }) {
     return (
-        <div className={`w-full h-full min-h-[300px] flex items-center justify-center ${className}`}>
+        <div className={`w-full h-full ${minHeight} flex items-center justify-center ${className}`}>
             <div className="flex flex-col items-center gap-3">
                 {/* Animated bars to simulate chart loading */}
                 <div className="flex items-end gap-1 h-16">

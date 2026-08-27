@@ -71,7 +71,7 @@ export const HypeStakingCard = memo(function HypeStakingCard() {
       href="/explorer/validator"
     >
       <div className="p-3.5">
-        <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5" />
+        <KpiRibbon cells={cells} columns="grid-cols-1 xl:grid-cols-5" />
       </div>
     </OverviewModule>
   );

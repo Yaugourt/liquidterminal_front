@@ -4,7 +4,7 @@ import { memo, useId, useMemo } from "react";
 import { Gauge } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, chartPalette } from "@/components/common";
+import { ChartError, ChartLoading, chartPalette , rechartsXAxisPadding } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toHourlyFeeFlow } from "@/services/market/fees/derive";
 import { useFeesHistory } from "@/services/market/fees/hooks/useFeesHistory";
@@ -194,6 +194,7 @@ export const FeeRunRateCard = memo(function FeeRunRateCard() {
                 axisLine={false}
                 tickLine={false}
                 minTickGap={40}
+                padding={rechartsXAxisPadding}
               />
               <YAxis
                 tickFormatter={(v) => formatUsdAxis(Number(v))}

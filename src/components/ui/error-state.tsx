@@ -12,6 +12,8 @@ interface ErrorStateProps {
     className?: string;
     /** Si true, enveloppe le contenu dans une Card */
     withCard?: boolean;
+    /** Override the min-height floor (Tailwind class), e.g. "min-h-[380px]" to match the loaded content's height. */
+    minHeight?: string;
 }
 
 export function ErrorState({
@@ -20,10 +22,12 @@ export function ErrorState({
     onRetry,
     className,
     withCard = true,
+    minHeight,
 }: ErrorStateProps) {
     const content = (
         <div className={cn(
-            "flex flex-col items-center justify-center text-center px-4 py-8 w-full h-[300px]",
+            "flex flex-col items-center justify-center text-center px-4 py-8 w-full h-full",
+            minHeight ?? "min-h-[200px]",
             className
         )}>
             <AlertCircle className="w-12 h-12 mb-4 text-danger/50" />

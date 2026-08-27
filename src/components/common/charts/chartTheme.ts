@@ -93,6 +93,26 @@ export const rechartsGridDefaults = {
   vertical: false,
 } as const;
 
+/**
+ * Canonical horizontal gutter for numeric/time X axes. Recharts places the
+ * first and last datum on the plot edges when the X scale is `type="number"`
+ * or `scale="time"`, so without this padding the edge bars/points sit on top
+ * of the Y-axis scale labels. Spread onto the `<XAxis>` of every numeric-time
+ * chart. Do NOT apply to band/category axes (they already reserve a half-slot
+ * gap at each edge, and this would double-inset them).
+ */
+export const rechartsXAxisPadding = { left: 20, right: 20 } as const;
+
+/**
+ * Canonical Y-axis widths so sibling charts share the same plot-left edge and
+ * a card never shifts horizontally when a view toggle swaps its formatter.
+ * Pick by the widest tick the formatter can emit:
+ *  - compact  → percentages / small counts ("75%", "12")
+ *  - standard → compact USD / large counts ("$776.3K", "1.2M")
+ *  - wide     → dual-axis or full magnitudes
+ */
+export const rechartsYAxisWidth = { compact: 40, standard: 52, wide: 60 } as const;
+
 export const rechartsTooltipContainer =
   "bg-surface border border-border-default rounded-lg px-3 py-2 shadow-md" as const;
 

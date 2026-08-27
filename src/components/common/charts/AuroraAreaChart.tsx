@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { chartColors } from "./chartTheme";
+import { chartColors, rechartsXAxisPadding } from "./chartTheme";
 
 /**
  * Aurora-specific data shape (uses `time` as the x-axis key).
@@ -197,6 +197,7 @@ const AuroraAreaChartComponent = ({
             axisLine={false}
             tickLine={false}
             minTickGap={40}
+            padding={rechartsXAxisPadding}
           />
           <YAxis
             tickFormatter={(v) =>

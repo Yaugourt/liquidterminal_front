@@ -4,7 +4,7 @@ import { memo, useId, useMemo, useState } from "react";
 import { Vault } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useTvlHistory } from "@/services/ecosystem/project/hooks";
 
@@ -177,6 +177,7 @@ export const TvlHistoryCard = memo(function TvlHistoryCard() {
                 axisLine={false}
                 tickLine={false}
                 minTickGap={44}
+                padding={rechartsXAxisPadding}
               />
               <YAxis
                 tickFormatter={(v) => formatUsdAxis(Number(v))}

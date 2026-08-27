@@ -38,6 +38,7 @@ export function TopTradersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (t) => t.tradeCount,
+      type: "numeric",
       accessor: (t) => t.tradeCount,
     },
     {
@@ -46,6 +47,7 @@ export function TopTradersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (t) => t.totalVolume,
+      type: "numeric",
       accessor: (t) => `$${formatLargeNumber(t.totalVolume)}`,
     },
     {
@@ -55,7 +57,7 @@ export function TopTradersPreview() {
       align: "right",
       getSortValue: (t) => t.winRate,
       accessor: (t) => (
-        <span className={t.winRate >= 0.5 ? "text-success" : "text-text-secondary"}>
+        <span className={`mono ${t.winRate >= 0.5 ? "text-success" : "text-text-secondary"}`}>
           {(t.winRate * 100).toFixed(1)}%
         </span>
       ),
@@ -67,7 +69,7 @@ export function TopTradersPreview() {
       align: "right",
       getSortValue: (t) => t.totalPnl,
       accessor: (t) => (
-        <span className={t.totalPnl >= 0 ? "text-success" : "text-danger"}>
+        <span className={`mono ${t.totalPnl >= 0 ? "text-success" : "text-danger"}`}>
           {t.totalPnl >= 0 ? "+" : ""}${formatLargeNumber(Math.abs(t.totalPnl))}
         </span>
       ),

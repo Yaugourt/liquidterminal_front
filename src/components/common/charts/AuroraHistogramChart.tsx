@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { chartColors } from "./chartTheme";
+import { chartColors, rechartsXAxisPadding } from "./chartTheme";
 
 export interface HistogramDataPoint {
   time: number;
@@ -185,6 +185,7 @@ const AuroraHistogramChartComponent = ({
             axisLine={false}
             tickLine={false}
             minTickGap={40}
+            padding={rechartsXAxisPadding}
           />
           <YAxis
             tickFormatter={(v) =>

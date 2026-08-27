@@ -182,7 +182,7 @@ const RevenueChartComponent = ({ days, height = 220 }: RevenueChartProps) => {
               data={auroraData}
               lineColor={chartPalette.gold}
               height={height}
-              yAxisWidth={48}
+              yAxisWidth={56}
               formatValue={formatUsdCompact}
               formatTime={formatTickDate}
             />

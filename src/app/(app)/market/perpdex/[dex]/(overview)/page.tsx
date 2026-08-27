@@ -127,7 +127,7 @@ export default function PerpDexDetailPage() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {/* 24h Volume */}
         <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
           <div className="flex items-center gap-2 mb-2">

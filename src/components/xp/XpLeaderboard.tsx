@@ -139,7 +139,7 @@ export function XpLeaderboard({
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gold">
+                    <p className="mono font-bold text-gold">
                       {entry.totalXp.toLocaleString()}
                     </p>
                     <p className="text-xs text-text-tertiary">XP</p>

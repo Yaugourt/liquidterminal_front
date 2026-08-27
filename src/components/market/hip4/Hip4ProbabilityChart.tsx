@@ -13,7 +13,7 @@ import {
 import { Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { chartPalette, chartColors, TimeframeTabs } from "@/components/common";
+import { chartPalette, chartColors, TimeframeTabs , rechartsXAxisPadding } from "@/components/common";
 import type { Timeframe } from "@/lib/timeframe";
 import {
   buildProbabilitySeries,
@@ -224,6 +224,7 @@ export function Hip4ProbabilityChart({
                 axisLine={false}
                 tickLine={false}
                 minTickGap={50}
+                padding={rechartsXAxisPadding}
               />
               <YAxis
                 domain={[0, 100]}

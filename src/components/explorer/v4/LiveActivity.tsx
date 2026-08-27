@@ -339,7 +339,7 @@ export const LiveActivity = memo(function LiveActivity() {
   const txValue = useMemo(() => transactions, [transactions]);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-4">
+    <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_1fr] gap-4">
       <BlocksCard blocks={blocksValue} connected={isBlocksConnected} />
       <TxCard transactions={txValue} connected={isTransactionsConnected} />
     </div>
