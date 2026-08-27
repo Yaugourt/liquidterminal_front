@@ -232,7 +232,7 @@ export function OrderBook({
         {activeTab === "orderbook" ? (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Header */}
-            <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-label text-text-secondary flex-shrink-0 mb-2">
+            <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-label text-text-secondary flex-shrink-0 mb-2 pr-2.5">
               <span>Price</span>
               <span className="text-right">Size ({tokenName})</span>
               <span className="text-right">Total</span>
@@ -297,7 +297,7 @@ export function OrderBook({
         ) : (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Header */}
-            <div className="grid grid-cols-3 gap-2 text-label text-text-secondary border-b border-border-subtle pb-2 flex-shrink-0 mb-2">
+            <div className="grid grid-cols-3 gap-2 text-label text-text-secondary border-b border-border-subtle pb-2 flex-shrink-0 mb-2 px-1 pr-[14px]">
               <span>Price</span>
               <span className="text-right">Size ({tokenName})</span>
               <span className="text-right">Time</span>

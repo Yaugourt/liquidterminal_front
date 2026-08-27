@@ -274,6 +274,10 @@
 .scrollbar-brand {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    /* Always reserve the scrollbar gutter so a scroll container's content width
+       doesn't jump (and drift out of alignment with an outside header) when the
+       bar appears/disappears. */
+    scrollbar-gutter: stable;
 }
 
 .scrollbar-brand::-webkit-scrollbar {
