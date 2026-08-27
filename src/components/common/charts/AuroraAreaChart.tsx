@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { chartColors, rechartsXAxisPadding } from "./chartTheme";
+import { chartColors, rechartsXAxisPadding , rechartsGridDefaults } from "./chartTheme";
 
 /**
  * Aurora-specific data shape (uses `time` as the x-axis key).
@@ -180,11 +180,7 @@ const AuroraAreaChartComponent = ({
           </defs>
 
           {showGrid && (
-            <CartesianGrid
-              strokeDasharray="3 5"
-              stroke="rgba(255,255,255,0.04)"
-              vertical={false}
-            />
+            <CartesianGrid {...rechartsGridDefaults} />
           )}
 
           <XAxis

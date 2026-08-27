@@ -4,7 +4,7 @@ import { memo, useId, useMemo } from "react";
 import { BarChart3 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, chartPalette } from "@/components/common";
+import { ChartError, ChartLoading, chartPalette , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toQuarters, useFeeRevenueHistory, type RevenueQuarter } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
@@ -204,7 +204,7 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
                   <stop offset="100%" stopColor={chartPalette.violet} stopOpacity={0.32} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 5" stroke="rgba(255,255,255,0.04)" vertical={false} />
+              <CartesianGrid {...rechartsGridDefaults} />
               <XAxis
                 dataKey="label"
                 tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }}

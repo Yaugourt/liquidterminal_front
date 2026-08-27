@@ -18,6 +18,7 @@ import {
   KpiRibbon,
   chartPalette,
   type FlowGridColumn,
+  rechartsGridDefaults,
 } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { RevenueDay } from "@/services/market/revenue";
@@ -330,11 +331,7 @@ const RevenueStackedBars = memo(function RevenueStackedBars({
             </linearGradient>
           ))}
         </defs>
-        <CartesianGrid
-          strokeDasharray="3 5"
-          stroke="rgba(255,255,255,0.04)"
-          vertical={false}
-        />
+        <CartesianGrid {...rechartsGridDefaults} />
         <XAxis
           dataKey="time"
           type="number"

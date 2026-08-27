@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, chartPalette } from "@/components/common";
+import { ChartError, ChartLoading, chartPalette , rechartsGridDefaults } from "@/components/common";
 import { compactHype, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useAfBuybacks } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
@@ -223,7 +223,7 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
                   <stop offset="100%" stopColor={chartPalette.accent} stopOpacity={0.45} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 5" stroke="rgba(255,255,255,0.04)" vertical={false} />
+              <CartesianGrid {...rechartsGridDefaults} />
               <XAxis
                 dataKey="time"
                 tickFormatter={formatDay}
