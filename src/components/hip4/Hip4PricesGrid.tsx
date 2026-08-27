@@ -16,7 +16,7 @@ export function Hip4PricesGrid() {
             <div className="text-[11px] font-mono text-text-secondary mb-1">
               {ticker}
             </div>
-            <div className="text-lg font-bold" style={{ color }}>
+            <div className="mono text-lg font-bold" style={{ color }}>
               {pct}%
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-surface/50 overflow-hidden">

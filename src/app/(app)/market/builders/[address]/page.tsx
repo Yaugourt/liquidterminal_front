@@ -181,15 +181,21 @@ export default function BuilderDetailPage() {
           <Card className="rounded-lg overflow-hidden">
             <KpiRibbon
               bordered={false}
-              columns="grid-cols-3 sm:grid-cols-5"
-              cells={stats.stats.coinBreakdown.slice(0, 10).map((coin, i) => ({
-                key: coin.coin ?? String(i),
-                label: <span className="text-brand">{coin.coin ?? "—"}</span>,
-                value:
-                  coin.totalVolume !== undefined
-                    ? formatNumber(coin.totalVolume as number, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })
-                    : "—",
-              }))}
+              columns="grid-cols-1 sm:grid-cols-5"
+              cells={(() => {
+                const base = stats.stats.coinBreakdown.slice(0, 10).map((coin, i) => ({
+                  key: coin.coin ?? String(i),
+                  label: <span className="text-brand">{coin.coin ?? "—"}</span>,
+                  value:
+                    coin.totalVolume !== undefined
+                      ? formatNumber(coin.totalVolume as number, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })
+                      : "—",
+                }));
+                // Pad to a multiple of 5 so the 5-col grid never shows orphan tracks.
+                const pad = (5 - (base.length % 5)) % 5;
+                for (let k = 0; k < pad; k++) base.push({ key: `pad-${k}`, label: <span />, value: "" });
+                return base;
+              })()}
             />
           </Card>
         </section>

@@ -23,7 +23,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
   const renderFieldValue = (field: FormattedTransactionField) => {
     if (field.value === null || field.value === undefined) {
-      return <span className="text-secondary">-</span>;
+      return <span className="text-text-secondary">-</span>;
     }
 
     const stringValue = String(field.value);
@@ -85,7 +85,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
 
       case 'amount':
         return (
-          <span className="text-gold font-inter">
+          <span className="text-gold mono">
             {typeof field.value === 'number'
               ? field.value.toLocaleString()
               : stringValue
@@ -134,7 +134,7 @@ export function TransactionDetails({ data }: TransactionDetailsProps) {
             <div className="space-y-4">
               {section.fields.map((field, fieldIndex) => (
                 <div key={fieldIndex} className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                  <div className="text-secondary text-sm font-medium min-w-[150px] font-inter">
+                  <div className="text-text-secondary text-sm font-medium min-w-[150px] font-inter">
                     {field.label}:
                   </div>
                   <div className="flex-1 text-right sm:text-left">

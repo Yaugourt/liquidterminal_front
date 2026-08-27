@@ -572,13 +572,16 @@ export function CapitalLens() {
                   title="Could not load delegators"
                   message={holdersError.message}
                   withCard={false}
+                  minHeight="min-h-[170px]"
                 />
               ) : holdersLoading ? (
-                <LoadingState message="Loading distribution…" size="md" withCard={false} />
+                <LoadingState message="Loading distribution…" size="md" withCard={false} minHeight="min-h-[170px]" />
               ) : distribution.length === 0 ? (
                 <EmptyState
                   title="No distribution data"
                   description="Staker buckets will appear here."
+                  withCard={false}
+                  minHeight="min-h-[170px]"
                 />
               ) : (
                 <div className="h-[170px]">
@@ -681,6 +684,8 @@ export function CapitalLens() {
               <EmptyState
                 title="No unstaking history"
                 description="Daily unstaking volume will appear here."
+                withCard={false}
+                minHeight="min-h-[200px]"
               />
             ) : (
               <div className="h-[200px]">

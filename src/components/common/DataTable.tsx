@@ -384,7 +384,7 @@ export function TypedDataTable<T>({
             icon,
             subtitle,
             headerAction,
-            <LoadingState message="Loading…" size="md" withCard={false} />,
+            <LoadingState message="Loading…" size="md" withCard={false} minHeight="min-h-[300px]" />,
             className
         );
     }
@@ -399,6 +399,7 @@ export function TypedDataTable<T>({
                 message={error.message}
                 onRetry={onErrorRetry ? () => void onErrorRetry() : undefined}
                 withCard={false}
+                minHeight="min-h-[300px]"
             />,
             className
         );

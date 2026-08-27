@@ -379,7 +379,7 @@ export function OperatorLens() {
         <KpiRibbon
           variant="plain"
           cells={healthCells}
-          columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5"
+          columns="grid-cols-1 xl:grid-cols-5"
         />
       </section>
 

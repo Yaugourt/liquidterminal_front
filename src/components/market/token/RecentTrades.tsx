@@ -77,18 +77,18 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
                                         className="grid grid-cols-4 gap-4 text-xs hover:bg-surface-2 py-1.5 px-1 rounded transition-colors"
                                     >
                                         <span className={cn(
-                                            "font-medium",
+                                            "font-medium mono",
                                             isBuy ? 'text-success' : 'text-danger'
                                         )}>
                                             ${formatPrice(tradePrice)}
                                         </span>
-                                        <span className="text-text-primary text-right">
+                                        <span className="mono text-text-primary text-right">
                                             {formatSize(tradeSize)}
                                         </span>
-                                        <span className="text-text-secondary text-right">
+                                        <span className="mono text-text-secondary text-right">
                                             ${tradeValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </span>
-                                        <span className="text-text-secondary text-right">
+                                        <span className="mono text-text-secondary text-right">
                                             {formatTime(trade.time)}
                                         </span>
                                     </div>

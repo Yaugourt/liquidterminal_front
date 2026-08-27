@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { chartColors } from "@/components/common";
+import { chartColors, rechartsXAxisPadding } from "@/components/common";
 
 /**
  * One time-series fed to the multi-series chart.
@@ -220,6 +220,7 @@ const MultiSeriesAreaChartComponent = ({
             axisLine={false}
             tickLine={false}
             minTickGap={40}
+            padding={rechartsXAxisPadding}
           />
 
           {leftSeries.length > 0 && (

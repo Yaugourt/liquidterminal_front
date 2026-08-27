@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { HYPE_MAX_SUPPLY, HYPE_SPOT_COIN } from "@/services/market/hype";
 import { useTokenCandles } from "@/services/market/token";
@@ -200,6 +200,7 @@ export const MultipleHistoryCard = memo(function MultipleHistoryCard() {
                 axisLine={false}
                 tickLine={false}
                 minTickGap={44}
+                padding={rechartsXAxisPadding}
               />
               <YAxis
                 tickFormatter={(v) => `${Math.round(Number(v))}×`}

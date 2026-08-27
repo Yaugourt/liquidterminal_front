@@ -4,7 +4,7 @@ import { memo, useId, useMemo, useState } from "react";
 import { Layers, Percent, DollarSign } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown, type RevenueWindow } from "@/services/market/revenue";
 import { SeriesLegend } from "./SeriesLegend";
@@ -221,6 +221,7 @@ export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
                 axisLine={false}
                 tickLine={false}
                 minTickGap={44}
+                padding={rechartsXAxisPadding}
               />
               <YAxis
                 domain={view === "share" ? [0, 1] : [0, "auto"]}
@@ -230,7 +231,7 @@ export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
                 tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
-                width={view === "share" ? 40 : 52}
+                width={52}
               />
               <Tooltip
                 cursor={{ stroke: "rgba(255,255,255,0.12)" }}

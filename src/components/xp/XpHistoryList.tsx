@@ -158,7 +158,7 @@ export function XpHistoryList({
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-bold text-gold">
+                      <span className="mono font-bold text-gold">
                         +{tx.xpAmount}
                       </span>
                       <span className="text-xs text-text-tertiary ml-1">XP</span>

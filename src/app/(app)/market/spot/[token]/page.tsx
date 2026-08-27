@@ -22,7 +22,7 @@ import { ChartSkeleton } from "@/components/common";
 // Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
 const TradingViewChart = dynamic(
     () => import("@/components/market/token/TradingViewChart").then(mod => ({ default: mod.TradingViewChart })),
-    { ssr: false, loading: () => <ChartSkeleton /> }
+    { ssr: false, loading: () => <ChartSkeleton minHeight="min-h-[450px]" /> }
 );
 
 type BottomTab = "twap" | "holders";

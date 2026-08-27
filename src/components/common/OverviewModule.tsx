@@ -263,6 +263,7 @@ export function ModuleTable({
   );
   return (
     <ModuleTableContext.Provider value={{ density, alignments }}>
+      <div className="overflow-x-auto scrollbar-brand">
       <table
         className={`w-full border-collapse ${hasWidths ? "table-fixed" : "table-auto"}`}
       >
@@ -291,6 +292,7 @@ export function ModuleTable({
         </thead>
         <tbody>{children}</tbody>
       </table>
+      </div>
     </ModuleTableContext.Provider>
   );
 }

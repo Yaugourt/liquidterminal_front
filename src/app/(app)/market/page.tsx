@@ -145,7 +145,7 @@ export default function MarketHubPage() {
           </div>
         </div>
 
-        <aside className="xl:sticky xl:top-6 space-y-4">
+        <aside className="xl:sticky xl:top-20 space-y-4">
           <TopTradersCard />
           <FundingWatchCard markets={perpMarkets} />
         </aside>

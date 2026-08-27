@@ -49,6 +49,7 @@ export function ActiveUsersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (u) => u.fill_count,
+      type: "numeric",
       accessor: (u) => formatLargeNumber(u.fill_count),
     },
     {
@@ -57,6 +58,7 @@ export function ActiveUsersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (u) => u.total_volume,
+      type: "numeric",
       accessor: (u) => `$${formatLargeNumber(u.total_volume)}`,
     },
     {
@@ -65,6 +67,7 @@ export function ActiveUsersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (u) => u.unique_coins,
+      type: "numeric",
       accessor: (u) => u.unique_coins,
     },
     {
@@ -74,7 +77,7 @@ export function ActiveUsersPreview() {
       align: "right",
       getSortValue: (u) => new Date(u.last_activity).getTime(),
       accessor: (u) => (
-        <span className="text-text-tertiary">{timeAgo(u.last_activity)}</span>
+        <span className="mono text-text-tertiary">{timeAgo(u.last_activity)}</span>
       ),
     },
   ];

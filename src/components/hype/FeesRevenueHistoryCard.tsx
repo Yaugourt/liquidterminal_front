@@ -15,7 +15,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { movingAverage, useFeeRevenueHistory, type FeeRevenueDay } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
@@ -282,6 +282,7 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
                 axisLine={false}
                 tickLine={false}
                 minTickGap={44}
+                padding={rechartsXAxisPadding}
               />
               <YAxis
                 tickFormatter={(v) => formatUsdAxis(Number(v))}
@@ -325,6 +326,7 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
                 axisLine={false}
                 tickLine={false}
                 minTickGap={44}
+                padding={rechartsXAxisPadding}
               />
               <YAxis
                 domain={[0, 1]}
@@ -333,7 +335,7 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
                 tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
-                width={40}
+                width={52}
               />
               <ReferenceLine
                 y={totals.margin ?? 0}

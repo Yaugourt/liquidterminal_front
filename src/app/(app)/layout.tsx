@@ -60,7 +60,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     <ExplorerSearchBar placeholder="Search..." />
                 </div>
 
-                <main className="px-6 py-8 space-y-8 max-w-[1920px] mx-auto">
+                <main className="px-6 py-8 space-y-8 max-w-[1600px] mx-auto overflow-x-clip">
                     {children}
                 </main>
 
