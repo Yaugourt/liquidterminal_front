@@ -67,7 +67,7 @@ export const OverviewModule = memo(function OverviewModule({
       {/* V4 card-head — brand icon + title + tag pill + "View all →" link.
           flex-wrap so a narrow card drops the tag and link to a second line
           instead of squeezing the title down to an ellipsis. */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         {icon && (
           <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
             {icon}

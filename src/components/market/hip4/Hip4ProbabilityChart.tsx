@@ -156,7 +156,7 @@ export function Hip4ProbabilityChart({
 
   return (
     <Card className="w-full h-full min-h-[480px] flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
+      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Activity size={13} className="text-brand" />
         </span>

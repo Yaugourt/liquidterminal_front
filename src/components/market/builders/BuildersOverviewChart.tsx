@@ -228,7 +228,7 @@ export function BuildersOverviewChart({ rows, isLoading, timeframe }: BuildersOv
 
       {/* CARD FOOTER — V4 pedagogical */}
       {total > 0 && (
-        <div className="px-3.5 py-2.5 border-t border-border-subtle flex items-center justify-between text-[10px] text-text-tertiary">
+        <div className="px-3.5 py-2.5 border-t border-border-subtle min-h-[44px] flex items-center justify-between text-[10px] text-text-tertiary">
           <span>{slices.length} builders shown · sorted by {METRICS.find((m) => m.key === metric)?.label.toLowerCase()}</span>
           <span>
             Top 3: <span className="mono text-text-secondary">{topConcentration.toFixed(1)}%</span>

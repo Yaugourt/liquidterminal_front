@@ -51,7 +51,7 @@ export default function DashboardCapital() {
       </section>
 
       {/* Tracker recap */}
-      <section className="space-y-4">
+      <section className="space-y-2.5">
         <SectionHead
           title="Tracker"
           subtitle="Top traders, most active users, public lists & your watchlist"

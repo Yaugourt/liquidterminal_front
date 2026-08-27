@@ -167,7 +167,7 @@ export function MissionsWidget() {
               className="flex flex-col shadow-2xl shadow-black/50 max-h-[min(560px,calc(100vh-6rem))]"
             >
               {/* V4 card-head */}
-              <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle shrink-0">
+              <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px] shrink-0">
                 <span className="relative w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
                   {progress.allDone ? (
                     <PartyPopper size={13} className="text-gold" />

@@ -47,7 +47,7 @@ function StripBody({ kind, state, isLoading, compact }: StripBodyProps) {
   const meta = META[kind];
   if (isLoading && !state) {
     return (
-      <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-border-subtle text-[11px] text-text-tertiary">
+      <div className="flex items-center justify-between px-3.5 py-2.5 border-t border-border-subtle min-h-[44px] text-[11px] text-text-tertiary">
         <span>{meta.label}</span>
         <span>…</span>
       </div>

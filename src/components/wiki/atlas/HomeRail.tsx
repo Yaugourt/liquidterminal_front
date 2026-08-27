@@ -64,7 +64,7 @@ export function HomeRail({ readLists, readListsLoading }: HomeRailProps) {
         )}
         <Link
           href="/wiki/readlists"
-          className="flex items-center gap-1 border-t border-border-subtle px-3.5 py-2.5 text-[11.5px] font-medium text-brand transition-colors hover:text-brand-hover"
+          className="flex items-center gap-1 border-t border-border-subtle min-h-[44px] px-3.5 py-2.5 text-[11.5px] font-medium text-brand transition-colors hover:text-brand-hover"
         >
           Start a reading path <ArrowRight className="h-3 w-3" />
         </Link>
