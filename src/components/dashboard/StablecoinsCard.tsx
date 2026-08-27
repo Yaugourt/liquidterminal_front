@@ -19,6 +19,7 @@ import {
   TokenAvatar,
   chartPalette,
   DataStatus,
+  rechartsGridDefaults,
 } from "@/components/common";
 import { compactCount, compactUsd, fullUsd } from "@/lib/formatters/numberFormatting";
 import type { StablecoinSupplyByCoinPoint } from "@/services/market/stablecoins";
@@ -391,11 +392,7 @@ function StablesStackedBars({
             </linearGradient>
           ))}
         </defs>
-        <CartesianGrid
-          strokeDasharray="3 5"
-          stroke="rgba(255,255,255,0.04)"
-          vertical={false}
-        />
+        <CartesianGrid {...rechartsGridDefaults} />
         <XAxis
           dataKey="time"
           type="number"

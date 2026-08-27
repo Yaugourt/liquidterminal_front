@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { chartColors, rechartsXAxisPadding } from "./chartTheme";
+import { chartColors, rechartsXAxisPadding , rechartsGridDefaults } from "./chartTheme";
 
 export interface HistogramDataPoint {
   time: number;
@@ -170,11 +170,7 @@ const AuroraHistogramChartComponent = ({
             </linearGradient>
           </defs>
 
-          <CartesianGrid
-            strokeDasharray="3 5"
-            stroke="rgba(255,255,255,0.04)"
-            vertical={false}
-          />
+          <CartesianGrid {...rechartsGridDefaults} />
           <XAxis
             dataKey="time"
             type="number"

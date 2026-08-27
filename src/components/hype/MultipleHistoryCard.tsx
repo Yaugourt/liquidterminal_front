@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { HYPE_MAX_SUPPLY, HYPE_SPOT_COIN } from "@/services/market/hype";
 import { useTokenCandles } from "@/services/market/token";
@@ -189,7 +189,7 @@ export const MultipleHistoryCard = memo(function MultipleHistoryCard() {
         ) : (
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={series} margin={{ top: 6, right: 10, bottom: 0, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 5" stroke="rgba(255,255,255,0.04)" vertical={false} />
+              <CartesianGrid {...rechartsGridDefaults} />
               <XAxis
                 dataKey="time"
                 type="number"

@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { chartColors, rechartsXAxisPadding } from "@/components/common";
+import { chartColors, rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 
 /**
  * One time-series fed to the multi-series chart.
@@ -203,11 +203,7 @@ const MultiSeriesAreaChartComponent = ({
           </defs>
 
           {showGrid && (
-            <CartesianGrid
-              strokeDasharray="3 5"
-              stroke="rgba(255,255,255,0.04)"
-              vertical={false}
-            />
+            <CartesianGrid {...rechartsGridDefaults} />
           )}
 
           <XAxis
