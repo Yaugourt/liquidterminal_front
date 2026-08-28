@@ -4,6 +4,7 @@ import { CheckCircle2 } from "lucide-react";
 import { TypedDataTable, type Column } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
+import { truncateAddress } from "@/lib/formatters/numberFormatting";
 import type { Hip4SettlementRow } from "@/services/indexer/hip4";
 
 interface Hip4SettlementsTableProps {
@@ -80,6 +81,16 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
       },
     },
     {
+      key: "yesFraction",
+      header: "YES %",
+      type: "numeric",
+      accessor: (row) => (
+        <span className="mono text-[12px] text-text-secondary">
+          {row.settle_fraction != null ? `${(row.settle_fraction * 100).toFixed(0)}%` : "—"}
+        </span>
+      ),
+    },
+    {
       key: "settledAt",
       header: "Settled At",
       type: "numeric",
@@ -88,6 +99,21 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
           {formatSettledAt(row.settled_at)}
         </span>
       ),
+    },
+    {
+      key: "tx",
+      header: "Tx",
+      accessor: (row) =>
+        row.tx_hash ? (
+          <a
+            href={`/explorer/transaction/${row.tx_hash}`}
+            className="mono text-[11px] text-brand hover:underline"
+          >
+            {truncateAddress(row.tx_hash)}
+          </a>
+        ) : (
+          <span className="mono text-[11px] text-text-tertiary">—</span>
+        ),
     },
   ];
 
