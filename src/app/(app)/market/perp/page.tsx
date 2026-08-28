@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import { MarketStatsStrip, TokensSection } from "@/components/market/common";
+import { PerpLeaderboards } from "@/components/market/perp/PerpLeaderboards";
 import { AuctionCard, RecentAuctionsCard } from "@/components/market/auction";
 import { PageHeader, PageFaq, DataStatus } from "@/components/common";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
@@ -48,6 +49,9 @@ export default function MarketPerp() {
         <AuctionCard marketType="perp" />
         <RecentAuctionsCard />
       </div>
+
+      {/* Top gainers / losers */}
+      <PerpLeaderboards />
 
       {/* Token directory — main table */}
       <TokensSection market="perp" />
