@@ -62,14 +62,14 @@ const InfoCardComponent = ({ onAddClick, transactions, isLoadingTransactions }: 
                     </div>
                 </div>
                 <div>
-                    <div className="text-text-primary text-sm mb-3">Transactions sent</div>
+                    <div className="text-text-primary text-sm mb-3">Activity</div>
                     <div className="flex gap-5">
                         <div>
-                            <span className="text-text-tertiary text-xs">Latest:</span>
+                            <span className="text-text-tertiary text-xs">Last seen:</span>
                             <span className="text-brand ml-1.5 text-xs tabular-nums">{latest}</span>
                         </div>
                         <div>
-                            <span className="text-text-tertiary text-xs">First:</span>
+                            <span className="text-text-tertiary text-xs">First seen:</span>
                             <span className="text-brand ml-1.5 text-xs tabular-nums">{first}</span>
                         </div>
                     </div>

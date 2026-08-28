@@ -5,23 +5,20 @@ import { PageHeader, PageFaq, DataStatus } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { OperatorLens } from "@/components/explorer/validator/lens/OperatorLens";
 import { CapitalLens } from "@/components/explorer/validator/lens/CapitalLens";
-import { GovernanceLens } from "@/components/explorer/validator/lens/GovernanceLens";
 import { useValidators } from "@/services/explorer/validator/hooks";
 import { VALIDATORS_FAQ } from "@/lib/page-faqs";
 
-type Lens = "operator" | "capital" | "governance";
+type Lens = "operator" | "capital";
 
 const LENS_TABS = [
   { value: "operator", label: "Operator" },
   { value: "capital", label: "Capital" },
-  { value: "governance", label: "Governance" },
 ];
 
-/** Per-lens header description — one product, three reading angles. */
+/** Per-lens header description — one product, two reading angles. */
 const LENS_DESCRIPTION: Record<Lens, string> = {
   operator: "Health and performance of the active validator set.",
   capital: "Where stake sits and how it's flowing out.",
-  governance: "Pending L1 votes awaiting validator ratification.",
 };
 
 export default function ValidatorPage() {
@@ -54,7 +51,6 @@ export default function ValidatorPage() {
 
       {lens === "operator" && <OperatorLens />}
       {lens === "capital" && <CapitalLens />}
-      {lens === "governance" && <GovernanceLens />}
       <PageFaq items={VALIDATORS_FAQ} />
     </div>
   );

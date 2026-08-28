@@ -288,10 +288,12 @@ export function PortfolioStats({
                     </div>
                   </div>
 
-                  {/* Withdrawable */}
+                  {/* Withdrawable — from HL clearinghouseState.withdrawable (perp response). */}
                   <div className="flex justify-between items-center pt-2 border-t border-border-subtle">
                     <p className="text-text-secondary text-xs">Withdrawable:</p>
-                    <p className="mono text-text-primary text-sm font-bold">{formatCurrency(0)}</p>
+                    <p className="mono text-text-primary text-sm font-bold">
+                      {formatCurrency(perpPositions?.withdrawable ? parseFloat(perpPositions.withdrawable) : 0)}
+                    </p>
                   </div>
                 </div>
               </div>

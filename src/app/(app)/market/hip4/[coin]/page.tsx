@@ -308,6 +308,7 @@ export default function Hip4MarketDetailPage() {
             layout={layout}
             activeOutcome={activeOutcome}
             activeIndex={activeIndex}
+            volume24h={market.volume_24h}
           />
         </>
       )}

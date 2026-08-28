@@ -88,8 +88,10 @@ export const GenesisDistributionCard = memo(function GenesisDistributionCard() {
         ))}
       </div>
 
-      <div className="flex items-center gap-x-3 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
+      <div className="flex flex-wrap items-center gap-x-3 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
         <span>Source: Hyperliquid tokenomics docs · no VC / CEX allocation</span>
+        <span className="opacity-50">·</span>
+        <span>allocation at genesis (TGE), not current unlock status</span>
       </div>
     </Card>
   );

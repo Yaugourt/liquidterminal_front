@@ -280,28 +280,44 @@ export function UniversalTokenTable({
             ];
         } else {
             columns = [
-                { ...nameCol, width: '22%' },
-                { ...priceCol, width: '14%' },
-                { ...change24hCol, width: '14%' },
-                { ...volumeCol, width: '17%' },
+                { ...nameCol, width: '20%' },
+                { ...priceCol, width: '12%' },
+                { ...change24hCol, width: '12%' },
+                { ...volumeCol, width: '15%' },
                 {
                     key: "openInterest",
                     header: "Open Interest",
                     type: "numeric",
                     sortable: true,
-                    width: '17%',
+                    width: '15%',
                     accessor: (t) => `$${formatNumber(t.openInterest, format)}`,
                 },
                 {
                     key: "funding",
-                    header: "Funding Rate",
+                    header: "Funding /1h",
                     align: "right",
-                    width: '16%',
+                    width: '13%',
                     accessor: (t) => (
                         <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
                             {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
                         </StatusBadge>
                     ),
+                },
+                {
+                    // Annualized funding (per-hour rate × 24 × 365). HL funds hourly, so
+                    // this is a derived read-out, not a backend-sortable field.
+                    key: "fundingApr",
+                    header: "Funding APR",
+                    align: "right",
+                    width: '13%',
+                    accessor: (t) => {
+                        const apr = t.funding * 8760;
+                        return (
+                            <StatusBadge variant={apr >= 0 ? 'success' : 'error'}>
+                                {apr > 0 ? '+' : ''}{formatNumber(apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
+                            </StatusBadge>
+                        );
+                    },
                 },
             ];
         }
