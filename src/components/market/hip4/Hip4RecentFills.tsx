@@ -4,7 +4,7 @@ import { Activity } from "lucide-react";
 import { TypedDataTable, type Column } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
-import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
+import { compactUsd, compactCount, truncateAddress } from "@/lib/formatters/numberFormatting";
 import type { Hip4FillRow } from "@/services/indexer/hip4";
 
 /** Per-coin metadata used to label fills. `sideName` is only set when the
@@ -77,6 +77,18 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
       accessor: (row) => (
         <span className="mono text-[12px] text-text-primary">
           {row.px != null ? `${(row.px * 100).toFixed(2)}%` : "—"}
+        </span>
+      ),
+    },
+    {
+      key: "sz",
+      header: "Size",
+      type: "numeric",
+      sortable: true,
+      getSortValue: (row) => row.sz ?? 0,
+      accessor: (row) => (
+        <span className="mono text-[12px] text-text-secondary">
+          {row.sz != null ? compactCount(row.sz) : "—"}
         </span>
       ),
     },

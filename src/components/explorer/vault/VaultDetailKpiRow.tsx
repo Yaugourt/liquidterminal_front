@@ -121,6 +121,9 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
       delta7d,
       sharpe,
       commission,
+      totalDeposits: latest?.totalDeposits ?? null,
+      totalNotional: latest?.totalNotional ?? null,
+      nPositions: latest?.nPositions ?? null,
     };
   }, [snapshots, vaults, vaultAddress, details]);
 
@@ -162,6 +165,20 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
       label: "Sharpe · 90d",
       value: kpis.sharpe ? kpis.sharpe.value.toFixed(2) : ph,
       sub: kpis.sharpe ? `vol ${kpis.sharpe.vol.toFixed(1)}%` : undefined,
+    },
+    {
+      label: "Deposits",
+      value: kpis.totalDeposits != null ? compactUsd(kpis.totalDeposits) : ph,
+    },
+    {
+      label: "Open notional",
+      value: kpis.totalNotional != null ? compactUsd(kpis.totalNotional) : ph,
+      sub: "gross exposure",
+    },
+    {
+      label: "Positions",
+      value: kpis.nPositions != null ? kpis.nPositions.toLocaleString() : ph,
+      sub: "open",
     },
   ];
 

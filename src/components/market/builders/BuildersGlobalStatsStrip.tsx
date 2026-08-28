@@ -57,6 +57,22 @@ export function BuildersGlobalStatsStrip({ stats, isLoading, error }: BuildersGl
       sub: deltaSub(stats?.variations?.totalBuilderFeesPct),
     },
     {
+      // Gross fees (builder cut + HL protocol take). Sub shows what share reaches builders.
+      key: "Total Fees",
+      label: "Total Fees",
+      value: stats
+        ? formatNumber(stats.current.totalFees, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })
+        : placeholder,
+      sub:
+        stats && stats.current.totalFees > 0 ? (
+          <span className="mono text-[11px] font-medium text-text-tertiary">
+            {Math.round((stats.current.totalBuilderFees / stats.current.totalFees) * 100)}% to builders
+          </span>
+        ) : (
+          deltaSub(stats?.variations?.totalFeesPct)
+        ),
+    },
+    {
       key: "Unique Users",
       label: "Unique Users",
       value: stats

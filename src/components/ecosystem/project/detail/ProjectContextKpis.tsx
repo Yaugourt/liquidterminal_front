@@ -117,6 +117,9 @@ export function ProjectContextKpis({ position, metrics, tokenSymbol }: ProjectCo
     if (metrics?.revenue24h) {
       out.push({ key: "grev", label: "Revenue 24h", value: compactUsd(metrics.revenue24h.value), sub: "all chains" });
     }
+    if (metrics?.marketCap) {
+      out.push({ key: "gmcap", label: "Market cap", value: compactUsd(metrics.marketCap.value), sub: "all chains" });
+    }
     const price = priceCell();
     if (price) out.push(price);
     return out;
