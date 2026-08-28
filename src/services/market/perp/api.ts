@@ -1,5 +1,7 @@
 import { PerpMarketData, PerpGlobalStats, PerpMarketParams } from './types';
 import { get } from '../../api/axios-config';
+import { postExternal } from '../../api/http/axios-config';
+import { API_URLS } from '../../api/constants';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse, buildQueryParams } from '../../common';
 
@@ -23,6 +25,51 @@ export const getPerpMarket = async (coinName: string): Promise<PerpMarketData | 
     );
   } catch {
     // Silent error handling: the caller falls back to placeholder values
+    return null;
+  }
+};
+
+export interface PerpAssetCtx {
+  markPx: number | null;
+  oraclePx: number | null;
+  premium: number | null;
+}
+
+interface HlPerpCtx {
+  markPx?: string;
+  oraclePx?: string;
+  premium?: string;
+}
+type HlPerpMetaAndCtxs = [{ universe: { name: string }[] }, HlPerpCtx[]];
+
+const ctxNum = (value: string | undefined): number | null => {
+  if (value == null) return null;
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+/**
+ * Live mark / oracle / premium for one core perp, from Hyperliquid
+ * `metaAndAssetCtxs` (keyless, main dex). The perp directory endpoint doesn't
+ * carry these, so they're fetched here on demand. Returns null on failure so
+ * the caller keeps its directory values.
+ */
+export const getPerpAssetCtx = async (coin: string): Promise<PerpAssetCtx | null> => {
+  try {
+    const url = `${API_URLS.HYPERLIQUID_API}/info`;
+    const response = await postExternal<HlPerpMetaAndCtxs>(url, { type: 'metaAndAssetCtxs' });
+    const [meta, ctxs] = response ?? [];
+    const universe = meta?.universe ?? [];
+    const idx = universe.findIndex((u) => u.name.toLowerCase() === coin.toLowerCase());
+    if (idx < 0) return null;
+    const ctx = ctxs?.[idx];
+    if (!ctx) return null;
+    return {
+      markPx: ctxNum(ctx.markPx),
+      oraclePx: ctxNum(ctx.oraclePx),
+      premium: ctxNum(ctx.premium),
+    };
+  } catch {
     return null;
   }
 };

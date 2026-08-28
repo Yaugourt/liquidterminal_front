@@ -10,7 +10,7 @@ import { TradingLayout } from "@/layouts/TradingLayout";
 import { TokenCard, TokenData, OrderBook, RecentTrades } from "@/components/market/token";
 import { ChartSkeleton } from "@/components/common";
 import { getPerpCoinId } from "@/services/market/token/utils";
-import { getPerpMarket } from "@/services/market/perp/api";
+import { getPerpMarket, getPerpAssetCtx } from "@/services/market/perp/api";
 
 // Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
 const TradingViewChart = dynamic(
@@ -26,6 +26,9 @@ interface PerpToken {
   coin: string; // Coin for WebSocket (e.g., "BTC")
   logo: string | null;
   price?: number;
+  mark?: number;
+  oracle?: number;
+  premium?: number;
   change24h?: number;
   volume?: number;
   openInterest?: number;
@@ -53,8 +56,11 @@ export default function PerpTokenPage() {
       const coinId = getPerpCoinId(tokenParam.toUpperCase());
 
       // Pull the real market stats (change/volume/OI/funding) from the perp
-      // directory endpoint, the same source that feeds the perp table.
-      const market = await getPerpMarket(coinId);
+      // directory endpoint, plus mark/oracle/premium from HL asset ctx (keyless).
+      const [market, ctx] = await Promise.all([
+        getPerpMarket(coinId),
+        getPerpAssetCtx(coinId),
+      ]);
       if (cancelled) return;
 
       const perpToken: PerpToken = {
@@ -62,6 +68,9 @@ export default function PerpTokenPage() {
         coin: coinId,
         logo: market?.logo ?? null,
         price: market?.price, // Refined in real time by the WebSocket
+        mark: ctx?.markPx ?? undefined,
+        oracle: ctx?.oraclePx ?? undefined,
+        premium: ctx?.premium ?? undefined,
         change24h: market?.change24h,
         volume: market?.volume,
         openInterest: market?.openInterest,
@@ -107,6 +116,9 @@ export default function PerpTokenPage() {
     name: token.name,
     type: 'perpetual',
     price: token.price,
+    mark: token.mark,
+    oracle: token.oracle,
+    premium: token.premium,
     change24h: token.change24h,
     volume24h: token.volume,
     openInterest: token.openInterest,

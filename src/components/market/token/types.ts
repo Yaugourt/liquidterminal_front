@@ -8,6 +8,7 @@ export interface TokenData {
   // Price data
   mark?: number;
   oracle?: number;
+  premium?: number; // Perpetual only (mark vs oracle premium, from asset ctx)
   price?: number;
 
   // Market index for WebSocket connection
