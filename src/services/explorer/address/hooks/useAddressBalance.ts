@@ -3,6 +3,7 @@ import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBa
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useDelegatorSummary } from "@/services/explorer/validator/hooks/delegator/useDelegatorSummary";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
+import { useVaultDeposits } from "@/services/explorer/vault/hooks/useVaultDeposits";
 
 export function useAddressBalance(address: string) {
   // Utiliser les hooks directement dans le composant
@@ -10,6 +11,8 @@ export function useAddressBalance(address: string) {
   const { data: spotMarketTokens, isLoading: tokensLoading, error: tokensError, refetch: refreshTokens } = useSpotTokens({ limit: 100 });
   const { summary: stakingSummary, isLoading: stakingLoading, error: stakingError, refetch: refreshStaking } = useDelegatorSummary(address);
   const { price: hypePrice } = useHypePrice();
+  // Vault equity from HL userVaultEquities (keyless); folded into the totals below.
+  const { totalEquity: vaultTotal, isLoading: vaultLoading } = useVaultDeposits(address);
 
   // Calculer les statistiques du portefeuille
   const balances = useMemo(() => {
@@ -48,9 +51,6 @@ export function useAddressBalance(address: string) {
     // Récupérer la valeur du compte en perp directement depuis marginSummary
     const perpTotal = parseFloat(perpPositions.marginSummary.accountValue);
 
-    // Pour l'instant, on n'a pas de données sur les vaults
-    const vaultTotal = 0;
-    
     // Calculer le total staké en $ (delegated + undelegated)
     const stakedTotal = stakingSummary && hypePrice ? 
       (parseFloat(stakingSummary.delegated) + parseFloat(stakingSummary.undelegated)) * hypePrice : 0;
@@ -62,7 +62,7 @@ export function useAddressBalance(address: string) {
       vaultBalance: vaultTotal,
       stakedBalance: stakedTotal,
     };
-  }, [spotBalances, perpPositions, spotMarketTokens, stakingSummary, hypePrice]);
+  }, [spotBalances, perpPositions, spotMarketTokens, stakingSummary, hypePrice, vaultTotal]);
 
   const refresh = async () => {
     await Promise.all([refreshBalances(), refreshTokens(), refreshStaking()]);
@@ -70,7 +70,7 @@ export function useAddressBalance(address: string) {
 
   return {
     balances,
-    isLoading: balancesLoading || tokensLoading || stakingLoading,
+    isLoading: balancesLoading || tokensLoading || stakingLoading || vaultLoading,
     error: balancesError || tokensError || stakingError,
     refresh
   };

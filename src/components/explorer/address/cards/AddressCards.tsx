@@ -6,7 +6,6 @@ import { OverviewCard } from "./OverviewCard";
 import { PnLCard } from "./PnLCard";
 import { InfoCard } from "./InfoCard";
 import { AddressCardsProps } from "@/components/types/explorer.types";
-import { useVaultDeposits } from '@/services/explorer/vault/hooks/useVaultDeposits';
 import { FormattedUserTransaction } from "@/services/explorer/address/types";
 
 const GRID_CLASSES = "grid grid-cols-1 lg:grid-cols-3 gap-5 mb-4";
@@ -26,7 +25,6 @@ const AddressCardsComponent = ({
 }: AddressCardsPropsWithTransactions) => {
     const { balances, isLoading: loadingBalances } = useAddressBalance(address);
     const { format } = useNumberFormat();
-    const { totalEquity, isLoading: loadingVaultDeposits } = useVaultDeposits(address);
 
     // Mémoisation de la fonction de formatage
     const formatCurrency = useCallback((value: number) => {
@@ -39,21 +37,14 @@ const AddressCardsComponent = ({
         });
     }, [format]);
 
-    // Mémoisation des props des composants enfants.
-    // Vault equity is fetched separately (useVaultDeposits) and was missing from the
-    // header total, which is why the Vault line and the Total didn't reconcile. Fold it in.
-    const overviewProps = useMemo(() => {
-        const vaultEquity = Number.isFinite(totalEquity) ? totalEquity : 0;
-        return {
-            balances: {
-                ...balances,
-                vaultBalance: vaultEquity,
-                totalBalance: (balances?.totalBalance ?? 0) + vaultEquity,
-            },
-            isLoading: loadingBalances || loadingVaultDeposits,
-            formatCurrency,
-        };
-    }, [balances, loadingBalances, loadingVaultDeposits, totalEquity, formatCurrency]);
+    // Mémoisation des props des composants enfants. Vault equity is now folded
+    // into balances at the source (useAddressBalance → useVaultDeposits), so the
+    // Vault line and the Total reconcile without an override here.
+    const overviewProps = useMemo(() => ({
+        balances,
+        isLoading: loadingBalances,
+        formatCurrency,
+    }), [balances, loadingBalances, formatCurrency]);
 
     const pnlProps = useMemo(() => ({
         portfolio,
