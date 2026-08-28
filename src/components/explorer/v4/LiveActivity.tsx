@@ -175,7 +175,7 @@ function BlocksCard({
       </div>
 
       {rows.length === 0 ? (
-        <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary">
+        <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary min-h-[240px] flex flex-col items-center justify-center">
           Waiting for blocks…
         </div>
       ) : (
@@ -266,7 +266,7 @@ function TxCard({
       </div>
 
       {rows.length === 0 ? (
-        <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary">
+        <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary min-h-[240px] flex flex-col items-center justify-center">
           Waiting for transactions…
         </div>
       ) : (

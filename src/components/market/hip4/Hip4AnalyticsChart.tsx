@@ -310,7 +310,7 @@ export function Hip4AnalyticsChart() {
                   tick={{ fill: chartColors.textMuted, fontSize: 9 }}
                   axisLine={false}
                   tickLine={false}
-                  width={38}
+                  width={40}
                 />
                 <Tooltip
                   cursor={{ fill: chartColors.gridLine }}

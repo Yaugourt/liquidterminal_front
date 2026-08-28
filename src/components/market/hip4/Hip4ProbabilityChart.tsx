@@ -232,7 +232,7 @@ export function Hip4ProbabilityChart({
                 tick={{ fill: chartColors.textMuted, fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
-                width={36}
+                width={40}
               />
               <Tooltip
                 content={<ProbTooltip colored={colored} bucketMs={bucketMs} />}

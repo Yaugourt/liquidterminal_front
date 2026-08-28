@@ -207,7 +207,7 @@ export const MultipleHistoryCard = memo(function MultipleHistoryCard() {
                 tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }}
                 axisLine={false}
                 tickLine={false}
-                width={44}
+                width={52}
               />
               {stats.average != null && (
                 <ReferenceLine
