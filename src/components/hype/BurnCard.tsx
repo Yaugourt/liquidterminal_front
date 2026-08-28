@@ -107,6 +107,8 @@ export const BurnCard = memo(function BurnCard() {
         <span>Burned = on-chain max − total supply</span>
         <span className="opacity-50">·</span>
         <span>AF holdings shown as removed from float</span>
+        <span className="opacity-50">·</span>
+        <span>per-mechanism amounts not individually quantified</span>
       </div>
     </Card>
   );

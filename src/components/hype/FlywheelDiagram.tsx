@@ -27,7 +27,7 @@ export const FlywheelDiagram = memo(function FlywheelDiagram({
 }: FlywheelDiagramProps) {
   const steps: FlywheelStep[] = [
     { Icon: Coins, label: "Trading fees", sub: `${dailyRevenueUsd}/day` },
-    { Icon: Landmark, label: "Assistance Fund", sub: `~${feeSharePct}% routed` },
+    { Icon: Landmark, label: "Assistance Fund", sub: `~${feeSharePct}% routed (est.)` },
     { Icon: Repeat, label: "HYPE buyback", sub: `≈${dailyBuybackHype}/day` },
     { Icon: Flame, label: "Out of float", sub: "held · burned" },
   ];

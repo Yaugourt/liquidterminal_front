@@ -39,15 +39,21 @@ const AddressCardsComponent = ({
         });
     }, [format]);
 
-    // Mémoisation des props des composants enfants
-    const overviewProps = useMemo(() => ({
-        balances: {
-            ...balances,
-            vaultBalance: totalEquity,
-        },
-        isLoading: loadingBalances || loadingVaultDeposits,
-        formatCurrency
-    }), [balances, loadingBalances, loadingVaultDeposits, totalEquity, formatCurrency]);
+    // Mémoisation des props des composants enfants.
+    // Vault equity is fetched separately (useVaultDeposits) and was missing from the
+    // header total, which is why the Vault line and the Total didn't reconcile. Fold it in.
+    const overviewProps = useMemo(() => {
+        const vaultEquity = Number.isFinite(totalEquity) ? totalEquity : 0;
+        return {
+            balances: {
+                ...balances,
+                vaultBalance: vaultEquity,
+                totalBalance: (balances?.totalBalance ?? 0) + vaultEquity,
+            },
+            isLoading: loadingBalances || loadingVaultDeposits,
+            formatCurrency,
+        };
+    }, [balances, loadingBalances, loadingVaultDeposits, totalEquity, formatCurrency]);
 
     const pnlProps = useMemo(() => ({
         portfolio,
