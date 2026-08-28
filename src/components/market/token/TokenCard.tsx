@@ -106,6 +106,19 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             </div>
           )}
 
+          {/* Premium (Perpetual only): mark vs oracle, signed */}
+          {token.type === 'perpetual' && token.premium != null && (
+            <div className="flex flex-col">
+              <span className="text-stat-label">Premium</span>
+              <span className={cn(
+                "text-sm font-medium",
+                token.premium >= 0 ? "text-success" : "text-danger"
+              )}>
+                {`${token.premium >= 0 ? '+' : ''}${(token.premium * 100).toFixed(4)}%`}
+              </span>
+            </div>
+          )}
+
           {/* 24h Change: "N/A" when the stat is not available (no fake 0%) */}
           <div className="flex flex-col">
             <span className="text-stat-label">24h Change</span>
