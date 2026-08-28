@@ -145,6 +145,21 @@ export function CapitalLens() {
   const communityStake = totalStake - foundationStake;
   const foundationSharePct = totalStake > 0 ? (foundationStake / totalStake) * 100 : 0;
 
+  // Nakamoto coefficient: the smallest number of top validators whose combined
+  // stake exceeds the >1/3 halting threshold. Computed over the full set (not
+  // the community toggle) so the label stays unambiguous.
+  const nakamoto = useMemo(() => {
+    if (totalStake <= 0 || validators.length === 0) return null;
+    const sorted = [...validators].sort((a, b) => b.stake - a.stake);
+    const threshold = totalStake * (1 / 3);
+    let cumulative = 0;
+    for (let i = 0; i < sorted.length; i++) {
+      cumulative += sorted[i].stake;
+      if (cumulative > threshold) return i + 1;
+    }
+    return sorted.length;
+  }, [validators, totalStake]);
+
   // The set the concentration metrics describe (toggle-driven).
   const activeSet = view === "community" ? communityValidators : validators;
   // Denominator the shares are computed against.
@@ -363,6 +378,12 @@ export function CapitalLens() {
       sub: "cumulative",
     },
     {
+      key: "nakamoto",
+      label: "Nakamoto",
+      value: nakamoto != null ? String(nakamoto) : "—",
+      sub: "to halt (>⅓)",
+    },
+    {
       key: "total-staked",
       label: "Total staked",
       value: compactHype(totalStake),
@@ -408,6 +429,14 @@ export function CapitalLens() {
       value: compactHype(upcomingUnstaking?.next7Days.totalTokens ?? null),
       sub: upcomingUnstaking
         ? `${upcomingUnstaking.next7Days.transactionCount.toLocaleString()} tx`
+        : undefined,
+    },
+    {
+      key: "unstakers",
+      label: "Unique unstakers",
+      value: unstakingTotals ? compactCount(unstakingTotals.totalUniqueUsers) : "—",
+      sub: unstakingTotals
+        ? `${compactHype(unstakingTotals.averageTokensPerDay)}/day avg`
         : undefined,
     },
   ];

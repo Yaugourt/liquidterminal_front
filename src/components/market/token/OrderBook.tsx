@@ -163,7 +163,11 @@ export function OrderBook({
     const bestAsk = asks[0]?.[0];
     if (bestBid === undefined || bestAsk === undefined) return null;
     const absolute = bestAsk - bestBid;
-    return { absolute, percentage: bestAsk > 0 ? (absolute / bestAsk) * 100 : 0 };
+    return {
+      absolute,
+      percentage: bestAsk > 0 ? (absolute / bestAsk) * 100 : 0,
+      mid: (bestBid + bestAsk) / 2,
+    };
   }, [bids, asks]);
 
   const formatPrice = (price: number) =>
@@ -232,12 +236,15 @@ export function OrderBook({
         {activeTab === "orderbook" ? (
           <div className="flex flex-col flex-1 min-h-0">
             {/* Header */}
-            <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-label text-text-secondary flex-shrink-0 mb-2 pr-2.5">
+            <div className="grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 text-label text-text-secondary flex-shrink-0 mb-2 pr-2.5">
               <span>Price</span>
               <span className="text-right">Size ({tokenName})</span>
               <span className="text-right">Total</span>
               <span className="text-right w-8" title="Resting orders on this level">
                 Ord
+              </span>
+              <span className="text-right w-8" title="Distinct makers on this level">
+                Mkr
               </span>
             </div>
 
@@ -267,6 +274,10 @@ export function OrderBook({
 
                 {/* Spread */}
                 <div className="border-y border-border-subtle py-2 text-center my-2 mx-1 flex items-center justify-center gap-5 flex-shrink-0">
+                  <span className="text-label text-text-secondary">Mid</span>
+                  <span className="mono text-xs text-text-primary font-medium">
+                    {spread ? formatPrice(spread.mid) : "N/A"}
+                  </span>
                   <span className="text-label text-text-secondary">Spread</span>
                   <span className="mono text-xs text-text-primary font-medium">
                     {spread && spread.absolute > 0
@@ -357,7 +368,7 @@ function BookRow({
 
   return (
     <div
-      className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 text-xs hover:bg-surface-2 py-1 rounded relative transition-colors"
+      className="grid grid-cols-[1fr_1fr_1fr_auto_auto] gap-2 text-xs hover:bg-surface-2 py-1 rounded relative transition-colors"
       title={
         row.makers > 0
           ? `${row.orders} order${row.orders > 1 ? "s" : ""} · ${row.makers} maker${row.makers > 1 ? "s" : ""}`
@@ -392,6 +403,9 @@ function BookRow({
         )}
       >
         {row.orders || "—"}
+      </span>
+      <span className="mono text-right relative z-10 w-8 tabular-nums text-text-tertiary">
+        {row.makers || "—"}
       </span>
     </div>
   );
