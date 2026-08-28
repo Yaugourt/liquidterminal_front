@@ -267,24 +267,13 @@ export function ModuleTable({
       <table
         className={`w-full border-collapse ${hasWidths ? "table-fixed" : "table-auto"}`}
       >
-        {/* Always emit a colgroup. With no explicit widths, make the first
-            (label) column absorb the table's leftover width so the value
-            columns sit tight on the right instead of the slack being spread
-            as gaps between every column. */}
-        <colgroup>
-          {columns.map((c, i) => (
-            <col
-              key={i}
-              style={
-                hasWidths
-                  ? colStyle(c.width)
-                  : i === 0
-                  ? { width: "100%" }
-                  : undefined
-              }
-            />
-          ))}
-        </colgroup>
+        {hasWidths && (
+          <colgroup>
+            {columns.map((c, i) => (
+              <col key={i} style={colStyle(c.width)} />
+            ))}
+          </colgroup>
+        )}
         <thead>
           <tr>
             {columns.map((c, i) => (

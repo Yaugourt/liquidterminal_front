@@ -39,7 +39,6 @@ function buildColumns(
       key: "name",
       header: "Vault",
       sortable: true,
-      flex: true,
       getSortValue: (v) => v.summary.name.toLowerCase(),
       accessor: (v) => (
         <div className="flex items-center gap-2.5 min-w-0">
@@ -47,7 +46,7 @@ function buildColumns(
             {initials(v.summary.name)}
           </span>
           <div className="min-w-0">
-            <div className="text-sm font-medium text-text-primary truncate">
+            <div className="text-sm font-medium text-text-primary truncate max-w-[240px]">
               {v.summary.name}
             </div>
             <div className="mono text-[11px] text-text-tertiary">

@@ -76,13 +76,6 @@ export interface Column<T> {
     className?: string;
     /** Fixed column width (e.g. `'140px'`, `'12%'`). Applied via inline style on `<TableHead>`. */
     width?: string | number;
-    /**
-     * Make this column absorb the table's leftover width (width:100%) so the
-     * remaining columns size to their content instead of the extra space being
-     * spread as gaps between every column. Set it on the primary text column
-     * (name/label). Overrides `width`.
-     */
-    flex?: boolean;
     /** When true, the header is clickable and toggles the active sort. */
     sortable?: boolean;
     /**
@@ -391,7 +384,7 @@ export function TypedDataTable<T>({
             icon,
             subtitle,
             headerAction,
-            <LoadingState message="Loading…" size="md" withCard={false} minHeight="min-h-[180px]" />,
+            <LoadingState message="Loading…" size="md" withCard={false} minHeight="min-h-[300px]" />,
             className
         );
     }
@@ -406,7 +399,7 @@ export function TypedDataTable<T>({
                 message={error.message}
                 onRetry={onErrorRetry ? () => void onErrorRetry() : undefined}
                 withCard={false}
-                minHeight="min-h-[180px]"
+                minHeight="min-h-[300px]"
             />,
             className
         );
@@ -465,9 +458,7 @@ export function TypedDataTable<T>({
                         {columns.map((column, colIdx) => {
                             const colKey = column.key ?? `col-${colIdx}`;
                             const widthStyle =
-                                column.flex
-                                    ? { width: "100%" }
-                                    : column.width !== undefined
+                                column.width !== undefined
                                     ? { width: typeof column.width === "number" ? `${column.width}px` : column.width }
                                     : undefined;
                             const headAlign =
