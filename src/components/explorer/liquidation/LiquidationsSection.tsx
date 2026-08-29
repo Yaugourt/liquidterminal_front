@@ -95,6 +95,50 @@ export function LiquidationsSection() {
       ),
     },
     {
+      // Fill VWAP vs mark: how far the forced fill printed from the mark price
+      // (execution quality). Both are already in the payload, never shown.
+      key: "mark",
+      header: "Mark / VWAP",
+      align: "right",
+      className: "max-xl:hidden",
+      // fill_px_vwap is nullable in the payload (some fills have no VWAP yet);
+      // guard it so the cell never prints "$NaN".
+      accessor: (liq) => (
+        <div className="flex flex-col items-end leading-tight">
+          <span className="mono text-text-primary">
+            {liq.mark_px != null
+              ? `$${formatNumber(liq.mark_px, format, { maximumFractionDigits: 4 })}`
+              : "—"}
+          </span>
+          <span className="mono text-[10px] text-text-tertiary">
+            {liq.fill_px_vwap != null
+              ? `vwap $${formatNumber(liq.fill_px_vwap, format, { maximumFractionDigits: 4 })}`
+              : "vwap —"}
+          </span>
+        </div>
+      ),
+    },
+    {
+      // Who executed the liquidation. `liquidators` + count are fetched but the
+      // table only ever showed the liquidated user, never the liquidators.
+      key: "liquidators",
+      header: "Liquidators",
+      className: "max-lg:hidden",
+      accessor: (liq) =>
+        liq.liquidators && liq.liquidators.length > 0 ? (
+          <span className="inline-flex items-center gap-1.5">
+            {liq.liquidator_count > 1 && (
+              <span className="mono text-[10px] text-text-tertiary px-1 rounded bg-surface-2 border border-border-subtle">
+                {liq.liquidator_count}
+              </span>
+            )}
+            <AddressDisplay address={liq.liquidators[0]} />
+          </span>
+        ) : (
+          <span className="text-text-tertiary">—</span>
+        ),
+    },
+    {
       key: "user",
       header: "User",
       accessor: (liq) => <AddressDisplay address={liq.liquidated_user} />,

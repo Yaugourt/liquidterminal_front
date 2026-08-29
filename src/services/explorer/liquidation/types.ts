@@ -18,8 +18,8 @@ export interface Liquidation {
   liquidated_user: string;   // Adresse wallet liquidée
   size_total: number;        // Taille totale de la position
   notional_total: number;    // Valeur notionnelle en USD
-  fill_px_vwap: number;      // Prix moyen pondéré (VWAP)
-  mark_px: number;           // Prix mark
+  fill_px_vwap: number | null; // Prix moyen pondéré (VWAP) — null quand pas encore de fill
+  mark_px: number | null;    // Prix mark
   method: string;            // Méthode (ex: "market")
   fee_total_liquidated: number; // Frais de liquidation
   liquidators: string[];     // Liste des adresses liquidateurs
