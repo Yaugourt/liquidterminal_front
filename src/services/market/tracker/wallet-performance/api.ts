@@ -1,6 +1,6 @@
 import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
-import type { WalletPerformance, WalletCoinStat } from './types';
+import type { WalletPerformance, WalletCoinStat, WalletOverview } from './types';
 
 interface IndexerEnvelope<T> {
   success: boolean;
@@ -18,6 +18,18 @@ export const fetchWalletPerformance = async (address: string): Promise<WalletPer
     );
     return res.data;
   }, 'fetching wallet performance');
+};
+
+/**
+ * Lifetime summary for a wallet (volume, fees, markets traded, last active).
+ */
+export const fetchWalletOverview = async (address: string): Promise<WalletOverview> => {
+  return withErrorHandling(async () => {
+    const res = await get<IndexerEnvelope<WalletOverview>>(
+      `/indexer/users/${encodeURIComponent(address)}/overview`
+    );
+    return res.data;
+  }, 'fetching wallet overview');
 };
 
 /**

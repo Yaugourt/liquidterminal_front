@@ -1,3 +1,3 @@
-export { fetchWalletPerformance, fetchWalletCoins } from './api';
-export { useWalletPerformance, useWalletCoins } from './hooks';
-export type { WalletPerformance, WalletCoinStat } from './types';
+export { fetchWalletPerformance, fetchWalletCoins, fetchWalletOverview } from './api';
+export { useWalletPerformance, useWalletCoins, useWalletOverview } from './hooks';
+export type { WalletPerformance, WalletCoinStat, WalletOverview } from './types';

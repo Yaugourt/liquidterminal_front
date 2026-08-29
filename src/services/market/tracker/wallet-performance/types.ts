@@ -24,6 +24,23 @@ export interface WalletPerformance {
   // and unreliable, so it is deliberately omitted here (never displayed).
 }
 
+export interface WalletOverview {
+  user: string;
+  /** Lifetime traded notional, USD. */
+  total_volume: number;
+  /** Lifetime fees paid, USD. */
+  total_fees: number;
+  fill_count: number;
+  /** Distinct markets traded. */
+  unique_coins: number;
+  total_pnl: number;
+  total_trades: number;
+  total_priority_gas: number;
+  /** ISO datetime of the wallet's most recent fill. */
+  last_activity: string;
+  win_rate: number;
+}
+
 export interface WalletCoinStat {
   coin: string;
   total_volume: number;
