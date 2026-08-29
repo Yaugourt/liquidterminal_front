@@ -10,7 +10,6 @@ import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import {
   VaultDetailHeader,
   VaultDetailKpiRow,
-  VaultRiskCard,
   VaultDetailCharts,
   VaultSecondaryCharts,
   VaultLedgerTable,
@@ -95,7 +94,6 @@ export default function VaultDetailPage() {
           <VaultLedgerTable vaultAddress={vaultAddress} />
         </div>
         <aside className="flex flex-col gap-3">
-          <VaultRiskCard vaultAddress={vaultAddress} />
           <VaultMetadataCard
             vaultAddress={vaultAddress}
             details={details}
