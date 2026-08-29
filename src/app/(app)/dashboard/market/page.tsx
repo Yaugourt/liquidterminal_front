@@ -11,6 +11,7 @@ import {
   Hip3TopDeployersCard,
 } from "@/components/dashboard/Hip3AuctionRow";
 import { Hip4OutcomesCard } from "@/components/dashboard/Hip4OutcomesCard";
+import { TraderPnlCard } from "@/components/dashboard/TraderPnlCard";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 
 /**
@@ -72,6 +73,15 @@ export default function DashboardMarket() {
           <LiquidationsPanel />
           <TwapPanel />
         </div>
+      </section>
+
+      {/* Trader PnL by market */}
+      <section className="space-y-2.5">
+        <SectionHead
+          title="Trader flows"
+          subtitle="Where traders made and lost money, net realized · 10d"
+        />
+        <TraderPnlCard />
       </section>
 
       {/* HIP-4 Outcomes */}
