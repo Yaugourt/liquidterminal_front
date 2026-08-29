@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import { MarketStatsStrip, TokensSection } from "@/components/market/common";
 import { PerpLeaderboards } from "@/components/market/perp/PerpLeaderboards";
+import { PerpFundingCarry } from "@/components/market/perp/PerpFundingCarry";
 import { AuctionCard, RecentAuctionsCard } from "@/components/market/auction";
 import { PageHeader, PageFaq, DataStatus } from "@/components/common";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
@@ -52,6 +53,9 @@ export default function MarketPerp() {
 
       {/* Top gainers / losers */}
       <PerpLeaderboards />
+
+      {/* Cross-venue funding carry screen (HL vs Binance vs Bybit) */}
+      <PerpFundingCarry />
 
       {/* Token directory — main table */}
       <TokensSection market="perp" />
