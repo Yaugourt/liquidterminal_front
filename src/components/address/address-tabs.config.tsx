@@ -8,6 +8,7 @@ import {
   History,
   Layers,
   Coins,
+  Repeat,
   type LucideIcon,
 } from "lucide-react";
 
@@ -17,6 +18,7 @@ export type AddressTabId =
   | "orders"
   | "twap"
   | "fills"
+  | "roundtrips"
   | "vaults"
   | "staking";
 
@@ -32,6 +34,7 @@ export const ADDRESS_TAB_REGISTRY: Record<AddressTabId, AddressTabDefinition> = 
   orders: { id: "orders", label: "Orders", icon: ListOrdered },
   twap: { id: "twap", label: "TWAP", icon: Timer },
   fills: { id: "fills", label: "Recent Fills", icon: History },
+  roundtrips: { id: "roundtrips", label: "Round-trips", icon: Repeat },
   vaults: { id: "vaults", label: "Vaults", icon: Layers },
   staking: { id: "staking", label: "Staking", icon: Coins },
 };
@@ -43,6 +46,7 @@ export const ALL_ADDRESS_TABS: AddressTabId[] = [
   "orders",
   "twap",
   "fills",
+  "roundtrips",
   "vaults",
   "staking",
 ];

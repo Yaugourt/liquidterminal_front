@@ -16,7 +16,7 @@ export default function PublicWalletView() {
   return (
     <AddressAnalyticsLayout
       address={address}
-      tabs={["holdings", "orders", "twap", "fills"]}
+      tabs={["holdings", "orders", "twap", "fills", "roundtrips"]}
       defaultTab="holdings"
       summaryVariant="tracker"
       titleOverride={`Wallet ${address.slice(0, 6)}...${address.slice(-4)}`}

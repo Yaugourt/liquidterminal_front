@@ -41,6 +41,28 @@ export interface WalletOverview {
   win_rate: number;
 }
 
+// One closed round-trip trade (entry → exit), assembled server-side from the
+// wallet's fills. Realized PnL, hold duration and prices come pre-computed.
+export interface WalletRoundTrip {
+  coin: string;
+  /** "long" | "short". */
+  direction: string;
+  start_time: string;
+  end_time: string;
+  /** Hold duration in seconds. */
+  duration_s: number;
+  entry_price: number;
+  exit_price: number;
+  size_close: number;
+  /** Realized PnL for the round-trip, USD. */
+  pnl_realized: number;
+  leverage_type: string;
+  total_fees: number;
+  total_volume: number;
+  trade_id: number | string;
+  close_hash: string;
+}
+
 export interface WalletCoinStat {
   coin: string;
   total_volume: number;

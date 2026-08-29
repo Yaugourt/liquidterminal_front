@@ -18,6 +18,7 @@ import {
 import { AddressTransactionList } from "@/components/explorer/address";
 import { AssetsSection } from "@/components/market/tracker/assets";
 import { WalletScorecard } from "@/components/market/tracker/WalletScorecard";
+import { WalletRoundTrips } from "@/components/market/tracker/WalletRoundTrips";
 import {
   OrdersSection,
   AddressTwapSection,
@@ -174,6 +175,8 @@ function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
       return <AddressTwapSection address={address} />;
     case "fills":
       return <WalletRecentFillsSection address={address} />;
+    case "roundtrips":
+      return <WalletRoundTrips address={address} />;
     case "vaults":
       return <VaultDepositList address={address} />;
     case "staking":
