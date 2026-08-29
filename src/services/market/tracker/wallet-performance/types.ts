@@ -64,6 +64,8 @@ export interface WalletFundingSummary {
 // One closed round-trip trade (entry → exit), assembled server-side from the
 // wallet's fills. Realized PnL, hold duration and prices come pre-computed.
 export interface WalletRoundTrip {
+  /** The wallet that made the trade (present on the market-wide feed). */
+  user: string;
   coin: string;
   /** "long" | "short". */
   direction: string;
