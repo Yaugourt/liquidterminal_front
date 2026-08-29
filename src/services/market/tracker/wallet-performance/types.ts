@@ -41,6 +41,26 @@ export interface WalletOverview {
   win_rate: number;
 }
 
+export interface WalletFundingCoin {
+  coin: string;
+  /** Net funding (received − paid), USD. Negative = net cost. */
+  net_usdc: number;
+  paid_usdc: number;
+  received_usdc: number;
+  count: number;
+}
+
+/** Aggregated funding ledger for a wallet (net paid vs received), backend-computed. */
+export interface WalletFundingSummary {
+  user: string;
+  net_usdc: number;
+  paid_usdc: number;
+  received_usdc: number;
+  event_count: number;
+  window: { start: number | null; end: number | null };
+  by_coin: WalletFundingCoin[];
+}
+
 // One closed round-trip trade (entry → exit), assembled server-side from the
 // wallet's fills. Realized PnL, hold duration and prices come pre-computed.
 export interface WalletRoundTrip {

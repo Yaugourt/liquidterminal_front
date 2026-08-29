@@ -5,6 +5,7 @@ import type {
   WalletCoinStat,
   WalletOverview,
   WalletRoundTrip,
+  WalletFundingSummary,
 } from './types';
 
 interface IndexerEnvelope<T> {
@@ -51,6 +52,22 @@ export const fetchWalletCoins = async (
     );
     return res.data ?? [];
   }, 'fetching wallet coin breakdown');
+};
+
+/**
+ * Aggregated funding ledger for a wallet (net paid vs received, per coin). The
+ * backend fetches the funding events and sums them, so this is a plain fetch.
+ */
+export const fetchWalletFundingSummary = async (
+  address: string
+): Promise<WalletFundingSummary> => {
+  return withErrorHandling(async () => {
+    const res = await get<IndexerEnvelope<WalletFundingSummary>>(
+      `/indexer/funding/userFunding/summary`,
+      { user: address }
+    );
+    return res.data;
+  }, 'fetching wallet funding summary');
 };
 
 /**

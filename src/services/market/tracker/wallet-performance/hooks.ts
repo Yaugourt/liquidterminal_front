@@ -4,13 +4,25 @@ import {
   fetchWalletCoins,
   fetchWalletOverview,
   fetchWalletRoundTrips,
+  fetchWalletFundingSummary,
 } from './api';
 import type {
   WalletPerformance,
   WalletCoinStat,
   WalletOverview,
   WalletRoundTrip,
+  WalletFundingSummary,
 } from './types';
+
+export const useWalletFundingSummary = (address: string) => {
+  const { data, isLoading, error, refetch } = useDataFetching<WalletFundingSummary>({
+    fetchFn: () => fetchWalletFundingSummary(address),
+    dependencies: [address],
+    refreshInterval: 60000,
+    maxRetries: 1,
+  });
+  return { funding: data, isLoading, error, refetch };
+};
 
 export const useWalletRoundTrips = (address: string, limit = 50) => {
   const { data, isLoading, error, refetch } = useDataFetching<WalletRoundTrip[]>({
