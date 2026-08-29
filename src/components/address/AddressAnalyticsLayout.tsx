@@ -17,6 +17,7 @@ import {
 
 import { AddressTransactionList } from "@/components/explorer/address";
 import { AssetsSection } from "@/components/market/tracker/assets";
+import { WalletScorecard } from "@/components/market/tracker/WalletScorecard";
 import {
   OrdersSection,
   AddressTwapSection,
@@ -127,6 +128,8 @@ export function AddressAnalyticsLayout({
       <AddressHero address={address} />
 
       <AddressSummary address={address} variant={summaryVariant} />
+
+      <WalletScorecard address={address} />
 
       <AddressTabBar
         tabs={visibleTabs}
