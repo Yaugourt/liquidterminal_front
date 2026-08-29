@@ -1,6 +1,11 @@
 import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
-import type { WalletPerformance, WalletCoinStat, WalletOverview } from './types';
+import type {
+  WalletPerformance,
+  WalletCoinStat,
+  WalletOverview,
+  WalletRoundTrip,
+} from './types';
 
 interface IndexerEnvelope<T> {
   success: boolean;
@@ -46,4 +51,21 @@ export const fetchWalletCoins = async (
     );
     return res.data ?? [];
   }, 'fetching wallet coin breakdown');
+};
+
+/**
+ * Recent closed round-trip trades for a wallet (newest first). The backend
+ * assembles entry→exit pairs and realized PnL from the fill stream.
+ */
+export const fetchWalletRoundTrips = async (
+  address: string,
+  limit = 50
+): Promise<WalletRoundTrip[]> => {
+  return withErrorHandling(async () => {
+    const res = await get<IndexerEnvelope<WalletRoundTrip[]>>(
+      `/indexer/completed-trades/`,
+      { user: address, limit, sort_dir: 'DESC' }
+    );
+    return res.data ?? [];
+  }, 'fetching wallet round-trips');
 };
