@@ -17,6 +17,7 @@ import { VenueSplitBar } from "@/components/market/hub/VenueSplitBar";
 import { SpotVenueCard, PerpVenueCard } from "@/components/market/hub/VenueCards";
 import { PerpDexsLane, Hip4Lane, BuildersLane } from "@/components/market/hub/HubLanes";
 import { TopTradersCard, FundingWatchCard } from "@/components/market/hub/HubRail";
+import { BiggestTradesCard } from "@/components/market/hub/BiggestTradesCard";
 
 /** "+27.3% vs prior 24h" colored sub. */
 function variationSub(pct: number | undefined | null): React.ReactNode {
@@ -147,6 +148,7 @@ export default function MarketHubPage() {
 
         <aside className="xl:sticky xl:top-20 space-y-4">
           <TopTradersCard />
+          <BiggestTradesCard />
           <FundingWatchCard markets={perpMarkets} />
         </aside>
       </div>
