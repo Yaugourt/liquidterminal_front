@@ -15,6 +15,7 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import {
   useWalletPerformance,
   useWalletCoins,
+  useWalletOverview,
 } from "@/services/market/tracker/wallet-performance";
 
 interface WalletScorecardProps {
@@ -33,6 +34,7 @@ export function WalletScorecard({ address }: WalletScorecardProps) {
   const { performance: perf, isLoading: perfLoading, error: perfError } =
     useWalletPerformance(address);
   const { coins } = useWalletCoins(address, 8);
+  const { overview } = useWalletOverview(address);
 
   const cells = useMemo<KpiCell[]>(() => {
     if (!perf) return [];
@@ -104,6 +106,22 @@ export function WalletScorecard({ address }: WalletScorecardProps) {
           all-time
         </span>
       </div>
+
+      {overview && (
+        <div className="px-3.5 py-2 border-b border-border-subtle text-[11px] text-text-tertiary flex flex-wrap gap-x-3 gap-y-0.5">
+          <span>
+            <span className="mono text-text-secondary">{compactCount(overview.unique_coins)}</span> markets
+          </span>
+          <span>·</span>
+          <span>
+            <span className="mono text-text-secondary">{compactUsd(overview.total_volume)}</span> lifetime volume
+          </span>
+          <span>·</span>
+          <span>
+            <span className="mono text-text-secondary">{compactUsd(overview.total_fees)}</span> fees paid
+          </span>
+        </div>
+      )}
 
       <KpiRibbon cells={cells} />
 

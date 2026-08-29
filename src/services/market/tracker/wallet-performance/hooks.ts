@@ -1,6 +1,16 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
-import { fetchWalletPerformance, fetchWalletCoins } from './api';
-import type { WalletPerformance, WalletCoinStat } from './types';
+import { fetchWalletPerformance, fetchWalletCoins, fetchWalletOverview } from './api';
+import type { WalletPerformance, WalletCoinStat, WalletOverview } from './types';
+
+export const useWalletOverview = (address: string) => {
+  const { data, isLoading, error, refetch } = useDataFetching<WalletOverview>({
+    fetchFn: () => fetchWalletOverview(address),
+    dependencies: [address],
+    refreshInterval: 60000,
+    maxRetries: 1,
+  });
+  return { overview: data, isLoading, error, refetch };
+};
 
 export const useWalletPerformance = (address: string) => {
   const { data, isLoading, error, refetch } = useDataFetching<WalletPerformance>({
