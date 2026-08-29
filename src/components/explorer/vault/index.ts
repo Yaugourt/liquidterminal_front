@@ -8,6 +8,7 @@ export { VaultsLeaderboards } from './VaultsLeaderboards';
 // Detail page
 export { VaultDetailHeader } from './VaultDetailHeader';
 export { VaultDetailKpiRow } from './VaultDetailKpiRow';
+export { VaultRiskCard } from './VaultRiskCard';
 export { VaultDetailCharts } from './VaultDetailCharts';
 export { VaultSecondaryCharts } from './VaultSecondaryCharts';
 export { VaultLedgerTable } from './VaultLedgerTable';
