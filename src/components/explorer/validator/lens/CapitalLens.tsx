@@ -651,6 +651,7 @@ export function CapitalLens() {
                 density="compact"
                 columns={[
                   { header: "Cohort", align: "left" },
+                  { header: "Staked", align: "right" },
                   { header: "Share of stake", align: "right" },
                 ]}
               >
@@ -660,6 +661,11 @@ export function CapitalLens() {
                     cells={[
                       <span key="c" className="text-text-secondary">
                         Top {h.topCount.toLocaleString()}
+                      </span>,
+                      // totalStaked was fetched but never shown — the % alone
+                      // hides the magnitude behind each cohort.
+                      <span key="s" className="mono text-text-primary">
+                        {compactHype(h.totalStaked)}
                       </span>,
                       <span key="p" className="mono text-text-secondary">
                         {h.percentage.toFixed(2)}%
