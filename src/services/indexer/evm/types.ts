@@ -43,9 +43,63 @@ export function isWithdrawalEvent(e: Pick<EvmBridgeEvent, "event_type">): boolea
   return e.event_type.startsWith("withdraw");
 }
 
+/** Lifetime HyperEVM chain stats. */
+export interface EvmStats {
+  total_blocks: number;
+  total_transactions: number;
+  total_logs: number;
+  first_block: number;
+  last_block: number;
+  first_block_time: string;
+  last_block_time: string;
+}
+
+/** One day of HyperEVM activity. */
+export interface EvmDailyStat {
+  day: string;
+  blocks: number;
+  transactions: number;
+  system_txs: number;
+  gas_used: number;
+}
+
+/** A HyperEVM block header. */
+export interface EvmBlock {
+  block_time: string;
+  block_number: number;
+  block_hash: string;
+  parent_hash?: string;
+  gas_limit?: number;
+  gas_used?: number;
+  base_fee_per_gas?: number;
+  tx_count: number;
+  system_tx_count?: number;
+}
+
 // Hook result types
 export interface UseEvmBridgeEventsResult {
   events: EvmBridgeEvent[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export interface UseEvmStatsResult {
+  stats: EvmStats | null;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export interface UseEvmDailyStatsResult {
+  daily: EvmDailyStat[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+}
+
+export interface UseEvmBlocksResult {
+  blocks: EvmBlock[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;

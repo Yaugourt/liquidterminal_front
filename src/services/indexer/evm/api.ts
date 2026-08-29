@@ -1,8 +1,13 @@
 import { get } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
 import { parseLtData } from "@/services/api/runtime-validation";
-import type { EvmBridgeEvent } from "./types";
-import { EvmBridgeEventsArraySchema } from "./schemas";
+import type { EvmBridgeEvent, EvmStats, EvmDailyStat, EvmBlock } from "./types";
+import {
+  EvmBridgeEventsArraySchema,
+  EvmStatsSchema,
+  EvmDailyStatsArraySchema,
+  EvmBlocksArraySchema,
+} from "./schemas";
 
 const EVM = "/indexer/evm";
 
@@ -35,4 +40,25 @@ export async function fetchEvmBridgeEvents(params?: {
     );
     return parseLtData(EvmBridgeEventsArraySchema, raw);
   }, "fetching evm bridge events");
+}
+
+export async function fetchEvmStats(): Promise<EvmStats> {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(`${EVM}/stats`, {}, EVM_GET_OPTIONS);
+    return parseLtData(EvmStatsSchema, raw);
+  }, "fetching evm stats");
+}
+
+export async function fetchEvmDailyStats(limit = 31): Promise<EvmDailyStat[]> {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(`${EVM}/stats/daily`, toQuery({ limit }), EVM_GET_OPTIONS);
+    return parseLtData(EvmDailyStatsArraySchema, raw);
+  }, "fetching evm daily stats");
+}
+
+export async function fetchEvmBlocks(limit = 20): Promise<EvmBlock[]> {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(`${EVM}/blocks`, toQuery({ limit }), EVM_GET_OPTIONS);
+    return parseLtData(EvmBlocksArraySchema, raw);
+  }, "fetching evm blocks");
 }
