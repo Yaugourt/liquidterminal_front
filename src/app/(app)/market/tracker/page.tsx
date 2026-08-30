@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import {
-  TopTradersPreview,
+  SmartMoneyBoard,
   PublicListsPreview,
   TrackedWalletsPreview,
   ActiveUsersPreview,
@@ -46,17 +46,17 @@ export default function TrackerHome() {
       {/* Stats Bar */}
       <TrackerStatsBar />
 
-      {/* Top Traders & Active Users - Two Column Layout */}
+      {/* Smart Money — full-width ranked leaderboard (winners/losers/whales/active) */}
+      <SmartMoneyBoard />
+
+      {/* Active Users + Public Lists - Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <TopTradersPreview />
         <ActiveUsersPreview />
+        <PublicListsPreview />
       </div>
 
-      {/* Public Lists + Your Wallets - Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <PublicListsPreview />
-        <TrackedWalletsPreview />
-      </div>
+      {/* Your Wallets - full width */}
+      <TrackedWalletsPreview />
       <PageFaq items={TRACKER_FAQ} />
     </div>
   );
