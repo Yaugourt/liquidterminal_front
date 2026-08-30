@@ -2,6 +2,7 @@ import { useDataFetching } from '@/hooks/useDataFetching';
 import {
   fetchWalletPerformance,
   fetchWalletCoins,
+  fetchWalletCoinDistribution,
   fetchWalletOverview,
   fetchWalletRoundTrips,
   fetchWalletFundingSummary,
@@ -9,6 +10,7 @@ import {
 import type {
   WalletPerformance,
   WalletCoinStat,
+  WalletCoinShare,
   WalletOverview,
   WalletRoundTrip,
   WalletFundingSummary,
@@ -62,4 +64,14 @@ export const useWalletCoins = (address: string, limit = 8) => {
     maxRetries: 1,
   });
   return { coins: data ?? [], isLoading, error, refetch };
+};
+
+export const useWalletCoinDistribution = (address: string, limit = 100) => {
+  const { data, isLoading, error, refetch } = useDataFetching<WalletCoinShare[]>({
+    fetchFn: () => fetchWalletCoinDistribution(address, limit),
+    dependencies: [address, limit],
+    refreshInterval: 60000,
+    maxRetries: 1,
+  });
+  return { shares: data ?? [], isLoading, error, refetch };
 };

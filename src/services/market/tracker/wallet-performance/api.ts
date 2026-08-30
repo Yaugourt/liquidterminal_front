@@ -3,6 +3,7 @@ import { withErrorHandling } from '@/services/api/error-handler';
 import type {
   WalletPerformance,
   WalletCoinStat,
+  WalletCoinShare,
   WalletOverview,
   WalletRoundTrip,
   WalletFundingSummary,
@@ -52,6 +53,24 @@ export const fetchWalletCoins = async (
     );
     return res.data ?? [];
   }, 'fetching wallet coin breakdown');
+};
+
+/**
+ * Full per-coin volume distribution for a wallet (every market it touched, not
+ * just the top few). Backend-aggregated via the indexer; a plain fetch. Used to
+ * derive the market-concentration profile client-side (shares are cheap ratios).
+ */
+export const fetchWalletCoinDistribution = async (
+  address: string,
+  limit = 100
+): Promise<WalletCoinShare[]> => {
+  return withErrorHandling(async () => {
+    const res = await get<IndexerEnvelope<WalletCoinShare[]>>(
+      `/indexer/overview/coin-distribution`,
+      { user: address, limit }
+    );
+    return res.data ?? [];
+  }, 'fetching wallet coin distribution');
 };
 
 /**

@@ -95,3 +95,13 @@ export interface WalletCoinStat {
   /** Realized PnL on this coin, USD. */
   total_pnl: number;
 }
+
+/**
+ * One coin's slice of a wallet's lifetime activity — the lean shape returned by
+ * the overview coin-distribution endpoint (all markets, not just the top few).
+ */
+export interface WalletCoinShare {
+  coin: string;
+  volume: number;
+  fills: number;
+}

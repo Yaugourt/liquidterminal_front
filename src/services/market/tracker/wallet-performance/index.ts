@@ -1,6 +1,7 @@
 export {
   fetchWalletPerformance,
   fetchWalletCoins,
+  fetchWalletCoinDistribution,
   fetchWalletOverview,
   fetchWalletRoundTrips,
   fetchWalletFundingSummary,
@@ -8,6 +9,7 @@ export {
 export {
   useWalletPerformance,
   useWalletCoins,
+  useWalletCoinDistribution,
   useWalletOverview,
   useWalletRoundTrips,
   useWalletFundingSummary,
@@ -15,6 +17,7 @@ export {
 export type {
   WalletPerformance,
   WalletCoinStat,
+  WalletCoinShare,
   WalletOverview,
   WalletRoundTrip,
   WalletFundingSummary,
