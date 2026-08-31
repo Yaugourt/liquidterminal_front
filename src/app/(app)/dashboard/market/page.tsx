@@ -12,6 +12,7 @@ import {
 } from "@/components/dashboard/Hip3AuctionRow";
 import { Hip4OutcomesCard } from "@/components/dashboard/Hip4OutcomesCard";
 import { TraderPnlCard } from "@/components/dashboard/TraderPnlCard";
+import { MarketVolumeCard } from "@/components/dashboard/MarketVolumeCard";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 
 /**
@@ -73,6 +74,15 @@ export default function DashboardMarket() {
           <LiquidationsPanel />
           <TwapPanel />
         </div>
+      </section>
+
+      {/* Market-wide volume trend */}
+      <section className="space-y-2.5">
+        <SectionHead
+          title="Market volume"
+          subtitle="Total traded volume per day · trailing 10d"
+        />
+        <MarketVolumeCard />
       </section>
 
       {/* Trader PnL by market */}
