@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { usePageTitle } from "@/store/use-page-title";
 import {
   SmartMoneyBoard,
+  SmartMoneyPositioning,
   PublicListsPreview,
   TrackedWalletsPreview,
   ActiveUsersPreview,
@@ -48,6 +49,9 @@ export default function TrackerHome() {
 
       {/* Smart Money — full-width ranked leaderboard (winners/losers/whales/active) */}
       <SmartMoneyBoard />
+
+      {/* Smart Money positioning — collective long/short of the cohort, by market */}
+      <SmartMoneyPositioning />
 
       {/* Active Users + Public Lists - Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
