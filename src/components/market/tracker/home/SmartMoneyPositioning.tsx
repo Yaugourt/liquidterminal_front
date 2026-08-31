@@ -5,12 +5,16 @@ import { Crosshair } from "lucide-react";
 import {
   KpiRibbon,
   TypedDataTable,
+  AuroraAreaChart,
+  chartPalette,
   type KpiCell,
   type Column,
 } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import {
   useAggregatePositioning,
+  usePositioningHistory,
   type CoinPositioning,
 } from "@/services/market/positioning";
 
@@ -30,10 +34,16 @@ const TOP_N = 18;
  */
 export function SmartMoneyPositioning() {
   const { positioning, isLoading, error } = useAggregatePositioning();
+  const { history } = usePositioningHistory(168);
 
   const rows = useMemo(
     () => (positioning?.coins ?? []).slice(0, TOP_N),
     [positioning]
+  );
+
+  const trend = useMemo(
+    () => history.map((h) => ({ time: h.time, value: h.netNotional })),
+    [history]
   );
 
   const cells: KpiCell[] = useMemo(() => {
@@ -118,6 +128,26 @@ export function SmartMoneyPositioning() {
   return (
     <div className="space-y-4">
       <KpiRibbon cells={cells} />
+
+      {/* Net-bias trend — self-built history, hidden until enough points land. */}
+      {trend.length >= 2 && (
+        <Card className="flex flex-col overflow-hidden">
+          <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+            <h3 className="text-[13px] font-semibold text-text-primary">Net bias trend</h3>
+            <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
+              7d · hourly
+            </span>
+          </div>
+          <div className="p-3 h-[180px]">
+            <AuroraAreaChart
+              data={trend}
+              height={150}
+              lineColor={chartPalette.accent}
+              formatValue={(v) => `${v >= 0 ? "+" : "-"}$${compactUsd(Math.abs(v)).replace(/^\$/, "")}`}
+            />
+          </div>
+        </Card>
+      )}
       <TypedDataTable
         title="Smart money positioning"
         icon={<Crosshair size={15} className="text-brand" />}
