@@ -32,6 +32,7 @@ export function MarketScopeBar() {
     { label: "PerpDexs", href: "/market/perpdex", count: hip3?.total_dexs ?? null },
     { label: "HIP-4", href: "/market/hip4" },
     { label: "Builders", href: "/market/builders" },
+    { label: "Trades", href: "/market/trades" },
     { label: "Tracker", href: "/market/tracker" },
   ];
 
