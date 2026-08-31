@@ -53,3 +53,39 @@ export const useAggregatePositioning = () => {
   });
   return { positioning: data ?? null, isLoading, error, refetch };
 };
+
+/** One stored hourly point of the cohort's net bias, for the trend chart. */
+export interface PositioningHistoryPoint {
+  /** Epoch ms of the hour bucket. */
+  time: number;
+  longNotional: number;
+  shortNotional: number;
+  netNotional: number;
+  longShare: number;
+}
+
+/**
+ * Net-bias history of the cohort over the last `hours`, oldest first. Empty
+ * until the backend has accumulated stored snapshots (there is no upstream
+ * history for open-position state, so it is built over time going forward).
+ */
+export const fetchPositioningHistory = async (
+  hours = 168
+): Promise<PositioningHistoryPoint[]> => {
+  return withErrorHandling(async () => {
+    const res = await get<Envelope<PositioningHistoryPoint[]>>(
+      `/top-traders/positioning/history?hours=${hours}`
+    );
+    return res.data ?? [];
+  }, "fetching positioning history");
+};
+
+export const usePositioningHistory = (hours = 168) => {
+  const { data, isLoading, error, refetch } = useDataFetching<PositioningHistoryPoint[]>({
+    fetchFn: () => fetchPositioningHistory(hours),
+    dependencies: [hours],
+    refreshInterval: 300000,
+    maxRetries: 1,
+  });
+  return { history: data ?? [], isLoading, error, refetch };
+};
