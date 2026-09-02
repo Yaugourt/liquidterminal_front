@@ -8,7 +8,7 @@ interface Envelope<T> {
 }
 
 /** A self-sampled headline metric with a stored hourly history. */
-export type MetricKey = "total_oi" | "active_users_24h";
+export type MetricKey = "total_oi" | "active_users_24h" | "total_fees_24h";
 
 /** One stored hourly point of a metric. */
 export interface MetricHistoryPoint {
