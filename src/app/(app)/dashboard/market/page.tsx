@@ -13,6 +13,7 @@ import {
 import { Hip4OutcomesCard } from "@/components/dashboard/Hip4OutcomesCard";
 import { TraderPnlCard } from "@/components/dashboard/TraderPnlCard";
 import { MarketVolumeCard } from "@/components/dashboard/MarketVolumeCard";
+import { NetworkGrowthSection } from "@/components/dashboard/NetworkGrowthSection";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 
 /**
@@ -84,6 +85,9 @@ export default function DashboardMarket() {
         />
         <MarketVolumeCard />
       </section>
+
+      {/* Self-sampled growth trends (OI, active users) - appear once accrued */}
+      <NetworkGrowthSection />
 
       {/* Trader PnL by market */}
       <section className="space-y-2.5">
