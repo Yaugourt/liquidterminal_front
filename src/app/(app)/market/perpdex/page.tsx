@@ -9,6 +9,7 @@ import {
   TopPerpDexsCard,
   TopHip3MarketsCard,
   PastAuctionsPerpTable,
+  Hip3MarketsExplorer,
 } from "@/components/market/perpDex";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PageHeader, PageFaq, DataStatus } from "@/components/common";
@@ -50,6 +51,9 @@ export default function PerpDexsPage() {
         <TopPerpDexsCard />
         <TopHip3MarketsCard />
       </div>
+
+      {/* Ecosystem-wide markets explorer (with mark-vs-oracle basis) */}
+      <Hip3MarketsExplorer />
 
       {/* Table card with integrated tab header */}
       <Tabs defaultValue="builder-dexs" className="w-full">
