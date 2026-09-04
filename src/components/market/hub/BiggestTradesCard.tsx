@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ShareTile } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useBiggestTrades } from "@/services/market/biggest-trades";
 
@@ -48,6 +49,7 @@ export function BiggestTradesCard() {
         <div className="flex items-center gap-1">
           {pill("wins", "Wins")}
           {pill("losses", "Losses")}
+          <ShareTile src="/api/tile/biggest-trade" filename="biggest-trades" />
         </div>
       </div>
       <div className="px-4 py-3 space-y-3">

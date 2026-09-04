@@ -4,7 +4,7 @@ import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { Zap, TrendingUp, TrendingDown, DollarSign, BarChart3, Target } from "lucide-react";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useLiquidationsContext } from "./LiquidationsContext";
-import { StatsPanel } from "@/components/common";
+import { StatsPanel, ShareTile } from "@/components/common";
 import { cn } from "@/lib/utils";
 
 
@@ -84,9 +84,17 @@ export function LiquidationsStatsCard() {
       // Single honest window label: the backend serves one stats snapshot and
       // ignores narrower windows, so a period selector here would be cosmetic.
       headerAction={
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-danger/10 text-danger border border-danger/25">
-          24h
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-danger/10 text-danger border border-danger/25">
+            24h
+          </span>
+          {/* Copy-as-image affordance in the right-aligned header slot. */}
+          <ShareTile
+            src="/api/tile/liquidations"
+            filename="liquidations-24h"
+            label="Copy liquidations as image"
+          />
+        </div>
       }
     >
       <div className="flex flex-col gap-4 h-full">

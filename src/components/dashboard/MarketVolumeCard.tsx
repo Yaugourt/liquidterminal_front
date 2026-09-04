@@ -7,6 +7,7 @@ import {
   KpiRibbon,
   AuroraAreaChart,
   ChartSkeleton,
+  ShareTile,
   chartPalette,
   type KpiCell,
 } from "@/components/common";
@@ -103,6 +104,7 @@ export function MarketVolumeCard() {
         <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           daily · complete days
         </span>
+        <ShareTile src="/api/tile/volume-10d" filename="market-volume" />
       </div>
 
       <KpiRibbon cells={cells} />
