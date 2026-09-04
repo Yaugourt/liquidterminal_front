@@ -30,6 +30,10 @@ interface Sources {
   stables: { totalStablecoins: number } | null;
   liq: { totalVolume_USD: number } | null;
   hip3: { total_volume_24h: number; total_open_interest: number } | null;
+  global: { numberOfUsers: number; bridgedUsdc: number; totalHypeStake: number; vaultsTvl: number } | null;
+  builders: { totalBuilderFees: number; uniqueBuilders: number } | null;
+  /** Summed HIP-4 volume over the last 24 hourly buckets. */
+  hip4Vol: number | null;
 }
 
 async function wrapped<T>(path: string): Promise<T | null> {
@@ -53,16 +57,22 @@ async function raw<T>(path: string): Promise<T | null> {
 }
 
 async function loadSources(): Promise<Sources> {
-  const [fills24, perp, spot, stables, liqWrap, hip3] = await Promise.all([
+  const [fills24, perp, spot, stables, liqWrap, hip3, global, buildersWrap, hip4Rows] = await Promise.all([
     wrapped<Sources["fills24"]>("/indexer/analytics/fills/stats?hours=24"),
     raw<Sources["perp"]>("/market/perp/globalstats"),
     wrapped<{ name: string; price: number; marketCap: number }[]>("/market/spot"),
     raw<Sources["stables"]>("/market/stablecoins"),
     raw<{ stats?: Sources["liq"] }>("/liquidations/historical/stats"),
     wrapped<Sources["hip3"]>("/indexer/hip3/overview"),
+    raw<Sources["global"]>("/home/globalstats"),
+    wrapped<{ current: Sources["builders"] }>("/indexer/builders/stats"),
+    wrapped<{ volume: number }[]>("/indexer/hip4/analytics"),
   ]);
   const hype = (spot ?? []).find((t) => t.name?.toUpperCase() === "HYPE") ?? null;
-  return { fills24, perp, hype, stables, liq: liqWrap?.stats ?? null, hip3 };
+  const hip4Vol = hip4Rows
+    ? hip4Rows.slice(0, 24).reduce((a, r) => a + (Number(r.volume) || 0), 0)
+    : null;
+  return { fills24, perp, hype, stables, liq: liqWrap?.stats ?? null, hip3, global, builders: buildersWrap?.current ?? null, hip4Vol };
 }
 
 type Fmt = "usd" | "count" | "price";
@@ -86,6 +96,13 @@ const RESOLVERS: Record<string, Resolver> = {
   hype_mcap: { label: "HYPE market cap", fmt: "usd", get: (s) => s.hype?.marketCap ?? null },
   hlp_tvl: { label: "HLP TVL", fmt: "usd", get: (s) => s.perp?.hlpTvl ?? null },
   stablecoins: { label: "Stablecoin supply", fmt: "usd", get: (s) => s.stables?.totalStablecoins ?? null },
+  total_users: { label: "Total users", fmt: "count", get: (s) => s.global?.numberOfUsers ?? null },
+  bridged_usdc: { label: "Bridged USDC", fmt: "usd", get: (s) => s.global?.bridgedUsdc ?? null },
+  total_staked: { label: "HYPE staked", fmt: "count", get: (s) => s.global?.totalHypeStake ?? null },
+  vaults_tvl: { label: "Vaults TVL", fmt: "usd", get: (s) => s.global?.vaultsTvl ?? null },
+  builder_fees: { label: "Builder fees (24h)", fmt: "usd", get: (s) => s.builders?.totalBuilderFees ?? null },
+  active_builders: { label: "Active builders", fmt: "count", get: (s) => s.builders?.uniqueBuilders ?? null },
+  hip4_volume: { label: "HIP-4 24h volume", fmt: "usd", get: (s) => s.hip4Vol },
 };
 
 /** Charteable series: label, value formatter, and how to fetch its points. */
@@ -94,6 +111,7 @@ const SERIES_CONF: Record<string, { label: string; fmt: Fmt; load: () => Promise
   active_users_24h: { label: "Active users", fmt: "count", load: () => loadMetricSeries("active_users_24h") },
   total_fees_24h: { label: "Protocol fees", fmt: "usd", load: () => loadMetricSeries("total_fees_24h") },
   volume: { label: "Daily volume", fmt: "usd", load: loadVolumeSeries },
+  revenue: { label: "Daily revenue", fmt: "usd", load: loadRevenueSeries },
 };
 
 async function loadMetricSeries(metric: string): Promise<number[]> {
@@ -104,6 +122,10 @@ async function loadVolumeSeries(): Promise<number[]> {
   const rows = await wrapped<{ date: string; volume: number }[]>("/indexer/overview/daily-volume-10d");
   const today = new Date().toISOString().slice(0, 10);
   return (rows ?? []).filter((d) => d.date !== today && Number.isFinite(d.volume)).map((d) => d.volume);
+}
+async function loadRevenueSeries(): Promise<number[]> {
+  const data = await wrapped<{ days: { total: number }[] }>("/market/revenue/history?window=30d");
+  return (data?.days ?? []).map((d) => Number(d.total)).filter((v) => Number.isFinite(v));
 }
 
 function format(v: number | null, fmt: Fmt): string {

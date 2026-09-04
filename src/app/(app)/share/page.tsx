@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Copy, Download, ExternalLink, Check, Wand2 } from "lucide-react";
+import { Copy, Download, ExternalLink, Check, Wand2, Star, X } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/common";
 import { Card } from "@/components/ui/card";
@@ -183,6 +183,12 @@ export default function SharePage() {
       if (prev.length >= metricCap) return prev; // cap reached
       return [...prev, key];
     });
+
+  /** Move a selected metric to the front so it becomes the headline. */
+  const promoteMetric = (key: string) =>
+    setCustomMetrics((prev) => (prev.includes(key) ? [key, ...prev.filter((k) => k !== key)] : prev));
+
+  const labelOf = (key: string) => CUSTOM_METRICS.find((m) => m.key === key)?.label ?? key;
 
   const download = (blob: Blob) => {
     const url = URL.createObjectURL(blob);
@@ -366,8 +372,46 @@ export default function SharePage() {
                   <div className="text-[11px] text-text-tertiary">
                     {customLayout === "chart"
                       ? `Supporting stats (${Math.min(customMetrics.length, CHART_STATS_MAX)}/${CHART_STATS_MAX}) — optional`
-                      : `Metrics (${customMetrics.length}/${CUSTOM_MAX}) — first one is the headline`}
+                      : `Metrics (${customMetrics.length}/${CUSTOM_MAX}) — star sets the headline`}
                   </div>
+
+                  {/* selected, in order: first is the headline (grid) */}
+                  {customMetrics.length > 0 ? (
+                    <div className="flex flex-wrap items-center gap-1.5 pb-1">
+                      {customMetrics.map((k, i) => (
+                        <div
+                          key={k}
+                          className="flex items-center gap-1.5 rounded-md bg-brand/10 border border-brand/25 pl-2 pr-1 py-1"
+                        >
+                          {customLayout === "grid" && i === 0 ? (
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-brand">
+                              <Star size={10} className="fill-brand" /> Headline
+                            </span>
+                          ) : customLayout === "grid" ? (
+                            <button
+                              type="button"
+                              onClick={() => promoteMetric(k)}
+                              title="Set as headline"
+                              className="text-text-tertiary hover:text-brand"
+                            >
+                              <Star size={11} />
+                            </button>
+                          ) : null}
+                          <span className="text-[11px] text-text-primary">{labelOf(k)}</span>
+                          <button
+                            type="button"
+                            onClick={() => toggleMetric(k)}
+                            title="Remove"
+                            className="text-text-tertiary hover:text-danger"
+                          >
+                            <X size={11} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <div className="text-[11px] text-text-tertiary pt-1">Add a metric</div>
                   {Object.entries(CUSTOM_BY_GROUP).map(([groupName, metrics]) => (
                     <div key={groupName} className="flex flex-wrap items-center gap-1.5">
                       {metrics.map((m) => {
