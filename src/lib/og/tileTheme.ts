@@ -15,14 +15,18 @@
 
 /** V4 surface and text tokens, from `globals.css`. */
 export const tileColors = {
-  base: "#0A0B0F",
+  base: "#08101A",
   surface: "#0F1421",
   surface2: "#141B2A",
   borderSubtle: "#1E2535",
-  textPrimary: "#EAF0F7",
-  textSecondary: "#9BA7B8",
-  textTertiary: "#5E6B7E",
+  textPrimary: "#E8EAED",
+  textSecondary: "#9CA3AF",
+  textTertiary: "#6B7280",
   brand: "#83E9FF",
+  /** Long / positive / buy. */
+  success: "#1FA85B",
+  /** Short / negative / sell. */
+  danger: "#E53E3E",
   /** Caveats that change how the number should be read. */
   warn: "#F9E370",
 } as const;
