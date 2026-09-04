@@ -21,6 +21,7 @@ import {
   GraduationCap,
   Cpu,
   Download,
+  Share2,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -96,6 +97,9 @@ export const defaultNavigationGroups: NavigationGroup[] = [
       // family rather than belonging to one, and a tool nobody can navigate to
       // may as well not ship.
       { name: 'Export', href: '/export', icon: null, IconComponent: Download },
+      // Same page-agnostic tool slot as Export: the share studio turns any
+      // metric into a post-ready image, for every family.
+      { name: 'Share', href: '/share', icon: null, IconComponent: Share2 },
     ],
   },
   {
@@ -217,13 +221,17 @@ export const applyPreferencesToNavigation = (
       // Filter and sort items
       const itemsMap = new Map(groupPref.items.map(i => [i.id, i]));
       const filteredItems = group.items
-        .map(item => {
+        .map((item, itemIndex) => {
           const itemId = getItemId(item.name, item.href);
           const itemPref = itemsMap.get(itemId);
 
-          if (!itemPref || !itemPref.visible) return null;
+          // Only hide an item the user explicitly hid. An item absent from
+          // stored prefs is new since they last saved (e.g. a freshly shipped
+          // page): show it by default and append it, rather than hiding it
+          // until prefs are reset.
+          if (itemPref && !itemPref.visible) return null;
 
-          return { item, order: itemPref.order };
+          return { item, order: itemPref?.order ?? 1000 + itemIndex };
         })
         .filter((i): i is { item: NavigationItem; order: number } => i !== null)
         .sort((a, b) => a.order - b.order)
