@@ -67,10 +67,10 @@ export function ShareTile({ src, filename, label = "Copy as image", className }:
     }
   };
 
-  // A 12px icon button is too small for a spinner primitive; the pending state
-  // reads as a dimmed, non-interactive icon instead.
   const Icon = state === "done" ? Check : Share2;
 
+  // A labelled cyan pill rather than a bare icon: the share action has to be
+  // discoverable in a dense card-head, not hide as a muted glyph.
   return (
     <button
       type="button"
@@ -80,14 +80,14 @@ export function ShareTile({ src, filename, label = "Copy as image", className }:
       aria-label={label}
       aria-busy={state === "working"}
       className={cn(
-        "w-6 h-6 rounded-md grid place-items-center shrink-0 transition-colors",
-        "text-text-tertiary hover:text-text-primary hover:bg-surface-2",
+        "inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11px] font-semibold shrink-0 transition-colors",
+        "bg-brand/10 text-brand hover:bg-brand/20 border border-brand/20",
         state === "working" && "opacity-40 pointer-events-none",
-        state === "done" && "text-brand",
         className
       )}
     >
-      <Icon size={12} />
+      <Icon size={13} />
+      {state === "done" ? "Copied" : "Share"}
     </button>
   );
 }
