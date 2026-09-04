@@ -4,6 +4,7 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * HYPE spot price + fundamentals as a standalone image. One branded card for
@@ -53,7 +54,7 @@ export async function GET() {
   ];
 
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("hearteyes")]);
 
   return new ImageResponse(
     (
@@ -66,6 +67,7 @@ export async function GET() {
         heroSub={`${up ? "+" : ""}${h.change24h.toFixed(2)}% · 24h`}
         footLeft="Hyperliquid spot, HYPE/USDC"
         footNote={`Source: Hyperliquid — ${stamp} UTC`}
+        mascot={mascot}
       >
         <div style={{ display: "flex", width: "100%", marginTop: 34 }}>
           {cells.map((c) => (

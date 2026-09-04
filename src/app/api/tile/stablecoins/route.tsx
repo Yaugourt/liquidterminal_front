@@ -4,6 +4,7 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * Stablecoin supply on Hyperliquid as a standalone image: the total parked in
@@ -52,7 +53,7 @@ export async function GET() {
     { label: "USDH", value: compactUsd(s.totalSpotUSDH) },
   ];
 
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("cash")]);
 
   return new ImageResponse(
     (
@@ -66,6 +67,7 @@ export async function GET() {
         )}% (${compactCount(s.USDC_holdersCount)} holders)`}
         footLeft="Circulating stablecoins held on Hyperliquid spot"
         footNote="Source: Hypurrscan · Hyperliquid"
+        mascot={mascot}
       >
         <div style={{ display: "flex", width: "100%", marginTop: 34 }}>
           {cells.map((c) => (

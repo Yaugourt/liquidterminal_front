@@ -60,6 +60,8 @@ export interface TileFrameProps {
   footNote?: string;
   /** Optional caveat, rendered in the warn color. */
   warn?: string;
+  /** Optional Hypurr mascot as a data URI (from `loadHypurr`), shown in the head. */
+  mascot?: string | null;
   /** The tile-specific visual (bars, legend, chart). */
   children?: ReactNode;
 }
@@ -74,6 +76,7 @@ export function TileFrame({
   footLeft,
   footNote,
   warn,
+  mascot,
   children,
 }: TileFrameProps) {
   return (
@@ -139,18 +142,22 @@ export function TileFrame({
               {pill}
             </div>
           ) : null}
-          <div
-            style={{
-              marginLeft: "auto",
-              display: "flex",
-              alignItems: "center",
-              fontSize: 14,
-              fontWeight: 700,
-              letterSpacing: 3,
-              color: C.textTertiary,
-            }}
-          >
-            LIQUID TERMINAL
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                fontSize: 14,
+                fontWeight: 700,
+                letterSpacing: 3,
+                color: C.textTertiary,
+              }}
+            >
+              LIQUID TERMINAL
+            </div>
+            {mascot ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={mascot} width={40} height={40} alt="" style={{ display: "flex", marginLeft: 14 }} />
+            ) : null}
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * Smart-money positioning as a standalone, citable image.
@@ -66,7 +67,7 @@ export async function GET() {
     .slice(0, 4);
 
   const stamp = new Date(p.updatedAt ?? Date.now()).toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("sherlock")]);
 
   return new ImageResponse(
     (
@@ -78,6 +79,7 @@ export async function GET() {
         heroSub={`${signed(netNotional)} · ${longPct}% long / ${shortPct}% short`}
         footLeft="Open positions of the top traders by volume and PnL"
         footNote={`Source: Hyperliquid clearinghouse — ${stamp} UTC`}
+        mascot={mascot}
       >
         {/* long / short split bar */}
         <div

@@ -4,6 +4,7 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * The biggest closed trades market-wide (top realized win and loss) as a
@@ -51,7 +52,7 @@ export async function GET() {
   }
 
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("hearteyes")]);
 
   const Extreme = ({ label, t, color }: { label: string; t: Trade; color: string }) => (
     <div style={{ display: "flex", flexDirection: "column", flexGrow: 1, marginRight: 32 }}>
@@ -106,6 +107,7 @@ export async function GET() {
         heroSub={`Largest realized win · ${win.coin} ${cap(win.direction)}`}
         footLeft="Realized PnL on closed round-trip positions"
         footNote={`Source: Hyperliquid · on-chain indexing — ${stamp} UTC`}
+        mascot={mascot}
       >
         <div style={{ display: "flex", width: "100%", marginTop: 34 }}>
           <Extreme label="BIGGEST WIN" t={win} color={C.success} />

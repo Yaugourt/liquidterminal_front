@@ -4,6 +4,7 @@ import { compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * Staking decentralization as a standalone image: the Nakamoto coefficient
@@ -67,7 +68,7 @@ export async function GET() {
     { label: "Largest validator", value: `${topShare.toFixed(1)}%` },
   ];
 
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("purrfessor")]);
 
   return new ImageResponse(
     (
@@ -79,6 +80,7 @@ export async function GET() {
         heroSub={`Nakamoto coefficient · ${validators.length} active validators`}
         footLeft="Validators needed to control 1/3 of stake (halt threshold)"
         footNote="Source: Hyperliquid staking"
+        mascot={mascot}
       >
         <div style={{ display: "flex", width: "100%", marginTop: 34 }}>
           {cells.map((c) => (

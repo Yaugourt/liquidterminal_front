@@ -5,6 +5,7 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 import { seriesPaths } from "@/lib/og/chart";
 
 /**
@@ -74,7 +75,8 @@ export async function GET(request: NextRequest) {
   const { line, area } = seriesPaths(values);
 
   const stamp = new Date(series[series.length - 1].time).toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const mascotMood = metric === "total_oi" ? "crystalball" : metric === "active_users_24h" ? "happy" : "cash";
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr(mascotMood)]);
 
   return new ImageResponse(
     (
@@ -86,6 +88,7 @@ export async function GET(request: NextRequest) {
         heroSub={`${changePct >= 0 ? "+" : ""}${changePct.toFixed(1)}% over the window`}
         footLeft="Sampled hourly by Liquid Terminal · no upstream history"
         footNote={`Source: Hyperliquid · on-chain indexing — ${stamp} UTC`}
+        mascot={mascot}
       >
         {/* self-built trend line + faint fill */}
         <div style={{ display: "flex", width: "100%", height: 170, marginTop: 26 }}>

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/common";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CUSTOM_METRICS, CUSTOM_MAX } from "@/lib/og/customCatalog";
+import { CUSTOM_METRICS, CUSTOM_MAX, SERIES_METRICS, CHART_STATS_MAX } from "@/lib/og/customCatalog";
 
 /**
  * Share studio — pick a preset metric or compose your own, preview the branded
@@ -124,6 +124,8 @@ export default function SharePage() {
   });
   const [customTitle, setCustomTitle] = useState("Hyperliquid snapshot");
   const [debouncedTitle, setDebouncedTitle] = useState(customTitle);
+  const [customLayout, setCustomLayout] = useState<"grid" | "chart">("grid");
+  const [customChart, setCustomChart] = useState<string>("total_oi");
   const [customMetrics, setCustomMetrics] = useState<string[]>([
     "volume_24h",
     "open_interest",
@@ -143,18 +145,26 @@ export default function SharePage() {
   const tile = useMemo(() => ALL_TILES.find((t) => t.id === selectedId) ?? null, [selectedId]);
   const tileParams = useMemo(() => (tile ? params[tile.id] ?? {} : {}), [params, tile]);
 
+  const metricCap = customLayout === "chart" ? CHART_STATS_MAX : CUSTOM_MAX;
+
   const src = useMemo(() => {
     if (isCustom) {
-      const qs = new URLSearchParams({
-        title: debouncedTitle,
-        metrics: customMetrics.join(","),
-      }).toString();
+      const qs = new URLSearchParams(
+        customLayout === "chart"
+          ? {
+              layout: "chart",
+              title: debouncedTitle,
+              chart: customChart,
+              metrics: customMetrics.slice(0, CHART_STATS_MAX).join(","),
+            }
+          : { layout: "grid", title: debouncedTitle, metrics: customMetrics.join(",") }
+      ).toString();
       return `/api/tile/custom?${qs}`;
     }
     if (!tile) return "";
     const qs = new URLSearchParams(tileParams).toString();
     return `/api/tile/${tile.route}${qs ? `?${qs}` : ""}`;
-  }, [isCustom, debouncedTitle, customMetrics, tile, tileParams]);
+  }, [isCustom, customLayout, debouncedTitle, customChart, customMetrics, tile, tileParams]);
 
   const filename = useMemo(() => {
     if (isCustom) return "liquid-terminal-custom";
@@ -170,7 +180,7 @@ export default function SharePage() {
   const toggleMetric = (key: string) =>
     setCustomMetrics((prev) => {
       if (prev.includes(key)) return prev.filter((k) => k !== key);
-      if (prev.length >= CUSTOM_MAX) return prev; // cap reached
+      if (prev.length >= metricCap) return prev; // cap reached
       return [...prev, key];
     });
 
@@ -301,6 +311,19 @@ export default function SharePage() {
           <Card className="overflow-hidden">
             {isCustom ? (
               <div className="px-3.5 py-3 space-y-3 border-b border-border-subtle">
+                {/* layout: a stat grid, or a chart of one series */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-text-tertiary shrink-0">Layout</span>
+                  <PillTabs
+                    tabs={[
+                      { value: "grid", label: "Stat grid" },
+                      { value: "chart", label: "Chart" },
+                    ]}
+                    activeTab={customLayout}
+                    onTabChange={(v) => setCustomLayout(v as "grid" | "chart")}
+                  />
+                </div>
+
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] text-text-tertiary shrink-0">Title</span>
                   <input
@@ -311,15 +334,45 @@ export default function SharePage() {
                     className="flex-1 h-8 rounded-md bg-surface-2 border border-border-subtle px-2.5 text-[12px] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-brand/50"
                   />
                 </div>
+
+                {/* chart mode: choose the series to plot */}
+                {customLayout === "chart" ? (
+                  <div className="space-y-1.5">
+                    <div className="text-[11px] text-text-tertiary">Chart series</div>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {SERIES_METRICS.map((s) => {
+                        const on = customChart === s.key;
+                        return (
+                          <button
+                            key={s.key}
+                            type="button"
+                            onClick={() => setCustomChart(s.key)}
+                            className={`rounded-md px-2 py-1 text-[11px] font-medium border transition-colors ${
+                              on
+                                ? "bg-brand/10 text-brand border-brand/25"
+                                : "bg-surface-2 text-text-secondary border-border-subtle hover:text-text-primary"
+                            }`}
+                          >
+                            {s.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* metrics: headline + supporting (grid) or supporting stats (chart) */}
                 <div className="space-y-2">
                   <div className="text-[11px] text-text-tertiary">
-                    Metrics ({customMetrics.length}/{CUSTOM_MAX}) — first one is the headline
+                    {customLayout === "chart"
+                      ? `Supporting stats (${Math.min(customMetrics.length, CHART_STATS_MAX)}/${CHART_STATS_MAX}) — optional`
+                      : `Metrics (${customMetrics.length}/${CUSTOM_MAX}) — first one is the headline`}
                   </div>
                   {Object.entries(CUSTOM_BY_GROUP).map(([groupName, metrics]) => (
                     <div key={groupName} className="flex flex-wrap items-center gap-1.5">
                       {metrics.map((m) => {
                         const on = customMetrics.includes(m.key);
-                        const capped = !on && customMetrics.length >= CUSTOM_MAX;
+                        const capped = !on && customMetrics.length >= metricCap;
                         return (
                           <button
                             key={m.key}
