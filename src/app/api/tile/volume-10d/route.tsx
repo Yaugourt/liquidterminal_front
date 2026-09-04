@@ -4,6 +4,7 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 import { seriesPaths } from "@/lib/og/chart";
 
 /**
@@ -59,7 +60,7 @@ export async function GET() {
   const latest = complete[complete.length - 1];
   const { line, area } = seriesPaths(complete.map((d) => d.volume));
 
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("notes")]);
 
   return new ImageResponse(
     (
@@ -73,6 +74,7 @@ export async function GET() {
           latest.volume
         )}`}
         footNote="Source: Hyperliquid · on-chain indexing"
+        mascot={mascot}
       >
         <div style={{ display: "flex", width: "100%", height: 170, marginTop: 26 }}>
           <svg

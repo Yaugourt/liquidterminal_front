@@ -5,15 +5,18 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
-import { CUSTOM_METRIC_KEYS, CUSTOM_MAX } from "@/lib/og/customCatalog";
+import { loadHypurr } from "@/lib/og/hypurr";
+import { seriesPaths } from "@/lib/og/chart";
+import { CUSTOM_METRIC_KEYS, CUSTOM_MAX, SERIES_KEYS, CHART_STATS_MAX } from "@/lib/og/customCatalog";
 
 /**
- * A visitor-composed share-tile: pick a title and up to six metrics on the
- * share studio, and this renders them as one branded card. The metric keys are
- * an allowlist (CUSTOM_METRIC_KEYS), so the query can only ever request known
- * values from known endpoints.
+ * A visitor-composed share-tile. The share studio lets a visitor choose a
+ * layout (a stat grid or a chart), which data goes where, and a title; this
+ * renders it as one branded card. Every metric key is an allowlist, so the
+ * query can only request known values from known endpoints.
  *
- * `GET /api/tile/custom?title=...&metrics=volume_24h,open_interest,...`
+ * Grid:  `?layout=grid&title=&metrics=volume_24h,open_interest,...`
+ * Chart: `?layout=chart&title=&chart=total_oi&metrics=<supporting stats>`
  */
 export const runtime = "nodejs";
 export const revalidate = 120;
@@ -85,6 +88,24 @@ const RESOLVERS: Record<string, Resolver> = {
   stablecoins: { label: "Stablecoin supply", fmt: "usd", get: (s) => s.stables?.totalStablecoins ?? null },
 };
 
+/** Charteable series: label, value formatter, and how to fetch its points. */
+const SERIES_CONF: Record<string, { label: string; fmt: Fmt; load: () => Promise<number[]> }> = {
+  total_oi: { label: "Open interest", fmt: "usd", load: () => loadMetricSeries("total_oi") },
+  active_users_24h: { label: "Active users", fmt: "count", load: () => loadMetricSeries("active_users_24h") },
+  total_fees_24h: { label: "Protocol fees", fmt: "usd", load: () => loadMetricSeries("total_fees_24h") },
+  volume: { label: "Daily volume", fmt: "usd", load: loadVolumeSeries },
+};
+
+async function loadMetricSeries(metric: string): Promise<number[]> {
+  const rows = await wrapped<{ value: number }[]>(`/market/metrics/history?metric=${metric}&hours=168`);
+  return (rows ?? []).map((r) => r.value).filter((v) => Number.isFinite(v));
+}
+async function loadVolumeSeries(): Promise<number[]> {
+  const rows = await wrapped<{ date: string; volume: number }[]>("/indexer/overview/daily-volume-10d");
+  const today = new Date().toISOString().slice(0, 10);
+  return (rows ?? []).filter((d) => d.date !== today && Number.isFinite(d.volume)).map((d) => d.volume);
+}
+
 function format(v: number | null, fmt: Fmt): string {
   if (v == null || !Number.isFinite(v)) return "-";
   if (fmt === "count") return compactCount(v);
@@ -92,13 +113,13 @@ function format(v: number | null, fmt: Fmt): string {
   return compactUsd(v);
 }
 
-function parseMetrics(raw: string | null): string[] {
+function parseStats(raw: string | null, max: number, fallback: string[]): string[] {
   const keys = (raw ?? "")
     .split(",")
     .map((k) => k.trim())
     .filter((k) => CUSTOM_METRIC_KEYS.includes(k));
-  const deduped = [...new Set(keys)].slice(0, CUSTOM_MAX);
-  return deduped.length > 0 ? deduped : ["volume_24h", "open_interest", "active_users", "fees_24h"];
+  const deduped = [...new Set(keys)].slice(0, max);
+  return deduped.length > 0 ? deduped : fallback;
 }
 
 function cleanTitle(raw: string | null): string {
@@ -106,19 +127,87 @@ function cleanTitle(raw: string | null): string {
   return t || "Hyperliquid snapshot";
 }
 
+/** A supporting stat cell. */
+function StatCell({ label, value, width }: { label: string; value: string; width: string }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", width, marginBottom: 26 }}>
+      <div style={{ display: "flex", fontSize: 16, color: C.textSecondary }}>{label}</div>
+      <div style={{ display: "flex", fontFamily: "JetBrains Mono", fontSize: 30, fontWeight: 600, marginTop: 8 }}>
+        {value}
+      </div>
+    </div>
+  );
+}
+
 export async function GET(request: NextRequest) {
-  const metrics = parseMetrics(request.nextUrl.searchParams.get("metrics"));
-  const title = cleanTitle(request.nextUrl.searchParams.get("title"));
-  const sources = await loadSources();
-
-  const resolved = metrics.map((k) => {
-    const r = RESOLVERS[k];
-    return { label: r.label, value: format(r.get(sources), r.fmt) };
-  });
-  const [hero, ...rest] = resolved;
-
+  const sp = request.nextUrl.searchParams;
+  const layout = sp.get("layout") === "chart" ? "chart" : "grid";
+  const title = cleanTitle(sp.get("title"));
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("gm")]);
+  const imageOpts = {
+    width: 1200,
+    height: 630,
+    fonts: fonts.length > 0 ? fonts : undefined,
+    headers: { "Cache-Control": "public, max-age=120, s-maxage=600, stale-while-revalidate=3600" },
+  } as const;
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const footNote = `Source: Hyperliquid · on-chain indexing — ${stamp} UTC`;
+
+  if (layout === "chart") {
+    const chartKey = SERIES_KEYS.includes(sp.get("chart") ?? "") ? (sp.get("chart") as string) : "total_oi";
+    const conf = SERIES_CONF[chartKey];
+    const values = await conf.load();
+    if (values.length < 2) {
+      return new Response("not enough history for this series", { status: 503 });
+    }
+    const first = values[0];
+    const latest = values[values.length - 1];
+    const changePct = first > 0 ? ((latest - first) / first) * 100 : 0;
+    const { line, area } = seriesPaths(values);
+
+    // Optional supporting stats under the chart (kept short so nothing overflows).
+    const statKeys = parseStats(sp.get("metrics"), CHART_STATS_MAX, []);
+    const sources = statKeys.length > 0 ? await loadSources() : null;
+    const stats = sources
+      ? statKeys.map((k) => ({ label: RESOLVERS[k].label, value: format(RESOLVERS[k].get(sources), RESOLVERS[k].fmt) }))
+      : [];
+
+    return new ImageResponse(
+      (
+        <TileFrame
+          title={title}
+          pill="custom"
+          eyebrow={conf.label}
+          hero={format(latest, conf.fmt)}
+          heroSub={`${changePct >= 0 ? "+" : ""}${changePct.toFixed(1)}% over the window`}
+          footLeft="Composed on liquidterminal.xyz/share"
+          footNote={footNote}
+          mascot={mascot}
+        >
+          <div style={{ display: "flex", width: "100%", height: stats.length > 0 ? 140 : 180, marginTop: 22 }}>
+            <svg width="100%" height={stats.length > 0 ? "120" : "160"} viewBox="0 0 1000 150" preserveAspectRatio="none" style={{ display: "flex" }}>
+              <path d={area} fill="rgba(131, 233, 255, 0.12)" />
+              <path d={line} fill="none" stroke={C.brand} strokeWidth="3" strokeLinejoin="round" />
+            </svg>
+          </div>
+          {stats.length > 0 ? (
+            <div style={{ display: "flex", width: "100%", marginTop: 6 }}>
+              {stats.map((s) => (
+                <StatCell key={s.label} label={s.label} value={s.value} width="33%" />
+              ))}
+            </div>
+          ) : null}
+        </TileFrame>
+      ),
+      imageOpts
+    );
+  }
+
+  // Grid layout: a hero stat plus up to five supporting stats.
+  const metrics = parseStats(sp.get("metrics"), CUSTOM_MAX, ["volume_24h", "open_interest", "active_users", "fees_24h"]);
+  const sources = await loadSources();
+  const resolved = metrics.map((k) => ({ label: RESOLVERS[k].label, value: format(RESOLVERS[k].get(sources), RESOLVERS[k].fmt) }));
+  const [hero, ...rest] = resolved;
 
   return new ImageResponse(
     (
@@ -128,40 +217,18 @@ export async function GET(request: NextRequest) {
         eyebrow={hero.label}
         hero={hero.value}
         footLeft="Composed on liquidterminal.xyz/share"
-        footNote={`Source: Hyperliquid · on-chain indexing — ${stamp} UTC`}
+        footNote={footNote}
+        mascot={mascot}
       >
         {rest.length > 0 ? (
           <div style={{ display: "flex", flexWrap: "wrap", width: "100%", marginTop: 30 }}>
             {rest.map((c) => (
-              <div
-                key={c.label}
-                style={{ display: "flex", flexDirection: "column", width: "33%", marginBottom: 26 }}
-              >
-                <div style={{ display: "flex", fontSize: 16, color: C.textSecondary }}>{c.label}</div>
-                <div
-                  style={{
-                    display: "flex",
-                    fontFamily: "JetBrains Mono",
-                    fontSize: 30,
-                    fontWeight: 600,
-                    marginTop: 8,
-                  }}
-                >
-                  {c.value}
-                </div>
-              </div>
+              <StatCell key={c.label} label={c.label} value={c.value} width="33%" />
             ))}
           </div>
         ) : null}
       </TileFrame>
     ),
-    {
-      width: 1200,
-      height: 630,
-      fonts: fonts.length > 0 ? fonts : undefined,
-      headers: {
-        "Cache-Control": "public, max-age=120, s-maxage=600, stale-while-revalidate=3600",
-      },
-    }
+    imageOpts
   );
 }

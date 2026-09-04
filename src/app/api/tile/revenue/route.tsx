@@ -5,6 +5,7 @@ import { compactUsd, fullUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors, tileSeries } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 import type { RevenueBreakdown, RevenueWindow } from "@/services/market/revenue";
 
 /**
@@ -141,7 +142,7 @@ export async function GET(request: NextRequest) {
   const warn =
     missing.length > 0 ? `Understated: ${missing.join(", ")} unavailable at capture time` : undefined;
 
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("cash")]);
 
   return new ImageResponse(
     (
@@ -154,6 +155,7 @@ export async function GET(request: NextRequest) {
         footLeft={footLeft}
         footNote={footNote}
         warn={warn}
+        mascot={mascot}
       >
         {/* one bar, five sources, in the same colours as the app */}
         <div

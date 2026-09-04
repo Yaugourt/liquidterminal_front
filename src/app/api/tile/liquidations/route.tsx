@@ -4,6 +4,7 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * Liquidations over the last 24h as a standalone image: the flush total, the
@@ -58,7 +59,7 @@ export async function GET() {
   ];
 
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("cry")]);
 
   return new ImageResponse(
     (
@@ -72,6 +73,7 @@ export async function GET() {
         )}% longs / ${shortPct.toFixed(0)}% shorts`}
         footLeft="Forced-close notional across all perp markets"
         footNote={`Source: Hyperliquid · on-chain indexing — ${stamp} UTC`}
+        mascot={mascot}
       >
         {/* long / short flush split by notional */}
         <div

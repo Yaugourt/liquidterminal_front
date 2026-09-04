@@ -4,6 +4,7 @@ import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * Hyperliquid market pulse (last 24h) as a standalone image: the routine daily
@@ -67,7 +68,7 @@ export async function GET() {
   ];
 
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("gm")]);
 
   return new ImageResponse(
     (
@@ -79,6 +80,7 @@ export async function GET() {
         heroSub={`24h traded volume · ${compactCount(stats.unique_coins)} markets`}
         footLeft="Perp + spot activity across all markets"
         footNote={`Source: Hyperliquid · on-chain indexing — ${stamp} UTC`}
+        mascot={mascot}
       >
         <div style={{ display: "flex", width: "100%", marginTop: 34 }}>
           {cells.map((c) => (

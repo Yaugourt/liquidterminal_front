@@ -32,3 +32,19 @@ export const CUSTOM_METRIC_KEYS = CUSTOM_METRICS.map((m) => m.key);
 
 /** Max metrics on one tile (one hero + up to five supporting cells). */
 export const CUSTOM_MAX = 6;
+
+/** Metrics that have a stored time series and can be charted. */
+export interface SeriesMetric {
+  key: string;
+  label: string;
+}
+export const SERIES_METRICS: SeriesMetric[] = [
+  { key: "total_oi", label: "Open interest" },
+  { key: "active_users_24h", label: "Active users" },
+  { key: "total_fees_24h", label: "Protocol fees" },
+  { key: "volume", label: "Daily volume" },
+];
+export const SERIES_KEYS = SERIES_METRICS.map((m) => m.key);
+
+/** Max supporting stats shown under a chart layout. */
+export const CHART_STATS_MAX = 3;

@@ -4,6 +4,7 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
+import { loadHypurr } from "@/lib/og/hypurr";
 
 /**
  * HIP-3 ecosystem snapshot as a standalone image: how big the builder-deployed
@@ -68,7 +69,7 @@ export async function GET() {
     .slice(0, 4);
 
   const stamp = new Date().toISOString().slice(0, 16).replace("T", " ");
-  const fonts = await loadTileFonts();
+  const [fonts, mascot] = await Promise.all([loadTileFonts(), loadHypurr("meowdy")]);
 
   return new ImageResponse(
     (
@@ -82,6 +83,7 @@ export async function GET() {
         )} OI`}
         footLeft="Permissionless perp markets deployed on Hyperliquid"
         footNote={`Source: Hyperliquid · on-chain indexing — ${stamp} UTC`}
+        mascot={mascot}
       >
         {/* top markets by open interest */}
         <div style={{ display: "flex", width: "100%", marginTop: 30 }}>
