@@ -19,6 +19,7 @@ import {
   TokenAvatar,
   chartPalette,
   DataStatus,
+  ShareTile,
   rechartsGridDefaults,
 } from "@/components/common";
 import { compactCount, compactUsd, fullUsd } from "@/lib/formatters/numberFormatting";
@@ -168,6 +169,13 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
             </Fragment>
           ))}
         </div>
+        {/* Copy-as-image affordance — sits after the window tabs, in the
+            right-aligned cluster pushed by DataStatus's ml-auto. */}
+        <ShareTile
+          src="/api/tile/stablecoins"
+          filename="stablecoins-hyperliquid"
+          label="Copy stablecoins as image"
+        />
       </div>
 
       {/* 2. KPI strip — 3 cells (mirror Fees) */}

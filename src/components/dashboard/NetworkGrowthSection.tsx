@@ -41,6 +41,8 @@ export function NetworkGrowthSection() {
             format={usd}
             latestLabel="Current OI"
             history={oi}
+            shareSrc="/api/tile/metric?metric=total_oi"
+            shareFilename="hyperliquid-open-interest"
           />
         )}
         {hasUsers && (
@@ -51,6 +53,8 @@ export function NetworkGrowthSection() {
             format={compactCount}
             latestLabel="Active (24h)"
             history={users}
+            shareSrc="/api/tile/metric?metric=active_users_24h"
+            shareFilename="hyperliquid-active-users"
           />
         )}
         {hasFees && (
@@ -61,6 +65,8 @@ export function NetworkGrowthSection() {
             format={usd}
             latestLabel="Fees (24h)"
             history={fees}
+            shareSrc="/api/tile/metric?metric=total_fees_24h"
+            shareFilename="hyperliquid-fees"
           />
         )}
       </div>

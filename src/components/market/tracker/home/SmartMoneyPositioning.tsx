@@ -6,6 +6,7 @@ import {
   KpiRibbon,
   TypedDataTable,
   AuroraAreaChart,
+  ShareTile,
   chartPalette,
   type KpiCell,
   type Column,
@@ -152,6 +153,12 @@ export function SmartMoneyPositioning() {
         title="Smart money positioning"
         icon={<Crosshair size={15} className="text-brand" />}
         subtitle="Collective open positions of the top traders, long vs short by market"
+        headerAction={
+          <ShareTile
+            src="/api/tile/positioning"
+            filename="smart-money-positioning"
+          />
+        }
         columns={columns}
         data={rows}
         getRowKey={(c) => c.coin}

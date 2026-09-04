@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import {
   KpiRibbon,
   AuroraAreaChart,
+  ShareTile,
   chartPalette,
   type KpiCell,
 } from "@/components/common";
@@ -20,6 +21,10 @@ interface MetricHistoryCardProps {
   latestLabel: string;
   /** Stored hourly history for this metric (owned by the parent section). */
   history: MetricHistoryPoint[];
+  /** Tile endpoint for the "copy as image" button. Omitted = no share button. */
+  shareSrc?: string;
+  /** Basename used by the share button's download fallback. */
+  shareFilename?: string;
 }
 
 /**
@@ -35,6 +40,8 @@ export function MetricHistoryCard({
   format,
   latestLabel,
   history,
+  shareSrc,
+  shareFilename,
 }: MetricHistoryCardProps) {
   const model = useMemo(() => {
     const chartData = history
@@ -73,6 +80,9 @@ export function MetricHistoryCard({
         <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           7d · hourly
         </span>
+        {shareSrc && (
+          <ShareTile src={shareSrc} filename={shareFilename ?? "metric"} />
+        )}
       </div>
       <div className="p-3 space-y-3">
         <KpiRibbon cells={cells} />
