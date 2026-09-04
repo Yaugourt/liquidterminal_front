@@ -17,14 +17,21 @@ export const CUSTOM_METRICS: CustomMetric[] = [
   { key: "trades_24h", label: "Trades (24h)", group: "Activity" },
   { key: "active_users", label: "Active traders (24h)", group: "Activity" },
   { key: "markets_24h", label: "Markets traded (24h)", group: "Activity" },
+  { key: "total_users", label: "Total users", group: "Activity" },
   { key: "open_interest", label: "Open interest", group: "Markets" },
   { key: "fees_24h", label: "Fees (24h)", group: "Markets" },
   { key: "liquidations_24h", label: "Liquidations (24h)", group: "Markets" },
+  { key: "builder_fees", label: "Builder fees (24h)", group: "Builders & HIP-4" },
+  { key: "active_builders", label: "Active builders", group: "Builders & HIP-4" },
+  { key: "hip4_volume", label: "HIP-4 24h volume", group: "Builders & HIP-4" },
   { key: "hip3_volume", label: "HIP-3 24h volume", group: "HIP-3" },
   { key: "hip3_oi", label: "HIP-3 open interest", group: "HIP-3" },
   { key: "hype_price", label: "HYPE price", group: "HYPE & capital" },
   { key: "hype_mcap", label: "HYPE market cap", group: "HYPE & capital" },
   { key: "hlp_tvl", label: "HLP TVL", group: "HYPE & capital" },
+  { key: "vaults_tvl", label: "Vaults TVL", group: "HYPE & capital" },
+  { key: "total_staked", label: "HYPE staked", group: "HYPE & capital" },
+  { key: "bridged_usdc", label: "Bridged USDC", group: "HYPE & capital" },
   { key: "stablecoins", label: "Stablecoin supply", group: "HYPE & capital" },
 ];
 
@@ -43,6 +50,7 @@ export const SERIES_METRICS: SeriesMetric[] = [
   { key: "active_users_24h", label: "Active users" },
   { key: "total_fees_24h", label: "Protocol fees" },
   { key: "volume", label: "Daily volume" },
+  { key: "revenue", label: "Daily revenue" },
 ];
 export const SERIES_KEYS = SERIES_METRICS.map((m) => m.key);
 
