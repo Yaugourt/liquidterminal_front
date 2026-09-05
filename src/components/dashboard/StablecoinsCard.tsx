@@ -39,7 +39,7 @@ type StableKey = (typeof STABLE_SERIES)[number]["key"];
  * a different source (`/spotUSDC`) so we keep the type separate to avoid
  * coupling the two cards' selectors. */
 type SupplyWindow = "7d" | "30d" | "90d" | "1y" | "all";
-const SUPPLY_WINDOWS: readonly SupplyWindow[] = ["7d", "30d"] as const;
+const SUPPLY_WINDOWS: readonly SupplyWindow[] = ["7d", "30d", "90d", "1y", "all"] as const;
 const SUPPLY_WINDOW_LABELS: Record<SupplyWindow, string> = {
   "7d": "7D",
   "30d": "30D",
