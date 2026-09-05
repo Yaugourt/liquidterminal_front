@@ -3,6 +3,7 @@
 import { DataStatus } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
+  FeeRankCard,
   FeesRevenueHistoryCard,
   IncomeStatementCard,
   QuarterlyRevenueCard,
@@ -58,6 +59,9 @@ export default function HypeFinancialsPage() {
           <IncomeStatementCard />
           <RevenueSegmentsCard />
         </div>
+        {/* Where those fees place Hyperliquid against the whole public field —
+            the same DefiLlama basis the statements above quote. */}
+        <FeeRankCard />
         <RevenueReconciliation />
       </section>
 

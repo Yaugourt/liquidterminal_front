@@ -9,6 +9,7 @@ import {
   GenesisDistributionCard,
   HypeStakingCard,
   SupplyScarcityCard,
+  WhalesVsRetailCard,
 } from "@/components/hype";
 import { useAfBuybacks } from "@/services/market/hype";
 
@@ -68,6 +69,16 @@ export default function HypeCapitalPage() {
       <section className="space-y-2.5">
         <SectionHead title="Staking" subtitle="HYPE locked in proof-of-stake" />
         <HypeStakingCard />
+      </section>
+
+      <section className="space-y-2.5">
+        <SectionHead
+          title="Holder concentration"
+          subtitle="How supply splits across whale &amp; retail cohorts"
+        />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <WhalesVsRetailCard />
+        </div>
       </section>
     </div>
   );

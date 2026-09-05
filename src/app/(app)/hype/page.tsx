@@ -2,7 +2,7 @@
 
 import { DataStatus, PageFaq } from "@/components/common";
 import { SectionHead } from "@/components/dashboard/SectionHead";
-import { HypeHeroRibbon, HypePriceChart, RevenueFlywheelCard } from "@/components/hype";
+import { HypeHeroRibbon, HypePriceChart, HypeRelativePerformanceCard, RevenueFlywheelCard } from "@/components/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import { HYPE_FAQ } from "@/lib/page-faqs";
 
@@ -37,6 +37,7 @@ export default function HypePage() {
         </div>
         <HypeHeroRibbon />
         <HypePriceChart />
+        <HypeRelativePerformanceCard />
       </section>
 
       <section className="space-y-2.5">
