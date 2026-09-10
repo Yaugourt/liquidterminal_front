@@ -69,7 +69,7 @@ Format: route · key components · data sources · gotchas. Components live in `
 - `/share` — share studio: live preview + template gallery + custom tile composer (grid or chart), catalog in `lib/og/customCatalog.ts`. Consumes the tile routes below; `<ShareTile>` also drops a share button onto ~8 cards across dashboard/liquidations/perpDex/tracker.
 
 ### Ecosystem / Wiki / User
-- `/ecosystem/project` — ProjectsGrid · backend `/project` · public.
+- `/ecosystem/project` (+`[id]`) — ProjectsDirectory + EcosystemBanner · backend `/project` + `useChainStats` · public (the older ProjectsGrid/ProjectCard/CategoryTabs are rewrite leftovers, now dead).
 - `/ecosystem/publicgoods` (+`[id]`, `my-submissions`, `pending`) — grids + lazy modals · backend `/publicgoods*` (multipart uploads) · review = MODERATOR+, pending page MODERATOR-gated.
 - `/wiki` — EducationContent + category sidebar + resources · backend `/educational/*`, static JSON via `useStaticJson` · submit = USER (rate-limited), moderate = MODERATOR.
 - `/wiki/readlist` (+`public-readlists`), `/wiki/readlists` (+`[slug]`) — readlist CRUD + atlas index · `use-readlists` store + backend `/readlists/*`.
