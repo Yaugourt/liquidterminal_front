@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -31,7 +31,7 @@ interface PerpStats {
 /** `/indexer/*` responses wrap the payload in `{ data }`. */
 async function loadWrapped<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}${path}`, { next: { revalidate } });
+    const res = await fetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: T };
     return json.data ?? null;
@@ -43,7 +43,7 @@ async function loadWrapped<T>(path: string): Promise<T | null> {
 /** `/market/perp/globalstats` returns the stats object directly (no envelope). */
 async function loadRaw<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}${path}`, { next: { revalidate } });
+    const res = await fetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {

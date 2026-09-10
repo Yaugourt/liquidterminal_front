@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -30,7 +30,7 @@ interface LiqStats {
 
 async function load(): Promise<LiqStats | null> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}/liquidations/historical/stats`, {
+    const res = await fetch(backendUrl("/liquidations/historical/stats"), {
       next: { revalidate },
     });
     if (!res.ok) return null;

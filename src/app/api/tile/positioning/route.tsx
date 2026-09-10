@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -36,7 +36,7 @@ interface Positioning {
 
 async function load(): Promise<Positioning | null> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}/top-traders/positioning`, {
+    const res = await fetch(backendUrl("/top-traders/positioning"), {
       next: { revalidate },
     });
     if (!res.ok) return null;

@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -29,7 +29,7 @@ interface Stables {
 
 async function load(): Promise<Stables | null> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}/market/stablecoins`, { next: { revalidate } });
+    const res = await fetch(backendUrl("/market/stablecoins"), { next: { revalidate } });
     if (!res.ok) return null;
     return (await res.json()) as Stables;
   } catch {
