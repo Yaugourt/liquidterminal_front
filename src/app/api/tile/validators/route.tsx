@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -26,7 +26,7 @@ interface Validator {
 
 async function load(): Promise<Validator[]> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}/staking/validators`, { next: { revalidate } });
+    const res = await fetch(backendUrl("/staking/validators"), { next: { revalidate } });
     if (!res.ok) return [];
     const json = (await res.json()) as { data?: Validator[] };
     return json.data ?? [];

@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd, fullUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors, tileSeries } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -62,7 +62,7 @@ function parseWindow(raw: string | null): RevenueWindow {
 async function loadBreakdown(window: RevenueWindow): Promise<RevenueBreakdown | null> {
   try {
     const res = await fetch(
-      `${env.NEXT_PUBLIC_API}/market/revenue/history?window=${encodeURIComponent(window)}`,
+      backendUrl(`/market/revenue/history?window=${encodeURIComponent(window)}`),
       { next: { revalidate } }
     );
     if (!res.ok) return null;

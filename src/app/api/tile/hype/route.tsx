@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -28,7 +28,7 @@ interface SpotToken {
 
 async function loadHype(): Promise<SpotToken | null> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}/market/spot`, { next: { revalidate } });
+    const res = await fetch(backendUrl("/market/spot"), { next: { revalidate } });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: SpotToken[] };
     return (json.data ?? []).find((t) => t.name?.toUpperCase() === "HYPE") ?? null;

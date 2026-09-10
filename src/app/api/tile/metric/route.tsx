@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -45,7 +45,7 @@ function parseMetric(raw: string | null): MetricKey {
 async function load(metric: MetricKey): Promise<Point[]> {
   try {
     const res = await fetch(
-      `${env.NEXT_PUBLIC_API}/market/metrics/history?metric=${metric}&hours=168`,
+      backendUrl(`/market/metrics/history?metric=${metric}&hours=168`),
       { next: { revalidate } }
     );
     if (!res.ok) return [];

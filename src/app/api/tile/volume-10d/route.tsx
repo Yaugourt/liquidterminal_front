@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -26,7 +26,7 @@ interface Day {
 
 async function load(): Promise<Day[]> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}/indexer/overview/daily-volume-10d`, {
+    const res = await fetch(backendUrl("/indexer/overview/daily-volume-10d"), {
       next: { revalidate },
     });
     if (!res.ok) return [];

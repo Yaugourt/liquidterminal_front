@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "@/lib/og/backend";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
@@ -29,7 +29,7 @@ interface Trade {
 async function loadExtreme(dir: "DESC" | "ASC"): Promise<Trade | null> {
   try {
     const res = await fetch(
-      `${env.NEXT_PUBLIC_API}/indexer/completed-trades/?sort_by=pnl_realized&sort_dir=${dir}&limit=1`,
+      backendUrl(`/indexer/completed-trades/?sort_by=pnl_realized&sort_dir=${dir}&limit=1`),
       { next: { revalidate } }
     );
     if (!res.ok) return null;
