@@ -18,6 +18,7 @@ import {
   MetricChartCard,
   ProjectContextKpis,
   ProjectPeersModule,
+  ProjectYieldsModule,
   FeesRevenueTable,
   PositionRailCard,
   ProjectLinksCard,
@@ -147,6 +148,9 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
           )}
 
           {isLinked && <FeesRevenueTable fees={fees} revenue={revenue} />}
+
+          {/* HyperEVM yields — self-gates when Hyperfolio does not index the protocol. */}
+          <ProjectYieldsModule project={project} />
 
           <ProjectPeersModule
             title={peersTitle}
