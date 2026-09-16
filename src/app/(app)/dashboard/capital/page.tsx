@@ -4,6 +4,7 @@ import { FeesRevenuePanel } from "@/components/dashboard/FeesRevenuePanel";
 import { StablecoinsCard } from "@/components/dashboard/StablecoinsCard";
 import { VaultsModule } from "@/components/dashboard/modules/VaultsModule";
 import { ValidatorsModule } from "@/components/dashboard/modules/ValidatorsModule";
+import { TopYieldsModule } from "@/components/dashboard/modules/TopYieldsModule";
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import {
   TopTradersPreview,
@@ -40,13 +41,14 @@ export default function DashboardCapital() {
       <section className="space-y-2.5">
         <SectionHead
           title="Capital Allocators"
-          subtitle="Top vaults & validators by TVL and stake"
-          linkLabel="All vaults →"
-          linkHref="/explorer/vaults"
+          subtitle="Top vaults, validators & HyperEVM yields by TVL, stake and APY"
+          linkLabel="All yields →"
+          linkHref="/market/yields"
         />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           <VaultsModule />
           <ValidatorsModule />
+          <TopYieldsModule />
         </div>
       </section>
 

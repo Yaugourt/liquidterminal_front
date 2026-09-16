@@ -111,6 +111,29 @@ export const TRACKER_FAQ: FaqItem[] = [
   },
 ];
 
+export const YIELDS_FAQ: FaqItem[] = [
+  {
+    q: "Where does the yield data come from?",
+    a: "From Hyperfolio, which indexes lending markets, AMM pools, vaults and staking contracts on HyperEVM directly on-chain. Liquid Terminal relays it through its own API so it stays free to read; figures refresh a few times an hour.",
+  },
+  {
+    q: "What does the APY include?",
+    a: "The total APY is the base rate of the pool or market plus any token rewards it distributes; hover an APY to see the split. Borrow rows show what borrowing costs, not what you earn.",
+  },
+  {
+    q: "Why do some pools show a huge APY?",
+    a: "Thin pools: a few thousand dollars of liquidity can print a four-digit APY that vanishes as soon as capital enters. The Deep pools toggle hides everything under $100k of TVL, which is also the floor used by the dashboard's Top Yields card.",
+  },
+  {
+    q: "Why is TVL missing on some rows?",
+    a: "Lending markets on Hyperlend, Felix and Hypurrfi do not report a pool-level TVL through Hyperfolio yet, so the column shows a dash rather than a made-up number, and those rows are excluded from the total TVL and the TVL-weighted APY.",
+  },
+  {
+    q: "Is the risk level a rating?",
+    a: "No. It is Hyperfolio's coarse classification of the position type: liquidation exposure for borrows, impermanent loss for LPs, and so on. It says nothing about smart-contract or counterparty risk.",
+  },
+];
+
 export const VAULTS_FAQ: FaqItem[] = [
   {
     q: "What is a Hyperliquid vault?",
