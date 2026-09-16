@@ -30,6 +30,8 @@ export const API_URLS = {
   
   // APIs externes Hyperliquid
   HYPERLIQUID_RPC: 'https://rpc.hyperliquid.xyz',
+  /** HyperEVM JSON-RPC (chain 999) — keyless reads such as .hl/.hype name resolution. */
+  HYPEREVM_RPC: 'https://rpc.hyperliquid.xyz/evm',
   HYPERLIQUID_API: 'https://api.hyperliquid.xyz',
   HYPERLIQUID_UI_API: 'https://api-ui.hyperliquid.xyz',
   

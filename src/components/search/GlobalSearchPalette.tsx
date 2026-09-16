@@ -29,6 +29,8 @@ import {
   type SearchResultKind,
 } from "@/services/search";
 import { useGlobalSearch } from "@/store/use-global-search";
+import { useNameResolution } from "@/services/search";
+import { truncateAddress } from "@/lib/formatters/numberFormatting";
 import { trackSearch } from "@/lib/analytics";
 import { safeHref } from "@/lib/safeUrl";
 import { Hypurr, HYPURR_MOODS, type HypurrMood } from "@/components/hypurr/Hypurr";
@@ -142,6 +144,19 @@ export function GlobalSearchPalette() {
   }, [open]);
 
   const pattern = useMemo(() => detectPattern(query), [query]);
+  // `.hl` / `.hype` names resolve on-chain (debounced) into a wallet result.
+  const nameResolution = useNameResolution(query);
+  const nameResult: SearchResult | null = useMemo(() => {
+    if (nameResolution.status !== "resolved" || !nameResolution.result) return null;
+    const { name, address } = nameResolution.result;
+    return {
+      id: `name-${name}`,
+      kind: "address",
+      label: `${name} · ${truncateAddress(address)}`,
+      sublabel: "Open wallet",
+      href: `/market/tracker/wallet/${address}`,
+    };
+  }, [nameResolution]);
   const eggMood: HypurrMood | null = useMemo(() => {
     if (!EGG_QUERIES.has(query.trim().toLowerCase())) return null;
     return HYPURR_MOODS[Math.floor(Math.random() * HYPURR_MOODS.length)];
@@ -151,7 +166,8 @@ export function GlobalSearchPalette() {
     [index, query]
   );
   const hasQuery = query.trim().length > 0;
-  const isEmpty = hasQuery && !pattern && !eggMood && groups.length === 0;
+  const isEmpty =
+    hasQuery && !pattern && !eggMood && groups.length === 0 && nameResolution.status === "idle";
 
   const handleSelect = useCallback(
     (result: SearchResult) => {
@@ -185,7 +201,7 @@ export function GlobalSearchPalette() {
         <Command.Input
           value={query}
           onValueChange={setQuery}
-          placeholder="Search tokens, wallets, validators, vaults, projects, wiki…"
+          placeholder="Search tokens, wallets, .hl / .hype names, validators, vaults, projects, wiki…"
           className="h-12 w-full bg-transparent text-[13.5px] text-text-primary placeholder:text-text-tertiary focus:outline-none"
         />
         <kbd className="mono shrink-0 rounded-md border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10.5px] text-text-tertiary">
@@ -210,12 +226,24 @@ export function GlobalSearchPalette() {
           </div>
         )}
 
-        {pattern && (
+        {(pattern || nameResolution.status !== "idle") && (
           <Command.Group
             heading="On-chain"
             className="[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-[10.5px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-[0.08em] [&_[cmdk-group-heading]]:text-text-tertiary"
           >
-            <ResultRow result={pattern} onSelect={handleSelect} />
+            {pattern && <ResultRow result={pattern} onSelect={handleSelect} />}
+            {nameResult && <ResultRow result={nameResult} onSelect={handleSelect} />}
+            {nameResolution.status === "resolving" && (
+              <div className="px-3 py-2.5 text-[12.5px] text-text-tertiary">Resolving {nameResolution.name}…</div>
+            )}
+            {nameResolution.status === "not-found" && (
+              <div className="px-3 py-2.5 text-[12.5px] text-text-tertiary">
+                {nameResolution.name} is not registered or has no address set.
+              </div>
+            )}
+            {nameResolution.status === "error" && (
+              <div className="px-3 py-2.5 text-[12.5px] text-danger">Could not reach HyperEVM to resolve {nameResolution.name}.</div>
+            )}
           </Command.Group>
         )}
 
