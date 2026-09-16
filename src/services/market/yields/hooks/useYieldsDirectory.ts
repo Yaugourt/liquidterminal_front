@@ -28,8 +28,8 @@ const EMPTY_FACETS: YieldsPage['facets'] = { categories: [], protocols: [] };
  * (same contract as useVaultsDirectory). Every filter, the sort and the page
  * are applied by the backend, so `items` is exactly one page.
  */
-export function useYieldsDirectory() {
-  const [query, setQuery] = useState<YieldsQuery>(DEFAULT_QUERY);
+export function useYieldsDirectory(initial: Partial<YieldsQuery> = {}) {
+  const [query, setQuery] = useState<YieldsQuery>(() => ({ ...DEFAULT_QUERY, ...initial }));
   const [facets, setFacets] = useState<YieldsPage['facets']>(EMPTY_FACETS);
 
   const { data, isLoading, isRefreshing, error, dataUpdatedAt, refetch } = useDataFetching<YieldsPage>({
