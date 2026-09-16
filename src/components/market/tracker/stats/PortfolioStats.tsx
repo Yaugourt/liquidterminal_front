@@ -5,7 +5,7 @@ import { Copy, Check } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PeriodSelector } from "@/components/common";
+import { PeriodSelector, Skeleton } from "@/components/common";
 import { useWallets } from "@/store/use-wallets";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAddressBalance } from "@/services/explorer/address";
@@ -34,7 +34,7 @@ export function PortfolioStats({
   // Use provided address or fall back to active wallet
   const walletAddress = walletAddressProp || activeWallet?.address || '';
 
-  const { balances, isLoading, error } = useAddressBalance(walletAddress);
+  const { balances, isLoading, error, evmLoading, evmError } = useAddressBalance(walletAddress, { includeEvm: true });
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -216,6 +216,28 @@ export function PortfolioStats({
                 <p className="text-text-secondary text-xs">Staked Balance</p>
                 <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
               </div>
+              {/* HyperEVM side — Hyperfolio proxy. Streams in after the HyperCore cards. */}
+              {(
+                [
+                  ["EVM Balance", balances.evmBalance],
+                  ["DeFi Balance", balances.defiBalance],
+                  ["NFT Value", balances.nftBalance],
+                ] as const
+              ).map(([label, value]) => (
+                <div
+                  key={label}
+                  className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all"
+                >
+                  <p className="text-text-secondary text-xs">{label}</p>
+                  {evmLoading && value === 0 ? (
+                    <Skeleton className="h-4 w-16" />
+                  ) : evmError && value === 0 ? (
+                    <p className="mono text-text-tertiary text-sm font-bold" title={evmError.message}>—</p>
+                  ) : (
+                    <p className="mono text-text-primary text-sm font-bold">{formatCurrency(value)}</p>
+                  )}
+                </div>
+              ))}
               <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
                 <p className="text-text-secondary text-xs">Total Balance</p>
                 <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>

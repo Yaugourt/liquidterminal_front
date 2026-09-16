@@ -57,6 +57,7 @@ export function AddressSummary({
         </div>
         <div className="lg:col-span-7">
           <PerformanceChart
+            address={address}
             portfolioData={portfolio}
             portfolioLoading={loadingPortfolio}
             spotBalances={spotBalances}
