@@ -22,6 +22,7 @@ import {
   Cpu,
   Download,
   Share2,
+  Percent,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -126,6 +127,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
     accent: 'gold',
     items: [
       { name: 'Vaults', href: '/explorer/vaults', icon: null, IconComponent: Vault },
+      { name: 'Yields', href: '/market/yields', icon: null, IconComponent: Percent },
       { name: 'Validators', href: '/explorer/validator', icon: null, IconComponent: Network },
       { name: 'Tracker', href: '/market/tracker', icon: null, IconComponent: Wallet },
       { name: 'Builders', href: '/market/builders', icon: null, IconComponent: Hammer },

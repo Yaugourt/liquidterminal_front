@@ -325,6 +325,14 @@ export const seoConfig = {
     image: "/og/explorer.png",
   },
 
+  yields: {
+    title: "HyperEVM Yields - Lending, LP, Vault & Staking APY Rankings",
+    description: "Every HyperEVM yield opportunity ranked by APY and TVL: lending markets, LP pools, vaults and staking across Hyperlend, Felix, Kinetiq, Ramses and more. Filter by category, protocol, token, APY and depth.",
+    keywords: ["HyperEVM yields", "Hyperliquid DeFi APY", "HyperEVM lending", "Hyperlend APY", "Felix yield", "HYPE staking yield", "DeFi yields Hyperliquid"],
+    path: "/market/yields",
+    image: "/og/explorer.png",
+  },
+
   priorityFees: {
     title: "Priority Fees - Hyperliquid Explorer",
     description:

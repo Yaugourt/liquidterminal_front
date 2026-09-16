@@ -24,6 +24,7 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   // Explorer
   { path: '/explorer', changeFrequency: 'daily', priority: 0.9 },
   { path: '/explorer/vaults', changeFrequency: 'hourly', priority: 0.8 },
+  { path: '/market/yields', changeFrequency: 'hourly', priority: 0.8 },
   { path: '/explorer/validator', changeFrequency: 'daily', priority: 0.7 },
   { path: '/explorer/liquidations', changeFrequency: 'hourly', priority: 0.7 },
   { path: '/explorer/priority-fees', changeFrequency: 'daily', priority: 0.6 },
