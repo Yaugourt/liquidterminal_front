@@ -36,6 +36,10 @@ export const API_URLS = {
   // APIs tierces
   HYPURRSCAN_API: 'https://api.hypurrscan.io',
   LLAMA_FI_API: 'https://api.llama.fi',
+  /** Public host serving Hyperfolio's relative protocol logos (`/hyperlend.jpg`). */
+  HYPERFOLIO_ASSETS: 'https://hyperfolio.xyz',
+  /** HyperEVM block explorer (the in-app explorer only resolves HyperCore hashes). */
+  HYPEREVMSCAN: 'https://hyperevmscan.io',
 } as const;
 
 // Endpoints spécifiques

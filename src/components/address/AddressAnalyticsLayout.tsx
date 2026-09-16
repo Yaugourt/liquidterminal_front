@@ -20,6 +20,7 @@ import { AssetsSection } from "@/components/market/tracker/assets";
 import { WalletScorecard } from "@/components/market/tracker/WalletScorecard";
 import { WalletConcentration } from "@/components/market/tracker/WalletConcentration";
 import { WalletFundingCard } from "@/components/market/tracker/WalletFundingCard";
+import { HyperEvmCard } from "@/components/market/tracker/evm/HyperEvmCard";
 import { WalletRoundTrips } from "@/components/market/tracker/WalletRoundTrips";
 import {
   OrdersSection,
@@ -137,6 +138,8 @@ export function AddressAnalyticsLayout({
       <WalletConcentration address={address} />
 
       <WalletFundingCard address={address} />
+
+      {summaryVariant === "tracker" && <HyperEvmCard address={address} />}
 
       <AddressTabBar
         tabs={visibleTabs}

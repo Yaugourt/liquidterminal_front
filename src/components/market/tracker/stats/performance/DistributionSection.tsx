@@ -7,6 +7,17 @@ import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue } from '@/lib/formatters/numberFormatting';
 import { HyperliquidBalance } from "@/services/market/tracker/types";
 import { ChartLoading, ChartEmpty, chartPalette } from "@/components/common";
+import type { PortfolioHistory } from "@/services/market/tracker/hyperfolio";
+
+/** Which split the donut shows: HyperCore spot tokens, Hyperfolio categories, or DeFi protocols. */
+export type DistributionMode = 'spot' | 'category' | 'protocol';
+
+const CATEGORY_LABELS: Record<'tokens' | 'defi' | 'hypercore' | 'nft', string> = {
+  tokens: 'EVM tokens',
+  defi: 'DeFi',
+  hypercore: 'HyperCore',
+  nft: 'NFTs',
+};
 
 interface TooltipProps {
   active?: boolean;
@@ -31,12 +42,17 @@ interface DistributionSectionProps {
   hideSmallBalances?: boolean;
   spotBalances?: HyperliquidBalance[];
   isLoading?: boolean;
+  mode?: DistributionMode;
+  /** Hyperfolio snapshots — the latest one feeds the category / protocol modes. */
+  history?: PortfolioHistory | null;
 }
 
 export function DistributionSection({
   hideSmallBalances = false,
   spotBalances = [],
-  isLoading: balancesLoading = false
+  isLoading: balancesLoading = false,
+  mode = 'spot',
+  history = null,
 }: DistributionSectionProps) {
   const { data: spotMarketTokens, isLoading: tokensLoading } = useSpotTokens({ limit: 100 });
   const { format } = useNumberFormat();
@@ -46,6 +62,33 @@ export function DistributionSection({
   const MIN_VALUE_THRESHOLD = 1;
 
   const distributionData = useMemo((): AssetDistribution[] => {
+    if (mode !== 'spot') {
+      const latest = history?.snapshots[history.snapshots.length - 1];
+      if (!latest) return [];
+      const entries: { name: string; value: number }[] =
+        mode === 'category'
+          ? (Object.keys(CATEGORY_LABELS) as (keyof typeof CATEGORY_LABELS)[]).map((k) => ({
+              name: CATEGORY_LABELS[k],
+              value: latest[k],
+            }))
+          : Object.entries(latest.protocols).map(([id, value]) => ({
+              name: id.replace(/[_-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+              value,
+            }));
+      const kept = entries.filter((e) => e.value > 0 && (!hideSmallBalances || e.value >= MIN_VALUE_THRESHOLD));
+      const total = kept.reduce((sum, e) => sum + e.value, 0);
+      if (total === 0) return [];
+      return kept
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 10)
+        .map((e, index) => ({
+          name: e.name,
+          value: e.value,
+          percentage: (e.value / total) * 100,
+          color: COLORS[index % COLORS.length],
+        }));
+    }
+
     if (!spotBalances || !spotMarketTokens || spotBalances.length === 0) {
       return [];
     }
@@ -89,7 +132,7 @@ export function DistributionSection({
       percentage: (asset.value / totalValue) * 100,
       color: COLORS[index % COLORS.length]
     }));
-  }, [spotBalances, spotMarketTokens, hideSmallBalances]);
+  }, [spotBalances, spotMarketTokens, hideSmallBalances, mode, history]);
 
   const totalPortfolio = useMemo(
     () => distributionData.reduce((sum, a) => sum + a.value, 0),
@@ -109,7 +152,7 @@ export function DistributionSection({
   if (distributionData.length === 0) {
     return (
       <div className="absolute inset-0 p-4 pt-12">
-        <ChartEmpty message="No spot assets available" />
+        <ChartEmpty message={mode === 'spot' ? "No spot assets available" : "No snapshot breakdown available"} />
       </div>
     );
   }
