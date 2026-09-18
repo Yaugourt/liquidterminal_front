@@ -13,7 +13,7 @@ import {
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks/usePerpDexMarketData";
 import { extractPerpDexAssetTicker } from "@/services/market/perpDex/utils";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { TokenAvatar, DataStatus } from "@/components/common";
+import { TokenAvatar, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 
 /**
  * TwapPanel — carte « Active TWAP Orders » du Dashboard (Variant A).
@@ -69,7 +69,7 @@ function formatSignedUsd(v: number): string {
 }
 
 export const TwapPanel = memo(function TwapPanel() {
-  const { orders, total, totalVolume, metadata } = useTwapOrders({
+  const { orders, total, totalVolume, metadata, isLoading, error } = useTwapOrders({
     limit: 100,
     status: "active",
   });
@@ -170,7 +170,7 @@ export const TwapPanel = memo(function TwapPanel() {
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* Card-head V4 : icône + titre + tag actifs + tag volume */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Activity size={13} className="text-brand" />
         </span>
@@ -180,7 +180,8 @@ export const TwapPanel = memo(function TwapPanel() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           {count} active
         </span>
-        <DataStatus variant="live" className="ml-auto" />
+        <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} className="ml-auto" />
+        <DataStatus variant="live" />
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/25 mono">
           {compactUsd(totalVolume)} vol
         </span>

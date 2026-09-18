@@ -7,6 +7,8 @@ import {
   TypedDataTable,
   TokenAvatar,
   KpiRibbon,
+  SourceBadge,
+  combinedSourceStatus,
   type Column,
   type KpiCell,
 } from "@/components/common";
@@ -73,8 +75,10 @@ export function TradeExplorer() {
   }, [coinInput]);
 
   const { sortBy, sortDir } = SORT_MAP[sort];
-  const { trades, isLoading, error, refetch } = useTradeExplorer({ coin, sortBy, sortDir, limit: 100 });
-  const { summary } = useTradeSummary();
+  const explorer = useTradeExplorer({ coin, sortBy, sortDir, limit: 100 });
+  const summaryFeed = useTradeSummary();
+  const { trades, isLoading, error, refetch } = explorer;
+  const { summary } = summaryFeed;
 
   const signedUsd = (v: number) =>
     `${v >= 0 ? "+" : "-"}$${formatNumber(Math.abs(v), format, { maximumFractionDigits: 2 })}`;
@@ -201,6 +205,7 @@ export function TradeExplorer() {
         title="Trade explorer"
         icon={<Receipt size={15} className="text-brand" />}
         subtitle="Every closed round-trip on Hyperliquid, filter by coin and sort"
+        headerAction={<SourceBadge source="hypedexer" status={combinedSourceStatus(explorer, summaryFeed)} />}
         toolbar={toolbar}
         data={trades}
         columns={columns}

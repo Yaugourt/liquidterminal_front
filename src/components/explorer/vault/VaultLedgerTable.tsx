@@ -6,7 +6,7 @@ import { Download } from "lucide-react";
 import { useVaultLedger } from "@/services/explorer/vault/hooks/useVaultLedger";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, SourceBadge, sourceStatus, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
@@ -148,7 +148,10 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
 
   const toolbar = (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-      <h3 className="text-sm font-semibold text-text-primary">Activity</h3>
+      <span className="flex items-center gap-3">
+        <h3 className="text-sm font-semibold text-text-primary">Activity</h3>
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+      </span>
       <PillTabs
         activeTab={typeFilter}
         onTabChange={(v) => setTypeFilter(v as LedgerTypeFilter)}

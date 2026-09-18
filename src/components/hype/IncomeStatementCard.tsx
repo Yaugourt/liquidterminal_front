@@ -3,7 +3,7 @@
 import { memo, useMemo, useState } from "react";
 import { Receipt } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, TimeframeTabs } from "@/components/common";
+import { ChartError, ChartLoading, TimeframeTabs, SourceBadge, sourceStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Timeframe } from "@/lib/timeframe";
 import {
@@ -105,8 +105,8 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
           {entry.copy}
         </span>
+        <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} className="ml-auto" />
         <TimeframeTabs
-          className="ml-auto"
           options={PERIODS.map((p) => p.tf)}
           value={tf}
           onChange={setTf}

@@ -2,7 +2,7 @@
 
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
-import { KpiRibbon, OverviewModule, ModuleTable, ModuleTableRow, type KpiCell } from "@/components/common";
+import { KpiRibbon, OverviewModule, ModuleTable, ModuleTableRow, SourceBadge, sourceStatus, type KpiCell } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { ProjectLogo } from "@/components/ecosystem/project/ProjectLogo";
 import { useRankedProjects, useChainStats, type RankedProject } from "@/services/ecosystem/project";
@@ -42,7 +42,7 @@ function Change7d({ value }: { value: number | null }) {
  */
 export const ProjectsRecap = memo(function ProjectsRecap() {
   const { stats } = useChainStats();
-  const { byTvl, byFees, byMove7d, categoriesByTvl, trackedCount, totalCount, isLoading } =
+  const { byTvl, byFees, byMove7d, categoriesByTvl, trackedCount, totalCount, isLoading, metricsLoading, metricsError } =
     useRankedProjects();
   const [ranking, setRanking] = useState<Ranking>("tvl");
 
@@ -80,6 +80,7 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
           viewAllLabel="All projects"
           href="/ecosystem/project"
           className="min-w-0"
+          actions={<SourceBadge source="defillama" status={sourceStatus(metricsError, metricsLoading)} />}
         >
           <div className="px-3.5 py-2.5 border-b border-border-subtle">
             <PillTabs

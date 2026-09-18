@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useTwapFlow } from "@/services/market/twap-flow";
+import { SourceBadge, sourceStatus } from "@/components/common";
 
 function truncateAddress(addr: string): string {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -14,15 +15,16 @@ function truncateAddress(addr: string): string {
  * biggest active/recent TWAP accumulation and distribution market-wide.
  */
 export function TwapFlowCard() {
-  const { twaps, isLoading } = useTwapFlow(6);
+  const { twaps, isLoading, error } = useTwapFlow(6);
 
   // Nothing sizeable is executing right now — stay out of the way.
   if (!isLoading && twaps.length === 0) return null;
 
   return (
     <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
+      <div className="px-4 py-3 border-b border-border-subtle flex items-center gap-2">
         <h3 className="text-[13px] font-medium text-text-primary">TWAP flow</h3>
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
         <span className="text-[10px] text-text-tertiary">biggest · 24h</span>
       </div>
       <div className="px-4 py-3 space-y-3">

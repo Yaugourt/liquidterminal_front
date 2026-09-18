@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { KpiRibbon } from "@/components/common";
+import { KpiRibbon, SourceBadge } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useFeeRank } from "@/services/market/feeRank";
 
@@ -27,7 +27,7 @@ export const FeeRankCard = memo(function FeeRankCard() {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Trophy size={13} className="text-brand" />
         </span>
@@ -37,6 +37,7 @@ export const FeeRankCard = memo(function FeeRankCard() {
             Hyperliquid vs every protocol on DefiLlama
           </span>
         </div>
+        <SourceBadge source="defillama" status="ok" className="ml-auto" />
       </div>
 
       <div className="p-3.5">

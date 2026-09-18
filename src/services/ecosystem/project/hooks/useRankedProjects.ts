@@ -33,6 +33,9 @@ export interface UseRankedProjectsResult {
   isLoading: boolean;
   isRefreshing?: boolean;
   error: Error | null;
+  /** DefiLlama batch (`/defillama/projects-map`) state alone — feeds the source badge. */
+  metricsLoading: boolean;
+  metricsError: Error | null;
   refetch: () => Promise<void>;
   dataUpdatedAt?: number | null;
 }
@@ -125,6 +128,8 @@ export const useRankedProjects = (): UseRankedProjectsResult => {
     isLoading: catalogLoading || metricsLoading,
     isRefreshing: catalogRefreshing,
     error: catalogError ?? metricsError,
+    metricsLoading,
+    metricsError,
     refetch,
     dataUpdatedAt,
   };

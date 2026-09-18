@@ -1,6 +1,6 @@
 "use client";
 
-import { ModuleTable, ModuleTableRow } from "@/components/common";
+import { ModuleTable, ModuleTableRow, SourceBadge, type SourceBadgeStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { DefiLlamaMoneyBlock } from "@/services/ecosystem/project/types";
 
@@ -32,6 +32,8 @@ function usdWithDelta(block: DefiLlamaMoneyBlock, gold = false): React.ReactNode
 interface FeesRevenueTableProps {
   fees: DefiLlamaMoneyBlock | null;
   revenue: DefiLlamaMoneyBlock | null;
+  /** `/project/:id/defillama` route health. */
+  sourceStatus?: SourceBadgeStatus;
 }
 
 /**
@@ -39,7 +41,7 @@ interface FeesRevenueTableProps {
  * 7d/30d/all-time depth the API always served and the page never showed.
  * Renders nothing when neither block exists.
  */
-export function FeesRevenueTable({ fees, revenue }: FeesRevenueTableProps) {
+export function FeesRevenueTable({ fees, revenue, sourceStatus = "ok" }: FeesRevenueTableProps) {
   if (!fees && !revenue) return null;
 
   const columns = [
@@ -54,7 +56,7 @@ export function FeesRevenueTable({ fees, revenue }: FeesRevenueTableProps) {
     <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
         <h3 className="text-[13px] font-semibold text-text-primary">Fees &amp; revenue</h3>
-        <span className="text-[11px] text-text-tertiary">via DefiLlama</span>
+        <SourceBadge source="defillama" status={sourceStatus} />
       </div>
       <div className="overflow-x-auto">
         <div className="min-w-[520px]">

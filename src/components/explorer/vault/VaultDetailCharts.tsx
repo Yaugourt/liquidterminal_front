@@ -8,6 +8,8 @@ import {
   AuroraAreaChart,
   AuroraHistogramChart,
   chartPalette,
+  SourceBadge,
+  sourceStatus,
   type HistogramDataPoint,
 } from "@/components/common";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
@@ -158,11 +160,14 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
           <span className="h-1 w-1 rounded-full bg-brand" />
           Performance
         </div>
-        <PillTabs
-          activeTab={activeTab}
-          onTabChange={(v) => setActiveTab(v as TabId)}
-          tabs={TABS.map((t) => ({ value: t.value, label: t.label }))}
-        />
+        <div className="flex items-center gap-3">
+          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+          <PillTabs
+            activeTab={activeTab}
+            onTabChange={(v) => setActiveTab(v as TabId)}
+            tabs={TABS.map((t) => ({ value: t.value, label: t.label }))}
+          />
+        </div>
       </div>
 
       <div className="h-60">{renderChart()}</div>

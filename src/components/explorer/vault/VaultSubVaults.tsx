@@ -5,13 +5,14 @@ import { motion } from "framer-motion";
 import { GitBranch, ChevronRight } from "lucide-react";
 import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { SourceBadge, sourceStatus } from "@/components/common";
 
 interface VaultSubVaultsProps {
   childAddresses: string[];
 }
 
 export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
-  const { summaries, isLoading } = useVaultSummaries({ includeClosed: true, limit: 5000 });
+  const { summaries, isLoading, error } = useVaultSummaries({ includeClosed: true, limit: 5000 });
 
   const childSummaries = summaries.filter((s) => childAddresses.includes(s.vaultAddress));
 
@@ -27,6 +28,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
         <h3 className="text-sm font-semibold text-text-primary">
           Sub-Vaults ({childAddresses.length})
         </h3>
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
       </div>
 
       {isLoading ? (

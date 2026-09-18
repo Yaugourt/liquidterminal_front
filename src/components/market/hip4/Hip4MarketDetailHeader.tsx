@@ -5,6 +5,7 @@ import { ArrowLeft, Clock } from "lucide-react";
 import type { Hip4MarketEnrichedRow } from "@/services/indexer/hip4";
 import type { Hip4EffectiveStatus } from "@/lib/hip4/market-formatter";
 import { formatMarketTitle } from "@/lib/hip4/market-formatter";
+import { SourceBadge, type SourceBadgeStatus } from "@/components/common";
 
 interface Hip4MarketDetailHeaderProps {
   market: Hip4MarketEnrichedRow;
@@ -14,6 +15,8 @@ interface Hip4MarketDetailHeaderProps {
   typeLabel?: string;
   /** Lifecycle status — richer than `market.is_settled` alone. */
   status?: Hip4EffectiveStatus;
+  /** Hypedexer route health for the market/fills feeds behind this page. */
+  sourceStatus?: SourceBadgeStatus;
 }
 
 const STATUS_BADGE: Record<
@@ -47,6 +50,7 @@ export function Hip4MarketDetailHeader({
   title,
   typeLabel,
   status,
+  sourceStatus = "ok",
 }: Hip4MarketDetailHeaderProps) {
   const heading = title || formatMarketTitle(market);
   const badge = STATUS_BADGE[status ?? (market.is_settled ? "settled" : "live")];
@@ -86,12 +90,15 @@ export function Hip4MarketDetailHeader({
           </div>
         </div>
 
-        <span
-          className={`inline-flex shrink-0 items-center gap-1.5 self-start rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${badge.className}`}
-        >
-          {badge.pulse && <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />}
-          {badge.label}
-        </span>
+        <div className="flex shrink-0 items-center gap-3 self-start">
+          <SourceBadge source="hypedexer" status={sourceStatus} />
+          <span
+            className={`inline-flex items-center gap-1.5 rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${badge.className}`}
+          >
+            {badge.pulse && <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />}
+            {badge.label}
+          </span>
+        </div>
       </div>
     </div>
   );

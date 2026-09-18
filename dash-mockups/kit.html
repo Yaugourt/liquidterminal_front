@@ -118,6 +118,19 @@ Rule: header carries NO stats (they live in the cards) — only a description an
     </div>
   </section>
 
+  <!-- ───────────────────────── SourceBadge (third-party data credit) ───────────────────────── -->
+  <section class="space-y-3 kit-sec pt-8">
+    <div class="kit-label">SourceBadge  (DESIGN_SYSTEM §6.11)</div>
+    <div class="kit-jsx">React: &lt;SourceBadge source="hyperfolio"|"hypurrscan"|"defillama"|"hypedexer" status={sourceStatus(error, isLoading)} /&gt;  ·  @/components/common
+Sits LEFT of &lt;DataStatus&gt; in a card-head `ml-auto` corner, a PageHeader / OverviewModule `actions` slot, a TypedDataTable `headerAction` or a KpiRibbon `header.actions`. Dot = upstream route health (ok / error / loading), wired from the hook's `error`.</div>
+    <div class="flex flex-wrap items-center gap-6 mt-2">
+      <a class="inline-flex items-center gap-1.5 text-[10px] font-medium text-text-tertiary hover:text-text-secondary"><span class="inline-flex h-1.5 w-1.5 rounded-full bg-success"></span><img src="../public/hyperfolio.png" width="12" height="12" class="rounded-sm" alt="" />Hyperfolio</a>
+      <a class="inline-flex items-center gap-1.5 text-[10px] font-medium text-text-tertiary hover:text-text-secondary"><span class="inline-flex h-1.5 w-1.5 rounded-full bg-danger"></span><img src="../public/hypurrscan.jpg" width="12" height="12" class="rounded-sm" alt="" />Hypurrscan</a>
+      <a class="inline-flex items-center gap-1.5 text-[10px] font-medium text-text-tertiary hover:text-text-secondary"><span class="inline-flex h-1.5 w-1.5 rounded-full bg-text-tertiary/60"></span><img src="../public/defillama.jpg" width="12" height="12" class="rounded-sm" alt="" />DefiLlama</a>
+      <a class="inline-flex items-center gap-1.5 text-[10px] font-medium text-text-tertiary hover:text-text-secondary"><span class="inline-flex h-1.5 w-1.5 rounded-full bg-success"></span><img src="../public/hypedexer.png" width="12" height="12" class="rounded-sm" alt="" />Hypedexer</a>
+    </div>
+  </section>
+
   <!-- ───────────────────────── KpiRibbon (minimal · canonical) ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">KpiRibbon  (DESIGN_SYSTEM §7.b · variant="plain")</div>

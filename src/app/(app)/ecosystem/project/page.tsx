@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader, PageFaq, DataStatus } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 import { ProjectsDirectory } from "@/components/ecosystem/project/ProjectsDirectory";
 import { EcosystemBanner } from "@/components/ecosystem/project/EcosystemBanner";
 import { useChainStats } from "@/services/ecosystem/project";
@@ -10,7 +10,7 @@ import { ECOSYSTEM_FAQ } from "@/lib/page-faqs";
 
 export default function L1ProjectPage() {
   const { setTitle } = usePageTitle();
-  const { stats, isRefreshing, refetch, dataUpdatedAt } = useChainStats();
+  const { stats, isLoading, error, isRefreshing, refetch, dataUpdatedAt } = useChainStats();
 
   useEffect(() => {
     setTitle("Ecosystem Projects");
@@ -21,14 +21,17 @@ export default function L1ProjectPage() {
       <PageHeader
         title="Projects"
         titleQualifier="building on Hyperliquid"
-        description="Apps building on Hyperliquid — live fundamentals via DefiLlama."
+        description="Apps building on Hyperliquid — live fundamentals."
         actions={
-          <DataStatus
-            variant="polled"
-            updatedAt={dataUpdatedAt}
-            isRefreshing={isRefreshing}
-            onRefresh={refetch}
-          />
+          <>
+            <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
+            <DataStatus
+              variant="polled"
+              updatedAt={dataUpdatedAt}
+              isRefreshing={isRefreshing}
+              onRefresh={refetch}
+            />
+          </>
         }
       />
       <EcosystemBanner stats={stats} />

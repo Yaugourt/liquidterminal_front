@@ -9,6 +9,8 @@ import {
   ModuleAsset,
   HypeMark,
   DataStatus,
+  SourceBadge,
+  sourceStatus,
 } from "@/components/common";
 import {
   usePastAuctionsPerp,
@@ -36,7 +38,7 @@ const TOP_DEPLOYERS = 5;
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const Hip3PastAuctionsCard = memo(function Hip3PastAuctionsCard() {
-  const { auctions, isLoading } = usePastAuctionsPerp();
+  const { auctions, isLoading, error } = usePastAuctionsPerp();
 
   const rows = useMemo<PastAuctionPerp[]>(() => {
     return [...auctions]
@@ -51,6 +53,7 @@ export const Hip3PastAuctionsCard = memo(function Hip3PastAuctionsCard() {
       tag={<HypeMark size="xs" />}
       viewAllLabel="View all"
       href="/market/perp/auction"
+      actions={<SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} />}
     >
       <ModuleTable
         columns={[

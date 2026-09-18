@@ -15,7 +15,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { movingAverage, useFeeRevenueHistory, type FeeRevenueDay } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
@@ -202,6 +202,7 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
           <AreaChartIcon size={13} className="text-brand" />
         </span>
         <h3 className="text-[13px] font-semibold text-text-primary">Fees &amp; Revenue</h3>
+        <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
         <div className="ml-auto flex items-center gap-1.5">
           <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
             <ViewButton

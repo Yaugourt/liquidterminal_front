@@ -1,6 +1,6 @@
 "use client";
 
-import { PageHeader, DataStatus } from "@/components/common";
+import { PageHeader, DataStatus, SourceBadge } from "@/components/common";
 import type { UseYieldsDirectoryResult } from "@/services/market/yields";
 
 interface YieldsListHeaderProps {
@@ -8,7 +8,7 @@ interface YieldsListHeaderProps {
 }
 
 export function YieldsListHeader({ directory }: YieldsListHeaderProps) {
-  const { dataUpdatedAt, isRefreshing, refetch } = directory;
+  const { dataUpdatedAt, isRefreshing, isLoading, error, refetch } = directory;
 
   // Same contract as VaultsListHeader: no stats here (they live in the KPI
   // ribbon), only the freshness cue + manual refresh in the actions slot.
@@ -16,9 +16,12 @@ export function YieldsListHeader({ directory }: YieldsListHeaderProps) {
     <PageHeader
       title="Yields"
       titleQualifier="on HyperEVM"
-      description="Lending markets, LP pools, vaults and staking across the HyperEVM ecosystem, ranked by APY and depth. Data by Hyperfolio."
+      description="Lending markets, LP pools, vaults and staking across the HyperEVM ecosystem, ranked by APY and depth."
       actions={
-        <DataStatus variant="polled" updatedAt={dataUpdatedAt} isRefreshing={isRefreshing} onRefresh={refetch} />
+        <>
+          <SourceBadge source="hyperfolio" status={error ? "error" : isLoading && !dataUpdatedAt ? "loading" : "ok"} />
+          <DataStatus variant="polled" updatedAt={dataUpdatedAt} isRefreshing={isRefreshing} onRefresh={refetch} />
+        </>
       }
     />
   );

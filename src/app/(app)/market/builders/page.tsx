@@ -17,7 +17,7 @@ import {
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
-import { PageHeader, TimeframeTabs, PageFaq, DataStatus } from "@/components/common";
+import { PageHeader, TimeframeTabs, PageFaq, DataStatus, SourceBadge, combinedSourceStatus } from "@/components/common";
 import { BUILDERS_FAQ } from "@/lib/page-faqs";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
@@ -57,6 +57,7 @@ export default function MarketBuildersPage() {
         description="Referral builders on Hyperliquid — global activity, top builders by volume, and the full directory."
         actions={
           <>
+            <SourceBadge source="hypedexer" status={combinedSourceStatus(allTf, top, list)} />
             <DataStatus
               variant="polled"
               updatedAt={allTf.dataUpdatedAt}

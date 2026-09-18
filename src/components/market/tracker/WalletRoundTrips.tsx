@@ -1,6 +1,6 @@
 "use client";
 
-import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
+import { TypedDataTable, TokenAvatar, SourceBadge, sourceStatus, type Column } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
@@ -109,6 +109,8 @@ export function WalletRoundTrips({ address }: WalletRoundTripsProps) {
 
   return (
     <TypedDataTable<WalletRoundTrip>
+      title="Round-trip trades"
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
       data={trades}
       columns={columns}
       getRowKey={(t, i) => `${t.trade_id}-${i}`}

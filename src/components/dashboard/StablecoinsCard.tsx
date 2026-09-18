@@ -19,6 +19,8 @@ import {
   TokenAvatar,
   chartPalette,
   DataStatus,
+  SourceBadge,
+  sourceStatus,
   ShareTile,
   rechartsGridDefaults,
 } from "@/components/common";
@@ -89,6 +91,7 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
     supplyByCoinChart,
     isLoading,
     isRefreshing,
+    error,
     refetch,
     dataUpdatedAt,
   } = useSpotStablecoins();
@@ -146,12 +149,12 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           spot supply
         </span>
+        <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} className="ml-auto" />
         <DataStatus
           variant="polled"
           updatedAt={dataUpdatedAt}
           isRefreshing={isRefreshing}
           onRefresh={refetch}
-          className="ml-auto"
         />
         <div className="flex items-center gap-1 text-[11px] font-semibold">
           {SUPPLY_WINDOWS.map((w, i) => (

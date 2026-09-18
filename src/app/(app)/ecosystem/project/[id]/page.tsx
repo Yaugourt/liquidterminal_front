@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LoadingState } from "@/components/ui/loading-state";
-import { chartPalette, DataStatus } from "@/components/common";
+import { chartPalette, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import {
   useProject,
@@ -37,9 +37,9 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const router = useRouter();
 
   const { project, isLoading, isRefreshing, refetch, dataUpdatedAt } = useProject(projectId);
-  const { metrics, fees, revenue, tokenSymbol } = useProjectMetrics(projectId);
+  const { metrics, fees, revenue, tokenSymbol, isLoading: metricsLoading, error: metricsError } = useProjectMetrics(projectId);
   const { context } = useProjectContext(projectId);
-  const { history } = useTvlHistory(project?.defillamaSlug ?? null);
+  const { history, isLoading: tvlLoading, error: tvlError } = useTvlHistory(project?.defillamaSlug ?? null);
 
   const position = context?.position ?? null;
   const peers = context?.peers ?? [];
@@ -144,10 +144,13 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
               color={chartPalette.accent}
               formatValue={(v) => compactUsd(v)}
               defaultTimeframe="1Y"
+              actions={<SourceBadge source="defillama" status={sourceStatus(tvlError, tvlLoading)} />}
             />
           )}
 
-          {isLinked && <FeesRevenueTable fees={fees} revenue={revenue} />}
+          {isLinked && (
+            <FeesRevenueTable fees={fees} revenue={revenue} sourceStatus={sourceStatus(metricsError, metricsLoading)} />
+          )}
 
           {/* HyperEVM yields — self-gates when Hyperfolio does not index the protocol. */}
           <ProjectYieldsModule project={project} />

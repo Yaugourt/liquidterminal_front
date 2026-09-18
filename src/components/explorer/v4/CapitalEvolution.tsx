@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useHLBridge } from "@/services/dashboard/hooks/useHLBridge";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { chartPalette } from "@/components/common";
+import { chartPalette, SourceBadge, sourceStatus, type SourceBadgeStatus } from "@/components/common";
 
 /**
  * CapitalEvolution — two-panel "Capital Evolution · 30d" section.
@@ -72,7 +72,7 @@ function CapitalDonut({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <PieIcon size={13} className="text-brand" />
         </span>
@@ -152,8 +152,11 @@ function CapitalDonut({
 
 function BridgeTvlChart({
   points,
+  status,
 }: {
   points: { date: number; totalLiquidityUSD: number }[];
+  /** DefiLlama bridge route health. */
+  status: SourceBadgeStatus;
 }) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
@@ -196,7 +199,7 @@ function BridgeTvlChart({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <TrendingUp size={13} className="text-brand" />
         </span>
@@ -204,6 +207,7 @@ function BridgeTvlChart({
           Bridge TVL · 30d
         </h3>
         <span className="ml-auto flex items-center gap-3 text-[10.5px]">
+          <SourceBadge source="defillama" status={status} />
           <span className="text-text-tertiary mono">
             {compactUsd(minV)} – {compactUsd(maxV)}
           </span>
@@ -346,7 +350,7 @@ function BridgeTvlChart({
 
 export const CapitalEvolution = memo(function CapitalEvolution() {
   const { vaults, totalTvl } = useVaults({ limit: 1000, sortBy: "tvl" });
-  const { bridgeData } = useHLBridge();
+  const { bridgeData, isLoading: bridgeLoading, error: bridgeError } = useHLBridge();
 
   const concentration = useMemo(() => {
     if (!vaults?.length || !totalTvl) {
@@ -391,7 +395,7 @@ export const CapitalEvolution = memo(function CapitalEvolution() {
         restUsd={concentration.restUsd}
         totalTvl={totalTvl ?? 0}
       />
-      <BridgeTvlChart points={bridgePoints} />
+      <BridgeTvlChart points={bridgePoints} status={sourceStatus(bridgeError, bridgeLoading)} />
     </div>
   );
 });

@@ -1,12 +1,13 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 
 import { TwapTable } from "@/components/dashboard/twap/TwapTable";
 import { TwapTableData } from "@/components/dashboard/twap/types";
 import { useTwapOrders } from "@/services/market/order";
 import { EnrichedTwapOrder } from "@/services/market/order/types";
 import { Card } from "@/components/ui/card";
+import { sourceStatus, type SourceBadgeStatus } from "@/components/common";
 
 // Transformer les données enrichies en format tableau
 const transformTwapData = (enrichedOrders: EnrichedTwapOrder[]): TwapTableData[] => {
@@ -29,9 +30,12 @@ const transformTwapData = (enrichedOrders: EnrichedTwapOrder[]): TwapTableData[]
 
 interface TokenTwapSectionProps {
   tokenName: string;
+  /** Reports the Hypurrscan `/twap/*` route health so the page can show one
+   * `SourceBadge` next to the TWAP / Holders tabs. */
+  onSourceStatus?: (status: SourceBadgeStatus) => void;
 }
 
-export const TokenTwapSection = memo(({ tokenName }: TokenTwapSectionProps) => {
+export const TokenTwapSection = memo(({ tokenName, onSourceStatus }: TokenTwapSectionProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -40,6 +44,10 @@ export const TokenTwapSection = memo(({ tokenName }: TokenTwapSectionProps) => {
     limit: 1000,
     status: "active" // Seulement les ordres actifs
   });
+
+  useEffect(() => {
+    onSourceStatus?.(sourceStatus(error, isLoading));
+  }, [error, isLoading, onSourceStatus]);
 
   // Transformer les données enrichies en format tableau
   const twapTableData = useMemo(() => transformTwapData(enrichedOrders), [enrichedOrders]);
