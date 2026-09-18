@@ -1,4 +1,5 @@
-export { LiquidationsStatsCard } from './LiquidationsStatsCard';
+export { LiquidationsKpiStrip } from './LiquidationsKpiStrip';
 export { LiquidationsSection } from './LiquidationsSection';
 export { LiquidationsChartSection } from './LiquidationsChartSection';
-export { LiquidationsProvider,  } from './LiquidationsContext';
+export { LiquidationsProvider, useLiquidationsContext } from './LiquidationsContext';
+export { LiquidationsPageHeader } from './LiquidationsPageHeader';

@@ -469,6 +469,25 @@ The single data-freshness affordance for any card. Lives in the card-head action
 
 Wire the `polled` variant straight to `useDataFetching` (`dataUpdatedAt` / `isRefreshing` / `refetch`). `updatedAt` is optional: omit it and the component shows just the refresh button (`refetch` is exposed by ~all domain hooks; `dataUpdatedAt` by fewer — surface it in the hook when you want the timestamp). Rule of thumb: **one indicator per live surface** — per-card on a mixed page (dashboard), a single page-level chip when the whole page shares one live source (`/market/perpdex`, token pages). Don't stack redundant dots. Lives in `common/`.
 
+### 6.11 `<SourceBadge>` — third-party data credit + route health
+
+Tiny credit for a card whose data comes from an external provider. 10px `text-text-tertiary`, 12px logo from `public/`, external link on hover, and a **health dot** for the upstream route. Sits **left of `<DataStatus>`** in the card-head `ml-auto` corner, a `<PageHeader>` `actions` slot, an `OverviewModule` `actions` slot, a `TypedDataTable` `headerAction`, or a `<KpiRibbon header={{ actions }}>` strip.
+
+| `source` | Upstream |
+|---|---|
+| `hyperfolio` | `/hyperfolio/*` proxy (HyperEVM wallets, yields) |
+| `hypurrscan` | `api.hypurrscan.io` (deploys, TWAP, holders, stablecoins, past auctions) |
+| `defillama` | `api.llama.fi` + `/defillama/*` proxies (bridge, fundamentals, project metrics) |
+| `hypedexer` | `/indexer/*` proxy (vaults, builders, HIP-3/4, wallet performance, trades, EVM) |
+
+```tsx
+<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+// several routes of one provider behind one card:
+<SourceBadge source="hypedexer" status={combinedSourceStatus(feedA, feedB)} />
+```
+
+`ok` → green, `error` → red (pulsing), `loading` → muted. `sourceStatus(error, isLoading)` / `combinedSourceStatus(...feeds)` derive it from the hooks that hit the upstream — never from "is there data" (an empty wallet is still a healthy route). One badge per card per provider; a card that self-hides on error passes `status="ok"`. Replaces ad-hoc "via X" / "Data by X" text. Hyperliquid's own API/RPC is not credited (it is the chain, not a third party). Lives in `common/`.
+
 ## 7. Composition patterns
 
 Generic composition patterns, **applicable everywhere** in the app (dashboard, market, explorer, …). The DS encodes composition; domains consume it.
@@ -496,7 +515,7 @@ Horizontal strip of stat cells. **Consume the `<KpiRibbon>` primitive** (`@/comp
   columns="grid-cols-2 sm:grid-cols-4"        // optional; defaults by cell count
   cells={[{ label, value, sub?, tone?, sparkline? }]}
 />
-// Grouped ribbons (e.g. NetworkPulse): stack <KpiRibbon header={{label, helper}}> in space-y-*.
+// Grouped ribbons (e.g. NetworkPulse): stack <KpiRibbon header={{label, helper, actions?}}> in space-y-* — `actions` is the right-pinned slot for a <SourceBadge>.
 ```
 
 The primitive locks the look (the recipe below); callers pass data only.
@@ -642,7 +661,7 @@ Documenting these limits to avoid running into them again:
 - `PageHeader`, `PageSection` — page header.
 - `TimeframeTabs`, `PillTabs` — tabs.
 - `LoadingState`, `ErrorState`, `EmptyState`, `ChartLoading`, `ChartEmpty`, `ChartError`.
-- `StatsCard`, `StatsPanel`.
+- `StatsCard`.
 - `Num` — tabular numeric display primitive.
 - `TokenIcon` — **legacy** (cyan-on-navy circle). Kept for legacy pages. **Do not use inside a leaderboard card** — always go through `<ModuleAsset>`.
 

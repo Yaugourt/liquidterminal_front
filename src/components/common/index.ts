@@ -24,14 +24,15 @@ export type { StatsCardProps } from './StatsCard';
 
 // Loading skeletons (§7.f)
 export { Skeleton, SkeletonCard, SkeletonGrid } from './Skeleton';
-export { StatsPanel } from './StatsPanel';
-export type { StatsPanelProps } from './StatsPanel';
 export { WelcomePrompt } from './WelcomePrompt';
 export { UserAccountCompact } from './UserAccountCompact';
 export { ThemeToggle } from './ThemeToggle';
 
 // Data freshness cue (live dot / "updated Xs ago" + refresh)
 export { DataStatus } from './DataStatus';
+// Third-party data credit + upstream health dot (sits left of DataStatus)
+export { SourceBadge, sourceStatus, combinedSourceStatus } from './SourceBadge';
+export type { SourceBadgeStatus, SourceId } from './SourceBadge';
 
 // Tables
 export { TypedDataTable } from './DataTable';

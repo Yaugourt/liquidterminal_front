@@ -24,7 +24,7 @@ export interface Liquidation {
   fee_total_liquidated: number; // Frais de liquidation
   liquidators: string[];     // Liste des adresses liquidateurs
   liquidator_count: number;  // Nombre de liquidateurs
-  liq_dir: LiquidationDirection; // Direction de la liquidation
+  liq_dir: LiquidationDirection | null; // Direction ; null sur la ligne "liquidators" (voir merge.ts)
   tid: number;               // Trade ID (unique)
 }
 

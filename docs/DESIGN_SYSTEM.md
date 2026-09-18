@@ -40,7 +40,7 @@ JetBrains Mono. Radius des cards : `rounded-lg` (8px).
 | Surface / carte | `Card` (+ `CardHeader`/`CardContent`) | `@/components/ui/card` |
 | Chiffre autonome | `Num` | `@/components/common` |
 | En-tête / section de page | `PageHeader` / `PageSection` | `@/components/common` |
-| Carte de stat | `StatsCard` / `StatsPanel` | `@/components/common` |
+| Carte de stat | `StatsCard` | `@/components/common` |
 | Sélecteur de période | `TimeframeTabs` | `@/components/common` |
 | États chargement/erreur/vide | `LoadingState` / `ErrorState` / `EmptyState` | `@/components/ui/*` |
 
