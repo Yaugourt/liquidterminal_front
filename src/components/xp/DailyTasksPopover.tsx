@@ -152,7 +152,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
                 href={taskRoute}
                 className={cn(
                   "flex items-center gap-2.5 p-2 rounded-lg transition-colors",
-                  "bg-white/5 hover:bg-white/10 cursor-pointer group"
+                  "bg-surface-2 hover:bg-surface-3 cursor-pointer group"
                 )}
               >
                 {taskContent}
@@ -168,7 +168,7 @@ export function DailyTasksPopover({ className }: DailyTasksPopoverProps) {
               "flex items-center gap-2 p-2 rounded-lg",
               allDailyTasksCompleted
                 ? "bg-gold/20 border border-gold/30"
-                : "bg-white/5 border border-border-subtle"
+                : "bg-surface-2 border border-border-subtle"
             )}>
               <Gift className={cn(
                 "h-4 w-4",

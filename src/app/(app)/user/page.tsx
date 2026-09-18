@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { ShieldX } from 'lucide-react';
 import { UserManagement } from '@/components/user/UserManagement';
 import { WikiModerationCard } from '@/components/wiki/moderation/WikiModerationCard';
-import { ProtectedAction } from '@/components/common';
+import { ProtectedAction, PageHeader } from '@/components/common';
 import { LoadingState } from '@/components/ui/loading-state';
 import { useAuthContext } from '@/contexts/auth.context';
 import { usePageTitle } from '@/store/use-page-title';
@@ -54,7 +54,12 @@ export default function UserPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <PageHeader
+        title="User management"
+        titleQualifier="admin"
+        description="Accounts, roles and verification — plus wiki moderation for moderators."
+      />
       <UserManagement />
       <ProtectedAction requiredRole="MODERATOR" user={user}>
         <WikiModerationCard />

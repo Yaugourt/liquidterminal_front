@@ -85,15 +85,15 @@ export function XpNotificationProvider({ children }: { children?: ReactNode }) {
     if (stats && previousLevel.current !== null && stats.level > previousLevel.current) {
       toast.custom(
         () => (
-          <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/20 to-gold/20 border border-gold/50 rounded-xl p-4 shadow-xl shadow-gold/10 animate-pulse">
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-gold to-purple-500 flex items-center justify-center">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-brand/20 to-gold/20 border border-gold/50 rounded-xl p-4 shadow-xl shadow-gold/10 animate-pulse">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-gold to-brand flex items-center justify-center">
               <Star className="h-6 w-6 text-brand-text-on fill-brand-text-on" />
             </div>
             <div>
               <p className="font-bold text-gold text-lg">
                 Level Up! 🎉
               </p>
-              <p className="text-sm text-white">
+              <p className="text-sm text-text-primary">
                 You reached level {stats.level}
               </p>
             </div>

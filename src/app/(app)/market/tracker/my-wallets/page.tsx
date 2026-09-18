@@ -12,6 +12,7 @@ import { OrdersSection, AddressTwapSection } from "@/components/explorer/address
 import { WalletRecentFillsSection } from "@/components/market/tracker";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   Dialog,
   DialogContent,
@@ -107,7 +108,7 @@ export default function MyWallets() {
             </div>
             <Button
               onClick={() => router.push('/profile')}
-              className="bg-brand-telegram hover:bg-brand-telegram/90 text-white text-sm"
+              className="bg-brand-telegram hover:bg-brand-telegram/90 text-text-primary text-sm"
             >
               <TelegramIcon className="h-4 w-4 mr-2" />
               Connect
@@ -148,10 +149,7 @@ export default function MyWallets() {
           activeWallet?.address ? (
             <OrdersSection address={activeWallet.address} />
           ) : (
-            <div className="bg-surface border-2 border-brand/30 rounded-lg p-8 text-center">
-              <h3 className="text-text-primary text-lg font-medium mb-2">Orders</h3>
-              <p className="text-text-tertiary text-sm">No wallet selected</p>
-            </div>
+            <EmptyState title="Orders" description="No wallet selected" />
           )
         )}
 
@@ -159,10 +157,7 @@ export default function MyWallets() {
           activeWallet?.address ? (
             <AddressTwapSection address={activeWallet.address} />
           ) : (
-            <div className="bg-surface border-2 border-brand/30 rounded-lg p-8 text-center">
-              <h3 className="text-text-primary text-lg font-medium mb-2">TWAP</h3>
-              <p className="text-text-tertiary text-sm">No wallet selected</p>
-            </div>
+            <EmptyState title="TWAP" description="No wallet selected" />
           )
         )}
         {activeAssetsTab === "recent-fills" && <WalletRecentFillsSection />}

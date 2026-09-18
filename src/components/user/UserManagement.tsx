@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { ProtectedAction, StatsCard } from '@/components/common';
+import { ProtectedAction, KpiRibbon, DataStatus } from '@/components/common';
+import { compactCount } from '@/lib/formatters/numberFormatting';
 import { Pagination, DeleteConfirmDialog } from '@/components/common';
 import { useAuthContext } from '@/contexts/auth.context';
 import { useAdminUsers, useAdminUpdateUser, useAdminDeleteUser } from '@/services/auth/user';
@@ -9,7 +10,7 @@ import { AdminUpdateUserInput, AdminUsersQueryParams } from '@/services/auth/use
 import { User } from '@/services/auth/types';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Users, Shield, RefreshCw, ShieldCheck, UserCheck } from 'lucide-react';
+import { Users, Shield } from 'lucide-react';
 import { LoadingState } from '@/components/ui/loading-state';
 import { UserFilters } from './UserFilters';
 import { UserTable } from './UserTable';
@@ -190,60 +191,35 @@ export function UserManagement() {
     >
       {/* Main Card Container */}
       <Card>
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border-subtle">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center">
-              <Users className="w-5 h-5 text-gold" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-text-primary">User Management</h1>
-              <p className="text-text-secondary text-xs">Administration of user accounts</p>
-            </div>
-          </div>
-          <Button
-            onClick={handleRefresh}
-            disabled={isLoading}
-            variant="ghost"
-            size="sm"
-            className="interactive-secondary"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+        {/* V4 card-head: icon + title + tag + freshness/refresh in the ml-auto corner */}
+        <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+            <Users size={13} className="text-brand" />
+          </span>
+          <h3 className="text-[13px] font-semibold text-text-primary">Accounts</h3>
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
+            admin
+          </span>
+          <DataStatus
+            variant="polled"
+            className="ml-auto"
+            isRefreshing={isLoading}
+            onRefresh={handleRefresh}
+          />
         </div>
 
-        {/* Stats Cards */}
-        <div className="p-4 border-b border-border-subtle">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <StatsCard
-              icon={<Users size={16} className="text-brand" />}
-              title="Total Users"
-              value={pagination?.total || stats.total}
-              valueClassName="text-xl text-text-primary font-bold tracking-tight"
-            />
-            <StatsCard
-              icon={<Shield size={16} className="text-danger" />}
-              iconClassName="bg-danger/10"
-              title="Admins"
-              value={stats.admins}
-              valueClassName="text-xl text-text-primary font-bold tracking-tight"
-            />
-            <StatsCard
-              icon={<ShieldCheck size={16} className="text-gold" />}
-              iconClassName="bg-gold/10"
-              title="Moderators"
-              value={stats.moderators}
-              valueClassName="text-xl text-text-primary font-bold tracking-tight"
-            />
-            <StatsCard
-              icon={<UserCheck size={16} className="text-success" />}
-              iconClassName="bg-success/10"
-              title="Verified"
-              value={stats.verified}
-              valueClassName="text-xl text-text-primary font-bold tracking-tight"
-            />
-          </div>
+        {/* Stats ribbon (§7.b) — embedded, so no outer border */}
+        <div className="border-b border-border-subtle">
+          <KpiRibbon
+            bordered={false}
+            columns="grid-cols-2 lg:grid-cols-4"
+            cells={[
+              { label: "Total users", value: compactCount(pagination?.total || stats.total) },
+              { label: "Admins", value: compactCount(stats.admins), tone: "danger" },
+              { label: "Moderators", value: compactCount(stats.moderators), tone: "gold" },
+              { label: "Verified", value: compactCount(stats.verified), tone: "success" },
+            ]}
+          />
         </div>
 
         {/* Content */}

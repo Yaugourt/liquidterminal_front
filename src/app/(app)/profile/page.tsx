@@ -197,7 +197,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                         {getRank(xpStats.level)}
                                     </span>
                                     {xpStats.loginStreak > 0 && (
-                                        <span className="px-2 py-0.5 bg-orange-500/10 text-orange-400 text-xs rounded-md border border-orange-500/20 font-medium flex items-center gap-1">
+                                        <span className="px-2 py-0.5 bg-gold/10 text-gold text-xs rounded-md border border-gold/20 font-medium flex items-center gap-1">
                                             <Flame className="h-3 w-3" />
                                             {xpStats.loginStreak}d
                                         </span>
@@ -318,7 +318,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                         )}
 
                                         <div className="pt-4 mt-auto">
-                                            <Button variant="outline" className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg" asChild>
+                                            <Button variant="outline" className="w-full border-border-subtle hover:bg-surface-2 text-text-secondary rounded-lg" asChild>
                                                 <a href="/market/tracker">Manage Tracker & Lists</a>
                                             </Button>
                                         </div>
@@ -333,7 +333,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                 onClick={() => setSelectedListId(null)}
                                                 className={`flex justify-between items-center p-3 rounded-lg border cursor-pointer transition-all ${selectedListId === null
                                                     ? 'bg-brand/10 border-brand/30 text-brand'
-                                                    : 'bg-base border-border-subtle hover:bg-white/5 hover:border-border-default text-text-secondary'
+                                                    : 'bg-base border-border-subtle hover:bg-surface-2 hover:border-border-default text-text-secondary'
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
@@ -351,7 +351,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                         onClick={() => setSelectedListId(list.id)}
                                                         className={`flex justify-between items-center p-3 rounded-lg border cursor-pointer transition-all ${selectedListId === list.id
                                                             ? 'bg-brand/10 border-brand/30 text-brand'
-                                                            : 'bg-base border-border-subtle hover:bg-white/5 hover:border-border-default text-text-secondary'
+                                                            : 'bg-base border-border-subtle hover:bg-surface-2 hover:border-border-default text-text-secondary'
                                                             }`}
                                                     >
                                                         <div className="flex items-center gap-3 min-w-0">
@@ -416,7 +416,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                                     </div>
                                                 </div>
                                             ))}
-                                            <Button variant="outline" className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg" asChild>
+                                            <Button variant="outline" className="w-full border-border-subtle hover:bg-surface-2 text-text-secondary rounded-lg" asChild>
                                                 <a href="/wiki/readlist">Go to Wiki</a>
                                             </Button>
                                         </div>

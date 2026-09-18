@@ -102,7 +102,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           </div>
 
           {/* Countdown timer */}
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-default">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-2 border border-border-default">
             <Clock className="h-3.5 w-3.5 text-gold" />
             <span className={cn(
               "text-xs font-medium",
@@ -132,7 +132,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         <div className="flex gap-2">
           <Button
             asChild
-            className="flex-1 bg-brand-telegram hover:bg-brand-telegram/90 text-white font-semibold"
+            className="flex-1 bg-brand-telegram hover:bg-brand-telegram/90 text-text-primary font-semibold"
           >
             <a
               href={safeHref(deepLink) || '#'}
@@ -147,7 +147,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
           <Button
             variant="outline"
             onClick={cancelLinking}
-            className="border-border-default text-text-secondary hover:text-text-primary hover:bg-white/5"
+            className="border-border-default text-text-secondary hover:text-text-primary hover:bg-surface-2"
           >
             <XCircle className="h-4 w-4" />
           </Button>
@@ -216,7 +216,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
         <Button
           onClick={startLinking}
           disabled={isGeneratingLink}
-          className="bg-brand-telegram hover:bg-brand-telegram/90 text-white font-semibold"
+          className="bg-brand-telegram hover:bg-brand-telegram/90 text-text-primary font-semibold"
         >
           {isGeneratingLink ? (
             <InlineSpinner />
