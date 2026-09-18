@@ -4,6 +4,7 @@ import { createContext, useContext, useState, ReactNode, useEffect, useMemo, use
 import { Liquidation } from "@/services/explorer/liquidation";
 import { fetchRecentLiquidations, fetchLiquidationsData, fetchLiquidationsHistoricalChart } from "@/services/explorer/liquidation/api";
 import { useLiquidationWSStore } from "@/services/explorer/liquidation/websocket.store";
+import { mergeLiquidationRows } from "@/services/explorer/liquidation/merge";
 import { LiquidationStats, ChartDataBucket, HistoricalChartBucket, HistoricalChartPeriod, LiquidationsPeriodData } from "@/services/explorer/liquidation/types";
 
 type PeriodKey = "2h" | "4h" | "8h" | "12h" | "24h";
@@ -58,6 +59,9 @@ interface LiquidationsContextValue {
   // period selector; see LiquidationsStatsCard).
   stats: LiquidationStats;
   statsLoading: boolean;
+  /** False until the stats endpoint has answered once — lets the ribbon
+   *  render "—" instead of a fake $0 snapshot when the source is down. */
+  statsAvailable: boolean;
 
   // Chart data (from /liquidations/historical/chart, fetched per period)
   chartBuckets: ChartDataBucket[];
@@ -126,8 +130,9 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
       if (prev.some(l => l.tid === newLiq.tid)) {
         return prev;
       }
-      // Ajouter en tête, limiter la taille
-      return [newLiq, ...prev].slice(0, MAX_LIQUIDATIONS);
+      // Ajouter en tête, fusionner la paire priced/liquidators (même hash),
+      // limiter la taille
+      return mergeLiquidationRows([newLiq, ...prev]).slice(0, MAX_LIQUIDATIONS);
     });
     setLastUpdated(new Date());
   }, []);
@@ -150,7 +155,7 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
 
         // Liquidations pour le tableau
         if (liquidationsResponse.success) {
-          setLiquidations(liquidationsResponse.data);
+          setLiquidations(mergeLiquidationRows(liquidationsResponse.data));
         }
 
         // Stats + Chart pour toutes les périodes
@@ -241,7 +246,7 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
         fetchLiquidationsData(),
       ]);
       if (liquidationsResponse.success) {
-        setLiquidations(liquidationsResponse.data);
+        setLiquidations(mergeLiquidationRows(liquidationsResponse.data));
       }
       if (dataResponse.success) {
         setAllData(dataResponse.periods);
@@ -274,6 +279,7 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     setMinAmount,
     stats,
     statsLoading: dataLoading,
+    statsAvailable: allData != null,
     chartBuckets,
     chartLoading,
     chartPeriod,

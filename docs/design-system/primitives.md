@@ -123,11 +123,11 @@ Sélecteur de période, bâti sur `PillTabs`. Import : `@/components/common`.
 
 ---
 
-## StatsCard / StatsPanel
+## StatsCard
 
 `StatsCard` : carte de stat (`title`, `value`, `icon`, `change`, `changeDirection`,
-`subValue`, `density`, `withCard`). `StatsPanel` : panneau groupant plusieurs
-`StatsCard` sous un header (`title`, `icon`, `headerAction`, états `isLoading`/`error`).
+`subValue`, `density`, `withCard`). Pour une bande horizontale de KPI, utiliser
+`KpiRibbon` (§7.b) — l'ancien `StatsPanel` a été supprimé.
 
 ## États
 

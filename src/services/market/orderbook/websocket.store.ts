@@ -16,7 +16,7 @@ import type {
 const buildWSUrl = (): string => {
   const apiUrl = env.NEXT_PUBLIC_API;
   const wsProtocol = apiUrl.startsWith('https') ? 'wss' : 'ws';
-  return `${wsProtocol}://${apiUrl.replace(/^https?:\/\//, '')}/ws`;
+  return `${wsProtocol}://${apiUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '')}/ws`;
 };
 
 const MAX_RECONNECT_ATTEMPTS = 5;

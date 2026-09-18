@@ -3,13 +3,15 @@
 import { Liquidation } from "@/services/explorer/liquidation";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
+import { TypedDataTable, TokenAvatar, DataStatus, type Column } from "@/components/common";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
-import { useLiquidationsContext, MIN_AMOUNT_PRESETS } from "./LiquidationsContext";
-import { Filter, RefreshCw } from "lucide-react";
+import { useLiquidationsContext, MIN_AMOUNT_PRESETS, type MinAmountPreset } from "./LiquidationsContext";
+
+const MIN_AMOUNT_TABS = MIN_AMOUNT_PRESETS.map((p) => ({ value: String(p.value), label: p.label }));
 
 export function LiquidationsSection() {
   const {
@@ -152,49 +154,29 @@ export function LiquidationsSection() {
     },
   ];
 
+  // V4 toolbar: min-notional filter as PillTabs, freshness cue + manual
+  // refresh through <DataStatus> (WS feed fills the table, REST seeds it).
   const toolbar = (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div className="flex items-center gap-3">
-        <h3 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
-          Recent Liquidations
-        </h3>
-        {lastUpdated && (
-          <span className="text-[10px] text-text-tertiary">
-            Updated {lastUpdated.toLocaleTimeString()}
-          </span>
-        )}
-        <button
-          onClick={refreshData}
-          className="p-1.5 rounded-md hover-subtle text-text-tertiary hover:text-text-secondary"
-          title="Refresh data"
-        >
-          <RefreshCw className="h-3.5 w-3.5" />
-        </button>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Filter className="h-3.5 w-3.5 text-text-tertiary" />
-        <div className="flex bg-base rounded-lg p-0.5 border border-border-subtle">
-          {MIN_AMOUNT_PRESETS.map((preset) => (
-            <button
-              key={preset.value}
-              onClick={() => setMinAmount(preset.value)}
-              className={`px-2.5 py-1 rounded-md text-label transition-all ${
-                minAmount === preset.value
-                  ? "bg-brand text-brand-text-on font-bold"
-                  : "tab-inactive"
-              }`}
-            >
-              {preset.label}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="flex flex-wrap items-center gap-3">
+      <PillTabs
+        tabs={MIN_AMOUNT_TABS}
+        activeTab={String(minAmount)}
+        onTabChange={(v) => setMinAmount(Number(v) as MinAmountPreset)}
+      />
+      <span className="text-text-tertiary text-xs shrink-0">
+        {allLiquidations.length} shown
+      </span>
+      <DataStatus
+        variant="polled"
+        className="ml-auto"
+        updatedAt={lastUpdated}
+        onRefresh={refreshData}
+      />
     </div>
   );
 
   return (
-    <div className="w-full h-full flex flex-col p-4">
+    <div className="min-w-0 bg-surface border border-border-subtle rounded-lg">
       <TypedDataTable<Liquidation>
         data={allLiquidations}
         columns={columns}

@@ -14,7 +14,7 @@ import {
 const buildWSUrl = (): string => {
   const apiUrl = env.NEXT_PUBLIC_API;
   const wsProtocol = apiUrl.startsWith('https') ? 'wss' : 'ws';
-  const baseUrl = apiUrl.replace(/^https?:\/\//, '');
+  const baseUrl = apiUrl.replace(/^https?:\/\//, '').replace(/\/+$/, '');
   return `${wsProtocol}://${baseUrl}/ws`;
 };
 
