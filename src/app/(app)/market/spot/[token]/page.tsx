@@ -17,7 +17,7 @@ import { HoldersTable } from "@/components/market/token/HoldersTable";
 import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
 import { useTokenDetails } from "@/services/market/token";
 import { TradingLayout } from "@/layouts/TradingLayout";
-import { ChartSkeleton } from "@/components/common";
+import { ChartSkeleton, SourceBadge, sourceStatus, type SourceBadgeStatus } from "@/components/common";
 
 // Lazy load TradingViewChart - it uses lightweight-charts which requires DOM
 const TradingViewChart = dynamic(
@@ -37,6 +37,9 @@ export default function TokenPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [activeTab, setActiveTab] = useState<BottomTab>('twap');
+    // Both bottom tabs are Hypurrscan-fed (`/twap/*`, `/holders`); one badge
+    // follows the active tab's route health.
+    const [twapSourceStatus, setTwapSourceStatus] = useState<SourceBadgeStatus>('loading');
     // Remember which tabs have been opened so we mount them once and toggle
     // visibility from then on (no refetch on every tab switch).
     const [visitedTabs, setVisitedTabs] = useState<Set<BottomTab>>(
@@ -157,20 +160,31 @@ export default function TokenPage() {
                     />
 
                     <div className="space-y-2.5">
-                        <PillTabs
-                            variant="text"
-                            tabs={[
-                                { value: "twap", label: "TWAP" },
-                                { value: "holders", label: "Holders" },
-                            ]}
-                            activeTab={activeTab}
-                            onTabChange={(v) => selectTab(v as BottomTab)}
-                        />
+                        <div className="flex items-center">
+                            <PillTabs
+                                variant="text"
+                                tabs={[
+                                    { value: "twap", label: "TWAP" },
+                                    { value: "holders", label: "Holders" },
+                                ]}
+                                activeTab={activeTab}
+                                onTabChange={(v) => selectTab(v as BottomTab)}
+                            />
+                            <SourceBadge
+                                source="hypurrscan"
+                                status={
+                                    activeTab === 'holders'
+                                        ? sourceStatus(holdersData.error, holdersData.isLoading)
+                                        : twapSourceStatus
+                                }
+                                className="ml-auto"
+                            />
+                        </div>
                         {/* Both tabs stay mounted once visited, then just toggled
                             with `hidden` so switching no longer refetches. */}
                         {visitedTabs.has('twap') && (
                             <div className={activeTab === 'twap' ? '' : 'hidden'}>
-                                <TokenTwapSection tokenName={token.name} />
+                                <TokenTwapSection tokenName={token.name} onSourceStatus={setTwapSourceStatus} />
                             </div>
                         )}
                         {visitedTabs.has('holders') && (

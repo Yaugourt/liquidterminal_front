@@ -7,25 +7,27 @@ import { useDeploys } from "@/services/explorer";
 import {
   ModuleTable,
   ModuleTableRow,
+  SourceBadge,
+  sourceStatus,
 } from "@/components/common";
 import { truncateAddress } from "@/lib/formatters/numberFormatting";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 /**
  * TokenDeploys — recent token / spot / perp deployments. Compact V4 table fed
- * by `/v2/explorer/recentDeploys` via the existing `useDeploys` hook.
+ * by Hypurrscan `/deploys` via the existing `useDeploys` hook.
  */
 
 const ROWS = 8;
 
 export const TokenDeploys = memo(function TokenDeploys() {
-  const { deploys, isLoading } = useDeploys();
+  const { deploys, isLoading, error } = useDeploys();
 
   const rows = useMemo(() => (deploys ?? []).slice(0, ROWS), [deploys]);
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Rocket size={13} className="text-brand" />
         </span>
@@ -33,6 +35,7 @@ export const TokenDeploys = memo(function TokenDeploys() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           Last {ROWS}
         </span>
+        <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} className="ml-auto" />
       </div>
 
       {isLoading && rows.length === 0 ? (

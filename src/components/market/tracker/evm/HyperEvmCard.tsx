@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { Layers } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { DataStatus } from "@/components/common";
+import { DataStatus, SourceBadge, type SourceBadgeStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useDefiPositions, useEvmComposition } from "@/services/market/tracker/hyperfolio";
 import { DefiPositionsTab } from "./DefiPositionsTab";
@@ -37,8 +37,17 @@ export function HyperEvmCard({ address }: HyperEvmCardProps) {
   const [activeTab, setActiveTab] = useState<EvmTabId>("positions");
   const [visited, setVisited] = useState<Set<EvmTabId>>(() => new Set(["positions"]));
 
-  const { composition, isRefreshing, dataUpdatedAt, refetch } = useEvmComposition(address);
+  const { composition, isLoading, isRefreshing, error, dataUpdatedAt, refetch } = useEvmComposition(address);
   const defi = useDefiPositions(address);
+
+  // Upstream health for the source badge: red as soon as either Hyperfolio
+  // route (composition or DeFi stream) failed, muted until one has answered.
+  const sourceStatus: SourceBadgeStatus =
+    error || defi.status === "error" || defi.status === "rate-limited"
+      ? "error"
+      : isLoading && defi.isLoading
+        ? "loading"
+        : "ok";
 
   const handleTabChange = useCallback((value: string) => {
     const id = value as EvmTabId;
@@ -79,6 +88,7 @@ export function HyperEvmCard({ address }: HyperEvmCardProps) {
           </span>
         )}
         <div className="ml-auto flex items-center gap-2">
+          <SourceBadge source="hyperfolio" status={sourceStatus} />
           <DataStatus
             variant="polled"
             updatedAt={defi.updatedAt ?? dataUpdatedAt}

@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { SourceBadge, combinedSourceStatus } from "@/components/common";
 import { useVaultIndexerDetails } from "@/services/explorer/vault/hooks/useVaultIndexerDetails";
 import { useVaultSummaries } from "@/services/explorer/vault/hooks/useVaultSummaries";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
@@ -27,7 +28,7 @@ export default function VaultDetailPage() {
     vaultAddress,
   });
 
-  const { summaries, isLoading: summariesLoading } = useVaultSummaries({
+  const { summaries, isLoading: summariesLoading, error: summariesError } = useVaultSummaries({
     includeClosed: true,
     limit: 5000,
   });
@@ -76,6 +77,15 @@ export default function VaultDetailPage() {
             </span>
           )}
         </span>
+        {/* Details + summaries + every chart below come off the Hypedexer proxy. */}
+        <SourceBadge
+          source="hypedexer"
+          status={combinedSourceStatus(
+            { error: detailsError, isLoading: detailsLoading },
+            { error: summariesError, isLoading: summariesLoading },
+          )}
+          className="ml-auto"
+        />
       </nav>
 
       <VaultDetailHeader

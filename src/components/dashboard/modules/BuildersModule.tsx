@@ -9,6 +9,8 @@ import {
   ModuleTableRow,
   ModuleAsset,
   DataStatus,
+  SourceBadge,
+  combinedSourceStatus,
 } from "@/components/common";
 import { useBuildersStatsAllTimeframes } from "@/services/indexer/builders/hooks/useBuildersStatsAllTimeframes";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
@@ -24,12 +26,14 @@ import { useNumberFormat } from "@/store/number-format.store";
  * 2-initiales, même espacement, même card-head.
  */
 export const BuildersModule = memo(function BuildersModule() {
-  const { stats } = useBuildersStatsAllTimeframes();
-  const { data, isLoading, isRefreshing, refetch, dataUpdatedAt } = useBuildersTop({
+  const allTf = useBuildersStatsAllTimeframes();
+  const stats = allTf.stats;
+  const top = useBuildersTop({
     timeframe: "24h",
     sort: "builder_fees",
     limit: 5,
   });
+  const { data, isLoading, isRefreshing, refetch, dataUpdatedAt } = top;
   const { format } = useNumberFormat();
 
   const current = stats?.["24h"]?.current ?? null;
@@ -54,6 +58,7 @@ export const BuildersModule = memo(function BuildersModule() {
       href="/market/builders"
       actions={
         <>
+          <SourceBadge source="hypedexer" status={combinedSourceStatus(allTf, top)} />
           <DataStatus
             variant="polled"
             updatedAt={dataUpdatedAt}

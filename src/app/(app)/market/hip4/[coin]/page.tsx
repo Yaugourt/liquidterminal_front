@@ -26,7 +26,7 @@ import {
   Hip4RecentFills,
 } from "@/components/market/hip4";
 import { OrderBook } from "@/components/market/token";
-import { ChartSkeleton } from "@/components/common";
+import { ChartSkeleton, combinedSourceStatus } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
@@ -101,7 +101,8 @@ export default function Hip4MarketDetailPage() {
     setChartMode("underlying");
   }, [coin]);
 
-  const { markets, isLoading } = useHip4MarketsEnriched();
+  const enriched = useHip4MarketsEnriched();
+  const { markets, isLoading } = enriched;
   const questions = useHip4QuestionsWithOutcomes({ limit: 200 });
   // Live markets HypeDexer's enriched table omits (Fed/NBA/CPI/recurring BTC)
   // resolve from Hyperliquid's outcomeMeta + allMids so deep links don't bounce.
@@ -301,6 +302,7 @@ export default function Hip4MarketDetailPage() {
             }
             typeLabel={layout.typeLabel}
             status={detailStatus}
+            sourceStatus={combinedSourceStatus(enriched, questions, fillsResult)}
           />
           <Hip4DetailKpiRibbon
             question={parentQuestion}

@@ -8,7 +8,7 @@ import { useBuildersGlobalStats } from "@/services/indexer/builders/hooks/useBui
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
 import { resolveBuilderLabel } from "@/components/market/builders";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
-import { chartPalette, DonutTopN } from "@/components/common";
+import { chartPalette, DonutTopN, SourceBadge, combinedSourceStatus } from "@/components/common";
 import type { DonutSlice } from "@/components/common";
 
 /**
@@ -41,12 +41,14 @@ interface Segment extends DonutSlice {
 }
 
 export const BuildersConcentrationCard = memo(function BuildersConcentrationCard() {
-  const { stats } = useBuildersGlobalStats("24h");
-  const { data: top, isLoading } = useBuildersTop({
+  const global = useBuildersGlobalStats("24h");
+  const stats = global.stats;
+  const topFeed = useBuildersTop({
     timeframe: "24h",
     sort: "builder_fees",
     limit: TOP_N,
   });
+  const { data: top, isLoading } = topFeed;
 
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
@@ -95,7 +97,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* card-head V4 — title + 24h pill + Volume / Users live stats */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <PieIcon size={13} className="text-brand" />
         </span>
@@ -106,6 +108,8 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
           24h
         </span>
         <div className="ml-auto flex items-center gap-2.5 text-[10px] mono">
+          <SourceBadge source="hypedexer" status={combinedSourceStatus(global, topFeed)} />
+          <span className="text-text-tertiary/40">·</span>
           <span className="text-text-tertiary">
             Vol{" "}
             <span className="text-text-primary font-semibold">

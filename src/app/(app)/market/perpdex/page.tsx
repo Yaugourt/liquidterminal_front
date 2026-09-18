@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import {
@@ -12,8 +12,9 @@ import {
   Hip3MarketsExplorer,
 } from "@/components/market/perpDex";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { PageHeader, PageFaq, DataStatus } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 import { usePerpDexMarketDataStore } from "@/services/market/perpDex/websocket.service";
+import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
 import { PERPDEX_FAQ } from "@/lib/page-faqs";
 
 export default function PerpDexsPage() {
@@ -23,6 +24,10 @@ export default function PerpDexsPage() {
   // shared store (the cards below drive the actual connection): a pure read,
   // no duplicate REST poll and no re-render on every market tick.
   const wsConnected = usePerpDexMarketDataStore((s) => s.isConnected);
+  const [tab, setTab] = useState<"builder-dexs" | "auction-pairs">("builder-dexs");
+  // Auction pairs come from Hypurrscan `/pastAuctionsPerp`; the same GET is
+  // 30s-cached so this shares PastAuctionsPerpTable's fetch for the badge.
+  const pastAuctions = usePastAuctionsPerp();
 
   useEffect(() => {
     setTitle("Perp DEX - Market");
@@ -56,7 +61,7 @@ export default function PerpDexsPage() {
       <Hip3MarketsExplorer />
 
       {/* Table card with integrated tab header */}
-      <Tabs defaultValue="builder-dexs" className="w-full">
+      <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="w-full">
         <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
           {/* Card header: tabs */}
           <div className="flex items-center px-3.5 py-3 border-b border-border-subtle">
@@ -74,6 +79,13 @@ export default function PerpDexsPage() {
                 Auction Pairs
               </TabsTrigger>
             </TabsList>
+            {tab === "auction-pairs" && (
+              <SourceBadge
+                source="hypurrscan"
+                status={sourceStatus(pastAuctions.error, pastAuctions.isLoading)}
+                className="ml-auto"
+              />
+            )}
           </div>
 
           <TabsContent value="builder-dexs" className="mt-0">

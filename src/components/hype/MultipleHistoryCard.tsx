@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { HYPE_MAX_SUPPLY, HYPE_SPOT_COIN } from "@/services/market/hype";
 import { useTokenCandles } from "@/services/market/token";
@@ -146,8 +146,8 @@ export const MultipleHistoryCard = memo(function MultipleHistoryCard() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
           diluted
         </span>
+        <SourceBadge source="defillama" status={sourceStatus(error, loadingFees)} className="ml-auto" />
         <PeriodSelector
-          className="ml-auto"
           selected={metric}
           onChange={setMetric}
           options={METRICS}

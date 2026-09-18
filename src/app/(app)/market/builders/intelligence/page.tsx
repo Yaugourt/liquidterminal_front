@@ -17,7 +17,7 @@ import {
   BuilderIntelligenceSecondaryStats,
   isBuilderWindowEmpty,
 } from "@/components/market/builders";
-import { PageHeader, TimeframeTabs, DataStatus } from "@/components/common";
+import { PageHeader, TimeframeTabs, DataStatus, SourceBadge, combinedSourceStatus } from "@/components/common";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
 const ETH = /^0x[a-fA-F0-9]{40}$/i;
@@ -59,6 +59,7 @@ export default function BuildersIntelligencePage() {
         description="Deep analytics on users trading via builder codes — revenue, behavior, and coin exposure."
         actions={
           <>
+            <SourceBadge source="hypedexer" status={combinedSourceStatus(list, stats, users)} />
             <DataStatus
               variant="polled"
               updatedAt={stats.dataUpdatedAt}

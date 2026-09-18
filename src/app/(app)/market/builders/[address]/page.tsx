@@ -20,7 +20,7 @@ import {
   isBuilderWindowEmpty,
   resolveBuilderLabel,
 } from "@/components/market/builders";
-import { KpiRibbon, Skeleton, TimeframeTabs, DataStatus } from "@/components/common";
+import { KpiRibbon, Skeleton, TimeframeTabs, DataStatus, SourceBadge, combinedSourceStatus } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -82,6 +82,7 @@ export default function BuilderDetailPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />Back
         </Button>
         <div className="flex items-center gap-2">
+          <SourceBadge source="hypedexer" status={combinedSourceStatus(stats, users)} />
           <DataStatus
             variant="polled"
             updatedAt={stats.dataUpdatedAt}

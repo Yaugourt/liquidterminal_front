@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { Percent } from "lucide-react";
-import { OverviewModule, ModuleTable, ModuleTableRow, ModuleAsset, DataStatus } from "@/components/common";
+import { OverviewModule, ModuleTable, ModuleTableRow, ModuleAsset, DataStatus, SourceBadge } from "@/components/common";
 import { useTopYields } from "@/services/market/yields";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 
@@ -18,7 +18,10 @@ export const TopYieldsModule = memo(function TopYieldsModule() {
       viewAllLabel="All yields"
       href="/market/yields"
       actions={
-        <DataStatus variant="polled" updatedAt={dataUpdatedAt} isRefreshing={isRefreshing} onRefresh={refetch} />
+        <>
+          <SourceBadge source="hyperfolio" status={error ? "error" : isLoading && !dataUpdatedAt ? "loading" : "ok"} />
+          <DataStatus variant="polled" updatedAt={dataUpdatedAt} isRefreshing={isRefreshing} onRefresh={refetch} />
+        </>
       }
     >
       {/* Same three-column budget as VaultsModule: pool identity, APY, TVL. */}

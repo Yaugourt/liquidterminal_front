@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { AuroraAreaChart } from "@/components/common";
 import { PillTabs, TabOption } from "@/components/ui/pill-tabs";
 import { SeriesPoint } from "@/services/ecosystem/project/types";
@@ -25,6 +25,8 @@ interface MetricChartCardProps {
   /** Default selected timeframe. */
   defaultTimeframe?: string;
   height?: number;
+  /** Right-pinned head slot before the timeframe tabs (e.g. a `SourceBadge`). */
+  actions?: ReactNode;
 }
 
 /**
@@ -40,6 +42,7 @@ export function MetricChartCard({
   formatValue,
   defaultTimeframe = "90D",
   height = 260,
+  actions,
 }: MetricChartCardProps) {
   const [timeframe, setTimeframe] = useState(defaultTimeframe);
 
@@ -59,7 +62,8 @@ export function MetricChartCard({
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
         <h3 className="text-[13px] font-medium text-text-primary">{title}</h3>
         {currentValue && <span className="mono text-[11px] text-text-tertiary">{currentValue}</span>}
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          {actions}
           <PillTabs tabs={TAB_OPTIONS} activeTab={timeframe} onTabChange={setTimeframe} variant="text" />
         </div>
       </div>

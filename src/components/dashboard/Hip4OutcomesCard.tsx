@@ -10,6 +10,7 @@ import type {
   Hip4QuestionWithOutcomesRow,
 } from "@/services/indexer/hip4";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { SourceBadge, sourceStatus } from "@/components/common";
 import { formatExpiryCountdown } from "@/lib/hip4/market-formatter";
 
 /**
@@ -94,7 +95,7 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* card-head V4 */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Vote size={13} className="text-brand" />
         </span>
@@ -104,7 +105,8 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           {activeCount} live
         </span>
-        <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded mono bg-surface-2 text-text-tertiary border border-border-subtle">
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded mono bg-surface-2 text-text-tertiary border border-border-subtle">
           {compactUsd(totalVolume)} vol
         </span>
         <Link

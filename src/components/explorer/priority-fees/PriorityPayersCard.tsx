@@ -9,6 +9,8 @@ import {
   ModuleTable,
   ModuleTableRow,
   StackedShareBar,
+  SourceBadge,
+  sourceStatus,
   type ModuleColumn,
 } from "@/components/common";
 import { compactCount, compactHype, compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
@@ -87,6 +89,7 @@ export const PriorityPayersCard = memo(function PriorityPayersCard({
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           top {TOP_N}
         </span>
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
       </div>
 
       {rows.length > 0 && (

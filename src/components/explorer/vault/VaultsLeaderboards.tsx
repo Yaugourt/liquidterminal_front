@@ -7,6 +7,8 @@ import {
   ModuleTableRow,
   ModuleAsset,
   Skeleton,
+  SourceBadge,
+  sourceStatus,
 } from "@/components/common";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { useVaultsLeaderboards } from "@/services/explorer/vault/hooks/useVaultsLeaderboards";
@@ -47,7 +49,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
     [rows]
   );
 
-  const { followersGained, outflows, isLoading: leaderboardsLoading } = useVaultsLeaderboards({
+  const { followersGained, outflows, isLoading: leaderboardsLoading, error: leaderboardsError } = useVaultsLeaderboards({
     window: "24h",
     followersLimit: 6,
     outflowsLimit: 4,
@@ -98,7 +100,12 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         </ModuleTable>
       </OverviewModule>
 
-      <OverviewModule title="Followers gained · 24h" tag="sampled 50" tagVariant="plain">
+      <OverviewModule
+        title="Followers gained · 24h"
+        tag="sampled 50"
+        tagVariant="plain"
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading)} />}
+      >
         {leaderboardsLoading ? (
           <ModuleSkeleton />
         ) : followersRows.length === 0 ? (
@@ -126,7 +133,12 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         )}
       </OverviewModule>
 
-      <OverviewModule title="Largest outflows · 24h" tag="24h" tagVariant="plain">
+      <OverviewModule
+        title="Largest outflows · 24h"
+        tag="24h"
+        tagVariant="plain"
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading)} />}
+      >
         {leaderboardsLoading ? (
           <ModuleSkeleton />
         ) : outflowsRows.length === 0 ? (

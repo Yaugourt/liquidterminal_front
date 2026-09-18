@@ -8,6 +8,7 @@ import { useHip4QuestionsWithOutcomes } from "@/services/indexer/hip4/hooks/useH
 import { useBuildersTop, useBuildersStatsAllTimeframes } from "@/services/indexer/builders";
 import { BuilderAvatar, resolveBuilderLabel } from "@/components/market/builders";
 import { AuctionStrip } from "./AuctionStrip";
+import { SourceBadge, sourceStatus, combinedSourceStatus, type SourceBadgeStatus } from "@/components/common";
 
 function LaneShell({
   title,
@@ -16,6 +17,7 @@ function LaneShell({
   hrefLabel,
   children,
   footer,
+  actions,
 }: {
   title: string;
   tag?: string;
@@ -23,6 +25,8 @@ function LaneShell({
   hrefLabel: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
+  /** Right-pinned head slot before the link — home of the `SourceBadge`. */
+  actions?: React.ReactNode;
 }) {
   return (
     <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
@@ -31,9 +35,12 @@ function LaneShell({
           <h3 className="text-[13px] font-semibold text-text-primary truncate">{title}</h3>
           {tag && <span className="text-[11px] text-text-tertiary truncate">{tag}</span>}
         </div>
-        <Link href={href} className="text-[11.5px] text-brand hover:text-brand-hover shrink-0">
-          {hrefLabel} →
-        </Link>
+        <div className="flex items-center gap-3 shrink-0">
+          {actions}
+          <Link href={href} className="text-[11.5px] text-brand hover:text-brand-hover">
+            {hrefLabel} →
+          </Link>
+        </div>
       </div>
       <div className="flex-1">{children}</div>
       {footer}
@@ -45,13 +52,21 @@ function LaneShell({
  * PerpDexs (HIP-3) lane: the venue totals plus the deploy-auction recall
  * (the same auction as the Perpetuals strip — HIP-3 is where deploys land).
  */
-export function PerpDexsLane({ overview }: { overview: Hip3Overview | null }) {
+export function PerpDexsLane({
+  overview,
+  sourceStatus: status = "ok",
+}: {
+  overview: Hip3Overview | null;
+  /** `/indexer/hip3/overview` route health, owned by the page that fetches it. */
+  sourceStatus?: SourceBadgeStatus;
+}) {
   return (
     <LaneShell
       title="Perp DEXs"
       tag="HIP-3"
       href="/market/perpdex"
       hrefLabel="All"
+      actions={<SourceBadge source="hypedexer" status={status} />}
       footer={<AuctionStrip kind="perp" compact />}
     >
       <div className="px-3.5 py-3 space-y-2 text-[12px]">
@@ -67,7 +82,7 @@ export function PerpDexsLane({ overview }: { overview: Hip3Overview | null }) {
 
 /** HIP-4 predictions lane: the 3 biggest live questions with their probability. */
 export function Hip4Lane() {
-  const { questions } = useHip4QuestionsWithOutcomes();
+  const { questions, isLoading: questionsLoading, error: questionsError } = useHip4QuestionsWithOutcomes();
 
   const top = useMemo(() => {
     const rows = (questions ?? [])
@@ -90,7 +105,13 @@ export function Hip4Lane() {
   const liveCount = useMemo(() => (questions ?? []).filter((q) => q.status === "live").length, [questions]);
 
   return (
-    <LaneShell title="Predictions" tag="HIP-4" href="/market/hip4" hrefLabel={liveCount > 0 ? `${liveCount} live` : "All"}>
+    <LaneShell
+      title="Predictions"
+      tag="HIP-4"
+      href="/market/hip4"
+      hrefLabel={liveCount > 0 ? `${liveCount} live` : "All"}
+      actions={<SourceBadge source="hypedexer" status={sourceStatus(questionsError, questionsLoading)} />}
+    >
       <div className="px-3.5 py-3 space-y-3">
         {top.length === 0 && <p className="text-[11.5px] text-text-tertiary">Loading live questions…</p>}
         {top.map((q) => (
@@ -138,6 +159,7 @@ export function BuildersLane() {
       tag="order flow · 7d"
       href="/market/builders"
       hrefLabel="All"
+      actions={<SourceBadge source="hypedexer" status={combinedSourceStatus(top, allTf)} />}
       footer={
         totals ? (
           <div className="px-3.5 py-2.5 border-t border-border-subtle text-[10.5px] text-text-tertiary">

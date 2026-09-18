@@ -54,6 +54,8 @@ export interface KpiCell {
 export interface KpiRibbonHeaderProps {
   label: ReactNode;
   helper?: ReactNode;
+  /** Right-pinned slot — home of `<SourceBadge>` credits for third-party feeds. */
+  actions?: ReactNode;
 }
 
 export interface KpiRibbonProps {
@@ -71,13 +73,14 @@ export interface KpiRibbonProps {
   className?: string;
 }
 
-function RibbonHeader({ label, helper }: KpiRibbonHeaderProps) {
+function RibbonHeader({ label, helper, actions }: KpiRibbonHeaderProps) {
   return (
-    <div className="flex items-baseline gap-2 px-3.5 py-2 bg-surface-2 border-b border-border-subtle">
+    <div className="flex items-center gap-2 px-3.5 py-2 bg-surface-2 border-b border-border-subtle">
       <span className="text-[9.5px] uppercase tracking-[0.1em] text-text-secondary font-semibold">
         {label}
       </span>
       {helper && <span className="text-[10px] text-text-tertiary">{helper}</span>}
+      {actions && <span className="ml-auto shrink-0 flex items-center gap-2">{actions}</span>}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { usePageTitle } from "@/store/use-page-title";
-import { PageHeader, KpiRibbon, KpiCell, PageFaq } from "@/components/common";
+import { PageHeader, KpiRibbon, KpiCell, PageFaq, SourceBadge, sourceStatus, combinedSourceStatus } from "@/components/common";
 import { MARKET_FAQ } from "@/lib/page-faqs";
 import { compactUsd, compactCount, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -39,13 +39,18 @@ export default function MarketHubPage() {
   }, [setTitle]);
 
   // One fetch per source; every module below is presentational.
-  const { data: volume24h } = useTradingVolume24h();
-  const { data: traders24h } = useActiveTraders24h();
-  const { data: fees24h } = useTotalFees24h();
+  const volumeFeed = useTradingVolume24h();
+  const tradersFeed = useActiveTraders24h();
+  const feesFeed = useTotalFees24h();
+  const hip3Feed = useHip3Overview();
+  const stablesFeed = useSpotStablecoins();
+  const volume24h = volumeFeed.data;
+  const traders24h = tradersFeed.data;
+  const fees24h = feesFeed.data;
+  const hip3 = hip3Feed.data;
+  const { stablecoins } = stablesFeed;
   const { stats: spotStats } = useSpotGlobalStats();
   const { stats: perpStats } = usePerpGlobalStats();
-  const { data: hip3 } = useHip3Overview();
-  const { stablecoins } = useSpotStablecoins();
   const { data: spotTokens } = useSpotTokens({ limit: 100, sortBy: "volume", sortOrder: "desc" });
   const { data: perpMarkets } = usePerpMarkets({ limit: 100, defaultParams: { sortBy: "volume", sortOrder: "desc" } });
 
@@ -121,6 +126,15 @@ export default function MarketHubPage() {
         title="Market"
         titleQualifier="· everything traded on Hyperliquid"
         description="Everything traded on Hyperliquid — spot, perps, builder DEXs and predictions, one door in."
+        actions={
+          <>
+            <SourceBadge
+              source="hypedexer"
+              status={combinedSourceStatus(volumeFeed, tradersFeed, feesFeed, hip3Feed)}
+            />
+            <SourceBadge source="hypurrscan" status={sourceStatus(stablesFeed.error, stablesFeed.isLoading)} />
+          </>
+        }
       />
 
       {cells.length > 0 && <KpiRibbon cells={cells} />}
@@ -141,7 +155,7 @@ export default function MarketHubPage() {
 
           {/* One lane per remaining sidebar sibling. */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            <PerpDexsLane overview={hip3} />
+            <PerpDexsLane overview={hip3} sourceStatus={sourceStatus(hip3Feed.error, hip3Feed.isLoading)} />
             <Hip4Lane />
             <BuildersLane />
           </div>

@@ -8,6 +8,7 @@ import { usePortfolioHistory } from "@/services/market/tracker/hyperfolio";
 import { Eye, EyeOff } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
+import { SourceBadge } from "@/components/common";
 import { PortfolioApiResponse } from "@/services/explorer/address/types";
 import { HyperliquidBalance } from "@/services/market/tracker/types";
 
@@ -35,7 +36,9 @@ export function PerformanceChart({
 
   // Hyperfolio daily net-worth snapshots — only wallets tracked there have any;
   // the tab and the category/protocol splits stay hidden otherwise.
-  const { history, isLoading: historyLoading } = usePortfolioHistory(address, 365);
+  const { history, isLoading: historyLoading, error: historyError } = usePortfolioHistory(address, 365);
+  // Hyperfolio credit only on the tabs it feeds (net worth, category/protocol splits).
+  const showSource = activeTab === 'networth' || (activeTab === 'distribution' && !!history);
 
   const tabs: { value: PerformanceTab; label: string }[] = [
     { value: 'performance', label: 'Performance' },
@@ -60,10 +63,16 @@ export function PerformanceChart({
         />
       </div>
 
-      {/* Hide small balances — only on Distribution, Aurora style */}
-      {activeTab === 'distribution' && (
+      {/* Right corner: Hyperfolio credit + Distribution controls, Aurora style */}
+      {(showSource || activeTab === 'distribution') && (
         <div className="absolute top-3 right-4 z-20 flex items-center gap-2">
-          {history && (
+          {showSource && (
+            <SourceBadge
+              source="hyperfolio"
+              status={historyError ? "error" : historyLoading ? "loading" : "ok"}
+            />
+          )}
+          {activeTab === 'distribution' && history && (
             <PillTabs
               variant="text"
               tabs={distributionModes}
@@ -71,18 +80,20 @@ export function PerformanceChart({
               onTabChange={(value) => setDistributionMode(value as DistributionMode)}
             />
           )}
-          <button
-            onClick={() => setHideSmallBalances(!hideSmallBalances)}
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-              hideSmallBalances
-                ? "border-brand/40 bg-brand/10 text-brand"
-                : "border-border-subtle bg-base text-text-secondary hover:text-text-primary hover:border-border-default"
-            }`}
-            title={hideSmallBalances ? "Show all balances" : "Hide balances under $1"}
-          >
-            {hideSmallBalances ? <EyeOff size={12} /> : <Eye size={12} />}
-            <span className="hidden sm:inline">Hide dust</span>
-          </button>
+          {activeTab === 'distribution' && (
+            <button
+              onClick={() => setHideSmallBalances(!hideSmallBalances)}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                hideSmallBalances
+                  ? "border-brand/40 bg-brand/10 text-brand"
+                  : "border-border-subtle bg-base text-text-secondary hover:text-text-primary hover:border-border-default"
+              }`}
+              title={hideSmallBalances ? "Show all balances" : "Hide balances under $1"}
+            >
+              {hideSmallBalances ? <EyeOff size={12} /> : <Eye size={12} />}
+              <span className="hidden sm:inline">Hide dust</span>
+            </button>
+          )}
         </div>
       )}
 

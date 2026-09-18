@@ -2,14 +2,17 @@
 
 import { AuctionCard, AuctionChartSection } from "@/components/market/auction";
 import { PastAuctionsPerpTable } from "@/components/market/perpDex";
-import { PageFaq, PageHeader, DataStatus } from "@/components/common";
+import { PageFaq, PageHeader, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 import { usePerpAuctionTiming } from "@/services/market/auction/hooks/usePerpAuctionTiming";
+import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
 import { PERP_AUCTION_FAQ } from "@/lib/page-faqs";
 
 export function PerpAuctionContent() {
   // Page-level freshness cue for the live perp auction timing (the same GET is
   // 30s-cached, so this shares AuctionCard's fetch rather than doubling it).
   const timing = usePerpAuctionTiming();
+  // Same story for the past auctions (Hypurrscan) — shares the table's GET.
+  const pastAuctions = usePastAuctionsPerp();
 
   return (
     <>
@@ -37,9 +40,16 @@ export function PerpAuctionContent() {
       </div>
 
       <div>
-        <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider mb-4">
-          Recent Auction Pairs
-        </h2>
+        <div className="flex items-center mb-4">
+          <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
+            Recent Auction Pairs
+          </h2>
+          <SourceBadge
+            source="hypurrscan"
+            status={sourceStatus(pastAuctions.error, pastAuctions.isLoading)}
+            className="ml-auto"
+          />
+        </div>
         <PastAuctionsPerpTable />
       </div>
 

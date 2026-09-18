@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, SourceBadge, sourceStatus, type Column } from "@/components/common";
 import { compactUsd, formatPrice, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import { useHip3CoinFills, type Hip3Fill } from "@/services/indexer/hip3";
@@ -134,6 +134,7 @@ export function Hip3MarketTape({ coin }: { coin: string }) {
       subtitle={`≥ ${compactUsd(threshold)} notional`}
       headerAction={
         <div className="flex items-center gap-3 text-xs">
+          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
           {THRESHOLDS.map((option) => (
             <button
               key={option.value}

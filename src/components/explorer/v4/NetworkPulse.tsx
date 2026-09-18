@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { KpiRibbon, type KpiCell } from "@/components/common";
+import { KpiRibbon, SourceBadge, sourceStatus, combinedSourceStatus, type KpiCell } from "@/components/common";
 import { useExplorerStore } from "@/services/explorer";
 import {
   useActiveTraders24h,
@@ -73,15 +73,18 @@ export const NetworkPulse = memo(function NetworkPulse() {
   // currentBlockHeight comes from the canonical L1 websocket connected by
   // `LiveActivity` (mounted on the same page); we just consume the value.
   const currentBlockHeight = useExplorerStore((s) => s.currentBlockHeight);
-  const { data: fills } = useTotalFills24h();
-  const { data: traders } = useActiveTraders24h();
+  const fills24h = useTotalFills24h();
+  const traders24h = useActiveTraders24h();
+  const fills = fills24h.data;
+  const traders = traders24h.data;
   const { vaults, totalTvl: vaultsTvl } = useVaults({
     limit: 1000,
     sortBy: "tvl",
   });
   const { stats: validatorStats } = useValidators();
-  const { stats: builderStats } = useBuildersGlobalStats("24h");
-  const { bridgeData } = useHLBridge();
+  const builders = useBuildersGlobalStats("24h");
+  const builderStats = builders.stats;
+  const { bridgeData, isLoading: bridgeLoading, error: bridgeError } = useHLBridge();
 
   // Trades / sec averaged over the last 24h. `/indexer/overview/total-fills-24h`
   // is the canonical CLOB fill counter (perp + spot + HIP-3) — a Core metric,
@@ -171,6 +174,12 @@ export const NetworkPulse = memo(function NetworkPulse() {
         header={{
           label: "HyperCore · L1",
           helper: "Canonical orderbook chain — trades, validators, vaults, builders",
+          actions: (
+            <SourceBadge
+              source="hypedexer"
+              status={combinedSourceStatus(fills24h, traders24h, builders)}
+            />
+          ),
         }}
         columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-6"
         cells={coreCells}
@@ -178,7 +187,8 @@ export const NetworkPulse = memo(function NetworkPulse() {
       <KpiRibbon
         header={{
           label: "Cross-Chain Capital",
-          helper: "USDC bridge (Arbitrum ↔ Hyperliquid L1) — DefiLlama feed",
+          helper: "USDC bridge (Arbitrum ↔ Hyperliquid L1)",
+          actions: <SourceBadge source="defillama" status={sourceStatus(bridgeError, bridgeLoading)} />,
         }}
         columns="grid-cols-1 sm:grid-cols-2"
         cells={bridgeCells}

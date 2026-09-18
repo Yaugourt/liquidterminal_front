@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Layers } from "lucide-react";
 import { useVaultLedger } from "@/services/explorer/vault/hooks/useVaultLedger";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { chartPalette, Skeleton } from "@/components/common";
+import { chartPalette, Skeleton, SourceBadge, sourceStatus } from "@/components/common";
 import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
 
 interface VaultConcentrationBarProps {
@@ -23,7 +23,7 @@ interface DepositorAgg {
  * `net` is signed: positive = depositor put more in than they pulled out.
  */
 export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarProps) {
-  const { entries, isLoading } = useVaultLedger({ vaultAddress, limit: 2000 });
+  const { entries, isLoading, error } = useVaultLedger({ vaultAddress, limit: 2000 });
 
   const { top, others, totalNet, hhi } = useMemo(() => {
     if (!entries.length) {
@@ -84,8 +84,10 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
         </div>
         {/* Only show the stats when real ledger data backs them: zeroed HHI
             and a "Low" level on an empty ledger would be fake values. */}
-        {!isLoading && top.length > 0 && (
-          <div className="flex items-center gap-3 text-[11px]">
+        <div className="flex items-center gap-3 text-[11px]">
+          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+          {!isLoading && top.length > 0 && (
+            <>
             <span className="text-text-tertiary">
               HHI <span className="mono text-text-primary">{hhi.toFixed(0)}</span>
             </span>
@@ -95,8 +97,9 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
             <span className="text-text-tertiary">
               Level <span className="text-text-primary">{concentrationLabel}</span>
             </span>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
 
       {isLoading ? (

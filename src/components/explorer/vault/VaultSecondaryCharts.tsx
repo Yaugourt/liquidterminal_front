@@ -8,7 +8,10 @@ import {
   AuroraHistogramChart,
   chartPalette,
   Skeleton,
+  SourceBadge,
+  sourceStatus,
   type HistogramDataPoint,
+  type SourceBadgeStatus,
 } from "@/components/common";
 import { useVaultDailySnapshots } from "@/services/explorer/vault/hooks/useVaultDailySnapshots";
 import { useVaultLedger } from "@/services/explorer/vault/hooks/useVaultLedger";
@@ -27,12 +30,12 @@ const WINDOW_DAYS = 30;
  * - Net flows · 30D — derived from vaultLedger bucketed per day, signed.
  */
 export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps) {
-  const { snapshots, isLoading: snapsLoading } = useVaultDailySnapshots({
+  const { snapshots, isLoading: snapsLoading, error: snapsError } = useVaultDailySnapshots({
     vaultAddress,
     limit: 60,
   });
 
-  const { entries: ledger, isLoading: ledgerLoading } = useVaultLedger({
+  const { entries: ledger, isLoading: ledgerLoading, error: ledgerError } = useVaultLedger({
     vaultAddress,
     limit: 5000,
   });
@@ -95,6 +98,7 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
         summaryLabel="net over window"
         data={dailyPnl}
         isLoading={snapsLoading}
+        sourceStatus={sourceStatus(snapsError, snapsLoading)}
       />
       <SecondaryChartCard
         title="Net flows"
@@ -104,6 +108,7 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
         summaryLabel="deposits − withdrawals"
         data={netFlows}
         isLoading={ledgerLoading}
+        sourceStatus={sourceStatus(ledgerError, ledgerLoading)}
         // The indexer ledger returns nothing at all for some vaults (e.g. HLP);
         // say so explicitly instead of implying a quiet window.
         emptyMessage={
@@ -124,6 +129,8 @@ interface SecondaryChartCardProps {
   summaryLabel: string;
   data: HistogramDataPoint[];
   isLoading: boolean;
+  /** Hypedexer route health for this chart's feed. */
+  sourceStatus: SourceBadgeStatus;
   /** Shown when there is no data to chart. */
   emptyMessage?: string;
 }
@@ -136,11 +143,12 @@ function SecondaryChartCard({
   summaryLabel,
   data,
   isLoading,
+  sourceStatus: status,
   emptyMessage = "No data for this window.",
 }: SecondaryChartCardProps) {
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           {icon}
         </span>
@@ -148,8 +156,9 @@ function SecondaryChartCard({
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           {tag}
         </span>
+        <SourceBadge source="hypedexer" status={status} className="ml-auto" />
         {!isLoading && data.length > 0 && (
-          <div className="ml-auto flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2">
             <span
               className={`mono text-sm font-semibold ${
                 summary >= 0 ? "text-success" : "text-danger"

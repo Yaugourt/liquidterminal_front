@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, SourceBadge, sourceStatus, type Column } from "@/components/common";
 import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 import {
@@ -122,15 +122,18 @@ export function Hip3TopTraders({
       title="Top traders on this market"
       subtitle={staleness ? `aggregate updated ${staleness}` : undefined}
       headerAction={
-        concentration.share !== null ? (
-          <span className="text-[11px] text-text-tertiary">
-            Top 5 ·{" "}
-            <span className="mono text-text-secondary">
-              {(concentration.share * 100).toFixed(1)}%
-            </span>{" "}
-            of {compactUsd(concentration.reference ?? 0)}
-          </span>
-        ) : undefined
+        <span className="flex items-center gap-3">
+          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+          {concentration.share !== null && (
+            <span className="text-[11px] text-text-tertiary">
+              Top 5 ·{" "}
+              <span className="mono text-text-secondary">
+                {(concentration.share * 100).toFixed(1)}%
+              </span>{" "}
+              of {compactUsd(concentration.reference ?? 0)}
+            </span>
+          )}
+        </span>
       }
       data={clean}
       columns={buildColumns()}

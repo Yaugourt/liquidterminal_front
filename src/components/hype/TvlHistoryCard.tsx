@@ -4,7 +4,7 @@ import { memo, useId, useMemo, useState } from "react";
 import { Vault } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useTvlHistory } from "@/services/ecosystem/project/hooks";
 
@@ -110,8 +110,8 @@ export const TvlHistoryCard = memo(function TvlHistoryCard() {
           <Vault size={13} className="text-brand" />
         </span>
         <h3 className="text-[13px] font-semibold text-text-primary">Total Value Locked</h3>
+        <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} className="ml-auto" />
         <PeriodSelector
-          className="ml-auto"
           selected={window}
           onChange={setWindow}
           options={WINDOWS}

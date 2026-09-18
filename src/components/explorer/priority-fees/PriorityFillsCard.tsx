@@ -4,7 +4,7 @@ import { memo, useState } from "react";
 import { ChevronLeft, ChevronRight, Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AddressIdenticon, ModuleTable, ModuleTableRow, type ModuleColumn } from "@/components/common";
+import { AddressIdenticon, ModuleTable, ModuleTableRow, SourceBadge, sourceStatus, type ModuleColumn } from "@/components/common";
 import { TokenAvatar } from "@/components/common";
 import Link from "next/link";
 import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
@@ -93,6 +93,7 @@ export const PriorityFillsCard = memo(function PriorityFillsCard({
           <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
           live
         </span>
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
       </div>
 
       {error && (

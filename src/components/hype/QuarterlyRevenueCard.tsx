@@ -4,7 +4,7 @@ import { memo, useId, useMemo } from "react";
 import { BarChart3 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, chartPalette , rechartsGridDefaults } from "@/components/common";
+import { ChartError, ChartLoading, SourceBadge, sourceStatus, chartPalette , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toQuarters, useFeeRevenueHistory, type RevenueQuarter } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
@@ -130,12 +130,13 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <BarChart3 size={13} className="text-brand" />
         </span>
         <h3 className="text-[13px] font-semibold text-text-primary">Quarterly Revenue</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono ml-auto">
+        <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} className="ml-auto" />
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
           {rows.length} quarters
         </span>
       </div>

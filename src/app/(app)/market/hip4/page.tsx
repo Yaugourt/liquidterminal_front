@@ -18,7 +18,7 @@ import {
   Hip4SettlementsTable,
   Hip4StalenessChip,
 } from "@/components/market/hip4";
-import { PageHeader, PageFaq } from "@/components/common";
+import { PageHeader, PageFaq, SourceBadge, combinedSourceStatus } from "@/components/common";
 import { buildMergedQuestions } from "@/lib/hip4/merge-questions";
 import { isPlaceholderMarketName } from "@/lib/hip4/market-formatter";
 import { HIP4_FAQ } from "@/lib/page-faqs";
@@ -101,6 +101,10 @@ export default function MarketHip4Page() {
         description="Live prediction markets on Hyperliquid — outcome probabilities grouped by question, volume, open interest, and settlements."
         actions={
           <div className="flex items-center gap-2">
+            <SourceBadge
+              source="hypedexer"
+              status={combinedSourceStatus(enriched, questions, fills, settlements)}
+            />
             <Hip4StalenessChip updatedAt={questions.dataUpdatedAt} />
             <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand bg-brand/10 border border-brand/20 px-2.5 py-1 rounded-lg">
               <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />

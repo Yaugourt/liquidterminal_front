@@ -9,6 +9,8 @@ import {
   ModuleTableRow,
   ModuleAsset,
   Skeleton,
+  SourceBadge,
+  combinedSourceStatus,
   type KpiCell,
 } from "@/components/common";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
@@ -31,10 +33,12 @@ const signedUsd = (v: number) => `${v >= 0 ? "+" : "-"}${compactUsd(Math.abs(v))
  * client-side performance maths. Hidden for wallets with no HL trades.
  */
 export function WalletScorecard({ address }: WalletScorecardProps) {
-  const { performance: perf, isLoading: perfLoading, error: perfError } =
-    useWalletPerformance(address);
-  const { coins } = useWalletCoins(address, 8);
-  const { overview } = useWalletOverview(address);
+  const perfFeed = useWalletPerformance(address);
+  const coinsFeed = useWalletCoins(address, 8);
+  const overviewFeed = useWalletOverview(address);
+  const { performance: perf, isLoading: perfLoading, error: perfError } = perfFeed;
+  const { coins } = coinsFeed;
+  const { overview } = overviewFeed;
 
   const cells = useMemo<KpiCell[]>(() => {
     if (!perf) return [];
@@ -97,12 +101,13 @@ export function WalletScorecard({ address }: WalletScorecardProps) {
 
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
           <Trophy size={13} className="text-brand" />
         </span>
         <h3 className="text-[13px] font-semibold text-text-primary">Trading scorecard</h3>
-        <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
+        <SourceBadge source="hypedexer" status={combinedSourceStatus(perfFeed, coinsFeed, overviewFeed)} className="ml-auto" />
+        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           all-time
         </span>
       </div>
