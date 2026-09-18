@@ -147,7 +147,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-gold to-purple-500 p-0.5">
+            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-gold to-brand p-0.5">
               <div className="h-full w-full rounded-full bg-surface flex items-center justify-center">
                 <span className="text-xl font-bold text-gold">
                   {stats.level}
@@ -155,7 +155,7 @@ function XpBadgeContent({ stats, showStreak = true }: XpBadgeContentProps) {
               </div>
             </div>
             {/* Level glow effect */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold/20 to-purple-500/20 blur-md -z-10" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold/20 to-brand/20 blur-md -z-10" />
           </div>
           <div>
             <p className="text-xs text-text-secondary font-semibold uppercase tracking-wider">Level</p>

@@ -35,12 +35,12 @@ const TASK_ICONS: Record<DailyTaskType, React.ElementType> = {
 
 const TASK_COLORS: Record<DailyTaskType, string> = {
   LOGIN: "text-success",
-  READ_RESOURCE: "text-cyan-400",
+  READ_RESOURCE: "text-brand",
   ADD_WALLET: "text-brand",
   EXPLORE_LEADERBOARD: "text-gold",
-  SUBMIT_RESOURCE: "text-purple-400",
-  CREATE_READLIST: "text-pink-400",
-  CREATE_WALLETLIST: "text-blue-400",
+  SUBMIT_RESOURCE: "text-brand",
+  CREATE_READLIST: "text-brand",
+  CREATE_WALLETLIST: "text-brand",
 };
 
 export function DailyTasksWidget({ compact = false, className }: DailyTasksWidgetProps) {
@@ -79,7 +79,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
                   "h-6 w-6 rounded-full flex items-center justify-center",
                   task.completed
                     ? "bg-success/20 border border-success/40"
-                    : "bg-white/5 border border-border-default"
+                    : "bg-surface-2 border border-border-default"
                 )}
               >
                 {task.completed ? (
@@ -112,7 +112,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success/20 to-cyan-500/20 flex items-center justify-center border border-success/30">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-success/20 to-brand/20 flex items-center justify-center border border-success/30">
             <CheckCircle2 className="h-4 w-4 text-success" />
           </div>
           <div>
@@ -153,7 +153,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
                 "flex items-center gap-3 p-3 rounded-lg transition-all",
                 task.completed
                   ? "bg-success/10 border border-success/20"
-                  : "bg-white/5 border border-border-subtle hover:border-border-default"
+                  : "bg-surface-2 border border-border-subtle hover:border-border-default"
               )}
             >
               {/* Icon */}
@@ -161,7 +161,7 @@ export function DailyTasksWidget({ compact = false, className }: DailyTasksWidge
                 "h-9 w-9 rounded-lg flex items-center justify-center shrink-0",
                 task.completed
                   ? "bg-success/20"
-                  : "bg-white/5"
+                  : "bg-surface-2"
               )}>
                 <Icon className={cn(
                   "h-4.5 w-4.5",

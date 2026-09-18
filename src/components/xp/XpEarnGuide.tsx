@@ -27,24 +27,24 @@ const MISSIONS: MissionItem[] = [
         title: "Submit Resource",
         description: "Submit a quality educational resource to the Wiki.",
         xp: "+15 XP",
-        color: "text-purple-400",
-        bgColor: "bg-purple-500/10"
+        color: "text-brand",
+        bgColor: "bg-brand/10"
     },
     {
         icon: ListPlus,
         title: "Create Public Readlist",
         description: "Create a curated ID for the community.",
         xp: "+20 XP",
-        color: "text-pink-400",
-        bgColor: "bg-pink-500/10"
+        color: "text-brand",
+        bgColor: "bg-brand/10"
     },
     {
         icon: Wallet,
         title: "Create Public Wallet List",
         description: "Share a list of interesting wallets to track.",
         xp: "+20 XP",
-        color: "text-blue-400",
-        bgColor: "bg-blue-500/10"
+        color: "text-brand",
+        bgColor: "bg-brand/10"
     },
     {
         icon: ListPlus,
@@ -52,7 +52,7 @@ const MISSIONS: MissionItem[] = [
         description: "Create a private Readlist or Wallet List for yourself.",
         xp: "+15 XP",
         color: "text-text-secondary",
-        bgColor: "bg-zinc-500/10"
+        bgColor: "bg-surface-2"
     },
     {
         icon: CalendarCheck,
@@ -83,8 +83,8 @@ const MISSIONS: MissionItem[] = [
         title: "Read Resource",
         description: "Read an educational resource (max 10/day).",
         xp: "+5 XP",
-        color: "text-cyan-400",
-        bgColor: "bg-cyan-500/10"
+        color: "text-brand",
+        bgColor: "bg-brand/10"
     }
 ];
 
@@ -112,7 +112,7 @@ export function XpEarnGuide({ className }: { className?: string }) {
                     return (
                         <div
                             key={index}
-                            className="group p-4 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-all hover:bg-white/5"
+                            className="group p-4 rounded-lg bg-base border border-border-subtle hover:border-border-default transition-all hover:bg-surface-2"
                         >
                             <div className="flex justify-between items-start mb-3">
                                 <div className={cn(

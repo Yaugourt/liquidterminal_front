@@ -35,14 +35,14 @@ const CHALLENGE_ICONS: Record<WeeklyChallengeType, React.ElementType> = {
 
 const CHALLENGE_COLORS: Record<WeeklyChallengeType, { text: string; bg: string; border: string }> = {
   READ_20_RESOURCES: {
-    text: "text-cyan-400",
-    bg: "bg-cyan-500/20",
-    border: "border-cyan-500/30"
+    text: "text-brand",
+    bg: "bg-brand/20",
+    border: "border-brand/30"
   },
   CREATE_5_READLISTS: {
-    text: "text-purple-400",
-    bg: "bg-purple-500/20",
-    border: "border-purple-500/30"
+    text: "text-brand",
+    bg: "bg-brand/20",
+    border: "border-brand/30"
   },
   LOGIN_7_DAYS: {
     text: "text-success",
@@ -91,7 +91,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
           </div>
           <div className="h-1.5 bg-base rounded-full overflow-hidden mt-1">
             <div
-              className="h-full bg-gradient-to-r from-gold to-purple-500 transition-all"
+              className="h-full bg-gradient-to-r from-gold to-brand transition-all"
               style={{ width: `${(completedCount / Math.max(weeklyChallenges.length, 1)) * 100}%` }}
             />
           </div>
@@ -117,7 +117,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-gold/20 to-purple-500/20 flex items-center justify-center border border-gold/30">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-gold/20 to-brand/20 flex items-center justify-center border border-gold/30">
             <Trophy className="h-4 w-4 text-gold" />
           </div>
           <div>
@@ -128,7 +128,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
 
         {/* Timer */}
         {timeUntilWeeklyReset && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-border-default">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-2 border border-border-default">
             <Clock className="h-3.5 w-3.5 text-text-secondary" />
             <span className="text-xs text-text-secondary">Resets in {timeUntilWeeklyReset}</span>
           </div>
@@ -231,7 +231,7 @@ export const WeeklyChallengesCard = memo(function WeeklyChallengesCard({ compact
               href={challengeRoute}
               className={cn(
                 "p-4 rounded-lg transition-all block",
-                "bg-white/5 border border-border-subtle hover:bg-white/10 hover:border-brand/30 cursor-pointer group"
+                "bg-surface-2 border border-border-subtle hover:bg-surface-3 hover:border-brand/30 cursor-pointer group"
               )}
             >
               {challengeContent}

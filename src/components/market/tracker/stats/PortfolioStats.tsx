@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { Copy, Check } from "lucide-react";
-import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { useEffect, useState, useMemo } from "react";
+import { Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PeriodSelector, Skeleton } from "@/components/common";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { ErrorState } from "@/components/ui/error-state";
+import { Skeleton, StackedShareBar } from "@/components/common";
 import { useWallets } from "@/store/use-wallets";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAddressBalance } from "@/services/explorer/address";
-import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue } from '@/lib/formatters/numberFormatting';
+import { useNumberFormat } from "@/store/number-format.store";
+import { formatAssetValue, compactUsd } from "@/lib/formatters/numberFormatting";
 import { PortfolioApiResponse } from "@/services/explorer/address/types";
 import { HyperliquidPerpResponse } from "@/services/market/tracker/types";
 
@@ -20,312 +20,221 @@ interface PortfolioStatsProps {
   walletAddress?: string;  // Optional for public view
 }
 
+type VolumeTimeframe = "24h" | "7d" | "30d" | "all";
+
+const VOLUME_TABS: { value: VolumeTimeframe; label: string }[] = [
+  { value: "24h", label: "24h" },
+  { value: "7d", label: "7d" },
+  { value: "30d", label: "30d" },
+  { value: "all", label: "All" },
+];
+
+// Portfolio API period keys, per tab.
+const TIMEFRAME_KEY: Record<VolumeTimeframe, "day" | "week" | "month" | "allTime"> = {
+  "24h": "day",
+  "7d": "week",
+  "30d": "month",
+  all: "allTime",
+};
+
+/** One label/value line inside the card — no tile chrome, hairline dividers. */
+function StatRow({
+  label,
+  value,
+  emphasis,
+}: {
+  label: string;
+  value: React.ReactNode;
+  emphasis?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between py-1.5">
+      <span className={`text-xs ${emphasis ? "text-text-primary font-medium" : "text-text-secondary"}`}>
+        {label}
+      </span>
+      <span className={`mono text-sm ${emphasis ? "font-semibold text-text-primary" : "text-text-primary"}`}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Portfolio card (tracker + public address view): V4 card-head with the
+ * wallet address, then HyperCore/HyperEVM balances on the left and volume +
+ * long/short exposure on the right.
+ */
 export function PortfolioStats({
   portfolioData,
   perpPositions,
-  walletAddress: walletAddressProp
+  walletAddress: walletAddressProp,
 }: PortfolioStatsProps) {
   const [isMounted, setIsMounted] = useState(false);
-  const [volumeTimeframe, setVolumeTimeframe] = useState<'24h' | '7d' | '30d' | 'all'>('24h');
+  const [volumeTimeframe, setVolumeTimeframe] = useState<VolumeTimeframe>("24h");
   const { getActiveWallet } = useWallets();
   const { format } = useNumberFormat();
   const activeWallet = getActiveWallet();
 
   // Use provided address or fall back to active wallet
-  const walletAddress = walletAddressProp || activeWallet?.address || '';
+  const walletAddress = walletAddressProp || activeWallet?.address || "";
 
-  const { balances, isLoading, error, evmLoading, evmError } = useAddressBalance(walletAddress, { includeEvm: true });
-  const [copied, setCopied] = useState(false);
+  const { balances, isLoading, error, evmLoading, evmError } = useAddressBalance(walletAddress, {
+    includeEvm: true,
+  });
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Fonction pour formater les valeurs monétaires selon les settings utilisateur
-  const formatCurrency = useCallback((value: number) => {
-    return formatAssetValue(value, format);
-  }, [format]);
+  const fmt = (value: number) => formatAssetValue(value, format);
 
-  // Fonction pour formater avec des lettres (K, M, B) pour long/short
-  const formatAbbreviated = useCallback((value: number) => {
-    if (Math.abs(value) >= 1e9) {
-      return `$${(value / 1e9).toFixed(1)}B`;
-    }
-    if (Math.abs(value) >= 1e6) {
-      return `$${(value / 1e6).toFixed(1)}M`;
-    }
-    if (Math.abs(value) >= 1e3) {
-      return `$${(value / 1e3).toFixed(1)}K`;
-    }
-    return `$${value.toFixed(2)}`;
-  }, []);
-
-  // Calculer les valeurs long/short basées sur les positions perp
-  const longShortData = useMemo(() => {
-    if (!perpPositions?.assetPositions) {
-      return { longValue: 0, shortValue: 0, totalValue: 0, longPercentage: 0 };
-    }
-
+  // Long/short exposure from open perp positions.
+  const longShort = useMemo(() => {
     let longValue = 0;
     let shortValue = 0;
-
-    perpPositions.assetPositions.forEach(({ position }) => {
+    perpPositions?.assetPositions?.forEach(({ position }) => {
       const szi = parseFloat(position.szi);
       const positionValue = parseFloat(position.positionValue);
-
-      if (szi > 0) {
-        // Position longue
-        longValue += positionValue;
-      } else if (szi < 0) {
-        // Position courte
-        shortValue += positionValue;
-      }
+      if (szi > 0) longValue += positionValue;
+      else if (szi < 0) shortValue += positionValue;
     });
-
     const totalValue = longValue + shortValue;
-    const longPercentage = totalValue > 0 ? (longValue / totalValue) * 100 : 0;
-
-    return { longValue, shortValue, totalValue, longPercentage };
+    const longPct = totalValue > 0 ? (longValue / totalValue) * 100 : 0;
+    return { longValue, shortValue, totalValue, longPct };
   }, [perpPositions]);
 
-  // Mapping des périodes de l'API vers les tabs
-  const timeframeMapping = useMemo(() => ({
-    '24h': 'day',
-    '7d': 'week',
-    '30d': 'month',
-    'all': 'allTime'
-  } as const), []);
-
-  // Données de volume calculées depuis l'API portfolio
-  const volumeData = useMemo(() => {
-    if (!portfolioData || portfolioData.length === 0) {
-      return {
-        perpVolume: 0,
-        spotVaultVolume: 0,
-        totalVolume: 0
-      };
-    }
-
-    const currentTimeframe = timeframeMapping[volumeTimeframe];
-
-    // Trouver les données pour la période actuelle
-    const totalData = portfolioData.find(([period]) => period === currentTimeframe);
-    const perpData = portfolioData.find(([period]) => period === `perp${currentTimeframe.charAt(0).toUpperCase() + currentTimeframe.slice(1)}`);
-
-    if (!totalData || !perpData) {
-      return {
-        perpVolume: 0,
-        spotVaultVolume: 0,
-        totalVolume: 0
-      };
-    }
-
-    const totalVolume = parseFloat(totalData[1].vlm);
-    const perpVolume = parseFloat(perpData[1].vlm);
-    const spotVaultVolume = totalVolume - perpVolume;
-
-    return {
-      perpVolume,
-      spotVaultVolume: Math.max(0, spotVaultVolume), // Éviter les valeurs négatives
-      totalVolume
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Volume for the selected window, split perp vs spot+vault.
+  const volume = useMemo(() => {
+    const empty = { perp: 0, spotVault: 0, total: 0 };
+    if (!portfolioData?.length) return empty;
+    const key = TIMEFRAME_KEY[volumeTimeframe];
+    const totalData = portfolioData.find(([period]) => period === key);
+    const perpData = portfolioData.find(
+      ([period]) => period === `perp${key.charAt(0).toUpperCase()}${key.slice(1)}`
+    );
+    if (!totalData || !perpData) return empty;
+    const total = parseFloat(totalData[1].vlm);
+    const perp = parseFloat(perpData[1].vlm);
+    return { perp, spotVault: Math.max(0, total - perp), total };
   }, [portfolioData, volumeTimeframe]);
 
-  // Fonction pour copier l'adresse
-  const copyToClipboard = useCallback(() => {
-    if (activeWallet?.address) {
-      navigator.clipboard.writeText(activeWallet.address)
-        .then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        })
-        .catch(() => {
-          // Error handled silently
-        });
-    }
-  }, [activeWallet?.address]);
-
-  if (!isMounted) {
-    return (
-      <Card className="h-full p-6">
-        <div className="flex items-center justify-center h-full">
-          <InlineSpinner className="w-6 h-6 text-brand" />
-        </div>
-      </Card>
-    );
-  }
+  const evmRows = [
+    ["EVM balance", balances.evmBalance],
+    ["DeFi balance", balances.defiBalance],
+    ["NFT value", balances.nftBalance],
+  ] as const;
 
   return (
-    <div className="h-full space-y-4">
-      {/* Wallet address header */}
-      {activeWallet && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-text-primary text-xs">
-              {activeWallet.address}
-            </span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 p-0 text-text-tertiary hover:text-text-primary hover:bg-surface-2"
-                    onClick={copyToClipboard}
-                  >
-                    {copied ? <Check size={14} className="text-success" /> : <Copy size={14} className="text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{copied ? "Address copied!" : "Copy address"}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        </div>
-      )}
+    <Card className="h-full flex flex-col overflow-hidden">
+      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
+        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
+          <Wallet size={13} className="text-brand" />
+        </span>
+        <h3 className="text-[13px] font-semibold text-text-primary">Portfolio</h3>
+        {isMounted && walletAddress && (
+          <AddressDisplay address={walletAddress} showCopy className="ml-auto text-[11px]" />
+        )}
+      </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-32">
-          <InlineSpinner className="w-6 h-6 text-brand" />
+      {!isMounted || isLoading ? (
+        <div className="p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-5 w-full" />
+            ))}
+          </div>
+          <div className="space-y-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-5 w-full" />
+            ))}
+          </div>
         </div>
       ) : error ? (
-        <div className="text-danger text-center py-4">
-          Error loading portfolio data
-        </div>
+        <ErrorState message="Error loading portfolio data" />
       ) : (
-        <>
-          {/* Layout en 2 colonnes : Balances à gauche, Long/Short à droite */}
-          <div className="grid grid-cols-2 gap-4">
-            {/* Colonne gauche : Balances */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
-                <p className="text-text-secondary text-xs">Spot Balance</p>
-                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.spotBalance)}</p>
-              </div>
-              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
-                <p className="text-text-secondary text-xs">Perp Balance</p>
-                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.perpBalance)}</p>
-              </div>
-              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
-                <p className="text-text-secondary text-xs">Vault Balance</p>
-                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.vaultBalance)}</p>
-              </div>
-              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
-                <p className="text-text-secondary text-xs">Staked Balance</p>
-                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.stakedBalance)}</p>
-              </div>
-              {/* HyperEVM side — Hyperfolio proxy. Streams in after the HyperCore cards. */}
-              {(
-                [
-                  ["EVM Balance", balances.evmBalance],
-                  ["DeFi Balance", balances.defiBalance],
-                  ["NFT Value", balances.nftBalance],
-                ] as const
-              ).map(([label, value]) => (
-                <div
+        <div className="p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 flex-1 min-w-0">
+          {/* Left: balances */}
+          <div className="flex flex-col min-w-0">
+            <p className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1">
+              Balances
+            </p>
+            <div className="divide-y divide-border-subtle">
+              <StatRow label="Spot" value={fmt(balances.spotBalance)} />
+              <StatRow label="Perp" value={fmt(balances.perpBalance)} />
+              <StatRow label="Vault" value={fmt(balances.vaultBalance)} />
+              <StatRow label="Staked" value={fmt(balances.stakedBalance)} />
+              {/* HyperEVM side — Hyperfolio proxy. Streams in after the HyperCore rows. */}
+              {evmRows.map(([label, value]) => (
+                <StatRow
                   key={label}
-                  className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all"
-                >
-                  <p className="text-text-secondary text-xs">{label}</p>
-                  {evmLoading && value === 0 ? (
-                    <Skeleton className="h-4 w-16" />
-                  ) : evmError && value === 0 ? (
-                    <p className="mono text-text-tertiary text-sm font-bold" title={evmError.message}>—</p>
-                  ) : (
-                    <p className="mono text-text-primary text-sm font-bold">{formatCurrency(value)}</p>
-                  )}
-                </div>
+                  label={label}
+                  value={
+                    evmLoading && value === 0 ? (
+                      <Skeleton className="h-4 w-16" />
+                    ) : evmError && value === 0 ? (
+                      <span className="text-text-tertiary" title={evmError.message}>—</span>
+                    ) : (
+                      fmt(value)
+                    )
+                  }
+                />
               ))}
-              <div className="flex justify-between items-center bg-surface/60 border border-border-subtle p-3 rounded-lg hover:border-border-default transition-all">
-                <p className="text-text-secondary text-xs">Total Balance</p>
-                <p className="mono text-text-primary text-sm font-bold">{formatCurrency(balances.totalBalance)}</p>
-              </div>
             </div>
-
-            {/* Colonne droite : Long/Short Ratio */}
-            <Card className="p-4 h-full">
-              <div className="flex flex-col h-full">
-                {/* Section 1: Volumes */}
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-stat-label">Volume</p>
-                    <PeriodSelector
-                      selected={volumeTimeframe}
-                      onChange={setVolumeTimeframe}
-                      options={['24h', '7d', '30d', 'all'] as const}
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <p className="text-text-secondary text-xs">Perp:</p>
-                      <p className="mono text-text-primary text-sm font-bold">{formatCurrency(volumeData.perpVolume)}</p>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <p className="text-text-secondary text-xs">Spot + Vault:</p>
-                      <p className="mono text-text-primary text-sm font-bold">{formatCurrency(volumeData.spotVaultVolume)}</p>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <p className="text-text-secondary text-xs">Total:</p>
-                      <p className="mono text-text-primary text-sm font-bold">{formatCurrency(volumeData.totalVolume)}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Section 2: Long/Short Ratio */}
-                <div className="space-y-2 pt-3 border-t border-border-subtle mt-auto">
-                  <div className="flex justify-between items-center">
-                    <span className="text-success text-xs font-medium">
-                      Long: {formatAbbreviated(longShortData.longValue)}
-                    </span>
-                    <span className="text-danger text-xs font-medium">
-                      Short: {formatAbbreviated(longShortData.shortValue)}
-                    </span>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="h-1.5 bg-surface-2 rounded-full overflow-hidden relative">
-                      {longShortData.totalValue > 0 && (
-                        <>
-                          {/* Long positions bar */}
-                          <div
-                            className="h-full bg-success transition-all duration-500 absolute left-0"
-                            style={{
-                              width: `${longShortData.longPercentage}%`
-                            }}
-                          />
-                          {/* Short positions bar */}
-                          <div
-                            className="h-full bg-danger transition-all duration-500 absolute right-0"
-                            style={{
-                              width: `${100 - longShortData.longPercentage}%`
-                            }}
-                          />
-                        </>
-                      )}
-                    </div>
-                    <div className="flex justify-between text-label text-text-tertiary">
-                      <span>{longShortData.longPercentage.toFixed(1)}% Long</span>
-                      <span>{(100 - longShortData.longPercentage).toFixed(1)}% Short</span>
-                    </div>
-                  </div>
-
-                  {/* Withdrawable — from HL clearinghouseState.withdrawable (perp response). */}
-                  <div className="flex justify-between items-center pt-2 border-t border-border-subtle">
-                    <p className="text-text-secondary text-xs">Withdrawable:</p>
-                    <p className="mono text-text-primary text-sm font-bold">
-                      {formatCurrency(perpPositions?.withdrawable ? parseFloat(perpPositions.withdrawable) : 0)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
+            <div className="mt-auto pt-2 border-t border-border-default">
+              <StatRow label="Total" value={fmt(balances.totalBalance)} emphasis />
+            </div>
           </div>
 
+          {/* Right: volume + exposure */}
+          <div className="flex flex-col min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-1">
+              <p className="text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
+                Volume
+              </p>
+              <PillTabs
+                variant="text"
+                tabs={VOLUME_TABS}
+                activeTab={volumeTimeframe}
+                onTabChange={(v) => setVolumeTimeframe(v as VolumeTimeframe)}
+              />
+            </div>
+            <div className="divide-y divide-border-subtle">
+              <StatRow label="Perp" value={fmt(volume.perp)} />
+              <StatRow label="Spot + Vault" value={fmt(volume.spotVault)} />
+              <StatRow label="Total" value={fmt(volume.total)} emphasis />
+            </div>
 
-        </>
+            <div className="mt-auto pt-3 space-y-1.5">
+              <div className="flex items-center justify-between text-[11px] font-medium">
+                <span className="text-success">Long {compactUsd(longShort.longValue)}</span>
+                <span className="text-danger">Short {compactUsd(longShort.shortValue)}</span>
+              </div>
+              {longShort.totalValue > 0 ? (
+                <StackedShareBar
+                  height={6}
+                  segments={[
+                    { value: longShort.longValue, colorClass: "bg-success", label: "Long" },
+                    { value: longShort.shortValue, colorClass: "bg-danger", label: "Short" },
+                  ]}
+                />
+              ) : (
+                <div className="h-1.5 rounded-full bg-surface-2" />
+              )}
+              <div className="flex justify-between text-[10px] text-text-tertiary mono">
+                <span>{longShort.longPct.toFixed(1)}% long</span>
+                <span>{(100 - longShort.longPct).toFixed(1)}% short</span>
+              </div>
+              {/* Withdrawable — from HL clearinghouseState.withdrawable (perp response). */}
+              <div className="pt-1.5 border-t border-border-subtle">
+                <StatRow
+                  label="Withdrawable"
+                  value={fmt(perpPositions?.withdrawable ? parseFloat(perpPositions.withdrawable) : 0)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-    </div>
+    </Card>
   );
 }

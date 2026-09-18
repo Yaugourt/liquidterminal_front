@@ -42,17 +42,17 @@ const ACTION_ICONS: Record<string, React.ElementType> = {
 };
 
 const ACTION_COLORS: Record<string, string> = {
-  REGISTRATION: "text-purple-400 bg-purple-400/10",
+  REGISTRATION: "text-brand bg-brand/10",
   DAILY_LOGIN: "text-success bg-success/10",
   LOGIN_STREAK_7: "text-gold bg-gold/10",
   LOGIN_STREAK_30: "text-gold bg-gold/10",
-  REFERRAL_SUCCESS: "text-blue-400 bg-blue-400/10",
-  CREATE_READLIST: "text-cyan-400 bg-cyan-400/10",
-  MARK_RESOURCE_READ: "text-teal-400 bg-teal-400/10",
-  COPY_PUBLIC_READLIST: "text-indigo-400 bg-indigo-400/10",
+  REFERRAL_SUCCESS: "text-brand bg-brand/10",
+  CREATE_READLIST: "text-brand bg-brand/10",
+  MARK_RESOURCE_READ: "text-brand bg-brand/10",
+  COPY_PUBLIC_READLIST: "text-brand bg-brand/10",
   CREATE_WALLETLIST: "text-brand bg-brand/10",
   ADD_WALLET_TO_LIST: "text-brand bg-brand/10",
-  SUBMIT_PUBLIC_GOOD: "text-amber-400 bg-amber-400/10",
+  SUBMIT_PUBLIC_GOOD: "text-gold bg-gold/10",
   PUBLIC_GOOD_APPROVED: "text-gold bg-gold/10",
 };
 
@@ -174,7 +174,7 @@ export function XpHistoryList({
               historyPagination.page < historyPagination.totalPages && (
                 <Button
                   variant="outline"
-                  className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg"
+                  className="w-full border-border-subtle hover:bg-surface-2 text-text-secondary rounded-lg"
                   onClick={() => refetchHistory(historyPagination.page + 1)}
                   disabled={isLoadingHistory}
                 >

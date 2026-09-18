@@ -87,11 +87,11 @@ export function XpLeaderboard({
   const getRankBg = (rank: number) => {
     switch (rank) {
       case 1:
-        return "bg-gradient-to-r from-amber-500/10 to-amber-400/10 border-amber-500/30";
+        return "bg-gradient-to-r from-gold/10 to-gold/10 border-gold/30";
       case 2:
         return "bg-surface-2 border-border-default";
       case 3:
-        return "bg-gradient-to-r from-amber-600/10 to-gold/10 border-amber-600/30";
+        return "bg-gradient-to-r from-gold/10 to-gold/10 border-gold/30";
       default:
         return "bg-base border-border-subtle";
     }
@@ -170,7 +170,7 @@ export function XpLeaderboard({
             {hasMore && (
               <Button
                 variant="outline"
-                className="w-full border-border-subtle hover:bg-white/5 text-text-secondary rounded-lg"
+                className="w-full border-border-subtle hover:bg-surface-2 text-text-secondary rounded-lg"
                 onClick={loadMore}
                 disabled={isLoading}
               >
