@@ -55,7 +55,9 @@ interface AddressAnalyticsLayoutProps {
  *
  * Key features:
  * - Validates the address format up-front (shows a friendly invalid-state card).
- * - Shared hero + summary + tab bar.
+ * - Shared hero + summary + tab bar. The explorer variant keeps the summary to
+ *   a ribbon + one card so the tab content (transactions) starts within the
+ *   first screen; the tracker variant stacks its trading cards.
  * - Lazy-mount + keep-alive pattern for tab panels: each panel is only mounted
  *   on first visit, then stays in memory so switching tabs is instant.
  */
@@ -133,13 +135,16 @@ export function AddressAnalyticsLayout({
 
       <AddressSummary address={address} variant={summaryVariant} />
 
-      <WalletScorecard address={address} />
-
-      <WalletConcentration address={address} />
-
-      <WalletFundingCard address={address} />
-
-      {summaryVariant === "tracker" && <HyperEvmCard address={address} />}
+      {/* The explorer digest already folds scorecard, concentration and funding
+          into its profile card; the tracker keeps them as standalone cards. */}
+      {summaryVariant === "tracker" && (
+        <>
+          <WalletScorecard address={address} />
+          <WalletConcentration address={address} />
+          <WalletFundingCard address={address} />
+          <HyperEvmCard address={address} />
+        </>
+      )}
 
       <AddressTabBar
         tabs={visibleTabs}
