@@ -4,7 +4,7 @@ import { memo, useId, useMemo, useState } from "react";
 import { Vault } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHeading, ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useTvlHistory } from "@/services/ecosystem/project/hooks";
 
@@ -105,19 +105,18 @@ export const TvlHistoryCard = memo(function TvlHistoryCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Vault size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Total Value Locked</h3>
-        <PeriodSelector
-          className="ml-auto"
-          selected={window}
-          onChange={setWindow}
-          options={WINDOWS}
-          variant="aurora"
-        />
-      </div>
+      <CardHeading
+        icon={<Vault size={13} className="text-brand" />}
+        title="Total Value Locked"
+        actions={
+          <PeriodSelector
+            selected={window}
+            onChange={setWindow}
+            options={WINDOWS}
+            variant="aurora"
+          />
+        }
+      />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
         {[

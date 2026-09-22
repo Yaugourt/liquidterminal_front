@@ -317,6 +317,14 @@ export const seoConfig = {
     image: "/og/ecosystem.png",
   },
 
+  fundingPage: {
+    title: "Support Liquid Terminal - Sponsors & Donors",
+    description:
+      "Back the independent data terminal for Hyperliquid. Sponsor the sidebar, partner with us, or donate. 10,000+ visitors over 12 months with next to no paid marketing.",
+    keywords: ["sponsor Liquid Terminal", "Hyperliquid sponsor", "donate", "crypto sponsorship", "Hyperliquid data"],
+    path: "/funding",
+  },
+
   vaults: {
     title: "Hyperliquid Vaults - TVL, APR & Performance Rankings",
     description: "Every Hyperliquid vault ranked by TVL, APR and followers: HLP, protocol vaults and user-run strategies, with full performance history per vault.",

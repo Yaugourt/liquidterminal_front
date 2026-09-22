@@ -98,17 +98,11 @@ export default function MarketBuildersPage() {
         <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
           {/* Card header: tabs (left) + meta (right) */}
           <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle">
-            <TabsList className="bg-surface-2 p-0.5 rounded-md h-auto">
-              <TabsTrigger
-                value="top"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
-              >
+            <TabsList size="sm">
+              <TabsTrigger value="top" size="sm">
                 Top builders
               </TabsTrigger>
-              <TabsTrigger
-                value="all"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
-              >
+              <TabsTrigger value="all" size="sm">
                 All builders ({list.builders.length > 0 ? list.builders.length : "…"})
               </TabsTrigger>
             </TabsList>

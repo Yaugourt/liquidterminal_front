@@ -9,8 +9,8 @@ import {
 } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { CardHeading } from "./CardHeading";
 import {
   getTokenIconUrl,
   getTokenInitials,
@@ -64,39 +64,17 @@ export const OverviewModule = memo(function OverviewModule({
 }: OverviewModuleProps) {
   return (
     <Card className={`flex flex-col ${className ?? ""}`}>
-      {/* V4 card-head — brand icon + title + tag pill + "View all →" link.
-          flex-wrap so a narrow card drops the tag and link to a second line
-          instead of squeezing the title down to an ellipsis. */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        {icon && (
-          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-            {icon}
-          </span>
-        )}
-        <h3 className="text-[13px] font-semibold text-text-primary truncate">
-          {title}
-        </h3>
-        {tag != null &&
-          (tagVariant === "plain" ? (
-            <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">{tag}</span>
-          ) : (
-            <span className="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-              {tag}
-            </span>
-          ))}
-        {actions && (
-          <span className="ml-auto shrink-0 flex items-center gap-1">{actions}</span>
-        )}
-        {href && (
-          <Link
-            href={href}
-            className={`shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors ${actions ? "" : "ml-auto"}`}
-          >
-            {viewAllLabel ?? "View all"}
-            <ArrowRight size={12} />
-          </Link>
-        )}
-      </div>
+      {/* V4 card-head, shared via CardHeading. `tag` maps to `meta`; the head
+          keeps its flex-wrap + right-cluster ml-auto behaviour unchanged. */}
+      <CardHeading
+        title={title}
+        icon={icon}
+        meta={tag}
+        metaVariant={tagVariant}
+        actions={actions}
+        href={href}
+        viewAllLabel={viewAllLabel}
+      />
 
       {/* Body */}
       {children && <div className="flex-1 flex flex-col">{children}</div>}

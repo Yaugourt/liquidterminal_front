@@ -2,21 +2,47 @@
 
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
 const Tabs = TabsPrimitive.Root
 
+/** Track sizes. `default` is the historical size; `sm` is the dense strip. */
+const tabsListVariants = cva(
+    "inline-flex items-center justify-center rounded-md bg-surface-2 text-text-secondary",
+    {
+        variants: { size: { default: "h-10 p-1", sm: "h-auto p-0.5" } },
+        defaultVariants: { size: "default" },
+    }
+)
+
+/**
+ * Trigger sizes. The active/focus treatment is centralized here (brand fill,
+ * navy text, shared `.focus-ring`) so consumers never re-declare a
+ * `data-[state=active]` recipe — they only pick a `size`.
+ */
+const tabsTriggerVariants = cva(
+    "inline-flex items-center justify-center whitespace-nowrap font-medium transition-all motion-reduce:transition-none focus-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-brand data-[state=active]:text-brand-text-on",
+    {
+        variants: {
+            size: {
+                default: "rounded-sm px-3 py-1.5 text-sm",
+                sm: "rounded px-2.5 py-1 text-[11px]",
+            },
+        },
+        defaultVariants: { size: "default" },
+    }
+)
+
 const TabsList = React.forwardRef<
     React.ElementRef<typeof TabsPrimitive.List>,
-    React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> &
+        VariantProps<typeof tabsListVariants>
+>(({ className, size, ...props }, ref) => (
     <TabsPrimitive.List
         ref={ref}
-        className={cn(
-            "inline-flex h-10 items-center justify-center rounded-md bg-surface-2 p-1 text-text-secondary",
-            className
-        )}
+        className={cn(tabsListVariants({ size }), className)}
         {...props}
     />
 ))
@@ -24,14 +50,12 @@ TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = React.forwardRef<
     React.ElementRef<typeof TabsPrimitive.Trigger>,
-    React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> &
+        VariantProps<typeof tabsTriggerVariants>
+>(({ className, size, ...props }, ref) => (
     <TabsPrimitive.Trigger
         ref={ref}
-        className={cn(
-            "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-brand data-[state=active]:text-brand-text-on",
-            className
-        )}
+        className={cn(tabsTriggerVariants({ size }), className)}
         {...props}
     />
 ))
@@ -44,7 +68,7 @@ const TabsContent = React.forwardRef<
     <TabsPrimitive.Content
         ref={ref}
         className={cn(
-            "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "mt-2 focus-ring",
             className
         )}
         {...props}
@@ -52,4 +76,4 @@ const TabsContent = React.forwardRef<
 ))
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export { Tabs, TabsList, TabsTrigger, TabsContent } 
+export { Tabs, TabsList, TabsTrigger, TabsContent }

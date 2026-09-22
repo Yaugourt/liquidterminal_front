@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Settings, Shield, MessageCircle, Github, BookOpen, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { SidebarToggle } from "@/components/common"
-import { TokenAvatar, LiquidMark } from "@/components/common"
+import { TokenAvatar, LiquidMark, SponsorCard } from "@/components/common"
 import Image from "next/image"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
@@ -478,6 +478,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         )}
                     </ul>
                 </nav>
+
+                {/* Sponsors + donors — config-driven, routes to /funding. */}
+                <SponsorCard collapsed={isCollapsed} onNavigate={() => setIsOpen(false)} />
 
                 {/* Pied — customize + statut + socials, same morphing rules. */}
                 <div className="border-t border-border-subtle">

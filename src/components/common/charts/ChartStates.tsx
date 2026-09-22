@@ -9,7 +9,7 @@ interface ChartLoadingProps {
 
 export function ChartLoading({ className = "" }: ChartLoadingProps) {
   return (
-    <div className={`flex flex-col justify-end items-center h-full min-h-[200px] p-4 ${className}`}>
+    <div role="status" aria-live="polite" aria-busy="true" className={`flex flex-col justify-end items-center h-full min-h-[200px] p-4 ${className}`}>
       <div className="w-full flex items-end justify-center gap-[3px] h-[60%] max-w-[280px]">
         {[35, 55, 40, 70, 50, 80, 45, 65, 55, 75, 42, 60].map((h, i) => (
           <div
@@ -41,7 +41,7 @@ export function ChartEmpty({
   className = "",
 }: ChartEmptyProps) {
   return (
-    <div className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-2 ${className}`}>
+    <div role="status" className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-2 ${className}`}>
       <Hypurr mood="this-is-fine" height={64} />
       <p className="text-text-tertiary text-sm">{message}</p>
       {suggestion && (
@@ -63,7 +63,7 @@ export function ChartError({
   className = "",
 }: ChartErrorProps) {
   return (
-    <div className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-3 ${className}`}>
+    <div role="alert" className={`flex flex-col justify-center items-center h-full min-h-[200px] gap-3 ${className}`}>
       <AlertCircle className="h-6 w-6 text-danger" />
       <p className="text-danger text-sm">{message}</p>
       {onRetry && (

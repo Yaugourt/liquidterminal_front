@@ -2,6 +2,8 @@
 
 > Single source of truth for the design system. Every new screen or component composes from here; no style value is re-invented.
 
+> **Authority (2026-09-14).** This root file is the active design-system source. `docs/DESIGN_SYSTEM.md` is a short index into it, `docs/DESIGN_SYSTEM_V4.md` is dated historical rationale, and `dash-mockups/kit.html` is a historical reference (not a synced mirror). Live values are read from the code: `globals.css` (tokens), `tailwind.config.ts` (utilities), `layout.tsx` (fonts). The product theme is dark-only; the cyan Liquid identity stands (no marketing glass, no violet). Code that diverges from this spec is not automatically a new decision; resolve the divergence explicitly.
+
 ## 1. Philosophy
 
 - **Analytics-first** — aim for DefiLlama / Token Terminal level: info density, scannable hierarchy, restraint.
@@ -34,7 +36,7 @@
 
 ### Typography
 
-- Single stack **Inter** — `font-sans` and `font-mono` both resolve to Inter.
+- Two families, both loaded in `layout.tsx`: **Inter** for UI / body / headings (`font-sans`), **JetBrains Mono** for all numeric data (`font-mono`, the V4 signature).
 - `.mono` class for tabular numbers (`font-feature-settings: "tnum"`). Prefer `.mono` over `tabular-nums`.
 - Common sizes:
   - Card hero: `text-[20px]` to `text-[23px]`, `font-semibold`, `tracking-[-0.02em]`.

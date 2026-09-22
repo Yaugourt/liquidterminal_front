@@ -40,6 +40,8 @@ Format: route · key components · data sources · gotchas. Components live in `
 - `/explorer/vaults` (+`[address]`) — directory + detail · backend `/market/vaults` + Hypedexer `/indexer/vaults/*` with fallback chain indexer → summaries → address-only.
 
 ### Market
+> **Order books (all market types)** — `OrderBook` (spot/perp/HIP-3) and `Hip4OrderBook` read the **L4 per-order book** over backend WS `env.NEXT_PUBLIC_API/ws` type:`l4book` (`services/market/orderbook/`, snapshot + 250 ms deltas, 100 levels/side, order + maker counts per level, whole-book totals). HL's public `l2Book` stays subscribed: it supplies the exact top 20 levels the merge trusts over L4 (whose delta stream drops some departing orders) and carries the panel alone if L4 is down — badge in the card header says which is live.
+
 - `/market/spot` — SpotKpiStrip, SpotMarketShape, SpotAuctionBand, SpotDirectoryTable, SpotLeaderboards · backend `/market/spot`, Hypurrscan `/spotUSDC`, fees raw, HL candleSnapshot.
 - `/market/spot/[token]` — TokenCard, TradingViewChart (lazy), OrderBook, TokenDetailsBand, TWAP/Holders tabs · HL `/tokenDetails`, Hypurrscan holders · bridged tokens hide market cap.
 - `/market/spot/auction`, `/market/perp/auction` — auction timing backend + HL `perpDeployAuctionStatus` + Hypurrscan past auctions.
@@ -70,6 +72,7 @@ Format: route · key components · data sources · gotchas. Components live in `
 
 - Spot data: "liquidity" is actually mid-price mislabeled; market caps garbage for bridged + pre-mint stables; duplicate token names → match by `tokenId`; fees window ≈ 10 days.
 - HIP-4 backend: stale live status, null settlement names — frontend merges/falls back (see `buildMergedQuestions`).
+- Hypedexer's `l4Book` delta stream is lossy: resting orders can leave the book with no `remove` diff (measured 2026-08-07 on HYPE — 10 of 10 asks the price traded through went unannounced). The backend rebuilds each book from a fresh snapshot every 8 s and prunes levels better than HL's touch; the frontend additionally overlays HL `l2Book` for the top 20. Never treat a purely incremental L4 book as accurate.
 - `/explorer` and `/wiki` have pre-existing visual-check clip failures (mobile/1024) — predate the 2026-06 cleanup.
 - `visual-check` needs the dev server + Playwright from gstack (`GSTACK_NODE_MODULES` env or `~/gstack`/`~/.claude/skills/gstack`).
 - knip is configured (`knip.json`); `components/common/**` and `components/ui/**` are entry points — their exports are never "dead" (DS primitives kept for future pages).
