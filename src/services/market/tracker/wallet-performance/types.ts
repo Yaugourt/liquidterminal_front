@@ -4,6 +4,9 @@
 
 export interface WalletPerformance {
   user: string;
+  /** Aggregation window the indexer applied — "7d" by default, "custom" when
+   *  a `start_time` was passed (see `fetchWalletPerformance`). */
+  window: string;
   total_trades: number;
   /** Fraction 0..1. */
   win_rate: number;
@@ -20,8 +23,23 @@ export interface WalletPerformance {
   losses: number;
   /** Realized PnL, USD. */
   total_pnl: number;
-  // NOTE: upstream also returns avg_holding_time_s, but it is known-inflated
-  // and unreliable, so it is deliberately omitted here (never displayed).
+  /** Traded notional over the window, USD. */
+  volume: number;
+  /** Fees paid over the window, USD. */
+  total_fees: number;
+  longs: number;
+  shorts: number;
+  /** Fraction 0..1 of round-trips opened long. */
+  long_pct: number;
+  best_trade_pnl: number;
+  worst_trade_pnl: number;
+  /** Largest peak-to-trough equity decline, USD (equity-curve basis). */
+  equity_max_drawdown_usd: number;
+  /** Same, as a fraction 0..1 of the equity peak. */
+  equity_max_drawdown_pct: number;
+  // NOTE: upstream also returns avg_holding_time_s (known-inflated) and
+  // avg_trade_size (unit undocumented — it is not USD), both deliberately
+  // omitted here so they are never displayed.
 }
 
 export interface WalletOverview {

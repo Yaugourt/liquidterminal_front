@@ -268,6 +268,21 @@ export function compactUsd(
 }
 
 /**
+ * `compactUsd` avec signe explicite — `+$1.23M` / `-$45.6K` / `+$0.00`.
+ *
+ * Pour les deltas et PnL où le `+` porte l'information. Remplace les
+ * `signedUsd` locaux (WalletScorecard, TraderPnlCard, SmartMoney*, …).
+ */
+export function signedCompactUsd(
+  n: number | null | undefined,
+  opts: { decimals?: number; fallback?: string } = {}
+): string {
+  const { fallback = '—' } = opts;
+  if (n == null || !Number.isFinite(n)) return fallback;
+  return `${n < 0 ? '-' : '+'}${compactUsd(Math.abs(n), opts)}`;
+}
+
+/**
  * USD plein avec séparateurs de milliers — `$1,234,567`.
  *
  * Pour les tooltips et totaux où la valeur exacte compte. Remplace les

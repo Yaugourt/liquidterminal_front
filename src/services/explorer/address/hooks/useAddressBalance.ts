@@ -120,6 +120,9 @@ export function useAddressBalance(address: string, options: UseAddressBalanceOpt
 
   return {
     balances,
+    /** Raw perp clearinghouse state (open positions, margin) — for callers
+     *  that need position-level detail without opening a second feed. */
+    perpPositions,
     isLoading: balancesLoading || tokensLoading || stakingLoading || vaultLoading,
     error: balancesError || tokensError || stakingError,
     /** HyperEVM feeds still loading (kept apart so HyperCore cards render first). */

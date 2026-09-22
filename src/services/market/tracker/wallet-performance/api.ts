@@ -15,13 +15,31 @@ interface IndexerEnvelope<T> {
 }
 
 /**
+ * Earliest possible Hyperliquid activity. Passing it as `start_time` makes
+ * the indexer aggregate the wallet's whole history instead of its default
+ * 7-day window (the response then reports `window: "custom"`).
+ */
+const HL_GENESIS_ISO = '2023-01-01T00:00:00';
+
+export interface WalletPerformanceOptions {
+  /** Aggregate over the wallet's full history instead of the indexer's 7d default. */
+  lifetime?: boolean;
+}
+
+/**
  * Backend-computed trading scorecard for a wallet. The indexer proxy does the
  * aggregation server-side, so this is a plain fetch — no client-side maths.
+ * Defaults to the indexer's 7-day window; pass `{ lifetime: true }` for
+ * all-time figures that reconcile with `/overview` and `/coins`.
  */
-export const fetchWalletPerformance = async (address: string): Promise<WalletPerformance> => {
+export const fetchWalletPerformance = async (
+  address: string,
+  options: WalletPerformanceOptions = {}
+): Promise<WalletPerformance> => {
   return withErrorHandling(async () => {
     const res = await get<IndexerEnvelope<WalletPerformance>>(
-      `/indexer/users/${encodeURIComponent(address)}/performance`
+      `/indexer/users/${encodeURIComponent(address)}/performance`,
+      options.lifetime ? { start_time: HL_GENESIS_ISO } : undefined
     );
     return res.data;
   }, 'fetching wallet performance');

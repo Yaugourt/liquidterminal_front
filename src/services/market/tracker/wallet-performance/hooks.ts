@@ -1,6 +1,7 @@
 import { useDataFetching } from '@/hooks/useDataFetching';
 import {
   fetchWalletPerformance,
+  type WalletPerformanceOptions,
   fetchWalletCoins,
   fetchWalletCoinDistribution,
   fetchWalletOverview,
@@ -46,10 +47,14 @@ export const useWalletOverview = (address: string) => {
   return { overview: data, isLoading, error, refetch };
 };
 
-export const useWalletPerformance = (address: string) => {
+export const useWalletPerformance = (
+  address: string,
+  options: WalletPerformanceOptions = {}
+) => {
+  const lifetime = options.lifetime === true;
   const { data, isLoading, error, refetch } = useDataFetching<WalletPerformance>({
-    fetchFn: () => fetchWalletPerformance(address),
-    dependencies: [address],
+    fetchFn: () => fetchWalletPerformance(address, { lifetime }),
+    dependencies: [address, lifetime],
     refreshInterval: 60000,
     maxRetries: 1,
   });

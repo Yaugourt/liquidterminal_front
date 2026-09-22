@@ -43,6 +43,24 @@ export const fetchRecentLiquidations = async (
 };
 
 /**
+ * Every liquidation recorded against one wallet (as `liquidated_user`), newest
+ * first, from the local DB's unified `/liquidations` endpoint. The upstream
+ * emits two rows per event (priced + liquidators), so callers fold them with
+ * `mergeLiquidationRows` before counting.
+ * @param address Wallet address
+ * @param limit Max rows (1-1000, default 100)
+ */
+export const fetchUserLiquidations = async (
+  address: string,
+  limit = 100
+): Promise<LiquidationResponse> => {
+  return withErrorHandling(async () => {
+    const queryString = buildQueryParams({ user: address, limit, order: 'DESC' });
+    return await get<LiquidationResponse>(`${ENDPOINTS.LIQUIDATIONS}${queryString}`);
+  }, 'fetching user liquidations');
+};
+
+/**
  * Récupère toutes les données (stats + chart) pour toutes les périodes en UN appel
  * @returns Stats et buckets chart pour 2h, 4h, 8h, 12h, 24h
  */
