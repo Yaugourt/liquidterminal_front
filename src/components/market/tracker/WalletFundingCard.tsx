@@ -64,7 +64,8 @@ export function WalletFundingCard({ address }: WalletFundingCardProps) {
   if (isLoading && !funding) return null;
   if (error || !funding || funding.event_count === 0) return null;
 
-  const topCoins = funding.by_coin.slice(0, 6);
+  // The upstream emits an "UNKNOWN" bucket with no funding — noise, not data.
+  const topCoins = funding.by_coin.filter((c) => c.coin && c.coin !== "UNKNOWN").slice(0, 6);
 
   return (
     <Card className="flex flex-col overflow-hidden">

@@ -13,7 +13,7 @@ import {
   combinedSourceStatus,
   type KpiCell,
 } from "@/components/common";
-import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
+import { compactUsd, compactCount, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import {
   useWalletPerformance,
   useWalletCoins,
@@ -24,8 +24,6 @@ interface WalletScorecardProps {
   address: string;
 }
 
-const signedUsd = (v: number) => `${v >= 0 ? "+" : "-"}${compactUsd(Math.abs(v))}`;
-
 /**
  * Trading scorecard for a wallet — win rate, profit factor, drawdown, realized
  * PnL, plus a per-coin breakdown. Every figure is aggregated server-side by the
@@ -33,7 +31,9 @@ const signedUsd = (v: number) => `${v >= 0 ? "+" : "-"}${compactUsd(Math.abs(v))
  * client-side performance maths. Hidden for wallets with no HL trades.
  */
 export function WalletScorecard({ address }: WalletScorecardProps) {
-  const perfFeed = useWalletPerformance(address);
+  // Lifetime window: the indexer defaults to 7d, which would not reconcile
+  // with the all-time by-coin table below (nor with the "all-time" tag).
+  const perfFeed = useWalletPerformance(address, { lifetime: true });
   const coinsFeed = useWalletCoins(address, 8);
   const overviewFeed = useWalletOverview(address);
   const { performance: perf, isLoading: perfLoading, error: perfError } = perfFeed;
@@ -46,7 +46,7 @@ export function WalletScorecard({ address }: WalletScorecardProps) {
       {
         key: "pnl",
         label: "Realized PnL",
-        value: signedUsd(perf.total_pnl),
+        value: signedCompactUsd(perf.total_pnl),
         sub: "all-time",
         tone: perf.total_pnl >= 0 ? "success" : "danger",
       },
@@ -80,7 +80,7 @@ export function WalletScorecard({ address }: WalletScorecardProps) {
         key: "trades",
         label: "Trades",
         value: compactCount(perf.total_trades),
-        sub: `avg ${compactUsd(perf.avg_trade_size)}`,
+        sub: `${Math.round(perf.long_pct * 100)}% long`,
       },
     ];
   }, [perf]);
@@ -156,7 +156,7 @@ export function WalletScorecard({ address }: WalletScorecardProps) {
                     key="p"
                     className={`mono font-medium ${c.total_pnl >= 0 ? "text-success" : "text-danger"}`}
                   >
-                    {signedUsd(c.total_pnl)}
+                    {signedCompactUsd(c.total_pnl)}
                   </span>,
                   <span key="f" className="mono text-text-tertiary">
                     {compactCount(c.fill_count)}
