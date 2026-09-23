@@ -4,7 +4,7 @@ import { memo, useEffect, useState } from "react";
 import Link from "next/link";
 import { Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, DataStatus } from "@/components/common";
+import { CardHeading, DataStatus, TokenAvatar } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useLiveLiquidations } from "@/services/dashboard/live/useLiveLiquidations";
 
@@ -16,7 +16,14 @@ function age(ms: number, now: number): string {
   return `${Math.floor(m / 60)}h`;
 }
 
-/** Liquidations streamed from the backend push, newest first. */
+function short(addr: string): string {
+  return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+/**
+ * Liquidations streamed from the backend push, newest first. The age opens
+ * the transaction, the coin its market, the address the liquidated wallet.
+ */
 export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
   const { rows, connected } = useLiveLiquidations(12);
   const [now, setNow] = useState(() => Date.now());
@@ -36,7 +43,7 @@ export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
         href="/explorer/liquidations"
         viewAllLabel="All"
       />
-      <div className="h-[364px] overflow-y-auto px-3.5 py-1">
+      <div className="h-[364px] overflow-y-auto scrollbar-brand pl-3.5 pr-2 py-1">
         {rows.length === 0 ? (
           <div className="h-full grid place-items-center text-[12px] text-text-tertiary">Loading liquidations…</div>
         ) : (
@@ -44,14 +51,24 @@ export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
             <tbody>
               {rows.map((l) => (
                 <tr key={l.tid} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 text-text-tertiary whitespace-nowrap">{age(l.time_ms, now)}</td>
-                  <td className="py-1.5 pr-2 whitespace-nowrap max-w-[96px] truncate">
-                    <Link href={`/market/perp/${encodeURIComponent(l.coin)}`} className="text-text-primary hover:text-brand">
-                      {l.coin}
+                  <td className="py-1.5 pr-2 whitespace-nowrap">
+                    <Link href={`/explorer/transaction/${l.hash}`} className="text-text-tertiary hover:text-brand" title="Open the transaction">
+                      {age(l.time_ms, now)}
+                    </Link>
+                  </td>
+                  <td className="py-1.5 pr-2 whitespace-nowrap max-w-[108px]">
+                    <Link href={`/market/perp/${encodeURIComponent(l.coin)}`} className="flex items-center gap-1.5 min-w-0 text-text-primary hover:text-brand">
+                      <TokenAvatar assetName={l.coin} size="xs" />
+                      <span className="truncate">{l.coin}</span>
                     </Link>
                   </td>
                   <td className={`py-1.5 pr-2 ${l.liq_dir === "Long" ? "text-success" : "text-danger"}`}>{l.liq_dir}</td>
-                  <td className="py-1.5 text-right text-text-primary whitespace-nowrap">{compactUsd(l.notional_total)}</td>
+                  <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactUsd(l.notional_total)}</td>
+                  <td className="py-1.5 text-right whitespace-nowrap">
+                    <Link href={`/market/tracker/wallet/${l.liquidated_user}`} className="text-text-tertiary hover:text-brand" title="Liquidated wallet">
+                      {short(l.liquidated_user)}
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

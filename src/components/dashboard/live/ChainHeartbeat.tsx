@@ -1,10 +1,12 @@
 "use client";
 
 import { memo } from "react";
+import Link from "next/link";
 import { HeartPulse } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CardHeading, DataStatus } from "@/components/common";
-import { compactCount } from "@/lib/formatters/numberFormatting";
+import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
+import { useNumberFormat } from "@/store/number-format.store";
 import type { ChainPulse } from "@/services/dashboard/live/useChainPulse";
 
 function Area({ values }: { values: number[] }) {
@@ -34,6 +36,7 @@ function Area({ values }: { values: number[] }) {
 
 /** HyperCore heartbeat: transaction rate over the last minute and the action mix. */
 export const ChainHeartbeat = memo(function ChainHeartbeat({ pulse }: { pulse: ChainPulse }) {
+  const { format } = useNumberFormat();
   const peak = pulse.txSeries.length ? Math.max(...pulse.txSeries) : null;
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -69,6 +72,15 @@ export const ChainHeartbeat = memo(function ChainHeartbeat({ pulse }: { pulse: C
                 <span className="w-10 shrink-0 text-right text-text-tertiary">{Math.round(a.share * 100)}%</span>
               </div>
             ))
+          )}
+          {pulse.height != null && (
+            <Link
+              href={`/explorer/block/${pulse.height}`}
+              className="mt-1 flex items-center justify-between rounded-md bg-surface-2/60 px-2.5 py-1.5 text-[11px] hover:bg-surface-2 focus-ring"
+            >
+              <span className="text-text-tertiary">Latest block</span>
+              <span className="mono text-brand">#{formatNumber(pulse.height, format, { maximumFractionDigits: 0 })} →</span>
+            </Link>
           )}
           {pulse.mixSample > 0 && (
             <div className="text-[10px] text-text-tertiary">Shares of {pulse.mixSample} sampled transactions in the last minute.</div>

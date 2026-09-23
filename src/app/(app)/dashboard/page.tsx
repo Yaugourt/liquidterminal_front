@@ -20,8 +20,10 @@ const TAPE_SIZE = 12;
 /**
  * Dashboard · Overview: what is happening on Hyperliquid right now.
  *
- * Streams: the public Hyperliquid websockets (trades, allMids, explorer
- * blocks and transactions) and the backend liquidation push. Each stream is
+ * REST first, then streams: the tape opens on the last five minutes of
+ * indexed fills and the liquidations on the recent list, then the public
+ * Hyperliquid websockets (trades, allMids, explorer blocks and transactions)
+ * and the backend liquidation push take over. Each stream is
  * buffered and flushed at most once per second. The 24h signals under them
  * sit on light polled endpoints. Depth stays in the Market, Capital and
  * Ecosystem tabs. Every socket opened here closes when the tab unmounts.
@@ -43,7 +45,7 @@ export default function DashboardOverview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         <div className="lg:col-span-2 min-w-0">
-          <BigPrintsCard prints={feed.prints} connected={feed.connected} coinCount={tapeCoins.length} />
+          <BigPrintsCard prints={feed.prints} connected={feed.connected} seeded={feed.seeded} coinCount={tapeCoins.length} />
         </div>
         <LiveLiquidationsCard />
       </div>

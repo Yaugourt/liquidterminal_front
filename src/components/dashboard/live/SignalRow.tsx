@@ -4,6 +4,7 @@ import { memo, type ReactNode } from "react";
 import Link from "next/link";
 import { TrendingUp, Activity, Timer, Gavel, Hammer, Receipt, Trophy, Vault, Coins } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { TokenAvatar } from "@/components/common";
 import { useDashboardStats } from "@/services/dashboard";
 import { useTrendingPerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
@@ -42,7 +43,7 @@ function signedPct(v: number | null | undefined): { text: string; up: boolean } 
   return { text: `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`, up: v >= 0 };
 }
 
-/** A compact signal tile. */
+/** A compact signal tile; with `href` the whole tile opens the page that goes deeper. */
 function Signal({
   icon,
   label,
@@ -51,6 +52,7 @@ function Signal({
   sub,
   bar,
   spark,
+  href,
 }: {
   icon: ReactNode;
   label: string;
@@ -59,9 +61,10 @@ function Signal({
   sub?: ReactNode;
   bar?: ReactNode;
   spark?: ReactNode;
+  href?: string;
 }) {
-  return (
-    <Card className="p-3 flex flex-col gap-1.5 min-h-[96px]">
+  const tile = (
+    <Card className="p-3 flex flex-col gap-1.5 min-h-[96px] h-full">
       <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold">
         <span className="text-brand">{icon}</span>
         {label}
@@ -73,6 +76,12 @@ function Signal({
       {spark}
       {sub && <div className="text-[11px] text-text-secondary mt-auto truncate">{sub}</div>}
     </Card>
+  );
+  if (!href) return tile;
+  return (
+    <Link href={href} className="block rounded-lg focus-ring group [&>div]:group-hover:bg-surface-2/60">
+      {tile}
+    </Link>
   );
 }
 
@@ -112,18 +121,21 @@ export const SignalRow = memo(function SignalRow() {
       <Signal
         icon={<TrendingUp size={12} />}
         label="Top mover · perp"
-        value={perpMover?.name ?? EMPTY}
+        href={perpMover ? `/market/perp/${encodeURIComponent(perpMover.name)}` : "/market/perp"}
+        value={perpMover ? <span className="inline-flex items-center gap-1.5"><TokenAvatar assetName={perpMover.name} src={perpMover.logo} size="sm" />{perpMover.name}</span> : EMPTY}
         sub={perpMover ? <span className={perpChange.up ? "text-success" : "text-danger"}>{perpChange.text} <span className="text-text-tertiary">· {compactUsd(perpMover.volume)} vol</span></span> : undefined}
       />
       <Signal
         icon={<TrendingUp size={12} />}
         label="Top mover · spot"
-        value={spotMover?.name ?? EMPTY}
+        href={spotMover ? `/market/spot/${encodeURIComponent(spotMover.name)}` : "/market/spot"}
+        value={spotMover ? <span className="inline-flex items-center gap-1.5"><TokenAvatar assetName={spotMover.name} src={spotMover.logo} kind="spot" size="sm" />{spotMover.name}</span> : EMPTY}
         sub={spotMover ? <span className={spotChange.up ? "text-success" : "text-danger"}>{spotChange.text} <span className="text-text-tertiary">· {compactUsd(spotMover.volume)} vol</span></span> : undefined}
       />
       <Signal
         icon={<Activity size={12} />}
         label="HYPE buy pressure"
+        href="/hype"
         value={buyPressure != null ? `${buyPressure >= 0 ? "+" : "-"}${compactUsd(Math.abs(buyPressure))}` : EMPTY}
         valueClass={buyPressure == null ? "text-text-primary" : buyPressure >= 0 ? "text-success" : "text-danger"}
         sub={<span>Buys {compactUsd(totalBuyValue)} · sells {compactUsd(totalSellValue)}</span>}
@@ -139,12 +151,14 @@ export const SignalRow = memo(function SignalRow() {
       <Signal
         icon={<Timer size={12} />}
         label="Active TWAPs"
+        href="/dashboard/market"
         value={twapCount ? count(twapCount) : EMPTY}
         sub={twapVol ? <span>{compactUsd(twapVol)} in flight</span> : undefined}
       />
       <Signal
         icon={<Gavel size={12} />}
         label={auctionActive ? "Auction · live" : "Next auction"}
+        href="/market/spot/auction"
         value={auctionState ? `${formatNumber(auctionState.currentPrice, format)} HYPE` : EMPTY}
         sub={
           auctionState ? (
@@ -166,15 +180,13 @@ export const SignalRow = memo(function SignalRow() {
       <Signal
         icon={<Trophy size={12} />}
         label="Biggest win · 24h"
+        href={best ? `/market/tracker/wallet/${best.user}` : "/market/trades"}
         value={best ? `${best.pnl_realized >= 0 ? "+" : "-"}${compactUsd(Math.abs(best.pnl_realized))}` : EMPTY}
         valueClass={best && best.pnl_realized < 0 ? "text-danger" : "text-success"}
         sub={
           best ? (
             <span>
-              {best.coin} {best.direction} ·{" "}
-              <Link href={`/market/tracker/wallet/${best.user}`} className="hover:text-brand">
-                {best.user.slice(0, 6)}…{best.user.slice(-4)}
-              </Link>
+              <span className="inline-flex items-center gap-1 align-middle"><TokenAvatar assetName={best.coin} size="xs" />{best.coin}</span> {best.direction} · {best.user.slice(0, 6)}…{best.user.slice(-4)}
             </span>
           ) : undefined
         }
@@ -182,12 +194,14 @@ export const SignalRow = memo(function SignalRow() {
       <Signal
         icon={<Hammer size={12} />}
         label="Builder fees · 24h"
+        href="/market/builders"
         value={buildersFees != null ? compactUsd(buildersFees) : EMPTY}
         sub={builders?.current?.uniqueUsers != null ? <span>{count(builders.current.uniqueUsers)} users routed</span> : undefined}
       />
       <Signal
         icon={<Receipt size={12} />}
         label="Protocol fees · 24h"
+        href="/dashboard/capital"
         value={feesLatest != null ? compactUsd(feesLatest) : EMPTY}
         valueClass="text-gold"
         spark={feesHistory.length >= 2 ? <span className="text-gold"><Spark values={feesHistory.map((p) => p.value)} /></span> : undefined}
@@ -195,11 +209,13 @@ export const SignalRow = memo(function SignalRow() {
       <Signal
         icon={<Vault size={12} />}
         label="Vaults TVL"
+        href="/explorer/vaults"
         value={statsLoading && !stats ? "…" : compactUsd(stats?.vaultsTvl)}
       />
       <Signal
         icon={<Coins size={12} />}
         label="HYPE staked"
+        href="/explorer/validator"
         value={statsLoading && !stats ? "…" : count(stats?.totalHypeStake)}
       />
     </div>

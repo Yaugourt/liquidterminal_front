@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { WebSocketClient } from "@/lib/websocket-client";
+import { fetchRecentPrints } from "./api";
 
 const WS_URL = "wss://api.hyperliquid.xyz/ws";
 /** Lowest print kept in memory; the UI threshold chips filter on top of it. */
-const PRINT_FLOOR_USD = 10_000;
+export const PRINT_FLOOR_USD = 10_000;
 /** Prints older than this drop out (the buy/sell bar reads this window). */
 export const PRINT_WINDOW_MS = 5 * 60_000;
 const MAX_PRINTS = 400;
@@ -24,6 +25,10 @@ export interface LivePrint {
   ntl: number;
   /** Epoch ms. */
   time: number;
+  /** Address of the aggressor, when known. */
+  taker?: string;
+  /** L1 transaction hash, when the trade has a real one. */
+  hash?: string;
 }
 
 interface WsTrade {
@@ -33,7 +38,12 @@ interface WsTrade {
   sz: string;
   time: number;
   tid: number;
+  hash?: string;
+  /** [buyer, seller]. */
+  users?: [string, string];
 }
+
+const ZERO_HASH = /^0x0+$/;
 
 interface WsFrame {
   channel?: string;
@@ -46,16 +56,20 @@ export interface LiveMarketFeed {
   /** Latest mid per coin, limited to `boardCoins`. */
   mids: Record<string, number>;
   connected: boolean;
+  /** True once the REST snapshot of the last five minutes has landed (or failed). */
+  seeded: boolean;
 }
 
 /**
- * Keyless live market feed straight from the Hyperliquid public websocket:
- * `trades` on `tapeCoins` (for the big-prints tape) and `allMids` (for the
- * price board). One socket, buffered in refs and flushed to React once per
+ * Live market feed. On mount the tape is primed with the last five minutes of
+ * prints from the indexed fills (REST), then the Hyperliquid public websocket
+ * takes over: `trades` on `tapeCoins` for new prints and `allMids` for the
+ * price board. Both sources share the trade id, so the hand-off never shows a
+ * print twice. One socket, buffered in refs and flushed to React once per
  * second so a busy tape never re-renders the page per trade.
  */
 export function useLiveMarketFeed(tapeCoins: string[], boardCoins: string[]): LiveMarketFeed {
-  const [state, setState] = useState<LiveMarketFeed>({ prints: [], mids: {}, connected: false });
+  const [state, setState] = useState<LiveMarketFeed>({ prints: [], mids: {}, connected: false, seeded: false });
 
   const clientRef = useRef<WebSocketClient | null>(null);
   const subscribedRef = useRef<Set<string>>(new Set());
@@ -66,6 +80,8 @@ export function useLiveMarketFeed(tapeCoins: string[], boardCoins: string[]): Li
   const midsRef = useRef<Record<string, number>>({});
   const connectedRef = useRef(false);
   const dirtyRef = useRef(false);
+  const seededRef = useRef(false);
+  const seedStartedRef = useRef(false);
 
   wantedRef.current = tapeCoins;
   boardRef.current = boardCoins;
@@ -117,7 +133,9 @@ export function useLiveMarketFeed(tapeCoins: string[], boardCoins: string[]): Li
             const ntl = px * sz;
             if (!(ntl >= PRINT_FLOOR_USD) || t.time < cutoff || seenRef.current.has(t.tid)) continue;
             seenRef.current.add(t.tid);
-            printsRef.current.push({ tid: t.tid, coin: t.coin, side: t.side, px, sz, ntl, time: t.time });
+            const taker = t.users ? (t.side === "B" ? t.users[0] : t.users[1]) : undefined;
+            const hash = t.hash && !ZERO_HASH.test(t.hash) ? t.hash : undefined;
+            printsRef.current.push({ tid: t.tid, coin: t.coin, side: t.side, px, sz, ntl, time: t.time, taker, hash });
             dirtyRef.current = true;
           }
         } else if (frame.channel === "allMids") {
@@ -145,7 +163,7 @@ export function useLiveMarketFeed(tapeCoins: string[], boardCoins: string[]): Li
       printsRef.current = prints;
       seenRef.current = new Set(prints.map((p) => p.tid));
       dirtyRef.current = false;
-      setState({ prints, mids: { ...midsRef.current }, connected: connectedRef.current });
+      setState({ prints, mids: { ...midsRef.current }, connected: connectedRef.current, seeded: seededRef.current });
     }, FLUSH_MS);
 
     return () => {
@@ -159,6 +177,39 @@ export function useLiveMarketFeed(tapeCoins: string[], boardCoins: string[]): Li
   const tapeKey = [...tapeCoins].sort().join(",");
   useEffect(() => {
     syncSubscriptionsRef.current();
+  }, [tapeKey]);
+
+  // Prime the tape once, as soon as the coin set is known. Prints already
+  // pushed by the socket win (same tid), so the merge order does not matter.
+  useEffect(() => {
+    if (!tapeKey || seedStartedRef.current) return;
+    seedStartedRef.current = true;
+    let cancelled = false;
+    const merge = (seed: LivePrint[]) => {
+      if (cancelled) return;
+      for (const p of seed) {
+        if (seenRef.current.has(p.tid)) continue;
+        seenRef.current.add(p.tid);
+        printsRef.current.push(p);
+      }
+      dirtyRef.current = true;
+    };
+    // Most traded first (the order the page passes), not the sorted key.
+    fetchRecentPrints(wantedRef.current, Date.now() - PRINT_WINDOW_MS, PRINT_FLOOR_USD, merge)
+      .catch(() => {
+        // Indexer down or rate-limited: the socket alone fills the tape.
+      })
+      .finally(() => {
+        if (cancelled) return;
+        seededRef.current = true;
+        dirtyRef.current = true;
+      });
+    return () => {
+      cancelled = true;
+      // Only an unfinished seed may run again (dev double-mount); once primed,
+      // a later change of the coin set is left to the socket.
+      if (!seededRef.current) seedStartedRef.current = false;
+    };
   }, [tapeKey]);
 
   return state;

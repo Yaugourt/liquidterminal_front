@@ -4,7 +4,7 @@ import { memo, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { LayoutGrid } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, DataStatus } from "@/components/common";
+import { CardHeading, DataStatus, TokenAvatar } from "@/components/common";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import type { PerpMarketData } from "@/services/market/perp/types";
@@ -68,7 +68,10 @@ export const PriceBoard = memo(function PriceBoard({
                     f === "up" ? "border-success/60" : f === "down" ? "border-danger/60" : "border-transparent"
                   }`}
                 >
-                  <div className="text-[11px] font-semibold text-text-secondary truncate">{m.name}</div>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <TokenAvatar assetName={m.name} src={m.logo} size="xs" />
+                    <span className="text-[11px] font-semibold text-text-secondary truncate">{m.name}</span>
+                  </div>
                   <div className="mono text-[13px] text-text-primary">{formatPrice(mid, format, { showCurrency: false })}</div>
                   <div className={`mono text-[10px] ${change >= 0 ? "text-success" : "text-danger"}`}>
                     {change >= 0 ? "+" : ""}

@@ -1,6 +1,6 @@
 "use client";
 
-import { KpiRibbon, type KpiCell } from "@/components/common";
+import { KpiRibbon, TokenAvatar, type KpiCell } from "@/components/common";
 import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
@@ -30,13 +30,15 @@ export function LiveStrip({ pulse }: { pulse: ChainPulse }) {
   const cells: KpiCell[] = [
     {
       key: "hype",
-      label: "HYPE",
+      href: "/hype",
+      label: <span className="inline-flex items-center gap-1.5"><TokenAvatar assetName="HYPE" size="xs" className="rounded-full" />HYPE</span>,
       value: hype ? formatPrice(hype, format) : "…",
       tone: lastSide === "B" ? "success" : lastSide === "A" ? "danger" : undefined,
       sub: "live, per trade",
     },
     {
       key: "block",
+      href: pulse.height != null ? `/explorer/block/${pulse.height}` : "/explorer",
       label: "Block",
       // Ten digits: a notch smaller so the height fits the cell at every width.
       value: pulse.height != null ? <span className="text-[15px]">{formatNumber(pulse.height, format, { maximumFractionDigits: 0 })}</span> : "…",
@@ -44,28 +46,36 @@ export function LiveStrip({ pulse }: { pulse: ChainPulse }) {
     },
     {
       key: "bps",
+      href: "/explorer",
       label: "Blocks / s",
       value: pulse.blocksPerSec != null ? pulse.blocksPerSec.toFixed(1) : "…",
       sub: "60s average",
     },
     {
       key: "tps",
+      href: "/explorer",
       label: "Tx / s",
       value: pulse.txPerSec != null ? compactCount(pulse.txPerSec) : "…",
       sub: "60s average",
     },
-    { key: "vol", label: "24h Volume", value: statsLoading && !stats ? "…" : compactUsd(stats?.dailyVolume) },
-    { key: "oi", label: "Open Interest", value: compactUsd(perp?.totalOpenInterest) },
-    { key: "rev", label: "Revenue 24h", value: revenue24h != null ? compactUsd(revenue24h) : EMPTY, tone: "gold" },
+    { key: "vol", href: "/market", label: "24h Volume", value: statsLoading && !stats ? "…" : compactUsd(stats?.dailyVolume) },
+    { key: "oi", href: "/market/perp", label: "Open Interest", value: compactUsd(perp?.totalOpenInterest) },
+    { key: "rev", href: "/dashboard/capital", label: "Revenue 24h", value: revenue24h != null ? compactUsd(revenue24h) : EMPTY, tone: "gold" },
     {
       key: "liq",
+      href: "/explorer/liquidations",
       label: "Liqs 24h",
       value: liq?.totalVolume ? compactUsd(liq.totalVolume) : EMPTY,
       sub:
         longPct != null ? (
           <span>
             <span className="text-success">L {longPct}%</span> · <span className="text-danger">S {100 - longPct}%</span>
-            {liq?.topCoin ? <span className="text-text-tertiary"> · {liq.topCoin}</span> : null}
+            {liq?.topCoin ? (
+              <span className="text-text-tertiary">
+                {" · "}
+                <span className="inline-flex items-center gap-1 align-middle"><TokenAvatar assetName={liq.topCoin} size="xs" />{liq.topCoin}</span>
+              </span>
+            ) : null}
           </span>
         ) : undefined,
     },
