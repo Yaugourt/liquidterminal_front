@@ -50,8 +50,6 @@ export {
   ModuleSubhead,
 } from './OverviewModule';
 export type { ModuleColumn, ModuleRowStat } from './OverviewModule';
-export { CardHeading } from './CardHeading';
-export type { CardHeadingProps } from './CardHeading';
 
 // Numeric display
 export { Num } from './Num';

@@ -1,9 +1,8 @@
 "use client";
 
 import { memo, type ReactNode } from "react";
-import { Layers } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, DominanceBar, chartPalette } from "@/components/common";
+import { CardHead, DominanceBar, chartPalette } from "@/components/common";
 import type { DominanceSegment } from "@/components/common";
 import { useHypeOverview } from "@/services/market/hype";
 import { compactHype } from "@/lib/formatters/numberFormatting";
@@ -64,15 +63,7 @@ export const SupplyScarcityCard = memo(function SupplyScarcityCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading
-        icon={<Layers size={13} className="text-brand" />}
-        title="Supply & Scarcity"
-        actions={
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-            max 1B HYPE
-          </span>
-        }
-      />
+      <CardHead title="Supply & Scarcity" tag={<span className="mono">max 1B HYPE</span>} />
 
       <div className="px-3.5 pt-4 pb-3 border-b border-border-subtle">
         {segments.length > 0 ? (

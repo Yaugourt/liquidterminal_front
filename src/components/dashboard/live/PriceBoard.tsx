@@ -2,9 +2,8 @@
 
 import { memo, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { LayoutGrid } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, DataStatus, TokenAvatar } from "@/components/common";
+import { CardHead, DataStatus, TokenAvatar } from "@/components/common";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import type { PerpMarketData } from "@/services/market/perp/types";
@@ -44,11 +43,10 @@ export const PriceBoard = memo(function PriceBoard({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading
-        icon={<LayoutGrid size={13} className="text-brand" />}
+      <CardHead
         title="Price board"
-        meta="most traded perps"
-        status={<DataStatus variant="live" connected={connected} />}
+        tag="most traded perps"
+        actions={<DataStatus variant="live" connected={connected} />}
         href="/market/perp"
         viewAllLabel="All perps"
       />

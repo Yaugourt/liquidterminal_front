@@ -2,9 +2,8 @@
 
 import { memo, useEffect, useState } from "react";
 import Link from "next/link";
-import { Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, DataStatus, TokenAvatar } from "@/components/common";
+import { CardHead, DataStatus, TokenAvatar } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useLiveLiquidations } from "@/services/dashboard/live/useLiveLiquidations";
 
@@ -36,10 +35,9 @@ export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading
-        icon={<Zap size={13} className="text-brand" />}
+      <CardHead
         title="Liquidations"
-        status={<DataStatus variant="live" connected={connected} />}
+        actions={<DataStatus variant="live" connected={connected} />}
         href="/explorer/liquidations"
         viewAllLabel="All"
       />

@@ -11,9 +11,8 @@
  */
 
 import { useState, type ReactNode } from "react";
-import { Activity, BarChart3, Layers } from "lucide-react";
 import {
-  CardHeading,
+  CardHead,
   TimeframeTabs,
   ModuleTable,
   ModuleTableRow,
@@ -61,7 +60,6 @@ function Case({
   );
 }
 
-const brandIcon = (node: ReactNode) => <span className="text-brand">{node}</span>;
 
 /* -- fixtures ---------------------------------------------------------- */
 
@@ -101,18 +99,17 @@ export default function DesignSystemCatalogue() {
       <Case
         id="heading-basic"
         name="Card heading — basic"
-        spec="Title alone, then icon + meta + status. No empty slot when a part is absent; same anatomy either way. The head renders a ready status node — it never fetches."
+        spec="Title alone, then tag + status. No empty slot when a part is absent; same anatomy either way. The head renders a ready status node — it never fetches."
       >
         <div className="grid gap-3 sm:grid-cols-2">
           <Card>
-            <CardHeading title="Network overview" />
+            <CardHead title="Network overview" />
           </Card>
           <Card>
-            <CardHeading
+            <CardHead
               title="Network overview"
-              icon={brandIcon(<Activity size={14} />)}
-              meta="24h"
-              status={<span className="mono text-[10px] text-success">● live</span>}
+              tag="24h"
+              actions={<span className="mono text-[10px] text-success">● live</span>}
             />
           </Card>
         </div>
@@ -125,12 +122,11 @@ export default function DesignSystemCatalogue() {
         spec="Long title, status and two labelled actions. Actions stay reachable and wrap to a second line instead of overlapping the title; tab order matches visual order."
       >
         <Card>
-          <CardHeading
+          <CardHead
             title="HIP-3 builder-deployed perp DEX volume and open interest"
-            icon={brandIcon(<Layers size={14} />)}
-            status={<span className="mono text-[10px] text-success">● live</span>}
             actions={
               <>
+                <span className="mono text-[10px] text-success">● live</span>
                 <Button size="sm" variant="ghostBrand">Export</Button>
                 <Button size="sm" variant="outline">Filters</Button>
               </>
@@ -175,7 +171,7 @@ export default function DesignSystemCatalogue() {
       >
         <div className="grid gap-3 sm:grid-cols-2">
           <Card>
-            <CardHeading title="Flush body (table)" icon={brandIcon(<BarChart3 size={14} />)} />
+            <CardHead title="Flush body (table)" />
             <CardContent flush>
               <ModuleTable columns={TABLE_COLS} density="compact">
                 {TABLE_ROWS.map((r, i) => (
@@ -192,7 +188,7 @@ export default function DesignSystemCatalogue() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeading title="Padded body (prose)" icon={brandIcon(<BarChart3 size={14} />)} />
+            <CardHead title="Padded body (prose)" />
             <CardContent density="compact" className="text-[12px] text-text-secondary">
               Ordinary content keeps its padding; the body is not flush.
             </CardContent>
@@ -268,7 +264,7 @@ export default function DesignSystemCatalogue() {
           <Card><CardContent density="compact"><EmptyState title="No markets" description="No market in this window." minHeight="120px" /></CardContent></Card>
           <Card><CardContent density="compact"><ErrorState title="Failed to load" message="Upstream unavailable." onRetry={() => {}} minHeight="120px" /></CardContent></Card>
           <Card>
-            <CardHeading title="Open interest" status={<span className="mono text-[10px] text-text-tertiary">updated 5m ago · stale</span>} />
+            <CardHead title="Open interest" actions={<span className="mono text-[10px] text-text-tertiary">updated 5m ago · stale</span>} />
             <CardContent density="compact"><Num value={10.6} format="raw" className="text-[20px] font-semibold" />
               <span className="text-[12px] text-text-tertiary"> B (last known)</span>
             </CardContent>
@@ -314,12 +310,12 @@ export default function DesignSystemCatalogue() {
       >
         <div className="space-y-4">
           <div className="grid gap-3 md:grid-cols-[2fr_1fr]">
-            <Card><CardHeading title="Chart first" icon={brandIcon(<BarChart3 size={14} />)} meta="wide" /><CardContent density="compact" className="text-[12px] text-text-secondary h-20 grid place-items-center">chart slot</CardContent></Card>
-            <Card><CardHeading title="Context" /><CardContent density="compact" className="text-[12px] text-text-secondary">side panel</CardContent></Card>
+            <Card><CardHead title="Chart first" tag="wide" /><CardContent density="compact" className="text-[12px] text-text-secondary h-20 grid place-items-center">chart slot</CardContent></Card>
+            <Card><CardHead title="Context" /><CardContent density="compact" className="text-[12px] text-text-secondary">side panel</CardContent></Card>
           </div>
           <div className="grid gap-3 md:grid-cols-[1fr_2fr]">
-            <Card><CardHeading title="Context" /><CardContent density="compact" className="text-[12px] text-text-secondary">side panel</CardContent></Card>
-            <Card><CardHeading title="Chart second" icon={brandIcon(<BarChart3 size={14} />)} meta="wide" /><CardContent density="compact" className="text-[12px] text-text-secondary h-20 grid place-items-center">chart slot</CardContent></Card>
+            <Card><CardHead title="Context" /><CardContent density="compact" className="text-[12px] text-text-secondary">side panel</CardContent></Card>
+            <Card><CardHead title="Chart second" tag="wide" /><CardContent density="compact" className="text-[12px] text-text-secondary h-20 grid place-items-center">chart slot</CardContent></Card>
           </div>
         </div>
       </Case>

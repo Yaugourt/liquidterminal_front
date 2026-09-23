@@ -2,9 +2,8 @@
 
 import { memo } from "react";
 import Link from "next/link";
-import { HeartPulse } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, DataStatus } from "@/components/common";
+import { CardHead, DataStatus } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import type { ChainPulse } from "@/services/dashboard/live/useChainPulse";
@@ -40,10 +39,9 @@ export const ChainHeartbeat = memo(function ChainHeartbeat({ pulse }: { pulse: C
   const peak = pulse.txSeries.length ? Math.max(...pulse.txSeries) : null;
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading
-        icon={<HeartPulse size={13} className="text-brand" />}
+      <CardHead
         title="Chain heartbeat"
-        status={<DataStatus variant="live" connected={pulse.connected} />}
+        actions={<DataStatus variant="live" connected={pulse.connected} />}
         href="/explorer"
         viewAllLabel="Explorer"
       />

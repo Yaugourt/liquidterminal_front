@@ -2,9 +2,8 @@
 
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
-import { Waves } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, DataStatus, TokenAvatar } from "@/components/common";
+import { CardHead, DataStatus, TokenAvatar } from "@/components/common";
 import { compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import type { LivePrint } from "@/services/dashboard/live/useLiveMarketFeed";
@@ -57,31 +56,32 @@ export const BigPrintsCard = memo(function BigPrintsCard({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading
-        icon={<Waves size={13} className="text-brand" />}
+      <CardHead
         title="Big prints"
-        meta={coinCount ? `top ${coinCount} perps` : undefined}
-        status={<DataStatus variant="live" connected={connected} />}
+        tag={coinCount ? `top ${coinCount} perps` : undefined}
         href="/market/trades"
         viewAllLabel="Trade explorer"
         actions={
-          <div className="flex gap-1" role="group" aria-label="Minimum trade size">
-            {THRESHOLDS.map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setThreshold(t)}
-                aria-pressed={threshold === t}
-                className={`mono text-[10px] px-1.5 py-0.5 rounded border transition-colors ${
-                  threshold === t
-                    ? "text-brand border-brand/30 bg-brand/10"
-                    : "text-text-tertiary border-border-subtle hover:text-text-secondary"
-                }`}
-              >
-                {compactUsd(t, { decimals: 0 })}
-              </button>
-            ))}
-          </div>
+          <>
+            <DataStatus variant="live" connected={connected} />
+            <div className="flex gap-1" role="group" aria-label="Minimum trade size">
+              {THRESHOLDS.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setThreshold(t)}
+                  aria-pressed={threshold === t}
+                  className={`mono text-[10px] px-1.5 py-0.5 rounded border transition-colors ${
+                    threshold === t
+                      ? "text-brand border-brand/30 bg-brand/10"
+                      : "text-text-tertiary border-border-subtle hover:text-text-secondary"
+                  }`}
+                >
+                  {compactUsd(t, { decimals: 0 })}
+                </button>
+              ))}
+            </div>
+          </>
         }
       />
 

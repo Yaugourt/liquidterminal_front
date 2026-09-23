@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Flame } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, KpiRibbon } from "@/components/common";
+import { CardHead, KpiRibbon } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHypeOverview } from "@/services/market/hype";
 import { compactHype } from "@/lib/formatters/numberFormatting";
@@ -74,15 +74,7 @@ export const BurnCard = memo(function BurnCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading
-        icon={<Flame size={13} className="text-brand" />}
-        title="Burn & Deflation"
-        actions={
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-            permanent
-          </span>
-        }
-      />
+      <CardHead title="Burn & Deflation" tag="permanent" />
 
       <div className="p-3.5 border-b border-border-subtle">
         <KpiRibbon cells={cells} columns="grid-cols-1 sm:grid-cols-3" />

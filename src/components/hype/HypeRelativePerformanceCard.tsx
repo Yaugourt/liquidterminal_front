@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Activity } from "lucide-react";
 import {
   CartesianGrid,
   Line,
@@ -13,7 +12,7 @@ import {
 } from "recharts";
 import { Card } from "@/components/ui/card";
 import {
-  CardHeading,
+  CardHead,
   ChartLoading,
   chartPalette,
   rechartsGridDefaults,
@@ -108,10 +107,9 @@ export const HypeRelativePerformanceCard = memo(function HypeRelativePerformance
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading
-        icon={<Activity size={13} className="text-brand" />}
+      <CardHead
         title="Relative performance"
-        description="HYPE vs BTC / ETH / SOL, rebased to 100 (90d)"
+        subtitle="HYPE vs BTC / ETH / SOL, rebased to 100 (90d)"
         actions={
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             {SERIES.map(({ key, color }) => (

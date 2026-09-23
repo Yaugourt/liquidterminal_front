@@ -117,7 +117,7 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 
 ### Primitives (always compose from here — import via `@/components/common` barrel)
 
-- **Cards**: `<Card>` + V4 card-head (brand icon + 13px title + tag pill + `ml-auto` action). CVA variants: `padding` (`none|sm|md|lg`), `interactive`, and `density` on `CardHeader/Content/Footer`.
+- **Cards**: `<Card>` + `<CardHead>` (minimal head: 13px title + optional subtitle / plain tag + right `actions` slot + "View all →" link — no brand icon square, no pill). CVA variants: `padding` (`none|sm|md|lg`), `interactive`, and `density` on `CardHeader/Content/Footer`.
 - **Page tables**: `<TypedDataTable>` only — raw `<Table>` outside `common/` blocked by ESLint. Two valid column patterns:
   - **Simple** : `accessor: 'fieldName'` + `type: "numeric" | "fees" | "change" | "address" | "text"` → auto-styled (mono, alignment, gold for fees, signed green/red for change, truncated addresses).
   - **Custom** : `accessor: (row) => <CustomCell />` returning fully-styled JSX. `type` omitted (defaults to `custom`). Use this for badges, mixed values, interactive cells, anything beyond a single value.
@@ -145,7 +145,7 @@ The source of truth for how a primitive renders is the real component in `src/co
 - `.mono` for tabular numbers.
 - Use semantic text tokens (`text-text-primary/secondary/tertiary`) — never `text-zinc-*`.
 - No raw `white` utilities (`text-white`, `bg-white/…`, `hover:*-white`) in new or migrated code — use `bg-surface-*` / `text-text-*` tokens. (Legacy sites are being migrated progressively; don't add new ones.)
-- Card heads go through `<CardHeading>` (`@/components/common`) or `<OverviewModule>` — don't hand-roll the `px-3.5 py-2.5 border-b` head.
+- Card heads go through `<CardHead>` (`@/components/common`) — directly, or via `<OverviewModule>` / `TypedDataTable` (`title` prop), which render it. Don't hand-roll a `border-b` head; legacy inline heads (icon square + pill) get migrated to `<CardHead>` when touched.
 - Tab styling comes from `<TabsTrigger size>` / `<TabsList size>` (Radix panels) or `PillTabs` variants (selection) — don't paste `data-[state=active]:` recipes on consumers.
 - One focus treatment everywhere: `.focus-ring`. Don't re-declare `focus-visible:ring-*` recipes.
 - No fake sparkline/delta: if the API has no history for the metric, don't display it.

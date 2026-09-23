@@ -40,7 +40,7 @@
 - `.mono` class for tabular numbers (`font-feature-settings: "tnum"`). Prefer `.mono` over `tabular-nums`.
 - Common sizes:
   - Card hero: `text-[20px]` to `text-[23px]`, `font-semibold`, `tracking-[-0.02em]`.
-  - Card title (card-head): `text-[13px] font-semibold`.
+  - Card title (card-head): `text-[13px] font-medium` (via `<CardHead>`).
   - Stat label: `text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold`.
   - Table column header: `text-[9px]–[10px] uppercase tracking-wide text-text-tertiary`.
   - Table row: `text-[11.5px]`–`text-[12.5px]`.
@@ -117,7 +117,7 @@
 
 Renders `flex flex-wrap items-center gap-x-2 px-4 py-3 min-h-[44px] border-b border-border-subtle`. **No brand icon square, no pill chrome** (DS minimal, `DS_MINIMAL_SPEC.md` §A3). A `LIVE` state goes in `actions` as a `StatusBadge variant="success" dot`.
 
-> Legacy: ~58 non-table cards still inline the old V4 head (icon square + pill). Migrate them to `<CardHead>` when touched.
+> Legacy: ~55 non-table cards still inline the old V4 head (icon square + pill). Migrate them to `<CardHead>` when touched.
 
 ### Section sub-head (above grids)
 
