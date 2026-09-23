@@ -313,6 +313,8 @@ export const classifyHyperfolioError = (error: unknown): HyperfolioErrorKind => 
   const status = err?.response?.status;
   const code = err?.response?.data?.code;
   if (status === 429 || code === 'HYPERFOLIO_RATE_LIMITED' || code === 'SSE_CONNECTION_LIMIT') return 'rate-limited';
+  // Daily upstream budget spent: also a 503, but transient — not "unconfigured".
+  if (code === 'HYPERFOLIO_QUOTA_EXHAUSTED') return 'error';
   if (status === 503 || code === 'HYPERFOLIO_NOT_CONFIGURED') return 'not-configured';
   if (status === 400 || code === 'HYPERFOLIO_BAD_INPUT') return 'bad-input';
   return 'error';
