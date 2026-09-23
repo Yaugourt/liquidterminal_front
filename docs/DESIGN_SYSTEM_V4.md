@@ -1,5 +1,7 @@
 # Liquid Design System V4
 
+> **⚠️ ARCHIVE HISTORIQUE (non active).** Ce document est le rationnel design daté qui a mené au V4 ; il n'est pas la règle courante et certaines valeurs ont dérivé (ex. `bg-base` y est noté `#0A0B0F`, la valeur active est `#08101A`). La charte active est [`../DESIGN_SYSTEM.md`](../DESIGN_SYSTEM.md) ; les valeurs réelles sont dans `globals.css`. Conservé pour le contexte, à ne pas suivre pour construire.
+
 > **Trading-grade interface + Liquid brand identity.** La version validée, prête pour implementation.
 
 ---

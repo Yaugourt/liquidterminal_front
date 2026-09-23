@@ -50,6 +50,8 @@ export {
   ModuleSubhead,
 } from './OverviewModule';
 export type { ModuleColumn, ModuleRowStat } from './OverviewModule';
+export { CardHeading } from './CardHeading';
+export type { CardHeadingProps } from './CardHeading';
 
 // Numeric display
 export { Num } from './Num';
@@ -80,10 +82,12 @@ export type { DominanceSegment, DominanceBarProps } from './DominanceBar';
 
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
+export { SponsorCard } from './SponsorCard';
 export { PageHeader } from './PageHeader';
 export { PageFaq } from './PageFaq';
 export type { FaqItem } from './PageFaq';
 export { PageSection } from './PageSection';
+export { SectionHead } from './SectionHead';
 export { TimeframeTabs } from './TimeframeTabs';
 export { LegalFooter } from './LegalFooter';
 export { LegalPage } from './LegalPage';

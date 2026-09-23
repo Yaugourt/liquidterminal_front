@@ -27,7 +27,9 @@ export function EmptyState({
     minHeight,
 }: EmptyStateProps) {
     const content = (
-        <div className={cn(
+        <div
+            role="status"
+            className={cn(
             "flex flex-col items-center justify-center text-center px-4 py-8 w-full h-full",
             minHeight ?? "min-h-[200px]",
             className
@@ -39,7 +41,7 @@ export function EmptyState({
             ) : (
                 <Hypurr mood="shrug" height={84} className="mb-4" />
             )}
-            <p className="text-text-primary text-lg mb-2">{title}</p>
+            <p className="text-text-primary text-lg font-medium mb-2">{title}</p>
             <p className="text-text-tertiary text-sm mb-4">{description}</p>
             {action}
         </div>

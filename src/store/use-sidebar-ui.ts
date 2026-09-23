@@ -49,13 +49,13 @@ interface SidebarUiState {
 /**
  * Families collapsed on a fresh install. Ids come from `getGroupId` in
  * sidebar-config (groupName lowercased, spaces → dashes). Kept in sync with the
- * named groups of `defaultNavigationGroups`. Markets is intentionally absent —
- * it stays open on arrival so the primary destinations are visible immediately.
+ * named groups of `defaultNavigationGroups`. Every family ships folded so the
+ * rail arrives tidy; the visitor opens what they need.
  */
-const DEFAULT_FOLDED_GROUPS = ["capital", "chain", "ecosystem", "learn"];
+const DEFAULT_FOLDED_GROUPS = ["markets", "capital", "chain", "ecosystem", "learn"];
 
 /** Bump alongside a breaking change to the persisted shape, then extend `migrate`. */
-const SIDEBAR_UI_VERSION = 2;
+const SIDEBAR_UI_VERSION = 3;
 
 export const useSidebarUi = create<SidebarUiState>()(
   persist(

@@ -13,27 +13,31 @@ export type MarketTrade = WalletRoundTrip;
 
 /**
  * Market-wide biggest closed round-trip trades, ranked by realized PnL. Passing
- * DESC surfaces the biggest wins, ASC the biggest losses. The backend assembles
- * and ranks the trades; the front only formats them.
+ * DESC surfaces the biggest wins, ASC the biggest losses. `sinceHours` bounds
+ * the window explicitly (sent as `start_time`); omitted, the backend default
+ * applies. The backend assembles and ranks the trades; the front only formats.
  */
 export const fetchBiggestTrades = async (
   sortDir: "DESC" | "ASC" = "DESC",
-  limit = 5
+  limit = 5,
+  sinceHours?: number
 ): Promise<MarketTrade[]> => {
   return withErrorHandling(async () => {
-    const res = await get<IndexerEnvelope<MarketTrade[]>>(`/indexer/completed-trades/`, {
+    const params: Record<string, string | number> = {
       sort_by: "pnl_realized",
       sort_dir: sortDir,
       limit,
-    });
+    };
+    if (sinceHours) params.start_time = new Date(Date.now() - sinceHours * 3_600_000).toISOString();
+    const res = await get<IndexerEnvelope<MarketTrade[]>>(`/indexer/completed-trades/`, params);
     return res.data ?? [];
   }, "fetching biggest trades");
 };
 
-export const useBiggestTrades = (sortDir: "DESC" | "ASC" = "DESC", limit = 5) => {
+export const useBiggestTrades = (sortDir: "DESC" | "ASC" = "DESC", limit = 5, sinceHours?: number) => {
   const { data, isLoading, error, refetch } = useDataFetching<MarketTrade[]>({
-    fetchFn: () => fetchBiggestTrades(sortDir, limit),
-    dependencies: [sortDir, limit],
+    fetchFn: () => fetchBiggestTrades(sortDir, limit, sinceHours),
+    dependencies: [sortDir, limit, sinceHours],
     refreshInterval: 60000,
     maxRetries: 1,
   });

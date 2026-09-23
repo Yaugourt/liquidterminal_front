@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -8,6 +10,23 @@ import { cn } from "@/lib/utils"
  * verrouillé sur le look (surface, bordure, radius). Aucune largeur fixe —
  * la Card remplit l'espace que son parent lui donne.
  */
+
+type CardDensity = "comfortable" | "compact"
+
+/**
+ * Density chosen once on `<Card density=…>` and inherited by
+ * `CardHeader` / `CardContent` / `CardFooter`. `undefined` means the card made
+ * no choice, so sections fall back to their historical default (comfortable).
+ * A section can still override with its own `density` prop.
+ */
+const CardDensityContext = React.createContext<CardDensity | undefined>(undefined)
+
+/** explicit prop > inherited card density > historical default. */
+function useResolvedDensity(explicit?: CardDensity): CardDensity {
+  const inherited = React.useContext(CardDensityContext)
+  return explicit ?? inherited ?? "comfortable"
+}
+
 const cardVariants = cva(
   "bg-surface border border-border-subtle rounded-lg overflow-hidden transition-all",
   {
@@ -21,16 +40,28 @@ const cardVariants = cva(
 )
 
 type CardProps = React.HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof cardVariants>
+  VariantProps<typeof cardVariants> & {
+    /** Density inherited by the card sections. Omit to keep the historical default. */
+    density?: CardDensity
+  }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, padding, interactive, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(cardVariants({ padding, interactive }), className)}
-      {...props}
-    />
-  )
+  ({ className, padding, interactive, density, ...props }, ref) => {
+    const el = (
+      <div
+        ref={ref}
+        className={cn(cardVariants({ padding, interactive }), className)}
+        {...props}
+      />
+    )
+    // Only publish a density context when the card actually opts in, so cards
+    // that don't pass `density` leave their sections on the historical default.
+    return density ? (
+      <CardDensityContext.Provider value={density}>{el}</CardDensityContext.Provider>
+    ) : (
+      el
+    )
+  }
 )
 Card.displayName = "Card"
 
@@ -51,17 +82,20 @@ const cardFooterVariants = cva("flex items-center", {
 })
 
 type CardSectionProps = React.HTMLAttributes<HTMLDivElement> & {
-  density?: "comfortable" | "compact"
+  density?: CardDensity
 }
 
 const CardHeader = React.forwardRef<HTMLDivElement, CardSectionProps>(
-  ({ className, density, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(cardHeaderVariants({ density }), className)}
-      {...props}
-    />
-  )
+  ({ className, density, ...props }, ref) => {
+    const d = useResolvedDensity(density)
+    return (
+      <div
+        ref={ref}
+        className={cn(cardHeaderVariants({ density: d }), className)}
+        {...props}
+      />
+    )
+  }
 )
 CardHeader.displayName = "CardHeader"
 
@@ -89,25 +123,39 @@ const CardDescription = React.forwardRef<
 ))
 CardDescription.displayName = "CardDescription"
 
-const CardContent = React.forwardRef<HTMLDivElement, CardSectionProps>(
-  ({ className, density, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(cardContentVariants({ density }), className)}
-      {...props}
-    />
-  )
+type CardContentProps = CardSectionProps & {
+  /**
+   * Flush the body's padding so an inner table owns its own margins.
+   * Use this semantic mode instead of scattering `p-0` on the page.
+   */
+  flush?: boolean
+}
+
+const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
+  ({ className, density, flush, ...props }, ref) => {
+    const d = useResolvedDensity(density)
+    return (
+      <div
+        ref={ref}
+        className={cn(flush ? "p-0" : cardContentVariants({ density: d }), className)}
+        {...props}
+      />
+    )
+  }
 )
 CardContent.displayName = "CardContent"
 
 const CardFooter = React.forwardRef<HTMLDivElement, CardSectionProps>(
-  ({ className, density, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(cardFooterVariants({ density }), className)}
-      {...props}
-    />
-  )
+  ({ className, density, ...props }, ref) => {
+    const d = useResolvedDensity(density)
+    return (
+      <div
+        ref={ref}
+        className={cn(cardFooterVariants({ density: d }), className)}
+        {...props}
+      />
+    )
+  }
 )
 CardFooter.displayName = "CardFooter"
 

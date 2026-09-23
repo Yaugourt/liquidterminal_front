@@ -52,3 +52,11 @@ next-env.d.ts
 
 # WSL alternate-data-stream junk
 *:Zone.Identifier
+
+# internal planning docs — never publish on the open-source repo
+/COMPETITOR_INTEL.md
+/STRATEGY.md
+/STRATEGY.html
+/STRATEGY_ANNEXES.md
+/DATA_POSITIONING.md
+/DATA_POSITIONING.html

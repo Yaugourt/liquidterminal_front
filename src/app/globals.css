@@ -273,7 +273,7 @@
  */
 .scrollbar-brand {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    scrollbar-color: rgb(var(--border-default)) transparent;
     /* Always reserve the scrollbar gutter so a scroll container's content width
        doesn't jump (and drift out of alignment with an outside header) when the
        bar appears/disappears. */
@@ -290,12 +290,17 @@
 }
 
 .scrollbar-brand::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
+    background: rgb(var(--border-default));
+    border-radius: 999px;
 }
 
 .scrollbar-brand::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgb(var(--brand) / 0.45);
+}
+
+/* Firefox has no thumb hover pseudo; tint the bar while the container is hovered. */
+.scrollbar-brand:hover {
+    scrollbar-color: rgb(var(--border-strong)) transparent;
 }
 
 /* Smooth scroll for storytelling landing */

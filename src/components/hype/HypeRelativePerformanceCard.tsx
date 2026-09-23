@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { Card } from "@/components/ui/card";
 import {
+  CardHeading,
   ChartLoading,
   chartPalette,
   rechartsGridDefaults,
@@ -107,27 +108,21 @@ export const HypeRelativePerformanceCard = memo(function HypeRelativePerformance
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Activity size={13} className="text-brand" />
-        </span>
-        <div className="flex flex-col">
-          <h3 className="text-[13px] font-semibold text-text-primary leading-tight">
-            Relative performance
-          </h3>
-          <span className="text-[10.5px] text-text-tertiary leading-tight">
-            HYPE vs BTC / ETH / SOL, rebased to 100 (90d)
-          </span>
-        </div>
-        <div className="ml-auto flex flex-wrap items-center gap-x-3 gap-y-1">
-          {SERIES.map(({ key, color }) => (
-            <span key={key} className="flex items-center gap-1.5 text-[10.5px] text-text-secondary">
-              <span className="w-2.5 h-0.5 rounded-full" style={{ backgroundColor: color }} />
-              {key}
-            </span>
-          ))}
-        </div>
-      </div>
+      <CardHeading
+        icon={<Activity size={13} className="text-brand" />}
+        title="Relative performance"
+        description="HYPE vs BTC / ETH / SOL, rebased to 100 (90d)"
+        actions={
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            {SERIES.map(({ key, color }) => (
+              <span key={key} className="flex items-center gap-1.5 text-[10.5px] text-text-secondary">
+                <span className="w-2.5 h-0.5 rounded-full" style={{ backgroundColor: color }} />
+                {key}
+              </span>
+            ))}
+          </div>
+        }
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {isLoading && !hasData ? (

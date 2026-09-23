@@ -25,7 +25,9 @@ export function ErrorState({
     minHeight,
 }: ErrorStateProps) {
     const content = (
-        <div className={cn(
+        <div
+            role="alert"
+            className={cn(
             "flex flex-col items-center justify-center text-center px-4 py-8 w-full h-full",
             minHeight ?? "min-h-[200px]",
             className

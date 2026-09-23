@@ -106,7 +106,7 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 
 | Token | Usage |
 |-------|-------|
-| `bg-base` `#0A0B0F` | App background |
+| `bg-base` `#08101A` | App background |
 | `bg-surface` `#0F1421` | Cards, sidebar |
 | `bg-surface-2` `#141B2A` | Table header, hover, pills |
 | `border-subtle` / `border-default` | Separators / borders |
@@ -131,20 +131,23 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 - **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `compactCount`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
 - **Layout shell**: `bg-base` + subtle halo `z-0`; content `relative z-10`; sidebar 232px; sticky header `bg-base/80 backdrop-blur-xl` without `border-b`.
 
-### Mockups → code (the design kit)
+### Design catalogue (the live source)
 
-`dash-mockups/kit.html` is the **canonical design palette**: each block mirrors a React primitive 1:1 — same Tailwind classes, same tokens (copied from `globals.css`), labelled with its `<Primitive>` + JSX. This collapses the mockup ↔ DS ↔ app gap into one vocabulary.
+The source of truth for how a primitive renders is the real component in `src/components/common/` or `ui/` — read the component, never reconstruct its classes elsewhere.
 
-- **Design a page** → compose blocks copied from `kit.html` (load its Tailwind config header). Don't invent one-off classes.
-- **Ship a page** → replace each block's wrapper with its `<Primitive>` (it emits the same classes) and wire data. Near-zero translation.
-- **A block is missing** → that means a **primitive is missing**: build it in `common/`, add its block to `kit.html`, document it in `DESIGN_SYSTEM.md`, all in the same PR.
-- AI design tools (gstack design-shotgun, etc.) must be pointed at `kit.html` tokens/blocks so their output is already 1:1 with the app.
+- **Design a page** → compose the real primitives. Don't invent one-off classes.
+- **A primitive is missing** → build it in `common/`, then document it in `DESIGN_SYSTEM.md`.
+- `dash-mockups/kit.html` is kept as a **historical reference only**: it is no longer a guaranteed 1:1 mirror of the code and must not be manually re-synced.
 
 ### Hard rules
 
 - No hardcoded hex in styles — always a token (charts go through `chartPalette`).
 - `.mono` for tabular numbers.
 - Use semantic text tokens (`text-text-primary/secondary/tertiary`) — never `text-zinc-*`.
+- No raw `white` utilities (`text-white`, `bg-white/…`, `hover:*-white`) in new or migrated code — use `bg-surface-*` / `text-text-*` tokens. (Legacy sites are being migrated progressively; don't add new ones.)
+- Card heads go through `<CardHeading>` (`@/components/common`) or `<OverviewModule>` — don't hand-roll the `px-3.5 py-2.5 border-b` head.
+- Tab styling comes from `<TabsTrigger size>` / `<TabsList size>` (Radix panels) or `PillTabs` variants (selection) — don't paste `data-[state=active]:` recipes on consumers.
+- One focus treatment everywhere: `.focus-ring`. Don't re-declare `focus-visible:ring-*` recipes.
 - No fake sparkline/delta: if the API has no history for the metric, don't display it.
 - Hypedexer (`/indexer/*`) is unstable (402) — any dependent chart must degrade gracefully. Robust sources: local DB `/liquidations/historical/chart`, Hypurrscan fees + `/spotUSDC`, DefiLlama bridge.
 
@@ -159,7 +162,7 @@ See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) for the detailed composition patter
 | Data fetching hook | `src/hooks/useDataFetching.ts` |
 | API constants | `src/services/api/constants.ts` |
 | Tailwind tokens | `tailwind.config.ts` |
-| Global CSS & glass classes | `src/app/globals.css` |
+| Global CSS & design tokens | `src/app/globals.css` |
 | Number formatting | `src/lib/numberFormatting.ts` |
 | Date formatting | `src/lib/dateFormatting.ts` |
 
@@ -187,7 +190,7 @@ pnpm run visual-check <route>   # Render gate: screenshots a route at 375/1024/1
 
 - Use the 4-layer architecture for new services
 - Use design system tokens (not raw hex colors)
-- Use `glass-*` classes for containers
+- Use the opaque surface tokens (`bg-surface` / `-2` / `-3`) for containers
 - Use `useMemo` and `useCallback` for performance
 - Add JSDoc to API functions
 - Type all responses and parameters

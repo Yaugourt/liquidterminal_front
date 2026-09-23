@@ -6,6 +6,7 @@
  * page must consume <KpiRibbon>. When the ESLint guardrail banning hand-rolled
  * ribbons outside common/ lands, this file gets the sanctioned disable.
  */
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { useLiquidSurface } from "./LiquidSurface";
 
@@ -47,6 +48,8 @@ export interface KpiCell {
   /** Optional sparkline pinned to the bottom of the cell — only when the API
    *  exposes a real series for this metric (§7.b). */
   sparkline?: ReactNode;
+  /** Optional destination; the whole cell becomes a link to explore further. */
+  href?: string;
   /** Stable key; falls back to index. */
   key?: string;
 }
@@ -143,16 +146,27 @@ export function KpiRibbon({
 
   const grid = (
     <div className={gridClass}>
-      {cells.map((cell, i) => (
-        <div key={cell.key ?? i} className={cellClass}>
-          <div className={labelClass}>{cell.label}</div>
-          <div className={`${valueBase} ${TONE_CLASS[cell.tone ?? "default"]}`}>
-            {cell.value}
+      {cells.map((cell, i) => {
+        const body = (
+          <>
+            <div className={labelClass}>{cell.label}</div>
+            <div className={`${valueBase} ${TONE_CLASS[cell.tone ?? "default"]}`}>
+              {cell.value}
+            </div>
+            {cell.sub != null && <div className={subClass}>{cell.sub}</div>}
+            {cell.sparkline != null && <div className="mt-auto pt-2">{cell.sparkline}</div>}
+          </>
+        );
+        return cell.href ? (
+          <Link key={cell.key ?? i} href={cell.href} className={`${cellClass} focus-ring group`}>
+            {body}
+          </Link>
+        ) : (
+          <div key={cell.key ?? i} className={cellClass}>
+            {body}
           </div>
-          {cell.sub != null && <div className={subClass}>{cell.sub}</div>}
-          {cell.sparkline != null && <div className="mt-auto pt-2">{cell.sparkline}</div>}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 

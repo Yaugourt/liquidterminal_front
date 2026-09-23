@@ -33,7 +33,11 @@ export function LoadingState({
     const config = sizeConfig[size];
 
     const content = (
-        <div className={cn(
+        <div
+            role="status"
+            aria-live="polite"
+            aria-busy="true"
+            className={cn(
             "flex flex-col items-center justify-center w-full h-full",
             minHeight ?? config.height,
             className

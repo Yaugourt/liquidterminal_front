@@ -66,7 +66,7 @@ export function PillTabs({
                             key={tab.value}
                             onClick={() => onTabChange(tab.value)}
                             className={cn(
-                                "text-xs font-medium transition-colors whitespace-nowrap",
+                                "text-xs font-medium transition-colors motion-reduce:transition-none whitespace-nowrap rounded-sm focus-ring",
                                 isActive ? "text-brand" : "text-text-tertiary hover:text-text-primary"
                             )}
                         >
@@ -92,7 +92,7 @@ export function PillTabs({
             <div
                 className={cn(
                     "absolute h-[calc(100%-8px)] bg-brand rounded-md",
-                    isInitialized ? "transition-all duration-300 ease-out" : ""
+                    isInitialized ? "transition-all duration-300 ease-out motion-reduce:transition-none" : ""
                 )}
                 style={{
                     left: indicatorStyle.left,
@@ -110,7 +110,7 @@ export function PillTabs({
                         data-tab-value={tab.value}
                         onClick={() => onTabChange(tab.value)}
                         className={cn(
-                            "relative py-1.5 text-xs font-medium transition-colors rounded-md z-10 whitespace-nowrap",
+                            "relative py-1.5 text-xs font-medium transition-colors motion-reduce:transition-none rounded-md z-10 whitespace-nowrap focus-ring",
                             "px-2.5 sm:px-4",
                             isActive ? "text-brand-text-on" : "text-text-secondary hover:text-text-primary"
                         )}

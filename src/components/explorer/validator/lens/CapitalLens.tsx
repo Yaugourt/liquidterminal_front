@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import {
   KpiRibbon,
+  SectionHead,
   OverviewModule,
   ModuleTable,
   ModuleTableRow,
@@ -31,25 +32,6 @@ import {
 import type { Validator } from "@/services/explorer/validator/types/validators";
 import type { TopHoldersStats } from "@/services/explorer/validator/types/holders";
 import { compactHype, compactCount } from "@/lib/formatters/numberFormatting";
-
-/** Capital section header — 15px medium title + hint + optional right actions (mirrors v3-B). */
-function SectionHead({
-  title,
-  hint,
-  actions,
-}: {
-  title: string;
-  hint?: string;
-  actions?: ReactNode;
-}) {
-  return (
-    <div className="flex items-baseline gap-2">
-      <h2 className="text-[15px] font-medium text-text-primary">{title}</h2>
-      {hint && <span className="text-[11px] text-text-tertiary">{hint}</span>}
-      {actions && <div className="ml-auto shrink-0">{actions}</div>}
-    </div>
-  );
-}
 
 /* ──────────────────────────────────────────────────────────────────────────
  * CapitalLens — the "Capital" (concentration) lens of the validator page.
@@ -467,7 +449,7 @@ export function CapitalLens() {
       <section className="space-y-4">
         <SectionHead
           title="Concentration"
-          hint="Foundation dependence and top-N stake share."
+          subtitle="Foundation dependence and top-N stake share."
           actions={concentrationToggle}
         />
         {validatorsError ? (
@@ -582,7 +564,7 @@ export function CapitalLens() {
       <section className="space-y-4">
         <SectionHead
           title="Distribution"
-          hint={`How the ${compactCount(totalHolders)} staking wallets are distributed.`}
+          subtitle={`How the ${compactCount(totalHolders)} staking wallets are distributed.`}
         />
         <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
           {/* LEFT — stakers-by-size histogram */}
@@ -683,7 +665,7 @@ export function CapitalLens() {
       <section className="space-y-4">
         <SectionHead
           title="Exit pressure"
-          hint="Stake queued to leave, and the recent unstaking trend."
+          subtitle="Stake queued to leave, and the recent unstaking trend."
         />
         {unstakingError ? (
           <ErrorState
