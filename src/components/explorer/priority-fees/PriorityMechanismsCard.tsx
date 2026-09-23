@@ -1,8 +1,9 @@
 "use client";
 
 import { memo } from "react";
-import { AlertTriangle, ArrowDownToLine, ArrowUpFromLine, BookOpen } from "lucide-react";
+import { AlertTriangle, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { CardHead } from "@/components/common";
 
 const DOCS_URL =
   "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/priority-fees";
@@ -42,20 +43,7 @@ export const PriorityMechanismsCard = memo(function PriorityMechanismsCard({
 
   return (
     <Card className="overflow-hidden flex flex-col h-full">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <BookOpen size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Two burns, one name</h3>
-        <a
-          href={DOCS_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-auto text-[11px] font-medium text-brand hover:text-brand-hover"
-        >
-          Protocol docs
-        </a>
-      </div>
+      <CardHead title="Two burns, one name" href={DOCS_URL} viewAllLabel="Protocol docs" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border-subtle">
         <div className="p-3.5 space-y-1.5">

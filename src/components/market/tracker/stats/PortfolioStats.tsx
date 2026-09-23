@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { ErrorState } from "@/components/ui/error-state";
-import { Skeleton, StackedShareBar } from "@/components/common";
+import { CardHead, Skeleton, StackedShareBar } from "@/components/common";
 import { useWallets } from "@/store/use-wallets";
 import { useAddressBalance } from "@/services/explorer/address";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -126,15 +125,14 @@ export function PortfolioStats({
 
   return (
     <Card className="h-full flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Wallet size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Portfolio</h3>
-        {isMounted && walletAddress && (
-          <AddressDisplay address={walletAddress} showCopy className="ml-auto text-[11px]" />
-        )}
-      </div>
+      <CardHead
+        title="Portfolio"
+        actions={
+          isMounted && walletAddress ? (
+            <AddressDisplay address={walletAddress} showCopy className="text-[11px]" />
+          ) : undefined
+        }
+      />
 
       {!isMounted || isLoading ? (
         <div className="p-3.5 grid grid-cols-1 sm:grid-cols-2 gap-4">

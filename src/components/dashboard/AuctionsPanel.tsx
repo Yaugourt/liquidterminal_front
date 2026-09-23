@@ -1,8 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import Link from "next/link";
-import { Gavel, Clock, ArrowRight } from "lucide-react";
+import { Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   useAuctionTiming,
@@ -10,7 +9,8 @@ import {
 } from "@/services/market/auction";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber, compactUsd } from "@/lib/formatters/numberFormatting";
-import { HypeMark } from "@/components/common";
+import { CardHead, HypeMark } from "@/components/common";
+import { StatusBadge } from "@/components/ui/status-badge";
 import type { AuctionState } from "@/services/market/auction";
 
 /** Unit suffix — the official HYPE mark when the unit is HYPE, plain text otherwise. */
@@ -288,28 +288,18 @@ export const AuctionsPanel = memo(function AuctionsPanel({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* card-head V4 — badge LIVE si l'auction est active */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Gavel size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          {market === "spot" ? "Spot Auction" : "Perp Auction"}
-        </h3>
-        {entry.auctionState.isActive && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/25 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-            LIVE
-          </span>
-        )}
-        <Link
-          href={auctionHref}
-          className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-        >
-          View all
-          <ArrowRight size={12} />
-        </Link>
-      </div>
+      {/* LIVE badge while the auction is active */}
+      <CardHead
+        title={market === "spot" ? "Spot Auction" : "Perp Auction"}
+        actions={
+          entry.auctionState.isActive ? (
+            <StatusBadge variant="success" dot>
+              LIVE
+            </StatusBadge>
+          ) : undefined
+        }
+        href={auctionHref}
+      />
 
       <AuctionRow entry={entry} />
     </Card>

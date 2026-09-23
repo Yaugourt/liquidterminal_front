@@ -15,7 +15,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { movingAverage, useFeeRevenueHistory, type FeeRevenueDay } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
@@ -197,35 +197,36 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <AreaChartIcon size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Fees &amp; Revenue</h3>
-        <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
-        <div className="ml-auto flex items-center gap-1.5">
-          <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
-            <ViewButton
-              active={view === "split"}
-              onClick={() => setView("split")}
-              Icon={AreaChartIcon}
-              label="Split"
-            />
-            <ViewButton
-              active={view === "margin"}
-              onClick={() => setView("margin")}
-              Icon={Percent}
-              label="Margin"
-            />
-          </div>
-          <PeriodSelector
-            selected={window}
-            onChange={setWindow}
-            options={WINDOWS}
-            variant="aurora"
-          />
-        </div>
-      </div>
+      <CardHead
+        title="Fees & Revenue"
+        actions={
+          <>
+            <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
+                <ViewButton
+                  active={view === "split"}
+                  onClick={() => setView("split")}
+                  Icon={AreaChartIcon}
+                  label="Split"
+                />
+                <ViewButton
+                  active={view === "margin"}
+                  onClick={() => setView("margin")}
+                  Icon={Percent}
+                  label="Margin"
+                />
+              </div>
+              <PeriodSelector
+                selected={window}
+                onChange={setWindow}
+                options={WINDOWS}
+                variant="aurora"
+              />
+            </div>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
         {[

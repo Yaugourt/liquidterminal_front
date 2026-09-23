@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { Flame } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   useLiquidationsData,
@@ -10,7 +9,7 @@ import {
 import type { Liquidation } from "@/services/explorer/liquidation";
 import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
-import { chartPalette, KpiRibbon, TokenAvatar } from "@/components/common";
+import { CardHead, chartPalette, KpiRibbon, TokenAvatar } from "@/components/common";
 
 /**
  * LiquidationsPanel — Dashboard liquidations card (V4 · variant D "cumulative").
@@ -331,29 +330,25 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* V4 card-head */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Flame size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Liquidations</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          24h
-        </span>
-        <span className="ml-auto flex items-center gap-1.5 text-[10px] text-text-tertiary mono">
-          Top ·
-          {stats.topCoin ? (
-            <>
-              <TokenAvatar assetName={stats.topCoin} size="sm" />
-              <span className="text-text-secondary font-semibold">
-                {stats.topCoin}
-              </span>
-            </>
-          ) : (
-            <span>—</span>
-          )}
-        </span>
-      </div>
+      <CardHead
+        title="Liquidations"
+        tag="24h"
+        actions={
+          <span className="flex items-center gap-1.5 text-[10px] text-text-tertiary mono">
+            Top ·
+            {stats.topCoin ? (
+              <>
+                <TokenAvatar assetName={stats.topCoin} size="sm" />
+                <span className="text-text-secondary font-semibold">
+                  {stats.topCoin}
+                </span>
+              </>
+            ) : (
+              <span>—</span>
+            )}
+          </span>
+        }
+      />
 
       {/* Hero — 3-col strip (Total / Long / Short) */}
       <KpiRibbon

@@ -1,9 +1,9 @@
 "use client";
 
 import { Fragment, memo, useMemo, useState } from "react";
-import { Coins } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
+  CardHead,
   ChartEmpty,
   ChartError,
   ChartLoading,
@@ -50,49 +50,45 @@ export const FeesRevenuePanel = memo(function FeesRevenuePanel() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* card-head: icon + title + lifetime pill + window tabs */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Coins size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Protocol Revenue
-        </h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-          Lifetime {lifetimeTotal > 0 ? fullUsd(lifetimeTotal) : "—"}
-        </span>
-        <DataStatus
-          variant="polled"
-          updatedAt={dataUpdatedAt}
-          isRefreshing={isRefreshing}
-          onRefresh={refetch}
-          className="ml-auto"
-        />
-        <div className="flex items-center gap-1 text-[11px] font-semibold">
-          {WINDOWS.map((w, i) => (
-            <Fragment key={w}>
-              {i > 0 && <span className="text-text-tertiary/40">·</span>}
-              <button
-                type="button"
-                onClick={() => setWindow(w)}
-                className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
-                  w === window ? "text-text-primary" : "text-text-tertiary"
-                }`}
-              >
-                {WINDOW_LABELS[w]}
-              </button>
-            </Fragment>
-          ))}
-        </div>
-        {/* Offered only once there is something to cite. */}
-        {days.length > 0 && (
-          <ShareTile
-            src={`/api/tile/revenue?window=${window}`}
-            filename={`liquidterminal-revenue-${window}`}
-            label="Copy revenue as image"
-          />
-        )}
-      </div>
+      {/* card-head: title + lifetime total + window tabs */}
+      <CardHead
+        title="Protocol Revenue"
+        tag={<span className="mono">Lifetime {lifetimeTotal > 0 ? fullUsd(lifetimeTotal) : "—"}</span>}
+        actions={
+          <>
+            <DataStatus
+              variant="polled"
+              updatedAt={dataUpdatedAt}
+              isRefreshing={isRefreshing}
+              onRefresh={refetch}
+            />
+            <div className="flex items-center gap-1 text-[11px] font-semibold">
+              {WINDOWS.map((w, i) => (
+                <Fragment key={w}>
+                  {i > 0 && <span className="text-text-tertiary/40">·</span>}
+                  <button
+                    type="button"
+                    onClick={() => setWindow(w)}
+                    className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
+                      w === window ? "text-text-primary" : "text-text-tertiary"
+                    }`}
+                  >
+                    {WINDOW_LABELS[w]}
+                  </button>
+                </Fragment>
+              ))}
+            </div>
+            {/* Offered only once there is something to cite. */}
+            {days.length > 0 && (
+              <ShareTile
+                src={`/api/tile/revenue?window=${window}`}
+                filename={`liquidterminal-revenue-${window}`}
+                label="Copy revenue as image"
+              />
+            )}
+          </>
+        }
+      />
 
       {/* body — chart + KPI strip (left) / breakdown + capital base (right) */}
       <div className="flex-1 min-h-[340px] flex flex-col">

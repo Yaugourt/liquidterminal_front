@@ -1,10 +1,9 @@
 "use client";
 
 import { memo, useId, useMemo } from "react";
-import { Gauge } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toHourlyFeeFlow } from "@/services/market/fees/derive";
 import { useFeesHistory } from "@/services/market/fees/hooks/useFeesHistory";
@@ -118,15 +117,10 @@ export const FeeRunRateCard = memo(function FeeRunRateCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Gauge size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Fee Run Rate</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono ml-auto">
-          {summary.span > 0 ? `hourly · ${summary.span}h` : "hourly"}
-        </span>
-      </div>
+      <CardHead
+        title="Fee Run Rate"
+        tag={<span className="mono">{summary.span > 0 ? `hourly · ${summary.span}h` : "hourly"}</span>}
+      />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
         {[

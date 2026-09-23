@@ -1,8 +1,7 @@
 "use client";
 
-import { Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { KpiRibbon, StackedShareBar, TooltipIcon, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, StackedShareBar, TooltipIcon, type KpiCell } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4TradeFlow } from "@/lib/hip4/trade-flow";
 
@@ -46,25 +45,20 @@ export function Hip4PositioningBar({ flow, outcomeLabel, isLoading }: Hip4Positi
 
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 border-b border-border-subtle min-h-[44px] px-3.5 py-2.5">
-        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-brand/10">
-          <Activity size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Trade Flow</h3>
-        {outcomeLabel && (
-          <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-semibold text-text-tertiary">
-            {outcomeLabel}
+      <CardHead
+        title="Trade Flow"
+        subtitle={outcomeLabel || undefined}
+        tag={
+          <span className="inline-flex items-center gap-1">
+            Observed fills
+            <TooltipIcon>
+              Capital that bought vs sold this outcome, summed from the fills feed. HIP-4 exposes no
+              holdings or open-interest data, so this reflects trade flow — not point-in-time
+              positions.
+            </TooltipIcon>
           </span>
-        )}
-        <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
-          Observed fills
-          <TooltipIcon>
-            Capital that bought vs sold this outcome, summed from the fills feed. HIP-4 exposes no
-            holdings or open-interest data, so this reflects trade flow — not point-in-time
-            positions.
-          </TooltipIcon>
-        </span>
-      </div>
+        }
+      />
 
       <div className="space-y-3 p-3.5">
         {volume > 0 ? (

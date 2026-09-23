@@ -1,8 +1,7 @@
 "use client";
 
-import { ListChecks } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { OutcomeRow, chartPalette } from "@/components/common";
+import { CardHead, OutcomeRow, chartPalette } from "@/components/common";
 import { isResidualOutcome } from "@/lib/hip4/market-formatter";
 import type { Hip4DetailLayout } from "@/lib/hip4/detail-layout";
 import type {
@@ -50,15 +49,10 @@ export function Hip4OutcomeList({
 
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 border-b border-border-subtle min-h-[44px] px-3.5 py-2.5">
-        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-brand/10">
-          <ListChecks size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">{header}</h3>
-        <span className="ml-auto text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
-          {outcomes.length} {outcomes.length === 1 ? "outcome" : "outcomes"}
-        </span>
-      </div>
+      <CardHead
+        title={header}
+        tag={`${outcomes.length} ${outcomes.length === 1 ? "outcome" : "outcomes"}`}
+      />
 
       <div className="flex flex-col gap-2 p-3">
         {outcomes.map((o, i) => {

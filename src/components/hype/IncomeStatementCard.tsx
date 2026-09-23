@@ -1,9 +1,8 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { Receipt } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, TimeframeTabs, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, TimeframeTabs, SourceBadge, sourceStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Timeframe } from "@/lib/timeframe";
 import {
@@ -95,23 +94,20 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* flex-wrap: at 375 the title, the period pill and the four tabs do not
-          fit one line, and without it the last tab is clipped off the card. */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Receipt size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Income Statement</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-          {entry.copy}
-        </span>
-        <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} className="ml-auto" />
-        <TimeframeTabs
-          options={PERIODS.map((p) => p.tf)}
-          value={tf}
-          onChange={setTf}
-        />
-      </div>
+      <CardHead
+        title="Income Statement"
+        tag={<span className="mono">{entry.copy}</span>}
+        actions={
+          <>
+            <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
+            <TimeframeTabs
+              options={PERIODS.map((p) => p.tf)}
+              value={tf}
+              onChange={setTf}
+            />
+          </>
+        }
+      />
 
       <div className="flex-1 px-4 py-3">
         {error ? (

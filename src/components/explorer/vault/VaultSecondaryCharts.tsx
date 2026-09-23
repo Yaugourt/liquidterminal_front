@@ -2,10 +2,10 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   AuroraHistogramChart,
+  CardHead,
   chartPalette,
   Skeleton,
   SourceBadge,
@@ -92,7 +92,6 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
     >
       <SecondaryChartCard
         title="Daily PnL"
-        icon={<TrendingUp size={13} className="text-brand" />}
         tag="30D"
         summary={pnlSum}
         summaryLabel="net over window"
@@ -102,7 +101,6 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
       />
       <SecondaryChartCard
         title="Net flows"
-        icon={<Activity size={13} className="text-brand" />}
         tag="30D"
         summary={flowSum}
         summaryLabel="deposits − withdrawals"
@@ -123,7 +121,6 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
 
 interface SecondaryChartCardProps {
   title: string;
-  icon: React.ReactNode;
   tag: string;
   summary: number;
   summaryLabel: string;
@@ -137,7 +134,6 @@ interface SecondaryChartCardProps {
 
 function SecondaryChartCard({
   title,
-  icon,
   tag,
   summary,
   summaryLabel,
@@ -148,29 +144,28 @@ function SecondaryChartCard({
 }: SecondaryChartCardProps) {
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          {icon}
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">{title}</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          {tag}
-        </span>
-        <SourceBadge source="hypedexer" status={status} className="ml-auto" />
-        {!isLoading && data.length > 0 && (
-          <div className="flex items-baseline gap-2">
-            <span
-              className={`mono text-sm font-semibold ${
-                summary >= 0 ? "text-success" : "text-danger"
-              }`}
-            >
-              {summary >= 0 ? "+" : "-"}
-              {compactUsd(Math.abs(summary))}
-            </span>
-            <span className="text-[10px] text-text-tertiary">{summaryLabel}</span>
-          </div>
-        )}
-      </div>
+      <CardHead
+        title={title}
+        tag={tag}
+        actions={
+          <>
+            <SourceBadge source="hypedexer" status={status} />
+            {!isLoading && data.length > 0 && (
+              <div className="flex items-baseline gap-2">
+                <span
+                  className={`mono text-sm font-semibold ${
+                    summary >= 0 ? "text-success" : "text-danger"
+                  }`}
+                >
+                  {summary >= 0 ? "+" : "-"}
+                  {compactUsd(Math.abs(summary))}
+                </span>
+                <span className="text-[10px] text-text-tertiary">{summaryLabel}</span>
+              </div>
+            )}
+          </>
+        }
+      />
       <div className="px-3 py-3 h-[160px]">
         {isLoading ? (
           <Skeleton className="h-full rounded" />

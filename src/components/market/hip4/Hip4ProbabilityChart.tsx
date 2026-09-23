@@ -10,10 +10,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Activity } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { chartPalette, chartColors, TimeframeTabs , rechartsXAxisPadding } from "@/components/common";
+import { CardHead, chartPalette, chartColors, TimeframeTabs , rechartsXAxisPadding } from "@/components/common";
 import type { Timeframe } from "@/lib/timeframe";
 import {
   buildProbabilitySeries,
@@ -156,24 +155,19 @@ export function Hip4ProbabilityChart({
 
   return (
     <Card className="w-full h-full min-h-[480px] flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Activity size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary truncate">{title}</h3>
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          {showTabs && (
+      <CardHead
+        title={title}
+        subtitle={<span className="hidden sm:inline">Implied probability</span>}
+        actions={
+          showTabs ? (
             <TimeframeTabs
               options={timeframeOptions!}
               value={timeframe!}
               onChange={onTimeframeChange!}
             />
-          )}
-          <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-text-tertiary sm:inline">
-            Implied probability
-          </span>
-        </div>
-      </div>
+          ) : undefined
+        }
+      />
 
       {/* Legend with current odds */}
       <div className="px-3.5 py-2 flex flex-wrap gap-1.5">

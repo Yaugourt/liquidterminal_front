@@ -1,9 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Fish } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { KpiRibbon, StackedShareBar, chartPalette } from "@/components/common";
+import { CardHead, KpiRibbon, StackedShareBar, chartPalette } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { compactCount } from "@/lib/formatters/numberFormatting";
 import { useHypeHolderCohorts } from "@/services/market/spot/hooks/useHypeHolderCohorts";
@@ -63,22 +62,11 @@ export const WhalesVsRetailCard = memo(function WhalesVsRetailCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Fish size={13} className="text-brand" />
-        </span>
-        <div className="min-w-0">
-          <h3 className="text-[13px] font-semibold text-text-primary leading-tight">
-            Whales vs retail
-          </h3>
-          <p className="text-[10px] text-text-tertiary leading-tight">
-            HYPE holders by size tier
-          </p>
-        </div>
-        <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          concentration
-        </span>
-      </div>
+      <CardHead
+        title="Whales vs retail"
+        subtitle="HYPE holders by size tier"
+        tag="concentration"
+      />
 
       <div className="p-3.5 border-b border-border-subtle">
         <KpiRibbon cells={cells} columns="grid-cols-3" />

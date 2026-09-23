@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePublicListsPreview } from "@/services/market/tracker/hooks/usePublicListsPreview";
 import { PublicWalletListCard } from "../walletlists/PublicWalletListCard";
-import { List, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { List } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { CardHead } from "@/components/common";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { WalletList } from "@/services/market/tracker/types";
@@ -26,27 +25,12 @@ export function PublicListsPreview() {
   return (
     <Card className="h-full flex flex-col">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-brand/10 rounded-lg">
-            <List className="h-5 w-5 text-brand" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-text-primary">Public Lists</h2>
-            <p className="text-text-tertiary text-sm">Curated wallet collections</p>
-          </div>
-        </div>
-        <Link href="/market/tracker/public-lists">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-brand hover:text-brand hover:bg-brand/10"
-          >
-            Browse All
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
+      <CardHead
+        title="Public Lists"
+        subtitle="Curated wallet collections"
+        href="/market/tracker/public-lists"
+        viewAllLabel="Browse all"
+      />
 
       {/* Content */}
       <div className="flex-1 p-6">

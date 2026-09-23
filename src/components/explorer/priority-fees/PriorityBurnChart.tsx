@@ -1,9 +1,8 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { Flame } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { AuroraHistogramChart, ChartEmpty, ChartError, ChartLoading, chartPalette } from "@/components/common";
+import { AuroraHistogramChart, CardHead, ChartEmpty, ChartError, ChartLoading, chartPalette } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { compactCount, compactHype, compactUsd } from "@/lib/formatters/numberFormatting";
 import type { PriorityFeesSeries, PriorityFeesSeriesWindow } from "@/services/explorer/priority-fees";
@@ -73,21 +72,17 @@ export const PriorityBurnChart = memo(function PriorityBurnChart({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Flame size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Burn rate</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          {window === "24h" ? "hourly" : "6h buckets"}
-        </span>
-        <PillTabs
-          tabs={METRIC_TABS}
-          activeTab={metric}
-          onTabChange={(v) => setMetric(v as Metric)}
-          className="ml-auto"
-        />
-      </div>
+      <CardHead
+        title="Burn rate"
+        tag={window === "24h" ? "hourly" : "6h buckets"}
+        actions={
+          <PillTabs
+            tabs={METRIC_TABS}
+            activeTab={metric}
+            onTabChange={(v) => setMetric(v as Metric)}
+          />
+        }
+      />
 
       <div className="flex-1 min-h-[280px] flex flex-col p-3.5">
         {error ? (

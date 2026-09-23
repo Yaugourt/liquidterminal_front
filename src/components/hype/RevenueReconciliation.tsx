@@ -1,13 +1,12 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Scale } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import { toIncomeStatement, useProtocolFundamentals } from "@/services/market/fundamentals";
 import { SourceCoverageNote } from "./SourceCoverageNote";
-import { SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, SourceBadge, sourceStatus } from "@/components/common";
 
 /**
  * Why the two revenue figures on this page differ.
@@ -43,18 +42,11 @@ export const RevenueReconciliation = memo(function RevenueReconciliation() {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-gold/10 grid place-items-center shrink-0">
-          <Scale size={13} className="text-gold" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Why the two revenue figures differ
-        </h3>
-        <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} className="ml-auto" />
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-          last 30 days
-        </span>
-      </div>
+      <CardHead
+        title="Why the two revenue figures differ"
+        tag="last 30 days"
+        actions={<SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />}
+      />
 
       <div className="px-4 py-3.5">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border-subtle rounded-md overflow-hidden">

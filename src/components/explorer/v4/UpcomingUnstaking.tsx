@@ -1,11 +1,10 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import Link from "next/link";
-import { Hourglass, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useUnstakingQueuePaginated } from "@/services/explorer/validator/hooks/staking/useUnstakingQueuePaginated";
 import {
+  CardHead,
   ModuleTable,
   ModuleTableRow,
 } from "@/components/common";
@@ -57,26 +56,15 @@ export const UpcomingUnstaking = memo(function UpcomingUnstaking() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Hourglass size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Upcoming Unstakings
-        </h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          {total > 0
+      <CardHead
+        title="Upcoming Unstakings"
+        tag={
+          total > 0
             ? `Top ${TOP_N} of ${formatNumber(total, format, { maximumFractionDigits: 0 })}`
-            : `Top ${TOP_N} by size`}
-        </span>
-        <Link
-          href="/explorer/validator"
-          className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-        >
-          View all
-          <ArrowRight size={12} />
-        </Link>
-      </div>
+            : `Top ${TOP_N} by size`
+        }
+        href="/explorer/validator"
+      />
 
       {isLoading && top.length === 0 ? (
         <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary">

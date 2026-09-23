@@ -1,9 +1,8 @@
 "use client";
 
 import { Fragment, memo, useMemo, useState } from "react";
-import { Coins } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { ChartEmpty, ChartError, ChartLoading } from "@/components/common";
+import { CardHead, ChartEmpty, ChartError, ChartLoading } from "@/components/common";
 import { RevenueChart } from "@/components/dashboard/RevenueChart";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import type { RevenueWindow } from "@/services/market/revenue";
@@ -33,31 +32,28 @@ export const RevenueFlywheelCard = memo(function RevenueFlywheelCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Coins size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Protocol Revenue</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          buyback fuel
-        </span>
-        <div className="ml-auto flex items-center gap-1 text-[11px] font-semibold">
-          {WINDOWS.map((w, i) => (
-            <Fragment key={w}>
-              {i > 0 && <span className="text-text-tertiary/40">·</span>}
-              <button
-                type="button"
-                onClick={() => setWindow(w)}
-                className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
-                  w === window ? "text-text-primary" : "text-text-tertiary"
-                }`}
-              >
-                {WINDOW_LABELS[w]}
-              </button>
-            </Fragment>
-          ))}
-        </div>
-      </div>
+      <CardHead
+        title="Protocol Revenue"
+        tag="buyback fuel"
+        actions={
+          <div className="flex items-center gap-1 text-[11px] font-semibold">
+            {WINDOWS.map((w, i) => (
+              <Fragment key={w}>
+                {i > 0 && <span className="text-text-tertiary/40">·</span>}
+                <button
+                  type="button"
+                  onClick={() => setWindow(w)}
+                  className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
+                    w === window ? "text-text-primary" : "text-text-tertiary"
+                  }`}
+                >
+                  {WINDOW_LABELS[w]}
+                </button>
+              </Fragment>
+            ))}
+          </div>
+        }
+      />
 
       {/* buyback annotation */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-3.5 py-2 border-b border-border-subtle bg-surface-2/30 text-[11px]">

@@ -1,12 +1,11 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { PieChart as PieIcon, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 import { useHLBridge } from "@/services/dashboard/hooks/useHLBridge";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { chartPalette, SourceBadge, sourceStatus, type SourceBadgeStatus } from "@/components/common";
+import { CardHead, chartPalette, SourceBadge, sourceStatus, type SourceBadgeStatus } from "@/components/common";
 
 /**
  * CapitalEvolution — two-panel "Capital Evolution · 30d" section.
@@ -72,17 +71,7 @@ function CapitalDonut({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <PieIcon size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Vault concentration
-        </h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          Top {topCount} vs rest
-        </span>
-      </div>
+      <CardHead title="Vault concentration" tag={`Top ${topCount} vs rest`} />
 
       <div className="p-4 flex flex-col items-center">
         <svg
@@ -199,28 +188,25 @@ function BridgeTvlChart({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <TrendingUp size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Bridge TVL · 30d
-        </h3>
-        <span className="ml-auto flex items-center gap-3 text-[10.5px]">
-          <SourceBadge source="defillama" status={status} />
-          <span className="text-text-tertiary mono">
-            {compactUsd(minV)} – {compactUsd(maxV)}
+      <CardHead
+        title="Bridge TVL · 30d"
+        actions={
+          <span className="flex items-center gap-3 text-[10.5px]">
+            <SourceBadge source="defillama" status={status} />
+            <span className="text-text-tertiary mono">
+              {compactUsd(minV)} – {compactUsd(maxV)}
+            </span>
+            <span
+              className={`mono font-semibold ${
+                totalChange >= 0 ? "text-success" : "text-danger"
+              }`}
+            >
+              {totalChange >= 0 ? "+" : ""}
+              {totalChangePct.toFixed(1)}%
+            </span>
           </span>
-          <span
-            className={`mono font-semibold ${
-              totalChange >= 0 ? "text-success" : "text-danger"
-            }`}
-          >
-            {totalChange >= 0 ? "+" : ""}
-            {totalChangePct.toFixed(1)}%
-          </span>
-        </span>
-      </div>
+        }
+      />
 
       <div className="p-4 relative" onMouseLeave={() => setHoveredIdx(null)}>
         <div

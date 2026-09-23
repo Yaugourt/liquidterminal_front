@@ -1,14 +1,12 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import Link from "next/link";
-import { PieChart as PieIcon, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useBuildersGlobalStats } from "@/services/indexer/builders/hooks/useBuildersGlobalStats";
 import { useBuildersTop } from "@/services/indexer/builders/hooks/useBuildersTop";
 import { resolveBuilderLabel } from "@/components/market/builders";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
-import { chartPalette, DonutTopN, SourceBadge, combinedSourceStatus } from "@/components/common";
+import { CardHead, chartPalette, DonutTopN, SourceBadge, combinedSourceStatus } from "@/components/common";
 import type { DonutSlice } from "@/components/common";
 
 /**
@@ -96,46 +94,35 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* card-head V4 — title + 24h pill + Volume / Users live stats */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <PieIcon size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Builders Code
-        </h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          24h
-        </span>
-        <div className="ml-auto flex items-center gap-2.5 text-[10px] mono">
-          <SourceBadge source="hypedexer" status={combinedSourceStatus(global, topFeed)} />
-          <span className="text-text-tertiary/40">·</span>
-          <span className="text-text-tertiary">
-            Vol{" "}
-            <span className="text-text-primary font-semibold">
-              {stats?.current?.totalVolume
-                ? compactUsd(stats.current.totalVolume)
-                : "—"}
+      {/* card-head — title + 24h window + Volume / Users live stats */}
+      <CardHead
+        title="Builders Code"
+        tag="24h"
+        actions={
+          <div className="flex items-center gap-2.5 text-[10px] mono">
+            <SourceBadge source="hypedexer" status={combinedSourceStatus(global, topFeed)} />
+            <span className="text-text-tertiary/40">·</span>
+            <span className="text-text-tertiary">
+              Vol{" "}
+              <span className="text-text-primary font-semibold">
+                {stats?.current?.totalVolume
+                  ? compactUsd(stats.current.totalVolume)
+                  : "—"}
+              </span>
             </span>
-          </span>
-          <span className="text-text-tertiary/40">·</span>
-          <span className="text-text-tertiary">
-            Users{" "}
-            <span className="text-text-primary font-semibold">
-              {stats?.current?.uniqueUsers
-                ? compactCount(stats.current.uniqueUsers)
-                : "—"}
+            <span className="text-text-tertiary/40">·</span>
+            <span className="text-text-tertiary">
+              Users{" "}
+              <span className="text-text-primary font-semibold">
+                {stats?.current?.uniqueUsers
+                  ? compactCount(stats.current.uniqueUsers)
+                  : "—"}
+              </span>
             </span>
-          </span>
-        </div>
-        <Link
-          href="/market/builders"
-          className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-        >
-          View all
-          <ArrowRight size={12} />
-        </Link>
-      </div>
+          </div>
+        }
+        href="/market/builders"
+      />
 
       {!hasData ? (
         <div className="flex-1 grid place-items-center py-10 text-[11px] text-text-tertiary">

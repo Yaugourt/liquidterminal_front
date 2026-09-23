@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { BarChart2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { CardHead } from "@/components/common";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 import { useDateFormat } from "@/store/date-format.store";
 import type { IndexerVaultPortfolioEntry } from "@/services/explorer/vault/types";
@@ -61,15 +61,7 @@ export function VaultCommissionHistory({ portfolio }: VaultCommissionHistoryProp
       transition={{ delay: 0.35, duration: 0.35 }}
     >
       <Card className="flex flex-col overflow-hidden">
-        <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-            <BarChart2 size={13} className="text-brand" />
-          </span>
-          <h3 className="text-[13px] font-semibold text-text-primary">Commission history</h3>
-          <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-            {tag}
-          </span>
-        </div>
+        <CardHead title="Commission history" tag={tag} />
 
         {stable ? (
           <div className="px-3.5 py-3 text-xs text-text-secondary">

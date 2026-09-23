@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { BookOpen } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { CardHead } from "@/components/common";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useHip4OrderBook } from "@/services/indexer/hip4";
@@ -96,37 +97,33 @@ export function Hip4OrderBook({ coin, sideName, enabled = true, depth = 9 }: Hip
 
   return (
     <Card className="flex h-full flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 border-b border-border-subtle px-3.5 py-2.5">
-        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-brand/10">
-          <BookOpen size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Order Book</h3>
-        {sideName && (
-          <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-semibold text-text-tertiary">
-            {sideName}
-          </span>
-        )}
-        {available && (
-          <span
-            className={`mono rounded px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${
-              isL4 ? "bg-brand/15 text-brand" : "bg-surface-2 text-text-tertiary"
-            }`}
-            title={
-              isL4
-                ? "Per-order (L4) book: every resting order, not just the top aggregated levels"
-                : "Aggregated (L2) book, polled over REST"
-            }
-          >
-            {isL4 ? "L4" : "L2"}
-          </span>
-        )}
-        {available && spread != null && (
-          <span className="ml-auto mono text-[10.5px] text-text-tertiary">
-            Spread {(spread * 100).toFixed(1)}¢
-            {spreadPct != null ? ` · ${spreadPct.toFixed(1)}%` : ""}
-          </span>
-        )}
-      </div>
+      <CardHead
+        title="Order Book"
+        subtitle={sideName || undefined}
+        tag={
+          available && spread != null ? (
+            <span className="mono">
+              Spread {(spread * 100).toFixed(1)}¢
+              {spreadPct != null ? ` · ${spreadPct.toFixed(1)}%` : ""}
+            </span>
+          ) : undefined
+        }
+        actions={
+          available ? (
+            <StatusBadge
+              variant={isL4 ? "info" : "neutral"}
+              className="mono"
+              title={
+                isL4
+                  ? "Per-order (L4) book: every resting order, not just the top aggregated levels"
+                  : "Aggregated (L2) book, polled over REST"
+              }
+            >
+              {isL4 ? "L4" : "L2"}
+            </StatusBadge>
+          ) : undefined
+        }
+      />
 
       {isLoading ? (
         <div className="flex flex-1 items-center justify-center py-10">

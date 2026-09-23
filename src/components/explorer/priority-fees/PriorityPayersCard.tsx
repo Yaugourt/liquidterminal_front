@@ -2,10 +2,10 @@
 
 import { memo, useMemo } from "react";
 import Link from "next/link";
-import { Crown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   AddressIdenticon,
+  CardHead,
   ModuleTable,
   ModuleTableRow,
   StackedShareBar,
@@ -81,16 +81,11 @@ export const PriorityPayersCard = memo(function PriorityPayersCard({
 
   return (
     <Card className="overflow-hidden flex flex-col h-full">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Crown size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Top payers</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          top {TOP_N}
-        </span>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
-      </div>
+      <CardHead
+        title="Top payers"
+        tag={`top ${TOP_N}`}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+      />
 
       {rows.length > 0 && (
         <div className="px-3.5 py-2.5 border-b border-border-subtle bg-surface-2/30">

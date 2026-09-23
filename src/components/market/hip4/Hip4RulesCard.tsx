@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Scale } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { TooltipIcon } from "@/components/common";
+import { CardHead, TooltipIcon } from "@/components/common";
 import { formatExpiryDate } from "@/lib/hip4/market-formatter";
 import { parseOutcomeDescription } from "@/lib/hip4/outcome-meta";
 import type { Hip4DetailLayout } from "@/lib/hip4/detail-layout";
@@ -81,20 +80,19 @@ export function Hip4RulesCard({ market, layout }: Hip4RulesCardProps) {
 
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 border-b border-border-subtle min-h-[44px] px-3.5 py-2.5">
-        <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-brand/10">
-          <Scale size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Rules &amp; Resolution</h3>
-        <span className="ml-auto inline-flex items-center gap-1 rounded bg-surface-2 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
-          {resolutionMode}
-          <TooltipIcon>
-            {isPriceMarket
-              ? "Resolved automatically from the underlying oracle price at expiry."
-              : "Resolved manually by the market operator from the official result."}
-          </TooltipIcon>
-        </span>
-      </div>
+      <CardHead
+        title="Rules & Resolution"
+        tag={
+          <span className="inline-flex items-center gap-1">
+            {resolutionMode}
+            <TooltipIcon>
+              {isPriceMarket
+                ? "Resolved automatically from the underlying oracle price at expiry."
+                : "Resolved manually by the market operator from the official result."}
+            </TooltipIcon>
+          </span>
+        }
+      />
 
       <div className="space-y-3 p-3.5">
         {ruleText ? (

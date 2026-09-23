@@ -1,9 +1,8 @@
 "use client";
 
 import { Fragment, memo, useMemo, useState } from "react";
-import { LineChart } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { AuroraAreaChart, chartPalette } from "@/components/common";
+import { AuroraAreaChart, CardHead, chartPalette } from "@/components/common";
 import { useTokenCandles } from "@/services/market/token";
 import { useHypePrice, HYPE_SPOT_COIN } from "@/services/market/hype";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
@@ -89,36 +88,37 @@ export const HypePriceChart = memo(function HypePriceChart() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <LineChart size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Price</h3>
-        <span className="hidden sm:flex items-center gap-2.5">
-          <span className="mono text-[14px] font-semibold text-text-primary">
-            {current != null ? formatPrice(current, format) : "—"}
+      <CardHead
+        title="Price"
+        subtitle={
+          <span className="hidden sm:flex items-center gap-2.5">
+            <span className="mono text-[14px] font-semibold text-text-primary">
+              {current != null ? formatPrice(current, format) : "—"}
+            </span>
+            <span className={`mono text-[11px] font-semibold ${changeColor}`}>
+              {fmtSignedPct(windowChange)} {tf}
+            </span>
           </span>
-          <span className={`mono text-[11px] font-semibold ${changeColor}`}>
-            {fmtSignedPct(windowChange)} {tf}
-          </span>
-        </span>
-        <div className="ml-auto flex items-center gap-1 text-[11px] font-semibold">
-          {TF_ORDER.map((t, i) => (
-            <Fragment key={t}>
-              {i > 0 && <span className="text-text-tertiary/40">·</span>}
-              <button
-                type="button"
-                onClick={() => setTf(t)}
-                className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
-                  t === tf ? "text-text-primary" : "text-text-tertiary"
-                }`}
-              >
-                {t}
-              </button>
-            </Fragment>
-          ))}
-        </div>
-      </div>
+        }
+        actions={
+          <div className="flex items-center gap-1 text-[11px] font-semibold">
+            {TF_ORDER.map((t, i) => (
+              <Fragment key={t}>
+                {i > 0 && <span className="text-text-tertiary/40">·</span>}
+                <button
+                  type="button"
+                  onClick={() => setTf(t)}
+                  className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
+                    t === tf ? "text-text-primary" : "text-text-tertiary"
+                  }`}
+                >
+                  {t}
+                </button>
+              </Fragment>
+            ))}
+          </div>
+        }
+      />
 
       {/* ATH / ATL strip */}
       <div className="flex flex-wrap items-center gap-x-5 gap-y-1 px-3.5 py-2 border-b border-border-subtle text-[11px]">

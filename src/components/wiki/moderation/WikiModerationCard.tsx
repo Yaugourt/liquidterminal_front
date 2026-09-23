@@ -6,9 +6,10 @@ import { EducationalResource } from "@/services/wiki/types";
 import { safeHref } from "@/lib/safeUrl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { CardHead } from "@/components/common";
 import {
-    Shield,
     CheckCircle,
     XCircle,
     ExternalLink,
@@ -147,34 +148,29 @@ export function WikiModerationCard() {
     return (
         <Card>
             {/* Header */}
-            <CardHeader density="compact" className="border-b border-border-subtle flex-row items-center justify-between space-y-0">
-                <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-gold/10 rounded-lg">
-                        <Shield className="w-4 h-4 text-gold" />
-                    </div>
-                    <div>
-                        <h3 className="text-text-primary font-semibold text-sm">Wiki Moderation</h3>
-                        <p className="text-xs text-text-tertiary">Resources pending review</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    {count > 0 && (
-                        <span className="px-2 py-0.5 bg-gold/10 text-gold text-xs rounded-md border border-gold/20 flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {count}
-                        </span>
-                    )}
-                    <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => refetch()}
-                        disabled={isLoading}
-                        className="h-7 w-7 text-text-secondary hover:text-text-primary"
-                    >
-                        <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
-                    </Button>
-                </div>
-            </CardHeader>
+            <CardHead
+                title="Wiki Moderation"
+                subtitle="Resources pending review"
+                actions={
+                    <>
+                        {count > 0 && (
+                            <StatusBadge variant="gold">
+                                <Clock className="w-3 h-3" />
+                                {count}
+                            </StatusBadge>
+                        )}
+                        <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => refetch()}
+                            disabled={isLoading}
+                            className="h-7 w-7 text-text-secondary hover:text-text-primary"
+                        >
+                            <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
+                        </Button>
+                    </>
+                }
+            />
 
             {/* Content */}
             <CardContent density="compact">

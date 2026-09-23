@@ -1,9 +1,8 @@
 "use client";
 
 import { memo, useMemo, type ReactNode } from "react";
-import { Landmark } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { KpiRibbon, AuroraAreaChart, chartPalette } from "@/components/common";
+import { CardHead, KpiRibbon, AuroraAreaChart, chartPalette } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHypeOverview, useAfBuybacks } from "@/services/market/hype";
 import { compactHype } from "@/lib/formatters/numberFormatting";
@@ -86,22 +85,19 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* card-head */}
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Landmark size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Assistance Fund</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-          0xfefe…fe
-        </span>
-        <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] text-text-tertiary">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+      <CardHead
+        title="Assistance Fund"
+        tag={<span className="mono">0xfefe…fe</span>}
+        actions={
+          <span className="inline-flex items-center gap-1.5 text-[10px] text-text-tertiary">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+            </span>
+            live on-chain
           </span>
-          live on-chain
-        </span>
-      </div>
+        }
+      />
 
       {/* on-chain position */}
       <div className="p-3.5 border-b border-border-subtle">

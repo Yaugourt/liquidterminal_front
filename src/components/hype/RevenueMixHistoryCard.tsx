@@ -1,10 +1,10 @@
 "use client";
 
 import { memo, useId, useMemo, useState } from "react";
-import { Layers, Percent, DollarSign } from "lucide-react";
+import { Percent, DollarSign } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, PeriodSelector, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown, type RevenueWindow } from "@/services/market/revenue";
 import { SeriesLegend } from "./SeriesLegend";
@@ -152,43 +152,42 @@ export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Layers size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Revenue Mix</h3>
-        <div className="ml-auto flex items-center gap-1.5">
-          <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
-            <button
-              onClick={() => setView("share")}
-              aria-label="Share of revenue"
-              aria-pressed={view === "share"}
-              className={`px-1.5 py-1 rounded-md transition-colors ${
-                view === "share" ? "bg-white/[0.06] text-brand" : "text-text-tertiary hover:text-text-secondary"
-              }`}
-            >
-              <Percent size={12} />
-            </button>
-            <button
-              onClick={() => setView("usd")}
-              aria-label="Revenue in dollars"
-              aria-pressed={view === "usd"}
-              className={`px-1.5 py-1 rounded-md transition-colors ${
-                view === "usd" ? "bg-white/[0.06] text-brand" : "text-text-tertiary hover:text-text-secondary"
-              }`}
-            >
-              <DollarSign size={12} />
-            </button>
+      <CardHead
+        title="Revenue Mix"
+        actions={
+          <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
+              <button
+                onClick={() => setView("share")}
+                aria-label="Share of revenue"
+                aria-pressed={view === "share"}
+                className={`px-1.5 py-1 rounded-md transition-colors ${
+                  view === "share" ? "bg-white/[0.06] text-brand" : "text-text-tertiary hover:text-text-secondary"
+                }`}
+              >
+                <Percent size={12} />
+              </button>
+              <button
+                onClick={() => setView("usd")}
+                aria-label="Revenue in dollars"
+                aria-pressed={view === "usd"}
+                className={`px-1.5 py-1 rounded-md transition-colors ${
+                  view === "usd" ? "bg-white/[0.06] text-brand" : "text-text-tertiary hover:text-text-secondary"
+                }`}
+              >
+                <DollarSign size={12} />
+              </button>
+            </div>
+            <PeriodSelector
+              selected={window}
+              onChange={setWindow}
+              options={WINDOWS}
+              labels={WINDOW_LABELS}
+              variant="aurora"
+            />
           </div>
-          <PeriodSelector
-            selected={window}
-            onChange={setWindow}
-            options={WINDOWS}
-            labels={WINDOW_LABELS}
-            variant="aurora"
-          />
-        </div>
-      </div>
+        }
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {error ? (

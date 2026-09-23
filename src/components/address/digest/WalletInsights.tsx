@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/common";
+import { CardHead, Skeleton } from "@/components/common";
 import { cn } from "@/lib/utils";
 import type { InsightTone, WalletInsight } from "./walletInsights";
 
@@ -55,13 +54,10 @@ export function WalletInsightsCard({
 }) {
   return (
     <Card className={cn("flex flex-col overflow-hidden", className)}>
-      <div className="flex items-center gap-2.5 px-3.5 py-2 border-b border-border-subtle min-h-[36px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Sparkles size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">What the data says</h3>
-        <span className="ml-auto text-[10px] text-text-tertiary max-sm:hidden">hover a line for its sources</span>
-      </div>
+      <CardHead
+        title="What the data says"
+        tag={<span className="max-sm:hidden">hover a line for its sources</span>}
+      />
       {insights.length > 0 ? (
         <WalletInsightList insights={insights} className="flex-1 overflow-y-auto" />
       ) : loading ? (

@@ -8,6 +8,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { Wallet, LogIn, ArrowRight, TrendingUp, BarChart3, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { CardHead } from "@/components/common";
 
 /**
  * Composant preview des wallets suivis pour la home page du tracker
@@ -29,29 +30,12 @@ export function TrackedWalletsPreview() {
   return (
     <Card className="h-full flex flex-col">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gold/10 rounded-lg">
-            <Wallet className="h-5 w-5 text-gold" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-text-primary">Your Wallets</h2>
-            <p className="text-text-tertiary text-sm">Track and monitor</p>
-          </div>
-        </div>
-        {isAuthenticated && wallets.length > 0 && (
-          <Link href="/market/tracker/my-wallets">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-brand hover:text-brand hover:bg-brand/10"
-            >
-              Manage
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        )}
-      </div>
+      <CardHead
+        title="Your Wallets"
+        subtitle="Track and monitor"
+        href={isAuthenticated && wallets.length > 0 ? "/market/tracker/my-wallets" : undefined}
+        viewAllLabel="Manage"
+      />
 
       {/* Content */}
       <div className="flex-1 p-6">

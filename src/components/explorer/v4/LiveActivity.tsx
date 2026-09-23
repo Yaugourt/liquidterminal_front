@@ -2,17 +2,17 @@
 
 import { memo, useEffect, useMemo, useState } from "react";
 import {
-  Boxes,
-  Activity,
   Pause,
   Play,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useExplorerStore } from "@/services/explorer";
 import type { Block, Transaction } from "@/services/explorer/types";
 import {
+  CardHead,
   ModuleTable,
   ModuleTableRow,
 } from "@/components/common";
@@ -45,27 +45,15 @@ function LivePill({
 }) {
   if (paused) {
     return (
-      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-1.5 border bg-gold/10 text-gold border-gold/25">
-        <span className="w-1.5 h-1.5 rounded-full bg-gold" />
+      <StatusBadge variant="gold" dot>
         PAUSED
-      </span>
+      </StatusBadge>
     );
   }
   return (
-    <span
-      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-1.5 border ${
-        connected
-          ? "bg-success/10 text-success border-success/25"
-          : "bg-danger/10 text-danger border-danger/25"
-      }`}
-    >
-      <span
-        className={`w-1.5 h-1.5 rounded-full ${
-          connected ? "bg-success animate-pulse" : "bg-danger"
-        }`}
-      />
+    <StatusBadge variant={connected ? "success" : "error"} dot>
       {connected ? "LIVE" : "OFF"}
-    </span>
+    </StatusBadge>
   );
 }
 
@@ -153,26 +141,25 @@ function BlocksCard({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Boxes size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Latest blocks</h3>
-        <LivePill connected={connected} paused={paused} />
-        <div className="ml-auto flex items-center gap-2">
-          <StreamToolbar
-            paused={paused}
-            onTogglePause={() => {
-              setPaused((p) => !p);
-              setPage(0);
-            }}
-            page={safePage}
-            totalPages={totalPages}
-            onPrev={() => setPage((p) => Math.max(0, p - 1))}
-            onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-          />
-        </div>
-      </div>
+      <CardHead
+        title="Latest blocks"
+        actions={
+          <>
+            <LivePill connected={connected} paused={paused} />
+            <StreamToolbar
+              paused={paused}
+              onTogglePause={() => {
+                setPaused((p) => !p);
+                setPage(0);
+              }}
+              page={safePage}
+              totalPages={totalPages}
+              onPrev={() => setPage((p) => Math.max(0, p - 1))}
+              onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            />
+          </>
+        }
+      />
 
       {rows.length === 0 ? (
         <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary min-h-[240px] flex flex-col items-center justify-center">
@@ -244,26 +231,25 @@ function TxCard({
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Activity size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Latest transactions</h3>
-        <LivePill connected={connected} paused={paused} />
-        <div className="ml-auto flex items-center gap-2">
-          <StreamToolbar
-            paused={paused}
-            onTogglePause={() => {
-              setPaused((p) => !p);
-              setPage(0);
-            }}
-            page={safePage}
-            totalPages={totalPages}
-            onPrev={() => setPage((p) => Math.max(0, p - 1))}
-            onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-          />
-        </div>
-      </div>
+      <CardHead
+        title="Latest transactions"
+        actions={
+          <>
+            <LivePill connected={connected} paused={paused} />
+            <StreamToolbar
+              paused={paused}
+              onTogglePause={() => {
+                setPaused((p) => !p);
+                setPage(0);
+              }}
+              page={safePage}
+              totalPages={totalPages}
+              onPrev={() => setPage((p) => Math.max(0, p - 1))}
+              onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+            />
+          </>
+        }
+      />
 
       {rows.length === 0 ? (
         <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary min-h-[240px] flex flex-col items-center justify-center">

@@ -1,9 +1,8 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Scale } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, SourceBadge, sourceStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useHypeOverview } from "@/services/market/hype";
 import { toValuationMultiples, useFeeRevenueHistory } from "@/services/market/fundamentals";
@@ -67,16 +66,11 @@ export const ValuationMultiplesCard = memo(function ValuationMultiplesCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Scale size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Valuation Multiples</h3>
-        <SourceBadge source="defillama" status={sourceStatus(error, loadingFees)} className="ml-auto" />
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-          {partial ? `${multiples.ttmDays}d trailing` : "trailing 12 months"}
-        </span>
-      </div>
+      <CardHead
+        title="Valuation Multiples"
+        tag={partial ? `${multiples.ttmDays}d trailing` : "trailing 12 months"}
+        actions={<SourceBadge source="defillama" status={sourceStatus(error, loadingFees)} />}
+      />
 
       <div className="grid grid-cols-2 gap-px bg-border-subtle">
         {[

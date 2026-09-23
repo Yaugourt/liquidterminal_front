@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { Activity, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   useTwapOrders,
@@ -13,7 +13,7 @@ import {
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks/usePerpDexMarketData";
 import { extractPerpDexAssetTicker } from "@/services/market/perpDex/utils";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { TokenAvatar, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, TokenAvatar, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 
 /**
  * TwapPanel — carte « Active TWAP Orders » du Dashboard (Variant A).
@@ -169,23 +169,20 @@ export const TwapPanel = memo(function TwapPanel() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* Card-head V4 : icône + titre + tag actifs + tag volume */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Activity size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Active TWAP Orders
-        </h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          {count} active
-        </span>
-        <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} className="ml-auto" />
-        <DataStatus variant="live" />
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-brand/10 text-brand border border-brand/25 mono">
-          {compactUsd(totalVolume)} vol
-        </span>
-      </div>
+      <CardHead
+        title="Active TWAP Orders"
+        tag={
+          <>
+            {count} active · <span className="mono">{compactUsd(totalVolume)} vol</span>
+          </>
+        }
+        actions={
+          <>
+            <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} />
+            <DataStatus variant="live" />
+          </>
+        }
+      />
 
       {/* HYPE Buy Pressure — spot HYPE + perp HYPE combined */}
       <div className="border-b border-border-subtle">

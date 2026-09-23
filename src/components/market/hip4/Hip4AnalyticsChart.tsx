@@ -12,10 +12,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { TrendingUp, TrendingDown, BarChart2, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { chartPalette, chartColors, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, chartPalette, chartColors, SourceBadge, sourceStatus } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useHip4Analytics } from "@/services/indexer/hip4";
 import type { Hip4AnalyticsInterval } from "@/services/indexer/hip4";
@@ -108,34 +108,33 @@ export function Hip4AnalyticsChart() {
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
       {/* ── Volume area chart ── */}
       <Card className="xl:col-span-2 overflow-hidden flex flex-col h-[380px]">
-        <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-            <TrendingUp size={13} className="text-brand" />
-          </span>
-          <h3 className="text-[13px] font-semibold text-text-primary">Trading Volume</h3>
-          {display && (
-            <span className="mono text-[11px] text-text-tertiary">
-              · {formatBucket(display.bucket, interval)}
-            </span>
-          )}
-          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
-          <div className="flex items-center rounded-md border border-border-subtle bg-surface-2 p-0.5">
-            {INTERVALS.map((iv) => (
-              <button
-                key={iv.value}
-                type="button"
-                onClick={() => setInterval(iv.value)}
-                className={`rounded px-2 py-0.5 text-[10px] font-semibold transition-colors ${
-                  interval === iv.value
-                    ? "bg-surface text-text-primary"
-                    : "text-text-tertiary hover:text-text-secondary"
-                }`}
-              >
-                {iv.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <CardHead
+          title="Trading Volume"
+          subtitle={
+            display ? <span className="mono">{formatBucket(display.bucket, interval)}</span> : undefined
+          }
+          actions={
+            <>
+              <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+              <div className="flex items-center rounded-md border border-border-subtle bg-surface-2 p-0.5">
+                {INTERVALS.map((iv) => (
+                  <button
+                    key={iv.value}
+                    type="button"
+                    onClick={() => setInterval(iv.value)}
+                    className={`rounded px-2 py-0.5 text-[10px] font-semibold transition-colors ${
+                      interval === iv.value
+                        ? "bg-surface text-text-primary"
+                        : "text-text-tertiary hover:text-text-secondary"
+                    }`}
+                  >
+                    {iv.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          }
+        />
 
         <div className="px-3.5 py-3 flex items-baseline gap-3">
           <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-text-primary leading-none">
@@ -260,14 +259,10 @@ export function Hip4AnalyticsChart() {
 
       {/* ── Activity bar chart ── */}
       <Card className="overflow-hidden flex flex-col h-[380px]">
-        <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-            <Activity size={13} className="text-brand" />
-          </span>
-          <h3 className="text-[13px] font-semibold text-text-primary">Activity</h3>
-          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
-          <BarChart2 size={11} className="text-text-tertiary" />
-        </div>
+        <CardHead
+          title="Activity"
+          actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+        />
 
         <div className="px-3.5 py-3">
           <div className="mono text-[22px] font-semibold tracking-[-0.02em] text-text-primary leading-none">

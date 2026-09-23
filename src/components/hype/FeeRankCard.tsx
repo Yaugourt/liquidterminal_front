@@ -1,9 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { KpiRibbon, SourceBadge } from "@/components/common";
+import { CardHead, KpiRibbon, SourceBadge } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useFeeRank } from "@/services/market/feeRank";
 
@@ -27,18 +26,11 @@ export const FeeRankCard = memo(function FeeRankCard() {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Trophy size={13} className="text-brand" />
-        </span>
-        <div className="flex flex-col min-w-0">
-          <h3 className="text-[13px] font-semibold text-text-primary leading-tight">Fee rank</h3>
-          <span className="text-[10.5px] text-text-tertiary truncate">
-            Hyperliquid vs every protocol on DefiLlama
-          </span>
-        </div>
-        <SourceBadge source="defillama" status="ok" className="ml-auto" />
-      </div>
+      <CardHead
+        title="Fee rank"
+        subtitle="Hyperliquid vs every protocol on DefiLlama"
+        actions={<SourceBadge source="defillama" status="ok" />}
+      />
 
       <div className="p-3.5">
         <KpiRibbon

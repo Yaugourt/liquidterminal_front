@@ -2,8 +2,9 @@
 
 import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
-import { Info, Copy, CheckCircle2 } from "lucide-react";
+import { Copy, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { CardHead } from "@/components/common";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 import { useDateFormat } from "@/store/date-format.store";
@@ -142,12 +143,7 @@ export function VaultMetadataCard({
       transition={{ delay: 0.3, duration: 0.35 }}
     >
       <Card className="flex flex-col overflow-hidden">
-        <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-            <Info size={13} className="text-brand" />
-          </span>
-          <h3 className="text-[13px] font-semibold text-text-primary">Vault metadata</h3>
-        </div>
+        <CardHead title="Vault metadata" />
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 px-3.5 py-3">
           {rows.map((row) => (
             <div

@@ -2,9 +2,10 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Fingerprint } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
+  CardHead,
   DominanceBar,
   ModuleAsset,
   ModuleSubhead,
@@ -533,37 +534,32 @@ export function WalletProfileCard({ model, onShowPositions }: WalletProfileCardP
 
   return (
     <Card className="flex flex-col overflow-hidden h-full">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Fingerprint size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Wallet profile</h3>
-        {archetype && (
-          <span
-            title={archetype.reason}
-            className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle cursor-help"
-          >
-            {archetype.label}
-          </span>
-        )}
-        {cadence && (
-          <span
-            title={`Median hold ${formatDuration(cadence.medianHoldS)} over the last ${cadence.sample} closed round-trips`}
-            className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle cursor-help"
-          >
-            {cadence.style}
-          </span>
-        )}
-        <div className="ml-auto flex items-center gap-3">
-          <SourceBadge source="hypedexer" status={indexerStatus} />
-          <Link
-            href={isTracker ? `/explorer/address/${address}` : `/market/tracker/wallet/${address}`}
-            className="flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover"
-          >
-            {isTracker ? "On-chain view" : "Full trading view"} <ArrowRight size={12} />
-          </Link>
-        </div>
-      </div>
+      <CardHead
+        title="Wallet profile"
+        tag={
+          archetype || cadence ? (
+            <>
+              {archetype && (
+                <span title={archetype.reason} className="cursor-help">
+                  {archetype.label}
+                </span>
+              )}
+              {archetype && cadence && " · "}
+              {cadence && (
+                <span
+                  title={`Median hold ${formatDuration(cadence.medianHoldS)} over the last ${cadence.sample} closed round-trips`}
+                  className="cursor-help"
+                >
+                  {cadence.style}
+                </span>
+              )}
+            </>
+          ) : undefined
+        }
+        actions={<SourceBadge source="hypedexer" status={indexerStatus} />}
+        href={isTracker ? `/explorer/address/${address}` : `/market/tracker/wallet/${address}`}
+        viewAllLabel={isTracker ? "On-chain view" : "Full trading view"}
+      />
 
       <ProfileGrid>
         <BalancesColumn model={model} />

@@ -1,9 +1,9 @@
 "use client";
 
-import { FilePlus2, LogIn } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { LogIn } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ProtectedAction } from "@/components/common";
+import { CardHead, ProtectedAction } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import { MySubmissionsList } from "./MySubmissionsList";
 import { WikiModerationCard } from "./moderation/WikiModerationCard";
@@ -38,15 +38,7 @@ export function ContributionsPanel() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <Card>
-        <CardHeader density="compact" className="flex-row items-center gap-2 space-y-0 border-b border-border-subtle">
-          <div className="rounded-lg bg-brand/10 p-1.5">
-            <FilePlus2 className="h-4 w-4 text-brand" />
-          </div>
-          <div>
-            <h3 className="text-sm font-semibold text-text-primary">My submissions</h3>
-            <p className="text-xs text-text-tertiary">Suggested resources and their review status</p>
-          </div>
-        </CardHeader>
+        <CardHead title="My submissions" subtitle="Suggested resources and their review status" />
         <CardContent density="compact">
           <MySubmissionsList />
         </CardContent>

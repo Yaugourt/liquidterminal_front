@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useId, useMemo } from "react";
-import { Repeat } from "lucide-react";
 import {
   Bar,
   CartesianGrid,
@@ -13,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { ChartError, ChartLoading, chartPalette , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, chartPalette , rechartsGridDefaults } from "@/components/common";
 import { compactHype, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useAfBuybacks } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
@@ -157,15 +156,10 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Repeat size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Buyback vs Revenue</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono ml-auto">
-          {matched.days > 0 ? `${matched.days} completed days` : "daily"}
-        </span>
-      </div>
+      <CardHead
+        title="Buyback vs Revenue"
+        tag={<span className="mono">{matched.days > 0 ? `${matched.days} completed days` : "daily"}</span>}
+      />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
         {[

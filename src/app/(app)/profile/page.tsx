@@ -11,10 +11,10 @@ import { ReferralStats } from "@/services/auth/types";
 import { useXp } from "@/services/xp";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { StatsCard } from "@/components/common";
+import { CardHead, StatsCard } from "@/components/common";
 import { usePageTitle } from "@/store/use-page-title";
 import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard, XpEarnGuide } from "@/components/xp";
-import { Shield, Users, Wallet, BookOpen, Copy, Activity, List, Flame, Send } from "lucide-react";
+import { Shield, Users, Wallet, BookOpen, Copy, List, Flame, Send } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingState } from "@/components/ui/loading-state";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
@@ -262,12 +262,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Section Tracker Activity */}
                         <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-                            <div className="p-4 border-b border-border-subtle">
-                                <h3 className="flex items-center gap-2 text-text-primary font-semibold">
-                                    <Activity className="h-5 w-5 text-brand" />
-                                    Portfolio Tracker Activity
-                                </h3>
-                            </div>
+                            <CardHead title="Portfolio Tracker Activity" />
                             <div className="p-4">
                                 <div className="flex flex-col-reverse md:flex-row gap-6">
                                     {/* Left Column: Displayed Wallets (Content) */}
@@ -374,12 +369,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
 
                         {/* Section Knowledge Base with Tabs */}
                         <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-                            <div className="p-4 border-b border-border-subtle">
-                                <h3 className="flex items-center gap-2 text-text-primary font-semibold">
-                                    <BookOpen className="h-5 w-5 text-gold" />
-                                    Knowledge Base
-                                </h3>
-                            </div>
+                            <CardHead title="Knowledge Base" />
                             <Tabs defaultValue="readlists" className="w-full">
                                 <TabsList className="w-full grid grid-cols-2 bg-base/50 rounded-none border-b border-border-subtle p-1">
                                     <TabsTrigger

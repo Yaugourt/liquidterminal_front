@@ -1,10 +1,11 @@
 "use client";
 
 import { memo, useState } from "react";
-import { ChevronLeft, ChevronRight, Activity } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AddressIdenticon, ModuleTable, ModuleTableRow, SourceBadge, sourceStatus, type ModuleColumn } from "@/components/common";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { AddressIdenticon, CardHead, ModuleTable, ModuleTableRow, SourceBadge, sourceStatus, type ModuleColumn } from "@/components/common";
 import { TokenAvatar } from "@/components/common";
 import Link from "next/link";
 import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
@@ -84,17 +85,17 @@ export const PriorityFillsCard = memo(function PriorityFillsCard({
 
   return (
     <Card className="overflow-hidden flex flex-col h-full">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Activity size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Fills paying priority</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/25 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-          live
-        </span>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
-      </div>
+      <CardHead
+        title="Fills paying priority"
+        actions={
+          <>
+            <StatusBadge variant="success" dot>
+              live
+            </StatusBadge>
+            <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+          </>
+        }
+      />
 
       {error && (
         <div className="mx-3.5 mt-3 rounded-lg border border-danger/20 bg-danger/5 px-3 py-2 text-xs text-danger flex flex-wrap items-center gap-3">

@@ -1,8 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import Link from "next/link";
-import { ArrowRight, Clock, Vote } from "lucide-react";
+import { Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useHip4ActiveMarkets } from "@/services/indexer/hip4";
 import type {
@@ -10,7 +9,7 @@ import type {
   Hip4QuestionWithOutcomesRow,
 } from "@/services/indexer/hip4";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, SourceBadge, sourceStatus } from "@/components/common";
 import { formatExpiryCountdown } from "@/lib/hip4/market-formatter";
 
 /**
@@ -94,29 +93,16 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      {/* card-head V4 */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Vote size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          HIP-4 Outcomes
-        </h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          {activeCount} live
-        </span>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded mono bg-surface-2 text-text-tertiary border border-border-subtle">
-          {compactUsd(totalVolume)} vol
-        </span>
-        <Link
-          href="/market/hip4"
-          className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-        >
-          View all
-          <ArrowRight size={12} />
-        </Link>
-      </div>
+      <CardHead
+        title="HIP-4 Outcomes"
+        tag={
+          <>
+            {activeCount} live · <span className="mono">{compactUsd(totalVolume)} vol</span>
+          </>
+        }
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+        href="/market/hip4"
+      />
 
       <div className="flex-1">
         {isLoading && questions.length === 0 ? (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import {
@@ -10,6 +9,7 @@ import {
   ChartError,
   AuroraHistogramChart,
   chartPalette,
+  CardHead,
 } from "@/components/common";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
@@ -87,27 +87,25 @@ export function LiquidationsChartSection() {
 
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Zap size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Liquidation history</h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          {chartPeriod}
-        </span>
-        <PillTabs
-          tabs={CHART_TABS}
-          activeTab={selectedChart}
-          onTabChange={(v) => setSelectedChart(v as LiquidationChartType)}
-        />
-        <PillTabs
-          variant="text"
-          className="ml-auto"
-          tabs={CHART_PERIOD_OPTIONS}
-          activeTab={chartPeriod}
-          onTabChange={(v) => setChartPeriod(v as HistoricalChartPeriod)}
-        />
-      </div>
+      <CardHead
+        title="Liquidation history"
+        tag={chartPeriod}
+        actions={
+          <>
+            <PillTabs
+              tabs={CHART_TABS}
+              activeTab={selectedChart}
+              onTabChange={(v) => setSelectedChart(v as LiquidationChartType)}
+            />
+            <PillTabs
+              variant="text"
+              tabs={CHART_PERIOD_OPTIONS}
+              activeTab={chartPeriod}
+              onTabChange={(v) => setChartPeriod(v as HistoricalChartPeriod)}
+            />
+          </>
+        }
+      />
 
       {/* Headline value: hovered bucket, else the window total. */}
       <div className="flex items-baseline gap-2 px-3.5 pt-3">

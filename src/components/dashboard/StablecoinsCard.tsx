@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, memo, useId, useMemo, useState } from "react";
-import { Wallet, ChartLine, BarChart3 } from "lucide-react";
+import { ChartLine, BarChart3 } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { useSpotStablecoins } from "@/services/market/stablecoins";
 import {
   AuroraAreaChart,
+  CardHead,
   KpiRibbon,
   TokenAvatar,
   chartPalette,
@@ -62,7 +63,7 @@ const SUPPLY_WINDOW_DAYS: Record<Exclude<SupplyWindow, "all">, number> = {
  * Pure vertical stack mirroring `FeesRevenuePanel` strates so both cards
  * share the same hairline rhythm when placed in a side-by-side 2-col grid:
  *
- *   1. card-head        — Wallet icon · "Stablecoins" · "spot supply" pill
+ *   1. card-head        — "Stablecoins" · "spot supply" tag
  *   2. KPI strip 3-cell — Total supply · Holders · 24h Δ
  *   3. Chart strate     — "Supply trajectory · Npts" + Sparkline (~120px)
  *   4. Holdings list    — TokenAvatar + symbol + holders + supply + % per row
@@ -139,47 +140,43 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
   return (
     <Card className="overflow-hidden flex flex-col">
       {/* 1. card-head — same min-h as FeesRevenuePanel for hairline alignment. */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Wallet size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">
-          Stablecoins
-        </h3>
-        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          spot supply
-        </span>
-        <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} className="ml-auto" />
-        <DataStatus
-          variant="polled"
-          updatedAt={dataUpdatedAt}
-          isRefreshing={isRefreshing}
-          onRefresh={refetch}
-        />
-        <div className="flex items-center gap-1 text-[11px] font-semibold">
-          {SUPPLY_WINDOWS.map((w, i) => (
-            <Fragment key={w}>
-              {i > 0 && <span className="text-text-tertiary/40">·</span>}
-              <button
-                type="button"
-                onClick={() => setWindow(w)}
-                className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
-                  w === window ? "text-text-primary" : "text-text-tertiary"
-                }`}
-              >
-                {SUPPLY_WINDOW_LABELS[w]}
-              </button>
-            </Fragment>
-          ))}
-        </div>
-        {/* Copy-as-image affordance — sits after the window tabs, in the
-            right-aligned cluster pushed by DataStatus's ml-auto. */}
-        <ShareTile
-          src="/api/tile/stablecoins"
-          filename="stablecoins-hyperliquid"
-          label="Copy stablecoins as image"
-        />
-      </div>
+      <CardHead
+        title="Stablecoins"
+        tag="spot supply"
+        actions={
+          <>
+            <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} />
+            <DataStatus
+              variant="polled"
+              updatedAt={dataUpdatedAt}
+              isRefreshing={isRefreshing}
+              onRefresh={refetch}
+            />
+            <div className="flex items-center gap-1 text-[11px] font-semibold">
+              {SUPPLY_WINDOWS.map((w, i) => (
+                <Fragment key={w}>
+                  {i > 0 && <span className="text-text-tertiary/40">·</span>}
+                  <button
+                    type="button"
+                    onClick={() => setWindow(w)}
+                    className={`px-1 py-0.5 transition-colors hover:text-text-primary ${
+                      w === window ? "text-text-primary" : "text-text-tertiary"
+                    }`}
+                  >
+                    {SUPPLY_WINDOW_LABELS[w]}
+                  </button>
+                </Fragment>
+              ))}
+            </div>
+            {/* Copy-as-image affordance — sits after the window tabs. */}
+            <ShareTile
+              src="/api/tile/stablecoins"
+              filename="stablecoins-hyperliquid"
+              label="Copy stablecoins as image"
+            />
+          </>
+        }
+      />
 
       {/* 2. KPI strip — 3 cells (mirror Fees) */}
       <KpiRibbon

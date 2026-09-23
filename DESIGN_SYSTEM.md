@@ -117,7 +117,7 @@
 
 Renders `flex flex-wrap items-center gap-x-2 px-4 py-3 min-h-[44px] border-b border-border-subtle`. **No brand icon square, no pill chrome** (DS minimal, `DS_MINIMAL_SPEC.md` §A3). A `LIVE` state goes in `actions` as a `StatusBadge variant="success" dot`.
 
-> Legacy: ~55 non-table cards still inline the old V4 head (icon square + pill). Migrate them to `<CardHead>` when touched.
+> All app cards now go through `<CardHead>` (2026-09-23 migration). Deliberate exceptions: dialog/popover headers, entity hero cards (`PublicReadListDetails`), Telegram state tiles, landing marketing tiles, `labs/*` mockups.
 
 ### Section sub-head (above grids)
 

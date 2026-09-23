@@ -1,9 +1,8 @@
 "use client";
 
 import { memo } from "react";
-import { PieChart } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { DominanceBar, chartPalette } from "@/components/common";
+import { CardHead, DominanceBar, chartPalette } from "@/components/common";
 import type { DominanceSegment } from "@/components/common";
 import {
   HYPE_GENESIS_DISTRIBUTION,
@@ -36,15 +35,10 @@ export const GenesisDistributionCard = memo(function GenesisDistributionCard() {
 
   return (
     <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <PieChart size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Genesis Distribution</h3>
-        <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-          TGE {HYPE_GENESIS_DATE}
-        </span>
-      </div>
+      <CardHead
+        title="Genesis Distribution"
+        tag={<span className="mono">TGE {HYPE_GENESIS_DATE}</span>}
+      />
 
       <div className="px-3.5 pt-4 pb-3 border-b border-border-subtle">
         <DominanceBar
