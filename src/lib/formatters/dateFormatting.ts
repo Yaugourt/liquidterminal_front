@@ -22,6 +22,20 @@ export function timeAgo(date: Date | string | number): string {
   return `${Math.floor(h / 24)}d`;
 }
 
+/**
+ * Durée compacte en secondes — `25s` / `4m` / `2.5h` / `31.6d`.
+ *
+ * Source unique de vérité pour les temps de détention (round-trips, cadence
+ * du wallet) — remplace les copies locales de `fmtDuration`.
+ */
+export function formatDuration(seconds: number): string {
+  if (!Number.isFinite(seconds) || seconds < 0) return '—';
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+  if (seconds < 86400) return `${(seconds / 3600).toFixed(1)}h`;
+  return `${(seconds / 86400).toFixed(1)}d`;
+}
+
 export function formatDate(date: Date | string | number, format: DateFormatType): string {
   const dateObj = new Date(date);
   

@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { LineChart } from "lucide-react";
 import { ExportButton } from "@/components/export/ExportButton";
 import {
   OverviewModule,
@@ -107,7 +106,6 @@ export const Hip3MarketsPanel = memo(function Hip3MarketsPanel() {
   return (
     <OverviewModule
       title="Top HIP-3 Markets"
-      icon={<LineChart size={13} className="text-brand" />}
       tag="by 24h vol"
       viewAllLabel="All perp DEXs"
       href="/market/perpdex"

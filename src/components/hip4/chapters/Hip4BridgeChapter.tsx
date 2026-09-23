@@ -33,12 +33,12 @@ export function Hip4BridgeChapter() {
       </Hip4GlassPanel>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Hip4GlassPanel>
+        <Hip4GlassPanel className="min-w-0">
           <Hip4SectionTitle>Bridge 0x2222…2222</Hip4SectionTitle>
           <ul className="space-y-2 text-xs text-text-secondary">
             <li>
               <span className="text-text-secondary">Address:</span>{" "}
-              <code className="text-brand">0x2222222222222222222222222222222222222222</code>
+              <code className="break-all text-brand">0x2222222222222222222222222222222222222222</code>
             </li>
             <li>Receives HYPE, emits bridge event; calldata reverts.</li>
           </ul>
@@ -50,16 +50,16 @@ fallback() external { revert(); }`}
           </Hip4CodeBlock>
         </Hip4GlassPanel>
 
-        <Hip4GlassPanel>
-          <Hip4SectionTitle>Asset index mapping</Hip4SectionTitle>
-          <p className="mb-3 text-xs text-text-secondary">
+        <section className="min-w-0 space-y-3">
+          <Hip4SectionTitle className="!mb-0">Asset index mapping</Hip4SectionTitle>
+          <p className="text-xs text-text-secondary">
             Formula:{" "}
             <code className="text-brand">
               asset_idx = 100_000_000 + int(str(outcomeId) + str(sideId))
             </code>
           </p>
           <Hip4AssetTable />
-        </Hip4GlassPanel>
+        </section>
       </div>
     </Hip4ChapterShell>
   );

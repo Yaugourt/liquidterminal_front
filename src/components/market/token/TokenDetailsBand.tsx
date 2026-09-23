@@ -177,7 +177,7 @@ export function TokenDetailsBand({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
       {/* Supply structure */}
-      <OverviewModule title="Supply" tag="HL tokenDetails" tagVariant="plain">
+      <OverviewModule title="Supply" tag="HL tokenDetails">
         <div className="px-4 py-3.5 flex flex-col flex-1">
           {barSegments.length > 0 && (
             <div className="space-y-1.5 mb-1.5">
@@ -225,7 +225,7 @@ export function TokenDetailsBand({
       </OverviewModule>
 
       {/* HIP-1 deploy record */}
-      <OverviewModule title="Deploy" tag="HIP-1 record" tagVariant="plain">
+      <OverviewModule title="Deploy" tag="HIP-1 record">
         <div className="px-4 py-3.5 flex flex-col flex-1">
           <div className="flex-1 flex flex-col justify-end divide-y divide-border-subtle text-[11.5px]">
             <Row
@@ -297,7 +297,7 @@ export function TokenDetailsBand({
       </OverviewModule>
 
       {/* Genesis & HIP-2 distribution */}
-      <OverviewModule title="Distribution" tag="genesis · HIP-2" tagVariant="plain">
+      <OverviewModule title="Distribution" tag="genesis · HIP-2">
         <div className="px-4 py-3.5 flex flex-col flex-1">
           <div className="flex-1 flex flex-col justify-end divide-y divide-border-subtle text-[11.5px]">
             <Row

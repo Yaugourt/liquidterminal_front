@@ -2,10 +2,8 @@
 
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
-import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
+import { TypedDataTable, ModuleAsset, TableStat, TableSearch, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { Input } from "@/components/ui/input";
 import {
   formatNumber,
   formatMetricValue,
@@ -37,31 +35,23 @@ function buildColumns(
     {
       key: "rank",
       header: "#",
-      align: "right",
-      headerAlign: "right",
-      accessor: (_t, _i, absoluteIndex) => (
-        <span className="mono text-text-tertiary text-xs">{absoluteIndex + 1}</span>
-      ),
+      type: "rank",
+      accessor: (_t, _i, absoluteIndex) => absoluteIndex + 1,
     },
     {
       key: "name",
       header: "Token",
+      className: "max-w-[240px]",
       sortable: true,
       getSortValue: (t) => t.name.toLowerCase(),
       accessor: (t) => (
-        <div className="flex items-center gap-2.5 min-w-0">
-          <TokenAvatar assetName={t.name} kind="spot" size="md" />
-          <div className="min-w-0">
-            <div className="text-sm font-medium text-text-primary truncate max-w-[200px]">
-              {t.name}
-            </div>
-            <div className="mono text-[10px] text-text-tertiary truncate">
-              {/* Real quote asset (USDC / USDT0 / USDH ...) from HL spot meta */}
-              {t.name}/{pairMeta?.[t.marketIndex]?.quote ?? "USDC"}
-              {isBridged(t.name) ? " · bridged" : ""}
-            </div>
-          </div>
-        </div>
+        <ModuleAsset
+          assetName={t.name}
+          kind="spot"
+          name={t.name}
+          // Real quote asset (USDC / USDT0 / USDH ...) from HL spot meta
+          sub={`${t.name}/${pairMeta?.[t.marketIndex]?.quote ?? "USDC"}${isBridged(t.name) ? " · bridged" : ""}`}
+        />
       ),
     },
     {
@@ -147,16 +137,8 @@ export function SpotDirectoryTable({ directory }: SpotDirectoryTableProps) {
 
   const fmt = (n: number) => n.toLocaleString("en-US");
   const toolbar = (
-    <div className="flex flex-wrap items-center gap-3">
-      <div className="relative flex-1 min-w-[160px] max-w-xs">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
-        <Input
-          placeholder="Search token…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 h-8 text-sm bg-transparent border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50"
-        />
-      </div>
+    <>
+      <TableSearch value={search} onChange={setSearch} placeholder="Search token…" />
       <PillTabs
         variant="text"
         tabs={[
@@ -166,36 +148,32 @@ export function SpotDirectoryTable({ directory }: SpotDirectoryTableProps) {
         activeTab={tab}
         onTabChange={(v) => setTab(v as SpotDirectoryTab)}
       />
-      <span className="text-text-tertiary text-xs ml-auto shrink-0">
-        {rows.length} token{rows.length !== 1 ? "s" : ""}
-      </span>
-    </div>
+      <TableStat className="ml-auto" label="Tokens" value={fmt(rows.length)} />
+    </>
   );
 
   return (
-    <div className="min-w-0 bg-surface border border-border-subtle rounded-lg">
-      <TypedDataTable<SpotToken>
-        // Remount on tab switch so local pagination resets to page 1
-        key={tab}
-        data={rows}
-        columns={buildColumns(format, pairMeta)}
-        // marketIndex, not tokenId — the list is one row per MARKET and a
-        // token can back several pairs (HYPE appears 4×, same tokenId).
-        getRowKey={(t) => String(t.marketIndex)}
-        isLoading={isLoading && rows.length === 0}
-        error={error}
-        errorTitle="Failed to load tokens"
-        emptyMessage="No tokens found"
-        emptyDescription="Try adjusting your search or filters."
-        initialSort={{ field: "volume", direction: "desc" }}
-        paginate
-        itemsPerPage={20}
-        rowsPerPageOptions={[20, 50, 100]}
-        paginationVariant="full"
-        headerFill={false}
-        onRowClick={handleRowClick}
-        toolbar={toolbar}
-      />
-    </div>
+    <TypedDataTable<SpotToken>
+      className="min-w-0"
+      // Remount on tab switch so local pagination resets to page 1
+      key={tab}
+      data={rows}
+      columns={buildColumns(format, pairMeta)}
+      // marketIndex, not tokenId — the list is one row per MARKET and a
+      // token can back several pairs (HYPE appears 4×, same tokenId).
+      getRowKey={(t) => String(t.marketIndex)}
+      isLoading={isLoading && rows.length === 0}
+      error={error}
+      errorTitle="Failed to load tokens"
+      emptyMessage="No tokens found"
+      emptyDescription="Try adjusting your search or filters."
+      initialSort={{ field: "volume", direction: "desc" }}
+      paginate
+      itemsPerPage={20}
+      rowsPerPageOptions={[20, 50, 100]}
+      paginationVariant="full"
+      onRowClick={handleRowClick}
+      toolbar={toolbar}
+    />
   );
 }

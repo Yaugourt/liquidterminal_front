@@ -1,7 +1,6 @@
 "use client";
 
 import { memo } from "react";
-import { Shield } from "lucide-react";
 import { OverviewModule, KpiRibbon } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHoldersStats, useValidators } from "@/services/explorer/validator";
@@ -65,7 +64,6 @@ export const HypeStakingCard = memo(function HypeStakingCard() {
   return (
     <OverviewModule
       title="Staking & Security"
-      icon={<Shield size={13} className="text-brand" />}
       tag={totalStaked != null ? `${compactHype(totalStaked)} HYPE staked` : undefined}
       viewAllLabel="All validators"
       href="/explorer/validator"

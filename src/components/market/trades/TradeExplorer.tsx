@@ -1,23 +1,24 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import Link from "next/link";
-import { Receipt } from "lucide-react";
 import {
   TypedDataTable,
-  TokenAvatar,
+  ModuleAsset,
+  SideBadge,
+  toTradeSide,
   KpiRibbon,
   SourceBadge,
   combinedSourceStatus,
   type Column,
   type KpiCell,
 } from "@/components/common";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { Input } from "@/components/ui/input";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { compactUsd, compactCount, formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
-import { formatDateTime } from "@/lib/formatters/dateFormatting";
+import { compactUsd, compactCount, formatPrice, signedCompactUsd } from "@/lib/formatters/numberFormatting";
+import { formatDateTime, formatDuration } from "@/lib/formatters/dateFormatting";
 import type { WalletRoundTrip } from "@/services/market/tracker/wallet-performance";
 import {
   useTradeExplorer,
@@ -41,19 +42,6 @@ const SORT_MAP: Record<SortKey, { sortBy: TradeSortBy; sortDir: TradeSortDir }> 
   volume: { sortBy: "total_volume", sortDir: "DESC" },
   duration: { sortBy: "duration_s", sortDir: "DESC" },
 };
-
-/** Compact human duration from seconds: 29s · 12m · 3.4h · 2.1d. */
-function fmtDuration(s: number): string {
-  if (!Number.isFinite(s) || s < 0) return "—";
-  if (s < 60) return `${Math.round(s)}s`;
-  if (s < 3600) return `${Math.round(s / 60)}m`;
-  if (s < 86400) return `${(s / 3600).toFixed(1)}h`;
-  return `${(s / 86400).toFixed(1)}d`;
-}
-
-function shortAddr(a: string): string {
-  return a ? `${a.slice(0, 6)}…${a.slice(-4)}` : "—";
-}
 
 /**
  * Market-wide trade explorer: every closed round-trip on Hyperliquid, filterable
@@ -80,9 +68,6 @@ export function TradeExplorer() {
   const { trades, isLoading, error, refetch } = explorer;
   const { summary } = summaryFeed;
 
-  const signedUsd = (v: number) =>
-    `${v >= 0 ? "+" : "-"}$${formatNumber(Math.abs(v), format, { maximumFractionDigits: 2 })}`;
-
   const cells: KpiCell[] = useMemo(() => {
     if (!summary) return [];
     const longs = summary.direction_breakdown.find((d) => d.direction === "long");
@@ -91,7 +76,7 @@ export function TradeExplorer() {
     const pct = (n?: number) => (total > 0 ? `${(((n ?? 0) / total) * 100).toFixed(0)}%` : "—");
     return [
       { key: "trades", label: "Closed trades", value: compactCount(summary.total_trades), sub: "all-time" },
-      { key: "vol", label: "Volume", value: `$${compactUsd(summary.total_volume).replace(/^\$/, "")}` },
+      { key: "vol", label: "Volume", value: compactUsd(summary.total_volume) },
       { key: "long", label: "Longs", value: compactCount(longs?.count ?? 0), sub: pct(longs?.count), tone: "success" },
       { key: "short", label: "Shorts", value: compactCount(shorts?.count ?? 0), sub: pct(shorts?.count), tone: "danger" },
     ];
@@ -101,93 +86,71 @@ export function TradeExplorer() {
     {
       key: "user",
       header: "Trader",
-      accessor: (t) => (
-        <Link
-          href={`/market/tracker/wallet/${t.user}`}
-          className="mono text-brand hover:underline"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {shortAddr(t.user)}
-        </Link>
-      ),
+      accessor: (t) =>
+        t.user ? <AddressDisplay address={t.user} href={`/market/tracker/wallet/${t.user}`} /> : "—",
     },
     {
       key: "coin",
       header: "Coin",
-      accessor: (t) => (
-        <span className="inline-flex items-center gap-2">
-          <TokenAvatar assetName={t.coin} size="sm" kind="auto" />
-          <span className="text-text-primary font-medium">{t.coin}</span>
-        </span>
-      ),
+      accessor: (t) => <ModuleAsset assetName={t.coin} name={t.coin} />,
     },
     {
       key: "direction",
       header: "Side",
-      accessor: (t) => (
-        <StatusBadge variant={t.direction?.toLowerCase() === "long" ? "success" : "error"}>
-          {t.direction?.toLowerCase() === "long" ? "Long" : "Short"}
-        </StatusBadge>
-      ),
+      accessor: (t) => {
+        const side = toTradeSide(t.direction);
+        return side ? <SideBadge side={side} /> : "—";
+      },
     },
     {
       key: "entryexit",
       header: "Entry → Exit",
-      align: "right",
+      type: "numeric",
+      tone: () => "muted",
       className: "max-lg:hidden",
-      accessor: (t) => (
-        <span className="mono text-text-secondary">
-          {formatPrice(t.entry_price, format)} → {formatPrice(t.exit_price, format)}
-        </span>
-      ),
+      accessor: (t) => `${formatPrice(t.entry_price, format)} → ${formatPrice(t.exit_price, format)}`,
     },
     {
       key: "volume",
       header: "Volume",
-      align: "right",
+      type: "numeric",
       sortable: true,
       getSortValue: (t) => t.total_volume,
-      accessor: (t) => (
-        <span className="mono text-text-secondary">${compactUsd(t.total_volume).replace(/^\$/, "")}</span>
-      ),
+      accessor: (t) => compactUsd(t.total_volume),
     },
     {
       key: "pnl",
       header: "Realized PnL",
-      align: "right",
+      type: "change",
       sortable: true,
       getSortValue: (t) => t.pnl_realized,
-      accessor: (t) => (
-        <span className={`mono font-medium ${t.pnl_realized >= 0 ? "text-success" : "text-danger"}`}>
-          {signedUsd(t.pnl_realized)}
-        </span>
-      ),
+      accessor: (t) => signedCompactUsd(t.pnl_realized),
     },
     {
       key: "duration",
       header: "Held",
-      align: "right",
+      type: "numeric",
+      tone: () => "muted",
       className: "max-md:hidden",
-      accessor: (t) => <span className="mono text-text-tertiary">{fmtDuration(t.duration_s)}</span>,
+      accessor: (t) => formatDuration(t.duration_s),
     },
     {
       key: "closed",
       header: "Closed",
+      type: "time",
       align: "right",
       className: "max-md:hidden",
-      accessor: (t) => (
-        <span className="text-text-tertiary text-xs">{formatDateTime(t.end_time, dateFormat)}</span>
-      ),
+      accessor: (t) => formatDateTime(t.end_time, dateFormat),
     },
   ];
 
   const toolbar = (
-    <div className="flex flex-wrap items-center gap-3">
-      <input
+    <>
+      <Input
         value={coinInput}
         onChange={(e) => setCoinInput(e.target.value)}
         placeholder="Filter coin (e.g. BTC)"
-        className="h-8 w-40 rounded-md border border-border-subtle bg-surface-2 px-2.5 text-xs text-text-primary placeholder:text-text-tertiary focus:border-brand focus:outline-none"
+        className="h-8 w-40 text-xs"
       />
       <PillTabs
         tabs={SORT_TABS}
@@ -195,7 +158,7 @@ export function TradeExplorer() {
         onTabChange={(v) => setSort(v as SortKey)}
         variant="text"
       />
-    </div>
+    </>
   );
 
   return (
@@ -203,7 +166,6 @@ export function TradeExplorer() {
       <KpiRibbon cells={cells} />
       <TypedDataTable<WalletRoundTrip>
         title="Trade explorer"
-        icon={<Receipt size={15} className="text-brand" />}
         subtitle="Every closed round-trip on Hyperliquid, filter by coin and sort"
         headerAction={<SourceBadge source="hypedexer" status={combinedSourceStatus(explorer, summaryFeed)} />}
         toolbar={toolbar}

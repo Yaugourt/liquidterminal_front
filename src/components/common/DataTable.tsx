@@ -20,6 +20,7 @@ import {
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Card } from "@/components/ui/card";
+import { CardHead } from "./CardHead";
 import { SortableTableHead } from "./tables/SortableTableHead";
 import { TablePaginationFooter } from "./tables/TablePaginationFooter";
 import {
@@ -29,15 +30,44 @@ import {
 
 // ─── Public types ─────────────────────────────────────────────────────
 
+/** Semantic cell colours available to `Column.tone`. */
+export type CellTone = "success" | "danger" | "gold" | "brand" | "muted" | "primary";
+
+// `!` so the tone beats both the base `text-text-primary` and a type colour.
+// Literal class names: Tailwind only generates what it can read in source.
+const TONE_CLASS: Record<CellTone, string> = {
+    success: "!text-success",
+    danger: "!text-danger",
+    gold: "!text-gold",
+    brand: "!text-brand",
+    muted: "!text-text-tertiary",
+    primary: "!text-text-primary",
+};
+
 /**
- * Sémantique d'une colonne — pilote le style V4 automatiquement.
- * - `numeric` : police mono, aligné à droite.
- * - `fees`    : police mono + or (`.fees-cell`), aligné à droite — colonne Builder Fees.
- * - `change`  : police mono, couleur signée (vert/rouge) si la valeur est un nombre.
- * - `address` : police mono, troncature auto (`0x1234…abcd`) si la valeur est une string.
- * - `text` / `custom` (défaut) : aucun style auto — comportement historique.
+ * Sémantique d'une colonne — pilote le style (DS minimal) automatiquement.
+ * The accessor returns a *value* (formatted string/number); the table styles it.
+ * - `numeric` : mono, aligné à droite.
+ * - `fees`    : mono + or (gold, medium), aligné à droite — colonne Builder Fees.
+ * - `change`  : mono, aligné à droite, couleur signée (vert/rouge). Le signe vient
+ *               de la valeur brute (accessor clé) ou de `getSortValue(row)`.
+ * - `address` : mono, troncature auto (`0x1234…abcd`) si la valeur est une string.
+ * - `rank`    : mono 11px tertiaire, aligné à droite (`#`).
+ * - `time`    : mono secondaire, sans retour à la ligne (âge, date).
+ * - `code`    : mono, gauche, retour à la ligne permis (noms de champ, types, sélecteurs — tables de doc).
+ * - `text` / `custom` (défaut) : aucun style auto — l'accessor rend un composant
+ *   déjà stylé (`ModuleAsset`, `StatusBadge`, `AddressDisplay`…).
  */
-export type ColumnType = "text" | "numeric" | "fees" | "change" | "address" | "custom";
+export type ColumnType =
+    | "text"
+    | "numeric"
+    | "fees"
+    | "change"
+    | "address"
+    | "rank"
+    | "time"
+    | "code"
+    | "custom";
 
 /**
  * Column definition for `TypedDataTable`. Each column declares a stable
@@ -91,6 +121,12 @@ export interface Column<T> {
      */
     type?: ColumnType;
     /**
+     * Semantic colour of a cell, per row — keeps the accessor returning a plain
+     * value (e.g. a signed amount whose colour depends on the trade direction).
+     * Overrides the sign colour of `type: "change"`.
+     */
+    tone?: (item: T) => CellTone | undefined;
+    /**
      * Formateur optionnel appliqué quand `accessor` est une clé (`keyof T`).
      * Reçoit la valeur brute + la ligne. Ignoré si `accessor` est une fonction
      * (la fonction produit déjà le nœud).
@@ -101,15 +137,18 @@ export interface Column<T> {
 type Density = "compact" | "comfortable";
 
 interface DensityStyles {
-    cellPaddingY: string;
-    cellPaddingX: string;
+    /** Header cell padding. */
+    head: string;
+    /** Body cell padding. */
+    cell: string;
+    /** Body text size. */
     textSize: string;
 }
 
-// V4 table densities (spec §5.3) — dense rows, the V4 signature.
+// DS minimal table densities (DS_MINIMAL_SPEC §B1, kit.html TypedDataTable block).
 const DENSITY_STYLES: Record<Density, DensityStyles> = {
-    comfortable: { cellPaddingY: "py-2", cellPaddingX: "px-3.5", textSize: "text-sm" },
-    compact:     { cellPaddingY: "py-1.5", cellPaddingX: "px-3", textSize: "text-xs" },
+    comfortable: { head: "px-4 py-2.5", cell: "px-4 py-3", textSize: "text-[13px]" },
+    compact:     { head: "px-3 py-2",   cell: "px-3 py-2", textSize: "text-[12px]" },
 };
 
 // ─── TypedDataTable (the canonical primitive) ─────────────────────────
@@ -142,12 +181,10 @@ interface TypedDataTableProps<T> {
     // ── Visual ────────────────────────────────────────────────────────
     /**
      * Cell padding + font size preset.
-     * - `"comfortable"` (default): `py-3 px-4 text-sm` — full data tables.
-     * - `"compact"`:                `py-2 px-3 text-xs` — previews, embedded tables.
+     * - `"comfortable"` (default): `px-4 py-3 text-[13px]` — full page tables.
+     * - `"compact"`:                `px-3 py-2 text-[12px]` — previews, feeds, tab panels.
      */
     density?: Density;
-    /** @deprecated Use `density` instead. `'xs' → 'compact'`, `'sm' → 'comfortable'`. */
-    textSize?: "xs" | "sm";
     /** Sticky table header during vertical scroll. */
     stickyHeader?: boolean;
     /**
@@ -156,9 +193,7 @@ interface TypedDataTableProps<T> {
      * d'éviter la distribution erratique du `table-layout: auto`.
      */
     fixedLayout?: boolean;
-    /** Fill the header row with `bg-surface-2`. Default true; set false for the minimal/flat look. */
-    headerFill?: boolean;
-    /** Extra class on the outer wrapper. */
+    /** Extra class on the card (e.g. `max-h-[600px]`, grid placement). Never surface/border classes — the table owns its card. */
     className?: string;
 
     // ── Row interactions ──────────────────────────────────────────────
@@ -167,15 +202,20 @@ interface TypedDataTableProps<T> {
     /** Extra class on each `<TableRow>`. Function form receives the row + page-local index. */
     rowClassName?: string | ((row: T, index: number) => string);
 
-    // ── Card mode (optional) ──────────────────────────────────────────
-    /** When set, wraps the table in a `<Card>` with a header (title + icon + subtitle + action slot). */
+    // ── Card head (optional) ──────────────────────────────────────────
+    // The table always renders its own `<Card>`; `title` adds a `<CardHead>`.
+    /** Card title. When set, a `<CardHead>` is rendered above the table. */
     title?: ReactNode;
-    /** Icon shown in a tinted square next to the title. Only rendered when `title` is set. */
-    icon?: ReactNode;
-    /** Subtitle line below the title. Only rendered when `title` is set. */
+    /** One-line helper next to the title. Only rendered when `title` is set. */
     subtitle?: ReactNode;
-    /** Right-aligned slot in the header (e.g. a `<Select>` or `<Button>`). Only rendered when `title` is set. */
+    /** Plain figure pinned right in the head (count, total). Only rendered when `title` is set. */
+    tag?: ReactNode;
+    /** Right-aligned slot in the head (`SourceBadge`, `DataStatus`, a `<Select>`…). Only rendered when `title` is set. */
     headerAction?: ReactNode;
+    /** "View all →" link target in the head (previews of a full page). Only rendered when `title` is set. */
+    viewAllHref?: string;
+    /** Label of the "View all →" link. Defaults to "View all". */
+    viewAllLabel?: string;
 
     // ── Pagination ────────────────────────────────────────────────────
     /**
@@ -248,8 +288,9 @@ interface TypedDataTableProps<T> {
  * - **Server-paginated**: pass `total`, `page`, `rowsPerPage`, `onPageChange`,
  *   `onRowsPerPageChange`. Renders the full footer (with rows-per-page selector
  *   and items range) by default.
- * - **Card mode**: pass `title` (and optionally `icon`/`subtitle`/`headerAction`)
- *   to wrap the table in a styled card with a header.
+ * - **Card head**: the table always renders its own `<Card>`; pass `title`
+ *   (and optionally `subtitle`/`tag`/`headerAction`) to add the `<CardHead>`.
+ *   Filters/search/sub-tabs go in `toolbar`, never in a wrapping card.
  */
 export function TypedDataTable<T>({
     // Data
@@ -264,20 +305,20 @@ export function TypedDataTable<T>({
     emptyMessage = "No data available",
     emptyDescription = "Check back soon",
     // Visual
-    density,
-    textSize,
+    density = "comfortable",
     stickyHeader = false,
     fixedLayout = false,
-    headerFill = true,
     className,
     // Row
     onRowClick,
     rowClassName,
-    // Card mode
+    // Card head
     title,
-    icon,
     subtitle,
+    tag,
     headerAction,
+    viewAllHref,
+    viewAllLabel,
     // Pagination
     paginationVariant,
     paginate = false,
@@ -298,10 +339,8 @@ export function TypedDataTable<T>({
     toolbar,
     rowMotion = false,
 }: TypedDataTableProps<T>) {
-    // ── Resolve density (backward-compat with textSize) ──────────────
-    const resolvedDensity: Density = density
-        ?? (textSize === "xs" ? "compact" : "comfortable");
-    const ds = DENSITY_STYLES[resolvedDensity];
+    const ds = DENSITY_STYLES[density];
+    const head: CardHeadSlots = { title, subtitle, tag, headerAction, viewAllHref, viewAllLabel };
 
     // ── Identify the sort state owner ─────────────────────────────────
     const hasSortableColumn = columns.some((c) => c.sortable);
@@ -378,29 +417,37 @@ export function TypedDataTable<T>({
     );
 
     // ── Loading / error short-circuits (skip table chrome entirely) ──
+    // The toolbar stays mounted through loading/error so tabs, filters and
+    // refresh controls never vanish while a new slice of data is fetched.
+    const toolbarStrip = toolbar ? (
+        <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
+            {toolbar}
+        </div>
+    ) : null;
+
     if (isLoading) {
         return wrapInCard(
-            title,
-            icon,
-            subtitle,
-            headerAction,
-            <LoadingState message="Loading…" size="md" withCard={false} minHeight="min-h-[300px]" />,
+            head,
+            <>
+                {toolbarStrip}
+                <LoadingState message="Loading…" size="md" withCard={false} minHeight="min-h-[300px]" />
+            </>,
             className
         );
     }
     if (error) {
         return wrapInCard(
-            title,
-            icon,
-            subtitle,
-            headerAction,
-            <ErrorState
-                title={errorTitle}
-                message={error.message}
-                onRetry={onErrorRetry ? () => void onErrorRetry() : undefined}
-                withCard={false}
-                minHeight="min-h-[300px]"
-            />,
+            head,
+            <>
+                {toolbarStrip}
+                <ErrorState
+                    title={errorTitle}
+                    message={error.message}
+                    onRetry={onErrorRetry ? () => void onErrorRetry() : undefined}
+                    withCard={false}
+                    minHeight="min-h-[300px]"
+                />
+            </>,
             className
         );
     }
@@ -453,7 +500,7 @@ export function TypedDataTable<T>({
             }
         >
             <Table className={cn(fixedLayout && "table-fixed")}>
-                <TableHeader className={cn(headerFill && "bg-surface-2", stickyHeader && "sticky top-0 z-10")}>
+                <TableHeader className={cn(stickyHeader && "sticky top-0 z-10 bg-surface")}>
                     <TableRow className="border-b border-border-subtle hover:bg-transparent">
                         {columns.map((column, colIdx) => {
                             const colKey = column.key ?? `col-${colIdx}`;
@@ -475,7 +522,7 @@ export function TypedDataTable<T>({
                                         onSort={isControlledSort ? handleControlledSort : local.handleColumnSort}
                                         align={headAlign}
                                         style={widthStyle}
-                                        className={cn(ds.cellPaddingY, ds.cellPaddingX, column.className)}
+                                        className={cn(ds.head, column.className)}
                                     >
                                         {column.header}
                                     </SortableTableHead>
@@ -486,8 +533,7 @@ export function TypedDataTable<T>({
                                     key={colKey}
                                     style={widthStyle}
                                     className={cn(
-                                        ds.cellPaddingY,
-                                        ds.cellPaddingX,
+                                        ds.head,
                                         headAlign === "right" && "text-right",
                                         headAlign === "center" && "text-center",
                                         column.className
@@ -516,14 +562,16 @@ export function TypedDataTable<T>({
                                 ? () => handleRowClick(row, rowIndex)
                                 : undefined;
                             const rowClasses = cn(
-                                "border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors",
+                                "border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors",
                                 onRowClick && "cursor-pointer",
                                 rowExtraClass
                             );
                             const cells = columns.map((column, colIdx) => {
+                                // Raw value drives the sign colour of `change` cells:
+                                // the row field for key accessors, else `getSortValue`.
                                 const raw =
                                     typeof column.accessor === "function"
-                                        ? undefined
+                                        ? column.getSortValue?.(row)
                                         : row[column.accessor];
                                 const align =
                                     column.align ??
@@ -532,11 +580,11 @@ export function TypedDataTable<T>({
                                     <TableCell
                                         key={column.key ?? `col-${colIdx}`}
                                         className={cn(
-                                            ds.cellPaddingY,
-                                            ds.cellPaddingX,
+                                            ds.cell,
                                             ds.textSize,
                                             "text-text-primary",
                                             cellTypeClass(column.type, raw),
+                                            column.tone && toneClass(column.tone(row)),
                                             align === "right" && "text-right",
                                             align === "center" && "text-center",
                                             column.className
@@ -595,16 +643,14 @@ export function TypedDataTable<T>({
         ) : null;
 
     const tableContent = (
-        <div className={cn("w-full h-full flex flex-col", className)}>
-            {toolbar && (
-                <div className="px-4 py-3 border-b border-border-subtle">{toolbar}</div>
-            )}
+        <>
+            {toolbarStrip}
             {tableBody}
             {compactFooter}
-        </div>
+        </>
     );
 
-    return wrapInCard(title, icon, subtitle, headerAction, tableContent, undefined);
+    return wrapInCard(head, tableContent, className);
 }
 
 // ─── Internal helpers ─────────────────────────────────────────────────
@@ -615,9 +661,10 @@ const NUMERIC_COLUMN_TYPES: ReadonlySet<ColumnType> = new Set([
     "numeric",
     "fees",
     "change",
+    "rank",
 ]);
 
-/** A `numeric`/`fees`/`change` column — defaults to right-aligned. */
+/** A `numeric`/`fees`/`change`/`rank` column — defaults to right-aligned. */
 function isNumericType(type?: ColumnType): boolean {
     return type !== undefined && NUMERIC_COLUMN_TYPES.has(type);
 }
@@ -627,22 +674,32 @@ function cellTypeClass(type: ColumnType | undefined, rawValue: unknown): string 
     switch (type) {
         case "numeric":
         case "address":
-            return "mono";
+            return "mono whitespace-nowrap";
+        case "rank":
+            return "mono text-[11px] !text-text-tertiary";
+        case "time":
+            return "mono whitespace-nowrap !text-text-secondary";
+        case "code":
+            return "mono break-words";
         case "fees":
-            return "mono fees-cell";
+            return "mono whitespace-nowrap font-medium !text-gold";
         case "change":
             if (typeof rawValue === "number") {
                 return cn(
-                    "mono",
-                    rawValue > 0 && "text-success",
-                    rawValue < 0 && "text-danger",
-                    rawValue === 0 && "text-text-secondary"
+                    "mono whitespace-nowrap",
+                    rawValue > 0 && TONE_CLASS.success,
+                    rawValue < 0 && TONE_CLASS.danger,
+                    rawValue === 0 && "!text-text-secondary"
                 );
             }
-            return "mono";
+            return "mono whitespace-nowrap";
         default:
             return "";
     }
+}
+
+function toneClass(tone: CellTone | undefined): string | undefined {
+    return tone ? TONE_CLASS[tone] : undefined;
 }
 
 /** Resolves a cell's rendered node: function accessor > `format` > `type` default > raw string. */
@@ -671,29 +728,30 @@ function renderCellContent<T>(
     return String(raw ?? "");
 }
 
-function wrapInCard(
-    title: ReactNode,
-    icon: ReactNode,
-    subtitle: ReactNode,
-    headerAction: ReactNode,
-    body: ReactNode,
-    outerClassName: string | undefined,
-): ReactNode {
-    if (title === undefined || title === null) {
-        return body;
-    }
+interface CardHeadSlots {
+    title: ReactNode;
+    subtitle: ReactNode;
+    tag: ReactNode;
+    headerAction: ReactNode;
+    viewAllHref: string | undefined;
+    viewAllLabel: string | undefined;
+}
+
+/** Every table sits on its own `<Card>`; `title` adds the shared `<CardHead>`. */
+function wrapInCard(head: CardHeadSlots, body: ReactNode, className: string | undefined): ReactNode {
+    const hasHead = head.title !== undefined && head.title !== null;
     return (
-        <Card className={cn("flex flex-col", outerClassName)}>
-            <div className="px-6 py-4 border-b border-border-subtle flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                    {icon && <div className="p-2 bg-brand/10 rounded-lg">{icon}</div>}
-                    <div>
-                        <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
-                        {subtitle && <p className="text-text-tertiary text-sm">{subtitle}</p>}
-                    </div>
-                </div>
-                {headerAction && <div className="shrink-0">{headerAction}</div>}
-            </div>
+        <Card interactive={false} className={cn("flex flex-col min-w-0", className)}>
+            {hasHead && (
+                <CardHead
+                    title={head.title}
+                    subtitle={head.subtitle}
+                    tag={head.tag}
+                    actions={head.headerAction}
+                    href={head.viewAllHref}
+                    viewAllLabel={head.viewAllLabel}
+                />
+            )}
             {body}
         </Card>
     );

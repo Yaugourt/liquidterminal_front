@@ -1,8 +1,8 @@
-import { Card } from "@/components/ui/card";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactHype, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { Pagination } from "@/components/common";
-import { StakingTabButtons, StakingTableContent } from "./staking";
+import { TableStat } from "@/components/common";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import { StakingTableContent } from "./staking";
 import { useValidatorDelegations } from "@/services/explorer/validator/hooks/validator/useValidatorDelegations";
 import { useStakingValidationsPaginated } from "@/services/explorer/validator/hooks/staking/useStakingValidationsPaginated";
 import { useDelegatorHistory } from "@/services/explorer/validator/hooks/delegator/useDelegatorHistory";
@@ -12,6 +12,12 @@ import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect, useMemo } from "react";
 
 type StakingSubTab = 'delegations' | 'history' | 'rewards';
+
+const SUB_TABS: { value: StakingSubTab; label: string }[] = [
+  { value: 'delegations', label: 'Delegations' },
+  { value: 'history', label: 'History' },
+  { value: 'rewards', label: 'Rewards' },
+];
 
 interface StakingTableProps {
   address: string;
@@ -136,91 +142,63 @@ export function StakingTable({ address }: StakingTableProps) {
   const pendingWithdrawal = delegatorSummary ? parseFloat(delegatorSummary.totalPendingWithdrawal) : 0;
   const undelegatedAmount = delegatorSummary ? parseFloat(delegatorSummary.undelegated) : 0;
 
-  return (
-    <Card className="p-6 flex flex-col">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-        {/* Sub-tabs */}
-        <StakingTabButtons
-          activeSubTab={activeSubTab}
-          onSubTabChange={handleSubTabChange}
+  const toolbar = (
+    <>
+      <PillTabs
+        variant="text"
+        tabs={SUB_TABS}
+        activeTab={activeSubTab}
+        onTabChange={(v) => handleSubTabChange(v as StakingSubTab)}
+      />
+      <div className="ml-auto flex flex-wrap items-baseline gap-x-5 gap-y-1">
+        <TableStat
+          label="Delegated"
+          value={`${compactHype(stakingBalance)} HYPE`}
+          sub={hypePrice ? compactUsd(stakingBalance * hypePrice) : undefined}
         />
-
-        {/* Stats - responsive grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-6">
-          <div className="flex items-baseline gap-2">
-            <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Delegated:</span>
-            <span className="text-success text-sm font-semibold font-inter whitespace-nowrap">
-              {formatNumber(stakingBalance, format, { maximumFractionDigits: 2 })} HYPE
-              {hypePrice && (
-                <span className="text-text-primary text-xs font-normal ml-1">
-                  (${formatNumber(stakingBalance * hypePrice, format, { maximumFractionDigits: 2 })})
-                </span>
-              )}
-            </span>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Undelegated:</span>
-            <span className="text-brand text-sm font-semibold font-inter whitespace-nowrap">
-              {formatNumber(undelegatedAmount, format, { maximumFractionDigits: 2 })} HYPE
-              {hypePrice && (
-                <span className="text-text-primary text-xs font-normal ml-1">
-                  (${formatNumber(undelegatedAmount * hypePrice, format, { maximumFractionDigits: 2 })})
-                </span>
-              )}
-            </span>
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-text-primary text-xs font-medium font-inter whitespace-nowrap">Pending:</span>
-            <span className="text-gold text-sm font-semibold font-inter whitespace-nowrap">
-              {formatNumber(pendingWithdrawal, format, { maximumFractionDigits: 2 })} HYPE
-              {hypePrice && (
-                <span className="text-text-primary text-xs font-normal ml-1">
-                  (${formatNumber(pendingWithdrawal * hypePrice, format, { maximumFractionDigits: 2 })})
-                </span>
-              )}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Table Content */}
-      <div className="flex-1">
-        <StakingTableContent
-          activeSubTab={activeSubTab}
-          delegationsData={{
-            delegations: finalDelegations.slice(startIndex, endIndex),
-            loading: delegationsLoading,
-            error: delegationsError
-          }}
-          historyData={{
-            history: finalHistory.slice(startIndex, endIndex),
-            loading: delegatorHistoryLoading || historyLoading,
-            error: delegatorHistoryError || historyError
-          }}
-          rewardsData={{
-            rewards: finalRewards.slice(startIndex, endIndex),
-            loading: delegatorRewardsLoading,
-            error: delegatorRewardsError
-          }}
-          format={format}
-          hypePrice={hypePrice}
+        <TableStat
+          label="Undelegated"
+          value={`${compactHype(undelegatedAmount)} HYPE`}
+          sub={hypePrice ? compactUsd(undelegatedAmount * hypePrice) : undefined}
+        />
+        <TableStat
+          label="Pending"
+          value={`${compactHype(pendingWithdrawal)} HYPE`}
+          sub={hypePrice ? compactUsd(pendingWithdrawal * hypePrice) : undefined}
+          tone={pendingWithdrawal > 0 ? "gold" : "primary"}
         />
       </div>
-
-      {/* Pagination */}
-      {totalItems > 10 && (
-        <div className="border-t border-border-subtle flex items-center mt-auto">
-          <div className="w-full px-4 py-3">
-            <Pagination
-              total={totalItems}
-              page={currentPage}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
-          </div>
-        </div>
-      )}
-    </Card>
+    </>
   );
-} 
+
+  return (
+    <StakingTableContent
+      activeSubTab={activeSubTab}
+      toolbar={toolbar}
+      pagination={{
+        total: totalItems,
+        page: currentPage,
+        rowsPerPage,
+        onPageChange: handlePageChange,
+        onRowsPerPageChange: handleRowsPerPageChange,
+      }}
+      delegationsData={{
+        delegations: finalDelegations.slice(startIndex, endIndex),
+        loading: delegationsLoading,
+        error: delegationsError
+      }}
+      historyData={{
+        history: finalHistory.slice(startIndex, endIndex),
+        loading: delegatorHistoryLoading || historyLoading,
+        error: delegatorHistoryError || historyError
+      }}
+      rewardsData={{
+        rewards: finalRewards.slice(startIndex, endIndex),
+        loading: delegatorRewardsLoading,
+        error: delegatorRewardsError
+      }}
+      format={format}
+      hypePrice={hypePrice}
+    />
+  );
+}

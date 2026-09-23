@@ -1,8 +1,8 @@
 "use client";
 
-import { Trophy } from "lucide-react";
-import { TypedDataTable, type Column } from "@/components/common";
-import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
+import { TypedDataTable, CellValue, CellBar, type Column } from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { compactUsd, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4TraderFlow } from "@/lib/hip4/trade-flow";
 
 interface Hip4TopTradersProps {
@@ -31,74 +31,50 @@ export function Hip4TopTraders({
     {
       key: "rank",
       header: "#",
+      type: "rank",
       width: 44,
-      accessor: (_row, _i, abs) => (
-        <span className="mono text-[11px] text-text-tertiary">{abs + 1}</span>
-      ),
+      accessor: (_row, _i, abs) => abs + 1,
     },
     {
       key: "user",
       header: "Trader",
-      accessor: (row) => (
-        <span className="mono text-[11.5px] text-text-primary">{truncateAddress(row.user)}</span>
-      ),
+      accessor: (row) => <AddressDisplay address={row.user} showCopy={false} />,
     },
     {
       key: "net",
       header: "Net Flow",
-      type: "numeric",
+      type: "change",
       sortable: true,
       getSortValue: (row) => row.net,
-      accessor: (row) => (
-        <span
-          className={`mono text-[11.5px] font-semibold ${
-            row.net > 0 ? "text-success" : row.net < 0 ? "text-danger" : "text-text-secondary"
-          }`}
-        >
-          {row.net > 0 ? "+" : row.net < 0 ? "−" : ""}
-          {compactUsd(Math.abs(row.net))}
-        </span>
-      ),
+      accessor: (row) => (row.net === 0 ? compactUsd(0) : signedCompactUsd(row.net)),
     },
     {
       key: "buy",
       header: "Bought",
       type: "numeric",
+      tone: () => "muted",
       sortable: true,
       getSortValue: (row) => row.buy,
-      accessor: (row) => (
-        <span className="mono text-[11.5px] text-text-secondary">{compactUsd(row.buy)}</span>
-      ),
+      accessor: (row) => compactUsd(row.buy),
     },
     {
       key: "sell",
       header: "Sold",
       type: "numeric",
+      tone: () => "muted",
       sortable: true,
       getSortValue: (row) => row.sell,
-      accessor: (row) => (
-        <span className="mono text-[11.5px] text-text-secondary">{compactUsd(row.sell)}</span>
-      ),
+      accessor: (row) => compactUsd(row.sell),
     },
     {
       key: "volume",
       header: "Volume",
-      type: "numeric",
+      align: "right",
       sortable: true,
       getSortValue: (row) => row.volume,
       accessor: (row) => {
         const share = totalVolume > 0 ? row.volume / totalVolume : 0;
-        return (
-          <div className="flex items-center justify-end gap-2">
-            <span className="mono text-[11.5px] text-text-primary">{compactUsd(row.volume)}</span>
-            <div className="h-1 w-14 overflow-hidden rounded-full bg-surface-2">
-              <div
-                className="h-full rounded-full bg-brand opacity-70"
-                style={{ width: `${Math.max(0, Math.min(1, share)) * 100}%` }}
-              />
-            </div>
-          </div>
-        );
+        return <CellBar value={share} width={56} label={<CellValue value={compactUsd(row.volume)} />} />;
       },
     },
   ];
@@ -111,7 +87,6 @@ export function Hip4TopTraders({
       isLoading={isLoading && traders.length === 0}
       density="compact"
       title="Top Traders"
-      icon={<Trophy size={16} className="text-brand" />}
       subtitle={`By volume · observed fills${outcomeLabel ? ` · ${outcomeLabel}` : ""}`}
       emptyMessage="No traders yet"
       emptyDescription="Trades on this outcome will appear here."

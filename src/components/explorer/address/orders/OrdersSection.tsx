@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { OpenOrdersList } from "./OpenOrdersList";
 import { useOpenOrders } from "@/services/explorer/address";
 
@@ -7,7 +6,6 @@ interface OrdersSectionProps {
 }
 
 export function OrdersSection({ address }: OrdersSectionProps) {
-  // Hook pour récupérer les open orders (logique métier intégrée)
   const {
     data: openOrders,
     isLoading: openOrdersLoading,
@@ -15,14 +13,10 @@ export function OrdersSection({ address }: OrdersSectionProps) {
   } = useOpenOrders(address);
 
   return (
-    <Card className="w-full">
-      <div className="p-4">
-        <OpenOrdersList
-          orders={openOrders || []}
-          isLoading={openOrdersLoading}
-          error={openOrdersError}
-        />
-      </div>
-    </Card>
+    <OpenOrdersList
+      orders={openOrders || []}
+      isLoading={openOrdersLoading}
+      error={openOrdersError}
+    />
   );
-} 
+}

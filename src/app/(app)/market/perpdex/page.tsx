@@ -11,7 +11,7 @@ import {
   PastAuctionsPerpTable,
   Hip3MarketsExplorer,
 } from "@/components/market/perpDex";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { PageHeader, PageFaq, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 import { usePerpDexMarketDataStore } from "@/services/market/perpDex/websocket.service";
 import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
@@ -28,6 +28,18 @@ export default function PerpDexsPage() {
   // Auction pairs come from Hypurrscan `/pastAuctionsPerp`; the same GET is
   // 30s-cached so this shares PastAuctionsPerpTable's fetch for the badge.
   const pastAuctions = usePastAuctionsPerp();
+
+  const viewTabs = (
+    <PillTabs
+      variant="text"
+      tabs={[
+        { value: "builder-dexs", label: "All Builder DEXs" },
+        { value: "auction-pairs", label: "Auction Pairs" },
+      ]}
+      activeTab={tab}
+      onTabChange={(v) => setTab(v as typeof tab)}
+    />
+  );
 
   useEffect(() => {
     setTitle("Perp DEX - Market");
@@ -60,43 +72,23 @@ export default function PerpDexsPage() {
       {/* Ecosystem-wide markets explorer (with mark-vs-oracle basis) */}
       <Hip3MarketsExplorer />
 
-      {/* Table card with integrated tab header */}
-      <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)} className="w-full">
-        <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-          {/* Card header: tabs */}
-          <div className="flex items-center px-3.5 py-3 border-b border-border-subtle">
-            <TabsList className="bg-surface-2 p-0.5 rounded-md h-auto">
-              <TabsTrigger
-                value="builder-dexs"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
-              >
-                All Builder DEXs
-              </TabsTrigger>
-              <TabsTrigger
-                value="auction-pairs"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
-              >
-                Auction Pairs
-              </TabsTrigger>
-            </TabsList>
-            {tab === "auction-pairs" && (
+      {/* Directory — one table at a time; the view switcher lives in its toolbar */}
+      {tab === "builder-dexs" ? (
+        <PerpDexTable toolbar={viewTabs} />
+      ) : (
+        <PastAuctionsPerpTable
+          toolbar={
+            <>
+              {viewTabs}
               <SourceBadge
                 source="hypurrscan"
                 status={sourceStatus(pastAuctions.error, pastAuctions.isLoading)}
                 className="ml-auto"
               />
-            )}
-          </div>
-
-          <TabsContent value="builder-dexs" className="mt-0">
-            <PerpDexTable />
-          </TabsContent>
-
-          <TabsContent value="auction-pairs" className="mt-0">
-            <PastAuctionsPerpTable />
-          </TabsContent>
-        </div>
-      </Tabs>
+            </>
+          }
+        />
+      )}
       <PageFaq items={PERPDEX_FAQ} />
     </motion.div>
   );

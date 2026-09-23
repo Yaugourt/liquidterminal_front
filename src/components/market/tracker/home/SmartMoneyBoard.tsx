@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { Crown } from "lucide-react";
 import {
   TypedDataTable,
   type Column,
@@ -10,7 +8,8 @@ import {
   type KpiCell,
 } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
+import { compactUsd, compactCount, signedCompactUsd } from "@/lib/formatters/numberFormatting";
+import { AddressDisplay } from "@/components/ui/address-display";
 import { useTopTraders, type TopTrader } from "@/services/market/toptraders";
 
 /** The four server-side rankings the leaderboard endpoint exposes. */
@@ -31,8 +30,6 @@ const SUBTITLE: Record<Metric, string> = {
 };
 
 const LIMIT = 50;
-
-const signedUsd = (v: number) => `${v >= 0 ? "+" : "-"}$${compactUsd(Math.abs(v)).replace(/^\$/, "")}`;
 
 /**
  * Smart Money — the market's top traders ranked server-side by realized PnL,
@@ -57,10 +54,10 @@ export function SmartMoneyBoard() {
       {
         key: "pnl",
         label: `Net PnL · top ${n || LIMIT}`,
-        value: signedUsd(netPnl),
+        value: signedCompactUsd(netPnl),
         tone: netPnl >= 0 ? "success" : "danger",
       },
-      { key: "vol", label: "Combined volume", value: `$${compactUsd(vol).replace(/^\$/, "")}` },
+      { key: "vol", label: "Combined volume", value: compactUsd(vol) },
       { key: "win", label: "Avg win rate", value: `${(avgWin * 100).toFixed(1)}%` },
       { key: "n", label: "Traders shown", value: compactCount(n) },
     ];
@@ -70,72 +67,54 @@ export function SmartMoneyBoard() {
     {
       key: "rank",
       header: "#",
-      accessor: (_t, _i, absoluteIndex) => (
-        <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
-      ),
+      type: "rank",
+      accessor: (_t, _i, absoluteIndex) => absoluteIndex + 1,
     },
     {
       key: "trader",
       header: "Trader",
       accessor: (t) => (
-        <Link
-          href={`/market/tracker/wallet/${t.user}`}
-          className="mono text-sm text-brand hover:underline"
-        >
-          {t.user.slice(0, 6)}...{t.user.slice(-4)}
-        </Link>
+        <AddressDisplay address={t.user} href={`/market/tracker/wallet/${t.user}`} />
       ),
     },
     {
       key: "totalPnl",
       header: "PnL (24h)",
       sortable: true,
-      align: "right",
+      type: "change",
       getSortValue: (t) => t.totalPnl,
-      accessor: (t) => (
-        <span className={`mono ${t.totalPnl >= 0 ? "text-success" : "text-danger"}`}>
-          {signedUsd(t.totalPnl)}
-        </span>
-      ),
+      accessor: (t) => signedCompactUsd(t.totalPnl),
     },
     {
       key: "totalVolume",
       header: "Volume",
       sortable: true,
-      align: "right",
       getSortValue: (t) => t.totalVolume,
       type: "numeric",
-      accessor: (t) => `$${compactUsd(t.totalVolume).replace(/^\$/, "")}`,
+      accessor: (t) => compactUsd(t.totalVolume),
     },
     {
       key: "avgSize",
       header: "Avg size",
       sortable: true,
-      align: "right",
       getSortValue: (t) => (t.tradeCount > 0 ? t.totalVolume / t.tradeCount : 0),
       type: "numeric",
-      accessor: (t) =>
-        t.tradeCount > 0
-          ? `$${compactUsd(t.totalVolume / t.tradeCount).replace(/^\$/, "")}`
-          : "—",
+      className: "max-md:hidden",
+      accessor: (t) => (t.tradeCount > 0 ? compactUsd(t.totalVolume / t.tradeCount) : "—"),
     },
     {
       key: "winRate",
       header: "Win rate",
       sortable: true,
-      align: "right",
       getSortValue: (t) => t.winRate,
-      accessor: (t) => (
-        <span className={`mono ${t.winRate >= 0.5 ? "text-success" : "text-text-secondary"}`}>
-          {(t.winRate * 100).toFixed(1)}%
-        </span>
-      ),
+      type: "numeric",
+      tone: (t) => (t.winRate >= 0.5 ? "success" : "muted"),
+      accessor: (t) => `${(t.winRate * 100).toFixed(1)}%`,
     },
     {
       key: "tradeCount",
       header: "Trades",
       sortable: true,
-      align: "right",
       getSortValue: (t) => t.tradeCount,
       type: "numeric",
       accessor: (t) => compactCount(t.tradeCount),
@@ -147,10 +126,10 @@ export function SmartMoneyBoard() {
       <KpiRibbon cells={ribbon} />
       <TypedDataTable<TopTrader>
         title="Smart Money"
-        icon={<Crown className="h-5 w-5 text-brand" />}
         subtitle={SUBTITLE[metric]}
         toolbar={
           <PillTabs
+            variant="text"
             tabs={METRIC_TABS}
             activeTab={metric}
             onTabChange={(v) => setMetric(v as Metric)}

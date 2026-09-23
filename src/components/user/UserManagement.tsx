@@ -3,14 +3,14 @@
 import React, { useState, useMemo } from 'react';
 import { ProtectedAction, KpiRibbon, DataStatus } from '@/components/common';
 import { compactCount } from '@/lib/formatters/numberFormatting';
-import { Pagination, DeleteConfirmDialog } from '@/components/common';
+import { DeleteConfirmDialog } from '@/components/common';
 import { useAuthContext } from '@/contexts/auth.context';
 import { useAdminUsers, useAdminUpdateUser, useAdminDeleteUser } from '@/services/auth/user';
 import { AdminUpdateUserInput, AdminUsersQueryParams } from '@/services/auth/user/types';
 import { User } from '@/services/auth/types';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Users, Shield } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { LoadingState } from '@/components/ui/loading-state';
 import { UserFilters } from './UserFilters';
 import { UserTable } from './UserTable';
@@ -66,6 +66,18 @@ export function UserManagement() {
   // Handle page change
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
+  };
+
+  // A new search or role filter restarts from the first page: the server would
+  // otherwise return an empty page past the end of the narrowed result set.
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    setPage(0);
+  };
+
+  const handleRoleChange = (role: string) => {
+    setSelectedRole(role);
+    setPage(0);
   };
 
   // Handle rows per page change
@@ -189,101 +201,81 @@ export function UserManagement() {
         </Card>
       }
     >
-      {/* Main Card Container */}
-      <Card>
-        {/* V4 card-head: icon + title + tag + freshness/refresh in the ml-auto corner */}
-        <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-            <Users size={13} className="text-brand" />
-          </span>
-          <h3 className="text-[13px] font-semibold text-text-primary">Accounts</h3>
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-            admin
-          </span>
-          <DataStatus
-            variant="polled"
-            className="ml-auto"
-            isRefreshing={isLoading}
-            onRefresh={handleRefresh}
-          />
-        </div>
+      <div className="space-y-4">
+        {/* Stats ribbon (§7.b) */}
+        <KpiRibbon
+          columns="grid-cols-2 lg:grid-cols-4"
+          cells={[
+            { label: "Total users", value: compactCount(pagination?.total || stats.total) },
+            { label: "Admins", value: compactCount(stats.admins), tone: "danger" },
+            { label: "Moderators", value: compactCount(stats.moderators), tone: "gold" },
+            { label: "Verified", value: compactCount(stats.verified), tone: "success" },
+          ]}
+        />
 
-        {/* Stats ribbon (§7.b) — embedded, so no outer border */}
-        <div className="border-b border-border-subtle">
-          <KpiRibbon
-            bordered={false}
-            columns="grid-cols-2 lg:grid-cols-4"
-            cells={[
-              { label: "Total users", value: compactCount(pagination?.total || stats.total) },
-              { label: "Admins", value: compactCount(stats.admins), tone: "danger" },
-              { label: "Moderators", value: compactCount(stats.moderators), tone: "gold" },
-              { label: "Verified", value: compactCount(stats.verified), tone: "success" },
-            ]}
-          />
-        </div>
+        {/* Accounts table — owns its card: head (title + freshness), filters toolbar, server pagination */}
+        <UserTable
+          users={users}
+          isLoading={isLoading}
+          currentUserId={currentUser?.id}
+          isUpdating={isUpdating}
+          onEditUser={handleEditUser}
+          onDeleteUser={handleDeleteUser}
+          onVerifiedChange={handleVerifiedChange}
+          headerAction={
+            <DataStatus variant="polled" isRefreshing={isLoading} onRefresh={handleRefresh} />
+          }
+          toolbar={
+            <div className="w-full">
+              <UserFilters
+                searchTerm={searchTerm}
+                selectedRole={selectedRole}
+                onSearchChange={handleSearchChange}
+                onRoleChange={handleRoleChange}
+              />
+            </div>
+          }
+          pagination={
+            pagination
+              ? {
+                  total: pagination.total,
+                  page,
+                  rowsPerPage,
+                  onPageChange: handlePageChange,
+                  onRowsPerPageChange: handleRowsPerPageChange,
+                }
+              : undefined
+          }
+          paginationDisabled={isLoading}
+        />
+      </div>
 
-        {/* Content */}
-        <div className="p-4 space-y-4">
-          {/* Filters */}
-          <UserFilters
-            searchTerm={searchTerm}
-            selectedRole={selectedRole}
-            onSearchChange={setSearchTerm}
-            onRoleChange={setSelectedRole}
-          />
+      {/* Edit Modal */}
+      <UserEditModal
+        user={editingUser}
+        editForm={editForm}
+        isUpdating={isUpdating}
+        onFormChange={setEditForm}
+        onSave={handleSaveEdit}
+        onCancel={handleCancelEdit}
+      />
 
-          {/* Table */}
-          <UserTable
-            users={users}
-            isLoading={isLoading}
-            currentUserId={currentUser?.id}
-            isUpdating={isUpdating}
-            onEditUser={handleEditUser}
-            onDeleteUser={handleDeleteUser}
-            onVerifiedChange={handleVerifiedChange}
-          />
-
-          {/* Edit Modal */}
-          <UserEditModal
-            user={editingUser}
-            editForm={editForm}
-            isUpdating={isUpdating}
-            onFormChange={setEditForm}
-            onSave={handleSaveEdit}
-            onCancel={handleCancelEdit}
-          />
-
-          {/* Delete Confirmation */}
-          <DeleteConfirmDialog
-            open={userToDelete !== null}
-            onOpenChange={(open) => {
-              if (!open) setUserToDelete(null);
-            }}
-            title="Delete User"
-            description={
-              <>
-                Are you sure you want to delete{' '}
-                <span className="font-semibold">{userToDelete?.name || userToDelete?.email || 'this user'}</span>?
-              </>
-            }
-            isLoading={isDeleting}
-            onConfirm={confirmDeleteUser}
-          />
-
-          {/* Pagination */}
-          {pagination && (
-            <Pagination
-              total={pagination.total}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              disabled={isLoading}
-              className="mt-4"
-            />
-          )}
-        </div>
-      </Card>
+      {/* Delete Confirmation */}
+      <DeleteConfirmDialog
+        open={userToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setUserToDelete(null);
+        }}
+        title="Delete User"
+        description={
+          <>
+            Are you sure you want to delete{' '}
+            <span className="font-semibold">{userToDelete?.name || userToDelete?.email || 'this user'}</span>?
+          </>
+        }
+        isLoading={isDeleting}
+        onConfirm={confirmDeleteUser}
+      />
     </ProtectedAction>
   );
 }

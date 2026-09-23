@@ -1,8 +1,10 @@
-import { TypedDataTable, type Column } from "@/components/common";
-import { CopyButton } from "@/components/ui/copy-button";
+import { type ReactNode } from "react";
+import { TypedDataTable, ModuleAsset, type Column, type PaginationProps } from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, compactUsd, formatAssetValue } from "@/lib/formatters/numberFormatting";
 import { NumberFormatType } from "@/store/number-format.store";
 import { ValidatorDelegation } from "@/services/explorer/validator/types/validators";
 import {
@@ -12,8 +14,17 @@ import {
 
 type StakingSubTab = "delegations" | "history" | "rewards";
 
+type StakingPagination = Pick<
+  PaginationProps,
+  "total" | "page" | "rowsPerPage" | "onPageChange" | "onRowsPerPageChange"
+>;
+
 interface StakingTableContentProps {
   activeSubTab: StakingSubTab;
+  /** Sub-tabs + balances, rendered in the table toolbar. */
+  toolbar: ReactNode;
+  /** Controlled pagination shared by the three sub-tables. */
+  pagination: StakingPagination;
   delegationsData: {
     delegations: ValidatorDelegation[];
     loading: boolean;
@@ -33,6 +44,7 @@ interface StakingTableContentProps {
   hypePrice: number | null;
 }
 
+/** Validator name (when known) over its address; bare address otherwise. */
 function ValidatorCell({
   validatorName,
   validator,
@@ -41,36 +53,20 @@ function ValidatorCell({
   validator: string;
 }) {
   const hasName = !!validatorName && !validatorName.includes("...");
+  if (!hasName) return <AddressDisplay address={validator} />;
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex flex-col">
-        {hasName ? (
-          <>
-            <span className="text-text-primary font-medium text-sm font-inter">
-              {validatorName}
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="text-brand text-xs">
-                {validator.slice(0, 8)}...{validator.slice(-6)}
-              </span>
-              <CopyButton text={validator} />
-            </div>
-          </>
-        ) : (
-          <div className="flex items-center gap-2">
-            <span className="text-brand text-sm">
-              {validator.slice(0, 8)}...{validator.slice(-6)}
-            </span>
-            <CopyButton text={validator} />
-          </div>
-        )}
-      </div>
-    </div>
+    <ModuleAsset
+      logo={validatorName.slice(0, 2).toUpperCase()}
+      name={validatorName}
+      sub={<AddressDisplay address={validator} />}
+    />
   );
 }
 
 export function StakingTableContent({
   activeSubTab,
+  toolbar,
+  pagination,
   delegationsData,
   historyData,
   rewardsData,
@@ -79,53 +75,52 @@ export function StakingTableContent({
 }: StakingTableContentProps) {
   const { format: dateFormat } = useDateFormat();
 
+  const hype = (n: number, digits = 2) =>
+    `${formatNumber(n, format, { maximumFractionDigits: digits })} HYPE`;
+  const usd = (n: number) => (hypePrice ? compactUsd(n * hypePrice) : "—");
+
+  const shared = {
+    toolbar,
+    density: "compact" as const,
+    ...pagination,
+    // One page (≤ 10 rows) needs no pager — nor "0–0 of 0" under an empty state.
+    paginationVariant: pagination.total > 10 ? ("full" as const) : ("none" as const),
+  };
+
   if (activeSubTab === "delegations") {
     const columns: Column<ValidatorDelegation>[] = [
       {
         key: "validator",
         header: "Validator",
         accessor: (d) => (
-          <ValidatorCell
-            validatorName={d.validatorName}
-            validator={d.validator}
-          />
+          <ValidatorCell validatorName={d.validatorName} validator={d.validator} />
         ),
       },
       {
         key: "amount",
         header: "Amount",
-        accessor: (d) => (
-          <span className="text-text-primary">
-            {formatNumber(parseFloat(d.amount), format, { maximumFractionDigits: 2 })} HYPE
-          </span>
-        ),
+        type: "numeric",
+        accessor: (d) => hype(parseFloat(d.amount)),
       },
       {
         key: "value",
         header: "Value",
-        accessor: (d) => (
-          <span className="text-text-primary">
-            {hypePrice
-              ? `$${formatNumber(parseFloat(d.amount) * hypePrice, format, { maximumFractionDigits: 2 })}`
-              : "-"}
-          </span>
-        ),
+        type: "numeric",
+        accessor: (d) => usd(parseFloat(d.amount)),
       },
       {
         key: "lockedUntil",
         header: "Locked until",
-        accessor: (d) => (
-          <span className="text-text-primary">
-            {d.lockedUntilTimestamp
-              ? formatDateTime(d.lockedUntilTimestamp * 1000, dateFormat)
-              : "-"}
-          </span>
-        ),
+        type: "time",
+        align: "right",
+        accessor: (d) =>
+          d.lockedUntilTimestamp ? formatDateTime(d.lockedUntilTimestamp, dateFormat) : "—",
       },
     ];
 
     return (
       <TypedDataTable<ValidatorDelegation>
+        {...shared}
         data={delegationsData.delegations}
         columns={columns}
         getRowKey={(d, idx) => `${d.validator}-${idx}`}
@@ -134,7 +129,6 @@ export function StakingTableContent({
         errorTitle="Failed to load delegations"
         emptyMessage="No active delegations found."
         emptyDescription="Start delegating to validators to earn rewards."
-        paginationVariant="none"
       />
     );
   }
@@ -145,72 +139,51 @@ export function StakingTableContent({
         key: "hash",
         header: "Hash",
         accessor: (tx) => (
-          <div className="flex items-center gap-2">
-            <span className="text-brand text-sm">
-              {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
-            </span>
-            <CopyButton text={tx.hash} />
-          </div>
+          <AddressDisplay
+            address={tx.hash}
+            href={`/explorer/transaction/${tx.hash}`}
+            copyMessage="Hash copied to clipboard"
+          />
         ),
       },
       {
         key: "type",
         header: "Method",
         accessor: (tx) => (
-          <span
-            className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-              tx.type === "Undelegate"
-                ? "bg-danger/12 text-danger border border-danger/25"
-                : "bg-success/12 text-success border border-success/25"
-            }`}
-          >
-            {tx.type}
-          </span>
+          <StatusBadge variant={tx.type === "Undelegate" ? "sell" : "buy"}>{tx.type}</StatusBadge>
         ),
       },
       {
         key: "amount",
         header: "Amount",
-        accessor: (tx) => (
-          <span className="text-text-primary">
-            {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
-          </span>
-        ),
+        type: "numeric",
+        accessor: (tx) => hype(tx.amount),
       },
       {
         key: "value",
         header: "Value",
-        accessor: (tx) => (
-          <span className="text-text-primary">
-            {hypePrice
-              ? `$${formatNumber(tx.amount * hypePrice, format, { maximumFractionDigits: 2 })}`
-              : "-"}
-          </span>
-        ),
+        type: "numeric",
+        accessor: (tx) => usd(tx.amount),
       },
       {
         key: "validator",
         header: "Validator",
         accessor: (tx) => (
-          <ValidatorCell
-            validatorName={tx.validatorName}
-            validator={tx.validator}
-          />
+          <ValidatorCell validatorName={tx.validatorName} validator={tx.validator} />
         ),
       },
       {
         key: "timestamp",
         header: "Time",
-        accessor: (tx) => (
-          <span className="text-text-primary">
-            {formatDateTime(tx.timestamp, dateFormat)}
-          </span>
-        ),
+        type: "time",
+        align: "right",
+        accessor: (tx) => formatDateTime(tx.timestamp, dateFormat),
       },
     ];
 
     return (
       <TypedDataTable<FormattedDelegatorHistoryItem>
+        {...shared}
         data={historyData.history}
         columns={columns}
         getRowKey={(tx) => tx.hash}
@@ -219,7 +192,6 @@ export function StakingTableContent({
         errorTitle="Failed to load history"
         emptyMessage="No staking history found."
         emptyDescription="Your delegation and undelegation transactions will appear here."
-        paginationVariant="none"
       />
     );
   }
@@ -230,50 +202,37 @@ export function StakingTableContent({
         key: "source",
         header: "Source",
         accessor: (r) => (
-          <span
-            className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-              r.source === "commission"
-                ? "bg-gold/12 text-gold border border-gold/25"
-                : "bg-success/12 text-success border border-success/25"
-            }`}
-          >
+          <StatusBadge variant={r.source === "commission" ? "gold" : "success"}>
             {r.source === "commission" ? "Commission" : "Delegation"}
-          </span>
+          </StatusBadge>
         ),
       },
       {
         key: "amount",
         header: "Amount",
-        accessor: (r) => (
-          <span className="text-success">
-            {formatNumber(r.amount, format, { maximumFractionDigits: 6 })} HYPE
-          </span>
-        ),
+        type: "numeric",
+        tone: () => "success",
+        accessor: (r) => hype(r.amount, 6),
       },
       {
         key: "value",
         header: "Value",
-        accessor: (r) => (
-          <span className="text-text-primary">
-            {hypePrice
-              ? `$${formatNumber(r.amount * hypePrice, format, { maximumFractionDigits: 6 })}`
-              : "-"}
-          </span>
-        ),
+        type: "numeric",
+        // Daily rewards are tiny: keep sub-cent precision (compact would read $0.00).
+        accessor: (r) => (hypePrice ? formatAssetValue(r.amount * hypePrice, format) : "—"),
       },
       {
         key: "time",
         header: "Time",
-        accessor: (r) => (
-          <span className="text-text-primary">
-            {formatDateTime(r.timestamp, dateFormat)}
-          </span>
-        ),
+        type: "time",
+        align: "right",
+        accessor: (r) => formatDateTime(r.timestamp, dateFormat),
       },
     ];
 
     return (
       <TypedDataTable<FormattedDelegatorRewardItem>
+        {...shared}
         data={rewardsData.rewards}
         columns={columns}
         getRowKey={(r, idx) => `${r.source}-${r.timestamp}-${idx}`}
@@ -282,7 +241,6 @@ export function StakingTableContent({
         errorTitle="Failed to load rewards"
         emptyMessage="No staking rewards found."
         emptyDescription="Delegate to validators to start earning commission and delegation rewards."
-        paginationVariant="none"
       />
     );
   }

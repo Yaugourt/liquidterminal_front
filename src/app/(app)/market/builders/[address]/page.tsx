@@ -81,7 +81,7 @@ export default function BuilderDetailPage() {
         >
           <ArrowLeft className="h-4 w-4 mr-2" />Back
         </Button>
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
           <SourceBadge source="hypedexer" status={combinedSourceStatus(stats, users)} />
           <DataStatus
             variant="polled"
@@ -203,21 +203,12 @@ export default function BuilderDetailPage() {
       )}
 
       {/* Top users */}
-      <section className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-text-secondary text-[10px] font-semibold uppercase tracking-wider">
-            Top users ({tf})
-          </h2>
-          {users.data?.users && (
-            <span className="text-text-tertiary text-xs">{users.data.users.length} users</span>
-          )}
-        </div>
-        <BuilderUsersTable
-          users={users.data?.users ?? []}
-          isLoading={users.isLoading}
-          error={users.error}
-        />
-      </section>
+      <BuilderUsersTable
+        users={users.data?.users ?? []}
+        isLoading={users.isLoading}
+        error={users.error}
+        timeframe={tf}
+      />
     </motion.div>
   );
 }

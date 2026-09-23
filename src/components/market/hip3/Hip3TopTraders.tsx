@@ -1,79 +1,60 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
 import { TypedDataTable, SourceBadge, sourceStatus, type Column } from "@/components/common";
-import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { compactUsd, formatNumber, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 import {
   buildHip3Concentration,
   isPnlPlausible,
   sanitizeHip3Traders,
 } from "@/lib/hip3/traders";
+import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import { useHip3CoinTraders, type Hip3CoinTrader } from "@/services/indexer/hip3";
 
-function buildColumns(): Column<Hip3CoinTrader>[] {
+function buildColumns(format: NumberFormatType): Column<Hip3CoinTrader>[] {
   return [
     {
       key: "rank",
       header: "#",
-      align: "right",
+      type: "rank",
       width: "48px",
-      accessor: (_row, _index, absoluteIndex) => (
-        <span className="mono text-text-tertiary text-[11px]">{absoluteIndex + 1}</span>
-      ),
+      accessor: (_row, _index, absoluteIndex) => absoluteIndex + 1,
     },
     {
       key: "trader",
       header: "Trader",
-      align: "left",
-      accessor: (row) => (
-        <Link
-          href={`/explorer/address/${row.trader}`}
-          className="mono text-text-secondary hover:text-brand transition-colors"
-        >
-          {truncateAddress(row.trader)}
-        </Link>
-      ),
+      accessor: (row) => <AddressDisplay address={row.trader} />,
     },
     {
       key: "total_volume",
       header: "Volume",
-      align: "right",
-      accessor: (row) => <span className="mono">{compactUsd(row.total_volume)}</span>,
+      type: "numeric",
+      accessor: (row) => compactUsd(row.total_volume),
     },
     {
       key: "total_trades",
       header: "Trades",
-      align: "right",
-      accessor: (row) => (
-        <span className="mono text-text-secondary">{row.total_trades.toLocaleString()}</span>
-      ),
+      type: "numeric",
+      tone: () => "muted",
+      accessor: (row) => formatNumber(row.total_trades, format, { maximumFractionDigits: 0 }),
     },
     {
       key: "total_fees",
       header: "Fees",
-      align: "right",
-      accessor: (row) => <span className="mono text-gold">{compactUsd(row.total_fees)}</span>,
+      type: "fees",
+      accessor: (row) => compactUsd(row.total_fees),
     },
     {
       key: "pnl_realized",
       header: "Realised PnL",
-      align: "right",
-      accessor: (row) => {
-        // A single-fill trader reporting a PnL equal to their whole notional is
-        // an artefact of the upstream aggregate, not a trade result.
-        if (!isPnlPlausible(row)) {
-          return <span className="text-text-tertiary">—</span>;
-        }
-        const positive = row.pnl_realized >= 0;
-        return (
-          <span className={`mono font-medium ${positive ? "text-success" : "text-danger"}`}>
-            {positive ? "+" : "−"}
-            {compactUsd(Math.abs(row.pnl_realized))}
-          </span>
-        );
-      },
+      type: "change",
+      // A single-fill trader reporting a PnL equal to their whole notional is
+      // an artefact of the upstream aggregate, not a trade result.
+      getSortValue: (row) => (isPnlPlausible(row) ? row.pnl_realized : 0),
+      tone: (row) => (isPnlPlausible(row) ? undefined : "muted"),
+      accessor: (row) => (isPnlPlausible(row) ? signedCompactUsd(row.pnl_realized) : "—"),
     },
   ];
 }
@@ -93,6 +74,7 @@ export function Hip3TopTraders({
   /** Cumulative market volume, the only honest denominator for concentration. */
   cumulativeVolume: number | null;
 }) {
+  const { format } = useNumberFormat();
   const { traders, isLoading, error, refetch } = useHip3CoinTraders(coin);
 
   const clean = useMemo(() => sanitizeHip3Traders(traders), [traders]);
@@ -103,42 +85,23 @@ export function Hip3TopTraders({
 
   const staleness = clean[0]?.last_update ? timeAgo(clean[0].last_update) : null;
 
-  if (error) {
-    return (
-      <div className="bg-surface border border-border-subtle rounded-lg px-4 py-6 text-center">
-        <div className="text-[13px] text-text-secondary">Trader stats unavailable</div>
-        <button
-          onClick={refetch}
-          className="mt-2 h-7 px-2.5 text-[11px] font-medium inline-flex items-center rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary transition-colors"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
   return (
     <TypedDataTable<Hip3CoinTrader>
       title="Top traders on this market"
       subtitle={staleness ? `aggregate updated ${staleness}` : undefined}
-      headerAction={
-        <span className="flex items-center gap-3">
-          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
-          {concentration.share !== null && (
-            <span className="text-[11px] text-text-tertiary">
-              Top 5 ·{" "}
-              <span className="mono text-text-secondary">
-                {(concentration.share * 100).toFixed(1)}%
-              </span>{" "}
-              of {compactUsd(concentration.reference ?? 0)}
-            </span>
-          )}
-        </span>
+      tag={
+        concentration.share !== null
+          ? `Top 5 · ${(concentration.share * 100).toFixed(1)}% of ${compactUsd(concentration.reference ?? 0)}`
+          : undefined
       }
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
       data={clean}
-      columns={buildColumns()}
+      columns={buildColumns(format)}
       getRowKey={(row) => row.trader}
       isLoading={isLoading}
+      error={error}
+      onErrorRetry={refetch}
+      errorTitle="Trader stats unavailable"
       density="compact"
       paginate
       paginationVariant="compact"

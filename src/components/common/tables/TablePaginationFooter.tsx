@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface TablePaginationFooterProps {
@@ -38,65 +37,66 @@ export function TablePaginationFooter({
   // Page index ranges from 0 to totalPages-1. UI displays 1-based.
   const displayPage = page + 1;
 
+  const navBtn =
+    "h-6 w-6 inline-flex items-center justify-center rounded border border-border-subtle " +
+    "bg-surface-2 text-text-secondary hover:bg-surface-3 hover:text-text-primary " +
+    "transition-colors disabled:opacity-30 disabled:pointer-events-none";
+
+  // Windowed page numbers (1-based for display).
+  const count = Math.min(totalPages, maxNumberButtons);
+  const first =
+    totalPages <= maxNumberButtons || displayPage <= 3
+      ? 1
+      : displayPage >= totalPages - 2
+      ? totalPages - (maxNumberButtons - 1)
+      : displayPage - 2;
+
   return (
     <div
       className={cn(
-        "px-6 py-3 border-t border-border-subtle flex items-center justify-between",
+        "px-4 py-2.5 border-t border-border-subtle flex items-center justify-between text-[11px] text-text-tertiary",
         className
       )}
     >
-      <span className="text-text-tertiary text-xs">
-        Page {displayPage} of {totalPages}
+      <span>
+        Page <span className="mono text-text-secondary">{displayPage}</span> of{" "}
+        <span className="mono text-text-secondary">{totalPages}</span>
       </span>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
+      <div className="flex items-center gap-0.5">
+        <button
+          type="button"
+          className={navBtn}
           onClick={() => onPageChange(Math.max(0, page - 1))}
           disabled={page === 0}
-          className="h-8 w-8 p-0 text-text-tertiary hover:text-text-primary disabled:opacity-50"
+          aria-label="Previous page"
         >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex items-center gap-1">
-          {Array.from({ length: Math.min(totalPages, maxNumberButtons) }, (_, i) => {
-            let n: number;
-            if (totalPages <= maxNumberButtons) {
-              n = i + 1;
-            } else if (displayPage <= 3) {
-              n = i + 1;
-            } else if (displayPage >= totalPages - 2) {
-              n = totalPages - (maxNumberButtons - 1) + i;
-            } else {
-              n = displayPage - 2 + i;
-            }
-            return (
-              <Button
-                key={n}
-                variant="ghost"
-                size="sm"
-                onClick={() => onPageChange(n - 1)}
-                className={cn(
-                  "h-8 w-8 p-0 text-sm",
-                  n === displayPage
-                    ? "bg-brand/20 text-brand"
-                    : "text-text-tertiary hover:text-text-primary"
-                )}
-              >
-                {n}
-              </Button>
-            );
-          })}
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
+          <ChevronLeft className="h-3 w-3" />
+        </button>
+        {Array.from({ length: count }, (_, i) => first + i).map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onPageChange(n - 1)}
+            aria-current={n === displayPage ? "page" : undefined}
+            className={cn(
+              "mono h-6 min-w-6 px-1 inline-flex items-center justify-center rounded border text-[11px] transition-colors",
+              n === displayPage
+                ? "border-brand bg-brand text-brand-text-on"
+                : "border-border-subtle bg-surface-2 text-text-secondary hover:bg-surface-3 hover:text-text-primary"
+            )}
+          >
+            {n}
+          </button>
+        ))}
+        <button
+          type="button"
+          className={navBtn}
           onClick={() => onPageChange(Math.min(totalPages - 1, page + 1))}
           disabled={page === totalPages - 1}
-          className="h-8 w-8 p-0 text-text-tertiary hover:text-text-primary disabled:opacity-50"
+          aria-label="Next page"
         >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+          <ChevronRight className="h-3 w-3" />
+        </button>
       </div>
     </div>
   );

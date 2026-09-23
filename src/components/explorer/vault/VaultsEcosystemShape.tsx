@@ -114,7 +114,7 @@ export function VaultsEcosystemShape({ directory }: VaultsEcosystemShapeProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
       {/* Vault growth */}
-      <OverviewModule title="Vault growth" tag="cumulative" tagVariant="plain">
+      <OverviewModule title="Vault growth" tag="cumulative">
         <div className="px-4 py-3.5 flex flex-col gap-3 flex-1">
           <AuroraAreaChart
             data={growth}
@@ -132,7 +132,7 @@ export function VaultsEcosystemShape({ directory }: VaultsEcosystemShapeProps) {
       </OverviewModule>
 
       {/* Capital map */}
-      <OverviewModule title="Capital map" tag="excl HLP" tagVariant="plain">
+      <OverviewModule title="Capital map" tag="excl HLP">
         <div className="px-4 py-3.5 flex flex-col gap-2.5 flex-1">
           <div className="flex items-baseline gap-2 pb-2.5 border-b border-border-subtle">
             <span className="text-[11px] text-text-tertiary">HLP</span>
@@ -192,7 +192,7 @@ export function VaultsEcosystemShape({ directory }: VaultsEcosystemShapeProps) {
       </OverviewModule>
 
       {/* APR spread — categorical bars (count on top, all 6 buckets labelled). */}
-      <OverviewModule title="APR spread" tag="active" tagVariant="plain">
+      <OverviewModule title="APR spread" tag="active">
         <div className="px-4 py-3.5 flex flex-col gap-3 flex-1">
           <div>
             <div className="flex gap-2 items-end h-[150px]">

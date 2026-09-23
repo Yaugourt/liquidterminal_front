@@ -1,17 +1,33 @@
 "use client";
 
-import { useMemo } from "react";
-import { TypedDataTable, type Column } from "@/components/common";
+import { useMemo, type ReactNode } from "react";
+import { TypedDataTable, ModuleAsset, type Column, type PaginationProps } from "@/components/common";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { safeHref } from "@/lib/safeUrl";
 import type { EducationalResource } from "@/services/wiki/types";
-import { TypeBadge, SaveToListButton } from "../primitives";
+import { CONTENT_TYPE_META, detectContentType, SaveToListButton } from "../primitives";
+
+type ArticlePagination = Pick<
+  PaginationProps,
+  "total" | "page" | "rowsPerPage" | "onPageChange" | "onRowsPerPageChange"
+>;
 
 interface AtlasArticleTableProps {
   resources: EducationalResource[];
   isLoading: boolean;
   /** Show the Category column (community/topic tables). */
   showCategory?: boolean;
+  /** Card head — the table owns its card, so the feed chrome is passed through. */
+  title?: ReactNode;
+  tag?: ReactNode;
+  headerAction?: ReactNode;
+  /** Search / sort / type filters, under the head. */
+  toolbar?: ReactNode;
+  /** Server pagination (omit to hide the footer). */
+  pagination?: ArticlePagination;
+  /** Empty-state line (no match for the query / filter). */
+  emptyMessage?: string;
 }
 
 function hostnameOf(url: string): string {
@@ -22,32 +38,53 @@ function hostnameOf(url: string): string {
   }
 }
 
+/** Content-type pill (article, video, thread…) — derived from the URL. */
+function TypeCell({ url }: { url: string }) {
+  const meta = CONTENT_TYPE_META[detectContentType(url)];
+  const Icon = meta.icon;
+  return (
+    <StatusBadge variant="neutral">
+      <Icon className="h-3 w-3" />
+      {meta.label}
+    </StatusBadge>
+  );
+}
+
 /**
  * Atlas article table: Type / Title (+ domain sub) / [Category] / Saves
  * (gold, blank at 0) / Age / Save. Row opens the source in a new tab; the
  * Save column is a discrete hit target, separate from the row link.
  */
-export function AtlasArticleTable({ resources, isLoading, showCategory = false }: AtlasArticleTableProps) {
+export function AtlasArticleTable({
+  resources,
+  isLoading,
+  showCategory = false,
+  title,
+  tag,
+  headerAction,
+  toolbar,
+  pagination,
+  emptyMessage,
+}: AtlasArticleTableProps) {
   const columns: Column<EducationalResource>[] = useMemo(() => {
     const cols: Column<EducationalResource>[] = [
       {
         key: "type",
         header: "Type",
         width: "110px",
-        accessor: (r) => <TypeBadge url={r.url} />,
+        accessor: (r) => <TypeCell url={r.url} />,
       },
       {
         key: "title",
         header: "Resource",
+        className: "max-w-[440px]",
         accessor: (r) => {
           const hostname = hostnameOf(r.url);
           return (
-            <div className="min-w-0">
-              <div className="max-w-[440px] truncate text-[13px] font-medium text-text-primary">
-                {r.linkPreview?.title || hostname}
-              </div>
-              <div className="mono text-[11px] text-text-tertiary">{r.linkPreview?.siteName || hostname}</div>
-            </div>
+            <ModuleAsset
+              name={r.linkPreview?.title || hostname}
+              sub={r.linkPreview?.siteName || hostname}
+            />
           );
         },
       },
@@ -60,12 +97,7 @@ export function AtlasArticleTable({ resources, isLoading, showCategory = false }
         width: "160px",
         accessor: (r) => {
           const first = r.categories[0]?.category.name;
-          if (!first) return <span className="text-[11px] text-text-tertiary">–</span>;
-          return (
-            <span className="rounded-md border border-border-subtle bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-text-secondary">
-              {first}
-            </span>
-          );
+          return first ? <StatusBadge variant="neutral">{first}</StatusBadge> : "—";
         },
       });
     }
@@ -75,20 +107,17 @@ export function AtlasArticleTable({ resources, isLoading, showCategory = false }
         key: "saves",
         header: "Saves",
         width: "80px",
-        align: "right",
-        accessor: (r) =>
-          r.savesCount && r.savesCount > 0 ? (
-            <span className="mono text-[12px] font-medium text-gold">★ {r.savesCount}</span>
-          ) : (
-            <span className="text-text-tertiary/40">–</span>
-          ),
+        type: "numeric",
+        tone: (r) => (r.savesCount && r.savesCount > 0 ? "gold" : "muted"),
+        accessor: (r) => (r.savesCount && r.savesCount > 0 ? `★ ${r.savesCount}` : "—"),
       },
       {
         key: "age",
         header: "Age",
         width: "90px",
+        type: "time",
         align: "right",
-        accessor: (r) => <span className="mono text-[11.5px] text-text-secondary">{timeAgo(r.createdAt)}</span>,
+        accessor: (r) => timeAgo(r.createdAt),
       },
       {
         key: "save",
@@ -112,11 +141,20 @@ export function AtlasArticleTable({ resources, isLoading, showCategory = false }
 
   return (
     <TypedDataTable
+      title={title}
+      tag={tag}
+      headerAction={headerAction}
+      toolbar={toolbar}
       data={resources}
       columns={columns}
       getRowKey={(r) => r.id}
       isLoading={isLoading}
+      emptyMessage={emptyMessage}
+      emptyDescription=""
       onRowClick={(r) => window.open(safeHref(r.url), "_blank", "noopener,noreferrer")}
+      {...pagination}
+      rowsPerPageOptions={pagination ? [pagination.rowsPerPage] : undefined}
+      className="min-w-0"
     />
   );
 }

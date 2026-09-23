@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Shield } from "lucide-react";
 import {
   OverviewModule,
   ModuleTable,
@@ -29,7 +28,6 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
   return (
     <OverviewModule
       title="Validators"
-      icon={<Shield size={13} className="text-brand" />}
       tag={`${formatStakeValue(stats.totalHypeStaked, format)} HYPE staked`}
       viewAllLabel="All validators"
       href="/explorer/validator"
@@ -47,10 +45,10 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
         // truncates; without them five dense columns push past every card.
         columns={[
           { header: "Validator" },
-          { header: "Stake", width: 86 },
-          { header: "APR", width: 62 },
-          { header: "Commission", width: 92 },
-          { header: "Uptime", width: 72 },
+          { header: "Stake", width: 72 },
+          { header: "APR", width: 52 },
+          { header: "Comm.", width: 58 },
+          { header: "Uptime", width: 64 },
         ]}
       >
         {isLoading && topValidators.length === 0 && (

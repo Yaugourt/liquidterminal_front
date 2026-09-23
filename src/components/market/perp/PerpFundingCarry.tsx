@@ -2,25 +2,16 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeftRight } from "lucide-react";
-import { TypedDataTable, TokenAvatar, DataStatus } from "@/components/common";
+import { TypedDataTable, ModuleAsset, CellValue, DataStatus } from "@/components/common";
 import type { Column } from "@/components/common";
-import { cn } from "@/lib/utils";
 import { usePredictedFundings } from "@/services/market/funding";
 import type { FundingCarryRow } from "@/services/market/funding";
 
 const tokenHref = (name: string) => `/market/perp/${encodeURIComponent(name)}`;
 
-// Annualized funding APR, signed and colored. "—" when a venue doesn't quote.
-function AprCell({ apr }: { apr: number | null }) {
-  if (apr == null) return <span className="text-text-tertiary">—</span>;
-  return (
-    <span className={cn("mono", apr >= 0 ? "text-success" : "text-danger")}>
-      {apr > 0 ? "+" : ""}
-      {apr.toFixed(1)}%
-    </span>
-  );
-}
+// Annualized funding APR, signed. "—" when a venue doesn't quote.
+const formatApr = (apr: number | null) =>
+  apr == null ? "—" : `${apr > 0 ? "+" : ""}${apr.toFixed(1)}%`;
 
 // Sort accessor that pushes missing values to the bottom in both directions'
 // natural reading (biggest carries first under the default desc sort).
@@ -42,41 +33,42 @@ export function PerpFundingCarry() {
     {
       key: "coin",
       header: "Market",
+      // A width here too: with fixedLayout an unsized column gets squeezed to 0
+      // on narrow screens (the sized ones already exceed a phone's width).
+      width: 140,
       sortable: true,
       getSortValue: (r) => r.coin,
-      accessor: (r) => (
-        <div className="flex items-center gap-2">
-          <TokenAvatar assetName={r.coin} kind="auto" size="sm" />
-          <span className="text-text-primary font-medium">{r.coin}</span>
-        </div>
-      ),
+      accessor: (r) => <ModuleAsset assetName={r.coin} name={r.coin} />,
     },
     {
       key: "hlApr",
       header: "HL APR",
-      align: "right",
+      type: "change",
       width: 110,
       sortable: true,
       getSortValue: (r) => sortNum(r.hlApr),
-      accessor: (r) => <AprCell apr={r.hlApr} />,
+      tone: (r) => (r.hlApr == null ? "muted" : undefined),
+      accessor: (r) => formatApr(r.hlApr),
     },
     {
       key: "binanceApr",
       header: "Binance APR",
-      align: "right",
-      width: 120,
+      type: "change",
+      width: 140,
       sortable: true,
       getSortValue: (r) => sortNum(r.binanceApr),
-      accessor: (r) => <AprCell apr={r.binanceApr} />,
+      tone: (r) => (r.binanceApr == null ? "muted" : undefined),
+      accessor: (r) => formatApr(r.binanceApr),
     },
     {
       key: "bybitApr",
       header: "Bybit APR",
-      align: "right",
-      width: 120,
+      type: "change",
+      width: 130,
       sortable: true,
       getSortValue: (r) => sortNum(r.bybitApr),
-      accessor: (r) => <AprCell apr={r.bybitApr} />,
+      tone: (r) => (r.bybitApr == null ? "muted" : undefined),
+      accessor: (r) => formatApr(r.bybitApr),
     },
     {
       key: "spread",
@@ -87,16 +79,12 @@ export function PerpFundingCarry() {
       getSortValue: (r) => sortNum(r.spread),
       accessor: (r) =>
         r.spread == null ? (
-          <span className="text-text-tertiary">—</span>
+          "—"
         ) : (
-          <div className="flex flex-col items-end">
-            <span className="mono font-medium text-text-primary">{r.spread.toFixed(1)}%</span>
-            {r.shortVenue && r.longVenue && (
-              <span className="text-text-tertiary text-xs">
-                short {r.shortVenue} / long {r.longVenue}
-              </span>
-            )}
-          </div>
+          <CellValue
+            value={`${r.spread.toFixed(1)}%`}
+            sub={r.shortVenue && r.longVenue ? `short ${r.shortVenue} / long ${r.longVenue}` : undefined}
+          />
         ),
     },
   ];
@@ -105,7 +93,6 @@ export function PerpFundingCarry() {
     <TypedDataTable
       title="Funding / Carry"
       subtitle="Predicted next funding, annualized across venues — ranked by cross-venue spread"
-      icon={<ArrowLeftRight size={15} className="text-brand" />}
       headerAction={
         <DataStatus
           variant="polled"

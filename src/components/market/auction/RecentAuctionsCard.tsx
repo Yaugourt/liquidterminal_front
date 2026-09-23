@@ -1,9 +1,6 @@
 "use client";
 
-import { Gavel, ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { Card } from "@/components/ui/card";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, ModuleAsset, type Column } from "@/components/common";
 import { useAuctions } from "@/services/market/auction/hooks/useAuctions";
 import type { AuctionInfo } from "@/services/market/auction/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -11,7 +8,7 @@ import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
 
-/** Les 5 dernières auctions — mini-table V4, à placer à côté de l'AuctionCard. */
+/** Les 5 dernières auctions — preview table, à placer à côté de l'AuctionCard. */
 export function RecentAuctionsCard() {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
@@ -27,9 +24,7 @@ export function RecentAuctionsCard() {
     {
       key: "name",
       header: "Token",
-      accessor: (a) => (
-        <span className="font-medium text-text-primary">{a.name}</span>
-      ),
+      accessor: (a) => <ModuleAsset assetName={a.name} kind="spot" name={a.name} />,
     },
     {
       key: "deployer",
@@ -40,16 +35,13 @@ export function RecentAuctionsCard() {
     {
       key: "time",
       header: "Date",
-      accessor: (a) => (
-        <span className="text-text-secondary">
-          {formatDateTime(a.time, dateFormat)}
-        </span>
-      ),
+      type: "time",
+      accessor: (a) => formatDateTime(a.time, dateFormat),
     },
     {
       key: "gas",
       header: "Deploy Gas",
-      type: "numeric",
+      type: "fees",
       accessor: (a) =>
         `${formatNumber(parseFloat(a.deployGas), format, {
           maximumFractionDigits: 2,
@@ -58,33 +50,18 @@ export function RecentAuctionsCard() {
   ];
 
   return (
-    <Card className="overflow-hidden">
-      {/* Header — aligné px-3.5 sur les cellules de la table */}
-      <div className="flex items-center gap-2 px-3.5 py-3 border-b border-border-subtle">
-        <div className="w-7 h-7 rounded-lg bg-brand/10 flex items-center justify-center shrink-0">
-          <Gavel className="w-3.5 h-3.5 text-brand" />
-        </div>
-        <h3 className="text-xs font-medium text-text-primary tracking-tight">
-          Recent Auctions
-        </h3>
-        <Link
-          href="/market/perp/auction"
-          className="ml-auto shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
-        >
-          View all
-          <ArrowRight size={12} />
-        </Link>
-      </div>
-
-      <TypedDataTable<AuctionInfo>
-        data={recent}
-        columns={columns}
-        getRowKey={(a) => `${a.tokenId}-${a.index}`}
-        isLoading={isLoading && recent.length === 0}
-        error={error}
-        emptyMessage="No recent auctions"
-        emptyDescription=""
-      />
-    </Card>
+    <TypedDataTable<AuctionInfo>
+      title="Recent auctions"
+      viewAllHref="/market/perp/auction"
+      viewAllLabel="View all"
+      data={recent}
+      columns={columns}
+      getRowKey={(a) => `${a.tokenId}-${a.index}`}
+      isLoading={isLoading && recent.length === 0}
+      error={error}
+      emptyMessage="No recent auctions"
+      emptyDescription=""
+      density="compact"
+    />
   );
 }

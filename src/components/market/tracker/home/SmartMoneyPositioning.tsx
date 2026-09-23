@@ -1,27 +1,26 @@
 "use client";
 
 import { useMemo } from "react";
-import { Crosshair } from "lucide-react";
 import {
   KpiRibbon,
   TypedDataTable,
+  ModuleAsset,
+  CellValue,
+  CardHead,
   AuroraAreaChart,
   ShareTile,
   chartPalette,
   type KpiCell,
   type Column,
+  CellBar,
 } from "@/components/common";
 import { Card } from "@/components/ui/card";
-import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
+import { compactUsd, compactCount, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import {
   useAggregatePositioning,
   usePositioningHistory,
   type CoinPositioning,
 } from "@/services/market/positioning";
-
-/** Signed compact USD, e.g. `+$1.2M` / `-$1.2M`. */
-const signedUsd = (v: number) => `${v >= 0 ? "+" : "-"}$${compactUsd(Math.abs(v)).replace(/^\$/, "")}`;
-const usd = (v: number) => `$${compactUsd(v).replace(/^\$/, "")}`;
 
 /** How many coins to surface in the card (backend already sorts by gross exposure). */
 const TOP_N = 18;
@@ -56,11 +55,11 @@ export function SmartMoneyPositioning() {
         key: "bias",
         label: "Cohort net bias",
         value: netLong ? "Net long" : "Net short",
-        sub: signedUsd(t.netNotional),
+        sub: signedCompactUsd(t.netNotional),
         tone: netLong ? "success" : "danger",
       },
-      { key: "long", label: "Long exposure", value: usd(t.longNotional), sub: `${(t.longShare * 100).toFixed(0)}% of gross`, tone: "success" },
-      { key: "short", label: "Short exposure", value: usd(t.shortNotional), sub: `${((1 - t.longShare) * 100).toFixed(0)}% of gross`, tone: "danger" },
+      { key: "long", label: "Long exposure", value: compactUsd(t.longNotional), sub: `${(t.longShare * 100).toFixed(0)}% of gross`, tone: "success" },
+      { key: "short", label: "Short exposure", value: compactUsd(t.shortNotional), sub: `${((1 - t.longShare) * 100).toFixed(0)}% of gross`, tone: "danger" },
       { key: "traders", label: "Traders scanned", value: compactCount(positioning.tradersScanned), sub: `of ${positioning.cohortSize} cohort` },
     ];
   }, [positioning]);
@@ -69,17 +68,14 @@ export function SmartMoneyPositioning() {
     {
       key: "coin",
       header: "Market",
-      accessor: (c) => <span className="mono text-text-primary font-medium">{c.coin}</span>,
+      accessor: (c) => <ModuleAsset assetName={c.coin} name={c.coin} />,
     },
     {
       key: "long",
       header: "Long",
       align: "right",
       accessor: (c) => (
-        <div className="flex flex-col items-end leading-tight">
-          <span className="mono text-success">{usd(c.longNotional)}</span>
-          <span className="text-[10px] text-text-tertiary">{c.longCount} traders</span>
-        </div>
+        <CellValue value={compactUsd(c.longNotional)} sub={`${compactCount(c.longCount)} traders`} tone="success" />
       ),
     },
     {
@@ -87,38 +83,36 @@ export function SmartMoneyPositioning() {
       header: "Short",
       align: "right",
       accessor: (c) => (
-        <div className="flex flex-col items-end leading-tight">
-          <span className="mono text-danger">{usd(c.shortNotional)}</span>
-          <span className="text-[10px] text-text-tertiary">{c.shortCount} traders</span>
-        </div>
+        <CellValue value={compactUsd(c.shortNotional)} sub={`${compactCount(c.shortCount)} traders`} tone="danger" />
       ),
     },
     {
       key: "bias",
       header: "Long / Short",
       width: "160px",
+      className: "max-sm:hidden",
       accessor: (c) => {
         const gross = c.longNotional + c.shortNotional;
         const longPct = gross > 0 ? (c.longNotional / gross) * 100 : 0;
         return (
-          <div className="flex h-2 w-full overflow-hidden rounded-full bg-surface-2" title={`${longPct.toFixed(0)}% long`}>
-            <span className="bg-success" style={{ width: `${longPct}%` }} />
-            <span className="bg-danger" style={{ width: `${100 - longPct}%` }} />
-          </div>
+          <CellBar
+            width="full"
+            title={`${longPct.toFixed(0)}% long`}
+            segments={gross > 0 ? [
+              { value: longPct / 100, tone: "success" },
+              { value: 1 - longPct / 100, tone: "danger" },
+            ] : []}
+          />
         );
       },
     },
     {
       key: "net",
       header: "Net",
-      align: "right",
+      type: "change",
       sortable: true,
       getSortValue: (c) => c.netNotional,
-      accessor: (c) => (
-        <span className={`mono ${c.netNotional >= 0 ? "text-success" : "text-danger"}`}>
-          {signedUsd(c.netNotional)}
-        </span>
-      ),
+      accessor: (c) => signedCompactUsd(c.netNotional),
     },
   ];
 
@@ -133,25 +127,19 @@ export function SmartMoneyPositioning() {
       {/* Net-bias trend — self-built history, hidden until enough points land. */}
       {trend.length >= 2 && (
         <Card className="flex flex-col overflow-hidden">
-          <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-            <h3 className="text-[13px] font-semibold text-text-primary">Net bias trend</h3>
-            <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-              7d · hourly
-            </span>
-          </div>
+          <CardHead title="Net bias trend" tag="7d · hourly" />
           <div className="p-3 h-[180px]">
             <AuroraAreaChart
               data={trend}
               height={150}
               lineColor={chartPalette.accent}
-              formatValue={(v) => `${v >= 0 ? "+" : "-"}$${compactUsd(Math.abs(v)).replace(/^\$/, "")}`}
+              formatValue={(v) => signedCompactUsd(v)}
             />
           </div>
         </Card>
       )}
-      <TypedDataTable
+      <TypedDataTable<CoinPositioning>
         title="Smart money positioning"
-        icon={<Crosshair size={15} className="text-brand" />}
         subtitle="Collective open positions of the top traders, long vs short by market"
         headerAction={
           <ShareTile

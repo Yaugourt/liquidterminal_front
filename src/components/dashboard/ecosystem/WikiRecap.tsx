@@ -84,7 +84,6 @@ export const WikiRecap = memo(function WikiRecap() {
         <OverviewModule
           title="Topics"
           tag={categories.length > 0 ? String(categories.length) : undefined}
-          tagVariant="plain"
           viewAllLabel="All topics"
           href="/wiki/topics"
         >

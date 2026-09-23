@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { TrendingUp } from "lucide-react";
 import { useTopTraders, type TopTrader } from "@/services/market/toptraders";
-import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import { TypedDataTable, type Column } from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
 
 export function TopTradersPreview() {
   const { traders, isLoading, error, refetch } = useTopTraders({
@@ -15,72 +14,57 @@ export function TopTradersPreview() {
   const columns: Column<TopTrader>[] = [
     {
       key: "rank",
-      header: "Rank",
-      accessor: (_t, _i, absoluteIndex) => (
-        <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
-      ),
+      header: "#",
+      type: "rank",
+      accessor: (_t, _i, absoluteIndex) => absoluteIndex + 1,
     },
     {
       key: "trader",
       header: "Trader",
       accessor: (t) => (
-        <Link
-          href={`/market/tracker/wallet/${t.user}`}
-          className="text-sm text-brand hover:underline"
-        >
-          {t.user.slice(0, 6)}...{t.user.slice(-4)}
-        </Link>
+        <AddressDisplay address={t.user} href={`/market/tracker/wallet/${t.user}`} showCopy={false} />
       ),
     },
     {
       key: "tradeCount",
       header: "Trades",
       sortable: true,
-      align: "right",
       getSortValue: (t) => t.tradeCount,
       type: "numeric",
-      accessor: (t) => t.tradeCount,
+      className: "max-sm:hidden",
+      accessor: (t) => compactCount(t.tradeCount),
     },
     {
       key: "totalVolume",
       header: "Volume",
       sortable: true,
-      align: "right",
       getSortValue: (t) => t.totalVolume,
       type: "numeric",
-      accessor: (t) => `$${formatLargeNumber(t.totalVolume)}`,
+      accessor: (t) => compactUsd(t.totalVolume),
     },
     {
       key: "winRate",
       header: "Win Rate",
       sortable: true,
-      align: "right",
       getSortValue: (t) => t.winRate,
-      accessor: (t) => (
-        <span className={`mono ${t.winRate >= 0.5 ? "text-success" : "text-text-secondary"}`}>
-          {(t.winRate * 100).toFixed(1)}%
-        </span>
-      ),
+      type: "numeric",
+      tone: (t) => (t.winRate >= 0.5 ? "success" : "muted"),
+      accessor: (t) => `${(t.winRate * 100).toFixed(1)}%`,
     },
     {
       key: "totalPnl",
       header: "PnL (24h)",
       sortable: true,
-      align: "right",
       getSortValue: (t) => t.totalPnl,
-      accessor: (t) => (
-        <span className={`mono ${t.totalPnl >= 0 ? "text-success" : "text-danger"}`}>
-          {t.totalPnl >= 0 ? "+" : ""}${formatLargeNumber(Math.abs(t.totalPnl))}
-        </span>
-      ),
+      type: "change",
+      accessor: (t) => signedCompactUsd(t.totalPnl),
     },
   ];
 
   return (
     <TypedDataTable<TopTrader>
       title="Top Traders 24h"
-      icon={<TrendingUp className="h-5 w-5 text-brand" />}
-      subtitle={`${traders.length} traders`}
+      tag={`${traders.length} traders`}
       data={traders}
       columns={columns}
       getRowKey={(t) => t.user}
@@ -91,6 +75,7 @@ export function TopTradersPreview() {
       emptyMessage="No traders data available"
       paginate
       itemsPerPage={10}
+      density="compact"
     />
   );
 }

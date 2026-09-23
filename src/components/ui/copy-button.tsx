@@ -28,15 +28,15 @@ export function CopyButton({ text, className }: CopyButtonProps) {
         <button
             onClick={handleCopy}
             className={cn(
-                "group p-1 rounded transition-colors",
+                "group p-0.5 rounded-md hover:bg-surface-2 transition-colors",
                 className
             )}
             aria-label="Copy to clipboard"
         >
             {copied ? (
-                <Check className="h-3.5 w-3.5 text-success" />
+                <Check className="h-3 w-3 text-success" />
             ) : (
-                <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100" />
+                <Copy className="h-3 w-3 text-text-tertiary group-hover:text-text-primary transition-colors" />
             )}
         </button>
     );

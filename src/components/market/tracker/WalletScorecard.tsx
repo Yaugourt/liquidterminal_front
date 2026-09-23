@@ -148,7 +148,7 @@ export function WalletScorecard({ address }: WalletScorecardProps) {
               <ModuleTableRow
                 key={c.coin}
                 cells={[
-                  <ModuleAsset key="c" tone="neutral" assetName={c.coin} kind="auto" name={c.coin} />,
+                  <ModuleAsset key="c" assetName={c.coin} kind="auto" name={c.coin} />,
                   <span key="v" className="mono text-text-secondary">
                     {compactUsd(c.total_volume)}
                   </span>,

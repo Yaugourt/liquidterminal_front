@@ -3,16 +3,28 @@
 import { useState } from "react";
 import { useWallets } from "@/store/use-wallets";
 import { useUserFills } from "@/services/explorer/address/hooks/useUserFills";
-import { Copy, Check } from "lucide-react";
 import { useNumberFormat } from '@/store/number-format.store';
-import { formatAssetValue } from '@/lib/formatters/numberFormatting';
+import { formatAssetValue, formatNumber } from '@/lib/formatters/numberFormatting';
 import { formatAge } from "@/services/explorer/address/utils";
-import { TypedDataTable, type Column } from "@/components/common";
-import { Card } from "@/components/ui/card";
+import { TypedDataTable, ModuleAsset, toTradeSide, type Column } from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { UserFill } from "@/services/explorer/address/types";
 
 interface WalletRecentFillsSectionProps {
   address?: string;
+}
+
+type BadgeVariant = "gold" | "buy" | "sell" | "neutral";
+
+/** Fill direction ("Open Long", "Close Short", "Buy"…) → badge colour. Closes read gold. */
+function directionVariant(dir: string): BadgeVariant {
+  if (dir.toLowerCase().includes("close")) return "gold";
+  const side = toTradeSide(dir);
+  if (side === "long" || side === "buy") return "buy";
+  if (side === "short" || side === "sell") return "sell";
+  return "neutral";
 }
 
 export function WalletRecentFillsSection({ address: addressProp }: WalletRecentFillsSectionProps = {}) {
@@ -24,7 +36,6 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [copiedHash, setCopiedHash] = useState<string | null>(null);
 
   const {
     data: allFills,
@@ -41,89 +52,45 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
 
   const formatCurrency = (value: string | number) => formatAssetValue(Number(value), format);
 
-  const formatHash = (hash: string) => {
-    if (!hash) return '-';
-    return hash.length > 10 ? `${hash.slice(0, 5)}...${hash.slice(-3)}` : hash;
-  };
-
-  const copyHashToClipboard = async (hash: string) => {
-    try {
-      await navigator.clipboard.writeText(hash);
-      setCopiedHash(hash);
-      setTimeout(() => setCopiedHash(null), 2000);
-    } catch {
-      // Error handled silently
-    }
-  };
-
-  const formatDirection = (dir: string) => {
-    const isClose = dir.toLowerCase().includes('close');
-    const isShort = dir.toLowerCase().includes('short');
-    const isLong = dir.toLowerCase().includes('long');
-    if (isClose) return <span className="text-gold">{dir}</span>;
-    if (isShort) return <span className="text-danger">{dir}</span>;
-    if (isLong) return <span className="text-success">{dir}</span>;
-    return <span className="text-text-primary">{dir}</span>;
-  };
-
-  const formatPnl = (pnl: string) => {
-    const pnlValue = parseFloat(pnl);
-    if (pnlValue === 0) return <span className="text-text-tertiary">$0.00</span>;
-    const color = pnlValue > 0 ? 'text-success' : 'text-danger';
-    const sign = pnlValue > 0 ? '+' : '';
-    return <span className={color}>{sign}{formatCurrency(Math.abs(pnlValue))}</span>;
-  };
-
-  if (!activeWallet?.address) {
-    return (
-      <Card className="flex items-center justify-center h-[600px] text-text-primary">
-        No wallet selected
-      </Card>
-    );
+  if (!walletAddress) {
+    return <EmptyState title="Recent fills" description="No wallet selected" />;
   }
 
   const columns: Column<UserFill>[] = [
     {
       key: "hash",
       header: "Hash",
-      accessor: (fill) => (
-        <div className="flex items-center gap-1.5">
-          <span className="text-brand" title={fill.hash}>
-            {formatHash(fill.hash)}
-          </span>
-          <button
-            onClick={(e) => { e.preventDefault(); copyHashToClipboard(fill.hash); }}
-            className="group p-1 rounded transition-colors"
-          >
-            {copiedHash === fill.hash ? (
-              <Check className="h-3.5 w-3.5 text-success transition-all duration-200" />
-            ) : (
-              <Copy className="h-3.5 w-3.5 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
-            )}
-          </button>
-        </div>
-      ),
+      // TWAP slices carry the zero hash: nothing to link to.
+      accessor: (fill) =>
+        fill.hash && !/^0x0+$/.test(fill.hash) ? (
+          <AddressDisplay
+            address={fill.hash}
+            href={`/explorer/transaction/${fill.hash}`}
+            copyMessage="Hash copied to clipboard"
+          />
+        ) : "—",
     },
     {
       key: "coin",
       header: "Asset",
-      accessor: "coin",
+      accessor: (fill) => <ModuleAsset assetName={fill.coin} name={fill.coin} />,
     },
     {
       key: "dir",
       header: "Direction",
-      accessor: (fill) => formatDirection(fill.dir),
+      accessor: (fill) => <StatusBadge variant={directionVariant(fill.dir)}>{fill.dir}</StatusBadge>,
     },
     {
       key: "time",
       header: "Age",
+      type: "time",
       accessor: (fill) => formatAge(fill.time),
     },
     {
       key: "sz",
       header: "Size",
       type: "numeric",
-      accessor: (fill) => parseFloat(fill.sz).toFixed(4),
+      accessor: (fill) => formatNumber(parseFloat(fill.sz), format, { maximumFractionDigits: 4 }),
     },
     {
       key: "px",
@@ -134,37 +101,39 @@ export function WalletRecentFillsSection({ address: addressProp }: WalletRecentF
     {
       key: "closedPnl",
       header: "PnL",
-      type: "numeric",
-      align: "right",
-      accessor: (fill) => formatPnl(fill.closedPnl),
+      type: "change",
+      getSortValue: (fill) => parseFloat(fill.closedPnl) || 0,
+      accessor: (fill) => {
+        const pnl = parseFloat(fill.closedPnl) || 0;
+        // Full precision (sub-cent PnL stays visible), explicit sign.
+        return pnl === 0 ? "—" : `${pnl < 0 ? "-" : "+"}${formatCurrency(Math.abs(pnl))}`;
+      },
     },
     {
       key: "fee",
       header: "Fee",
-      type: "numeric",
-      align: "right",
+      type: "fees",
       accessor: (fill) => `${formatCurrency(fill.fee)} ${fill.feeToken}`,
     },
   ];
 
   return (
-    <Card className="flex flex-col">
-      <TypedDataTable<UserFill>
-        data={paginatedFills}
-        columns={columns}
-        getRowKey={(fill) => `${fill.hash}-${fill.tid}`}
-        isLoading={isLoading}
-        error={error ?? null}
-        emptyMessage="No fills found"
-        emptyDescription=""
-        total={total}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        onPageChange={setPage}
-        onRowsPerPageChange={(n) => { setRowsPerPage(n); setPage(0); }}
-        rowsPerPageOptions={[10, 25, 50]}
-        paginationVariant={total > 0 ? "full" : "none"}
-      />
-    </Card>
+    <TypedDataTable<UserFill>
+      data={paginatedFills}
+      columns={columns}
+      getRowKey={(fill) => `${fill.hash}-${fill.tid}`}
+      isLoading={isLoading}
+      error={error ?? null}
+      emptyMessage="No fills found"
+      emptyDescription=""
+      total={total}
+      page={page}
+      rowsPerPage={rowsPerPage}
+      onPageChange={setPage}
+      onRowsPerPageChange={(n) => { setRowsPerPage(n); setPage(0); }}
+      rowsPerPageOptions={[10, 25, 50]}
+      paginationVariant={total > 0 ? "full" : "none"}
+      density="compact"
+    />
   );
 }

@@ -124,7 +124,6 @@ export function SpotMarketShape({
         <OverviewModule
           title="Stablecoin liquidity"
           tag="hypurrscan · /spotUSDC"
-          tagVariant="plain"
           className="min-w-0"
         >
           <div className="px-4 pt-3 flex items-center justify-end">
@@ -179,7 +178,7 @@ export function SpotMarketShape({
           </div>
         </OverviewModule>
 
-        <OverviewModule title="Volume concentration" tag="24h" tagVariant="plain">
+        <OverviewModule title="Volume concentration" tag="24h">
           <div className="px-4 py-3.5 flex flex-col gap-2.5 flex-1">
             <div className="flex items-baseline gap-2 pb-2.5 border-b border-border-subtle">
               <span className="text-[11px] text-text-tertiary">
@@ -251,7 +250,6 @@ export function SpotMarketShape({
         <OverviewModule
           title="Spot fees · daily"
           tag={feePoints.length ? `${feePoints.length}d · API window` : "API window"}
-          tagVariant="plain"
         >
           <div className="px-4 py-3.5 flex flex-col gap-3 flex-1">
             {feePoints.length >= 2 ? (
@@ -289,7 +287,7 @@ export function SpotMarketShape({
           </div>
         </OverviewModule>
 
-        <OverviewModule title="HYPE spot price" tag="90d · 1d candles" tagVariant="plain">
+        <OverviewModule title="HYPE spot price" tag="90d · 1d candles">
           <div className="px-4 py-3.5 flex flex-col gap-3 flex-1">
             {hypeSeries.length >= 2 ? (
               <AuroraAreaChart

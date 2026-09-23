@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Wrench } from "lucide-react";
 import { ExportButton } from "@/components/export/ExportButton";
 import {
   OverviewModule,
@@ -52,7 +51,6 @@ export const BuildersModule = memo(function BuildersModule() {
   return (
     <OverviewModule
       title="Top Builders"
-      icon={<Wrench size={13} className="text-brand" />}
       tag={`${compactUsd(current?.totalBuilderFees)} fees 24h`}
       viewAllLabel="All builders"
       href="/market/builders"

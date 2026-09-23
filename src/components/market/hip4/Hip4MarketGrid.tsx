@@ -10,7 +10,11 @@ import {
   categorizeQuestion,
   type Hip4Category,
 } from "@/lib/hip4-category";
-import { effectiveStatus, type Hip4EffectiveStatus } from "@/lib/hip4/market-formatter";
+import {
+  effectiveStatus,
+  hip4QuestionKey,
+  type Hip4EffectiveStatus,
+} from "@/lib/hip4/market-formatter";
 import { Hip4QuestionCard } from "./Hip4QuestionCard";
 import { Hip4MarketCategoryTabs } from "./Hip4MarketCategoryTabs";
 
@@ -199,11 +203,8 @@ export function Hip4MarketGrid({ questions, isLoading, settlementsCount = 0 }: H
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-            {visible.map((q, i) => (
-              <Hip4QuestionCard
-                key={q.question_id ?? q.singleton_outcome_id ?? `idx-${i}`}
-                question={q}
-              />
+            {visible.map((q) => (
+              <Hip4QuestionCard key={hip4QuestionKey(q)} question={q} />
             ))}
           </div>
 

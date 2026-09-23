@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { TypedDataTable, type Column, TokenAvatar } from "@/components/common";
+import { TypedDataTable, ModuleAsset, formatPriceChange, type Column } from "@/components/common";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { hip3AssetHref } from "@/lib/hip3/coin";
 import { formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import type { PerpDexAssetWithMarketData } from "@/services/market/perpDex/types";
 import type { PerpDexMarketsSortField } from "@/lib/perpDexMarketsSort";
-import { Sprout, AlertCircle } from "lucide-react";
 
 interface PerpDexMarketsTableProps {
   /** Already sorted (parent owns sort state). */
@@ -26,31 +26,6 @@ const getTicker = (assetName: string) => {
   return parts.length > 1 ? parts[1] : assetName;
 };
 
-const formatPriceChange = (change: number | undefined) => {
-  if (change === undefined) return "-";
-  return `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
-};
-
-function renderAssetBadges(asset: PerpDexAssetWithMarketData) {
-  return (
-    <div className="flex items-center gap-2 mt-0.5">
-      <span className="text-label text-text-tertiary">{asset.maxLeverage}x</span>
-      {asset.growthMode === "enabled" && (
-        <span className="text-success text-label flex items-center gap-0.5">
-          <Sprout className="h-2.5 w-2.5" />
-          Growth
-        </span>
-      )}
-      {asset.isDelisted && (
-        <span className="text-danger text-label flex items-center gap-0.5">
-          <AlertCircle className="h-2.5 w-2.5" />
-          Delisted
-        </span>
-      )}
-    </div>
-  );
-}
-
 function buildColumns(
   format: NumberFormatType
 ): Column<PerpDexAssetWithMarketData>[] {
@@ -60,15 +35,13 @@ function buildColumns(
       header: "Asset",
       accessor: (row) => (
         <div className="flex items-center gap-2">
-          <TokenAvatar assetName={row.name} size="lg" className={row.isDelisted ? "opacity-50" : ""} />
-          <div>
-            <div className="flex items-center gap-1">
-              <span className="text-text-primary text-sm font-medium">{getTicker(row.name)}</span>
-              <span className="text-text-tertiary text-sm">/</span>
-              <span className="text-text-tertiary text-xs">{row.collateralToken}</span>
-            </div>
-            {renderAssetBadges(row)}
-          </div>
+          <ModuleAsset
+            assetName={row.name}
+            name={getTicker(row.name)}
+            sub={`${row.maxLeverage}x · ${row.collateralToken}`}
+          />
+          {row.growthMode === "enabled" && <StatusBadge variant="success">Growth</StatusBadge>}
+          {row.isDelisted && <StatusBadge variant="error">Delisted</StatusBadge>}
         </div>
       ),
     },
@@ -84,15 +57,11 @@ function buildColumns(
     {
       key: "priceChange24h",
       header: "24h",
+      type: "change",
       sortable: true,
       getSortValue: (row) => row.priceChange24h ?? 0,
-      accessor: (row) => (
-        <span
-          className={`text-sm font-medium ${(row.priceChange24h ?? 0) >= 0 ? "text-success" : "text-danger"}`}
-        >
-          {formatPriceChange(row.priceChange24h)}
-        </span>
-      ),
+      accessor: (row) =>
+        row.priceChange24h === undefined ? "-" : formatPriceChange(row.priceChange24h),
     },
     {
       key: "dayNtlVlm",
@@ -129,13 +98,9 @@ function buildColumns(
     {
       key: "funding",
       header: "Funding",
-      accessor: (row) => (
-        <span
-          className={`text-sm font-medium ${(row.funding ?? 0) >= 0 ? "text-success" : "text-danger"}`}
-        >
-          {formatFunding(row.funding)}
-        </span>
-      ),
+      type: "change",
+      getSortValue: (row) => row.funding ?? 0,
+      accessor: (row) => formatFunding(row.funding),
     },
     {
       key: "streamingOiCap",
@@ -173,25 +138,22 @@ export function PerpDexMarketsTable({
   };
 
   return (
-    <div>
-      <h2 className="text-table-header mb-3">
-        Markets ({activeAssets} active / {totalAssets} total)
-      </h2>
-      <TypedDataTable<PerpDexAssetWithMarketData>
-        data={assets}
-        columns={buildColumns(format)}
-        getRowKey={(row) => row.name}
-        emptyMessage="No markets available"
-        // Each market now has a page of its own — this table was the natural
-        // entry point to it and had no destination until now.
-        onRowClick={(row) => router.push(hip3AssetHref(row.name))}
-        rowClassName={(row) =>
-          `cursor-pointer ${row.isDelisted ? "opacity-50" : ""}`.trim()
-        }
-        onSortChange={handleSortChange}
-        sortField={sortField}
-        sortDirection={sortOrder}
-      />
-    </div>
+    <TypedDataTable<PerpDexAssetWithMarketData>
+      title="Markets"
+      tag={`${activeAssets} active / ${totalAssets} total`}
+      data={assets}
+      columns={buildColumns(format)}
+      getRowKey={(row) => row.name}
+      emptyMessage="No markets available"
+      // Each market now has a page of its own — this table was the natural
+      // entry point to it and had no destination until now.
+      onRowClick={(row) => router.push(hip3AssetHref(row.name))}
+      rowClassName={(row) =>
+        `cursor-pointer ${row.isDelisted ? "opacity-50" : ""}`.trim()
+      }
+      onSortChange={handleSortChange}
+      sortField={sortField}
+      sortDirection={sortOrder}
+    />
   );
 }

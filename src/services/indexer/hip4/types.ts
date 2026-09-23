@@ -197,9 +197,16 @@ export interface Hip4LiveMarketData {
   mids: Record<string, string>;
 }
 
+/** Lifetime notional volume per outcome encoding, from the indexer analytics. */
+export interface Hip4OutcomeVolumes {
+  volumes: Record<number, number>;
+  /** A batch failed or was truncated, so some volumes are understated. */
+  partial: boolean;
+}
+
 export interface Hip4LiveMarkets extends Hip4LiveMarketData {
-  /** True when the per-outcome volume fetch failed (analytics 402), so volumes
-   * fell back to 0 and any volume total is understated. */
+  /** True when the per-outcome volume fetch failed or was incomplete (analytics
+   * 402, truncated batch), so any volume total is understated. */
   volumesUnavailable: boolean;
 }
 

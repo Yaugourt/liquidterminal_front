@@ -1,7 +1,15 @@
 "use client";
 
-import { TypedDataTable, type Column, TokenAvatar, chartPalette, PeriodSelector } from "@/components/common";
-import { Card } from "@/components/ui/card";
+import {
+  TypedDataTable,
+  ModuleAsset,
+  CellValue,
+  SideBadge,
+  TableStat,
+  DataStatus,
+  type Column,
+} from "@/components/common";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { HoldingDisplay, PerpHoldingDisplay, SortableHolding } from "@/components/types/wallet.types";
 
 // Sort keys shared by spot & perp holdings tables. Kept here as the canonical
@@ -21,8 +29,15 @@ export type SortKey =
   | 'unrealizedPnl'
   | 'funding';
 
+type ViewType = 'spot' | 'perp';
+
+const VIEW_TABS: { value: ViewType; label: string }[] = [
+  { value: 'spot', label: 'Spot' },
+  { value: 'perp', label: 'Perps' },
+];
+
 interface AssetsTableProps {
-  type: 'spot' | 'perp';
+  type: ViewType;
   holdings: SortableHolding[];
   isLoading: boolean;
   onSort: (key: SortKey) => void;
@@ -31,7 +46,7 @@ interface AssetsTableProps {
   formatCurrency: (value: number | string) => string;
   formatTokenAmount?: (value: number | string) => string;
   formatPercent?: (value: number) => string;
-  onViewTypeChange: (type: 'spot' | 'perp') => void;
+  onViewTypeChange: (type: ViewType) => void;
   totalAssets: number;
   walletDisplay: string | null;
   onRefresh: () => void;
@@ -51,12 +66,7 @@ function buildSpotColumns(
       header: "Name",
       sortable: true,
       getSortValue: (row) => row.coin,
-      accessor: (row) => (
-        <div className="flex items-center gap-3">
-          <TokenAvatar src={row.logo} assetName={row.coin} size="lg" />
-          <span className="text-text-primary text-sm font-medium">{row.coin}</span>
-        </div>
-      ),
+      accessor: (row) => <ModuleAsset src={row.logo} assetName={row.coin} name={row.coin} />,
     },
     {
       key: "total",
@@ -77,14 +87,10 @@ function buildSpotColumns(
     {
       key: "pnlPercentage",
       header: "Change 24h",
-      type: "numeric",
+      type: "change",
       sortable: true,
       getSortValue: (row) => row.pnlPercentage,
-      accessor: (row) => (
-        <span style={{ color: row.pnlPercentage < 0 ? chartPalette.roseSoft : chartPalette.emeraldLight }}>
-          {formatPercent(row.pnlPercentage)}
-        </span>
-      ),
+      accessor: (row) => formatPercent(row.pnlPercentage),
     },
     {
       key: "totalValue",
@@ -103,10 +109,11 @@ function buildPerpColumns(
   formatCurrency: (v: number | string) => string,
   formatTokenAmount: (v: number | string) => string,
 ): Column<PerpHoldingDisplay>[] {
-  const formatTokenSize = (szi: string, coin: string, fmtAmount: (v: number | string) => string) => {
+  /** "+$1,234.56" / "-$1,234.56": sign before the currency symbol. */
+  const signedCurrency = (v: number) => `${v < 0 ? '-' : '+'}${formatCurrency(Math.abs(v))}`;
+  const formatTokenSize = (szi: string, coin: string) => {
     const amount = parseFloat(szi);
-    const absAmount = Math.abs(amount);
-    return `${amount < 0 ? '-' : ''}${fmtAmount(absAmount.toString())} ${coin}`;
+    return `${amount < 0 ? '-' : ''}${formatTokenAmount(Math.abs(amount).toString())} ${coin}`;
   };
 
   return [
@@ -116,27 +123,20 @@ function buildPerpColumns(
       sortable: true,
       getSortValue: (row) => row.coin,
       accessor: (row) => (
-        <div className="flex items-center gap-3">
-          <TokenAvatar src={row.logo} assetName={row.coin} size="lg" />
-          <span className="text-text-primary text-sm font-medium">{row.coin}</span>
-        </div>
+        <ModuleAsset
+          src={row.logo}
+          assetName={row.coin}
+          name={row.coin}
+          sub={`${row.leverage.value}x ${row.leverage.type}`}
+        />
       ),
     },
     {
       key: "type",
-      header: "Type",
+      header: "Side",
       sortable: true,
       getSortValue: (row) => row.type,
-      accessor: (row) => (
-        <div className="flex flex-col gap-0.5">
-          <span className={row.type === 'Short' ? 'text-danger font-medium' : 'text-success font-medium'}>
-            {row.type}
-          </span>
-          <span className="text-label text-text-tertiary">
-            {row.leverage.value}x ({row.leverage.type})
-          </span>
-        </div>
-      ),
+      accessor: (row) => <SideBadge side={row.type === 'Short' ? 'short' : 'long'} />,
     },
     {
       key: "entryPriceNum",
@@ -148,7 +148,7 @@ function buildPerpColumns(
     },
     {
       key: "liquidationNum",
-      header: "Liquidation Price",
+      header: "Liq. Price",
       type: "numeric",
       sortable: true,
       getSortValue: (row) => row.liquidationNum,
@@ -165,49 +165,31 @@ function buildPerpColumns(
     {
       key: "positionValueNum",
       header: "Value",
-      type: "numeric",
+      align: "right",
       sortable: true,
       getSortValue: (row) => row.positionValueNum,
       accessor: (row) => (
-        <div className="flex flex-col gap-0.5">
-          <span className="text-text-primary text-sm font-medium">
-            {formatCurrency(row.positionValue)}
-          </span>
-          <span className="text-label text-text-tertiary">
-            {formatTokenSize(row.szi, row.coin, formatTokenAmount)}
-          </span>
-        </div>
+        <CellValue
+          value={formatCurrency(row.positionValue)}
+          sub={formatTokenSize(row.szi, row.coin)}
+        />
       ),
     },
     {
       key: "unrealizedPnl",
-      header: "Unrealized PNL",
-      type: "numeric",
+      header: "Unrealized PnL",
+      type: "change",
       sortable: true,
       getSortValue: (row) => parseFloat(row.unrealizedPnl) || 0,
-      accessor: (row) => {
-        const pnlNum = parseFloat(row.unrealizedPnl);
-        return (
-          <span className={pnlNum >= 0 ? 'text-success' : 'text-danger'}>
-            {formatCurrency(pnlNum)}
-          </span>
-        );
-      },
+      accessor: (row) => signedCurrency(parseFloat(row.unrealizedPnl) || 0),
     },
     {
       key: "funding",
       header: "Funding",
-      type: "numeric",
+      type: "change",
       sortable: true,
       getSortValue: (row) => parseFloat(row.funding) || 0,
-      accessor: (row) => {
-        const fundingNum = parseFloat(row.funding);
-        return (
-          <span className={fundingNum >= 0 ? 'text-success' : 'text-danger'}>
-            {formatCurrency(fundingNum)}
-          </span>
-        );
-      },
+      accessor: (row) => signedCurrency(parseFloat(row.funding) || 0),
     },
   ];
 }
@@ -228,88 +210,52 @@ export function AssetsTable({
   onRefresh,
   isRefreshing
 }: AssetsTableProps) {
-  // Convert the external sort callback to the TypedDataTable server-sort API.
-  // TypedDataTable will call onSortChange when a column header is clicked;
-  // we forward that to the parent's requestSort.
+  // TypedDataTable calls onSortChange when a column header is clicked;
+  // forward it to the parent's requestSort (server-sort API).
   const handleSortChange = (field: string) => {
     onSort(field as SortKey);
   };
 
-  const spotColumns = buildSpotColumns(
-    formatCurrency, formatTokenAmount, formatPercent
-  );
-  const perpColumns = buildPerpColumns(formatCurrency, formatTokenAmount);
-
-  return (
-    <Card interactive={false}>
-      {/* Tab header + stats */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
-        <PeriodSelector
-          selected={type}
-          onChange={onViewTypeChange}
-          options={['spot', 'perp'] as const}
-          labels={{ spot: 'Spot', perp: 'Perps' }}
-          size="md"
-        />
-
-        <div className="flex items-center gap-6">
-          <div className="flex items-baseline gap-2">
-            <span className="text-text-secondary text-xs">Total assets:</span>
-            <span className="text-brand text-sm font-bold">{totalAssets}</span>
-          </div>
-          {walletDisplay && (
-            <>
-              <div className="w-px h-4 bg-border-subtle" />
-              <div className="flex items-baseline gap-2">
-                <span className="text-text-secondary text-xs">Wallet:</span>
-                <span className="text-brand text-sm font-medium">({walletDisplay})</span>
-              </div>
-            </>
-          )}
-          <div className="w-px h-4 bg-border-subtle" />
-          <button
-            onClick={onRefresh}
-            disabled={isRefreshing || isLoading}
-            className={`p-2 text-text-secondary hover:text-text-primary transition-colors rounded-lg hover:bg-surface-2 ${
-              isRefreshing ? 'animate-spin' : ''
-            }`}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-              <path d="M21 3v5h-5"/>
-              <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-              <path d="M3 21v-5h5"/>
-            </svg>
-          </button>
-        </div>
+  const toolbar = (
+    <>
+      <PillTabs
+        variant="text"
+        tabs={VIEW_TABS}
+        activeTab={type}
+        onTabChange={(v) => onViewTypeChange(v as ViewType)}
+      />
+      <div className="ml-auto flex flex-wrap items-center gap-x-5 gap-y-1">
+        <TableStat label="Assets" value={totalAssets} />
+        {walletDisplay && <TableStat label="Wallet" value={walletDisplay} tone="brand" />}
+        <DataStatus variant="polled" onRefresh={onRefresh} isRefreshing={isRefreshing || isLoading} />
       </div>
+    </>
+  );
 
-      {/* Table — tabs kept above, TypedDataTable inside */}
-      {type === 'spot' ? (
-        <TypedDataTable<HoldingDisplay>
-          data={holdings as HoldingDisplay[]}
-          columns={spotColumns}
-          getRowKey={(row) => row.coin}
-          isLoading={isLoading}
-          emptyMessage="No positions found"
-          emptyDescription="Add a position or check back later"
-          onSortChange={handleSortChange}
-          sortField={activeSortKey}
-          sortDirection={sortDirection}
-        />
-      ) : (
-        <TypedDataTable<PerpHoldingDisplay>
-          data={holdings as PerpHoldingDisplay[]}
-          columns={perpColumns}
-          getRowKey={(row) => row.coin}
-          isLoading={isLoading}
-          emptyMessage="No positions found"
-          emptyDescription="Add a position or check back later"
-          onSortChange={handleSortChange}
-          sortField={activeSortKey}
-          sortDirection={sortDirection}
-        />
-      )}
-    </Card>
+  const shared = {
+    toolbar,
+    isLoading,
+    density: "compact" as const,
+    emptyMessage: "No positions found",
+    emptyDescription: "Add a position or check back later",
+    onSortChange: handleSortChange,
+    sortField: activeSortKey,
+    sortDirection,
+  };
+
+  return type === 'spot' ? (
+    <TypedDataTable<HoldingDisplay>
+      {...shared}
+      data={holdings as HoldingDisplay[]}
+      columns={buildSpotColumns(formatCurrency, formatTokenAmount, formatPercent)}
+      getRowKey={(row) => row.coin}
+    />
+  ) : (
+    <TypedDataTable<PerpHoldingDisplay>
+      {...shared}
+      data={holdings as PerpHoldingDisplay[]}
+      columns={buildPerpColumns(formatCurrency, formatTokenAmount)}
+      getRowKey={(row) => row.coin}
+    />
   );
 }

@@ -36,7 +36,8 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
   return (
     <Card className="flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 px-4 pt-4">
+      {/* flex-wrap: in the 1/3 column (~248px at lg) the actions drop under the title. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-6 px-4 pt-4">
         <div className="flex items-center gap-3">
           <div className={`p-2 rounded-lg ${auctionState.isActive ? 'bg-success/10 text-success' : 'bg-gold/10 text-gold'}`}>
             <Gavel size={16} />
@@ -52,7 +53,7 @@ export const AuctionCard = memo(function AuctionCard({ marketType }: AuctionCard
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2">
           <Link
             href={`/market/${marketType}/auction`}
             className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"

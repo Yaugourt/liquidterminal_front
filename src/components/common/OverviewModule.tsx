@@ -4,24 +4,19 @@ import {
   createContext,
   memo,
   useContext,
-  useState,
   type ReactNode,
 } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import {
-  getTokenIconUrl,
-  getTokenInitials,
-  type TokenKind,
-} from "@/lib/tokenIconUrl";
+import { CardHead } from "./CardHead";
+import type { TokenKind } from "@/lib/tokenIconUrl";
+import { TokenAvatar } from "./TokenAvatar";
 
 /**
  * OverviewModule — la brique du Dashboard « vue d'ensemble ».
  *
- * Une carte = le résumé d'une page de l'app. En-tête « card-head » de la
- * maquette : titre + pill `tag` + lien « View all → » optionnel à droite.
+ * Une carte = le résumé d'une page de l'app. En-tête = `<CardHead>` (minimal :
+ * titre + tag discret + actions + lien « View all → » optionnel à droite).
  * Le corps accueille soit une table (`ModuleTable`), soit une liste de
  * leaderboard (`ModuleRow`). Toutes les pages se résument avec ce même
  * composant — cohérence garantie.
@@ -29,12 +24,10 @@ import {
 
 interface OverviewModuleProps {
   title: string;
-  /** Brand icon left of the title (V4 card-head). */
-  icon?: ReactNode;
-  /** `tag` pill from the mockup (e.g. "$1.91B TVL"). */
+  /** Plain figure pinned right of the head (e.g. "$1.91B TVL"). */
   tag?: ReactNode;
-  /** Tag style. "pill" (default) or "plain" (minimal: right-aligned muted text, no chip). */
-  tagVariant?: "pill" | "plain";
+  /** One-line helper next to the title. */
+  subtitle?: ReactNode;
   /** Label of the "View all →" link (e.g. "All vaults"). */
   viewAllLabel?: string;
   /** Link to the full page. Omit to hide the "View all" link — e.g. when the
@@ -53,9 +46,8 @@ interface OverviewModuleProps {
 
 export const OverviewModule = memo(function OverviewModule({
   title,
-  icon,
   tag,
-  tagVariant = "pill",
+  subtitle,
   viewAllLabel,
   href,
   actions,
@@ -64,41 +56,14 @@ export const OverviewModule = memo(function OverviewModule({
 }: OverviewModuleProps) {
   return (
     <Card className={`flex flex-col ${className ?? ""}`}>
-      {/* V4 card-head — brand icon + title + tag pill + "View all →" link.
-          flex-wrap so a narrow card drops the tag and link to a second line
-          instead of squeezing the title down to an ellipsis. */}
-      <div className="flex flex-wrap items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        {icon && (
-          <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-            {icon}
-          </span>
-        )}
-        <h3 className="text-[13px] font-semibold text-text-primary truncate">
-          {title}
-        </h3>
-        {tag != null &&
-          (tagVariant === "plain" ? (
-            <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">{tag}</span>
-          ) : (
-            <span className="shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-              {tag}
-            </span>
-          ))}
-        {actions && (
-          <span className="ml-auto shrink-0 flex items-center gap-1">{actions}</span>
-        )}
-        {href && (
-          <Link
-            href={href}
-            className={`shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors ${actions ? "" : "ml-auto"}`}
-          >
-            {viewAllLabel ?? "View all"}
-            <ArrowRight size={12} />
-          </Link>
-        )}
-      </div>
-
-      {/* Body */}
+      <CardHead
+        title={title}
+        subtitle={subtitle}
+        tag={tag}
+        actions={actions}
+        href={href}
+        viewAllLabel={viewAllLabel}
+      />
       {children && <div className="flex-1 flex flex-col">{children}</div>}
     </Card>
   );
@@ -141,19 +106,19 @@ export function ModuleRow({
   href?: string;
 }) {
   const inner = (
-    <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors">
-      <span className="mono w-5 shrink-0 text-[11px] font-semibold text-text-tertiary">
+    <div className="flex items-center gap-3 px-4 py-2.5 border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors">
+      <span className="mono w-5 shrink-0 text-[11px] text-text-tertiary">
         {String(rank).padStart(2, "0")}
       </span>
-      <div className="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-[10px] font-semibold bg-brand/10 text-brand overflow-hidden">
+      <div className="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold bg-surface-2 text-text-secondary overflow-hidden">
         {logo}
       </div>
       <div className="min-w-0">
-        <div className="text-[12.5px] font-semibold text-text-primary truncate">
+        <div className="text-[12.5px] font-medium text-text-primary truncate">
           {name}
         </div>
         {sub != null && (
-          <div className="text-[10px] text-text-tertiary truncate">{sub}</div>
+          <div className="mono text-[10px] text-text-tertiary truncate">{sub}</div>
         )}
       </div>
       <div className="ml-auto flex shrink-0 gap-5">
@@ -164,7 +129,7 @@ export function ModuleRow({
             style={s.width ? { width: s.width } : undefined}
           >
             <div
-              className={`mono text-[12.5px] font-semibold ${
+              className={`mono text-[12.5px] font-medium ${
                 s.valueClassName ?? "text-text-primary"
               }`}
             >
@@ -279,9 +244,9 @@ export function ModuleTable({
             {columns.map((c, i) => (
               <th
                 key={i}
-                className={`bg-surface-2 ${
-                  density === "compact" ? "px-3 py-1.5" : "px-4 py-2"
-                } text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle ${
+                className={`${
+                  density === "compact" ? "px-3 py-1.5" : "px-3 py-2"
+                } text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle ${
                   alignments[i] === "left" ? "text-left" : "text-right"
                 }`}
               >
@@ -311,7 +276,7 @@ export function ModuleTableRow({
 }) {
   return (
     <tr
-      className={`border-b border-border-subtle last:border-b-0 hover:bg-surface-2 transition-colors ${className ?? ""}`}
+      className={`border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors ${className ?? ""}`}
     >
       {cells.map((cell, i) => (
         <ModuleCell key={i} href={href} index={i}>
@@ -345,7 +310,7 @@ function ModuleCell({
   return (
     <td
       className={`${
-        density === "compact" ? "px-3 py-1.5" : "px-4 py-2.5"
+        density === "compact" ? "px-3 py-1.5" : "px-3 py-2"
       } text-[12.5px] overflow-hidden ${
         align === "left" ? "text-left" : "text-right"
       }`}
@@ -356,87 +321,58 @@ function ModuleCell({
 }
 
 /**
- * ModuleAsset — "name" cell of a leaderboard / asset row: rounded-md logo
- * square + name + optional sub-line. Mirrors the mockup's `.asset` block.
+ * ModuleAsset — the "name" cell of any table row (ModuleTable or
+ * TypedDataTable): neutral rounded-md avatar + name + optional mono sub-line.
+ * Mirrors the kit's `.asset` block.
  *
- * Two ways to pass the avatar (mutually exclusive):
- *  - `assetName` — recommended. The component fetches the Hyperliquid icon
- *    from the official CDN via {@link getTokenIconUrl} and falls back to
- *    2-letter initials on error. Pass the full asset name including any
- *    `xyz:` prefix for HIP-3.
- *  - `logo` — escape hatch. Pass an arbitrary `ReactNode` (a custom string,
- *    a pre-rendered `<Image>`, etc.). Use only when `assetName` doesn't fit.
+ * Avatar sources (first match wins):
+ *  - `logo` — arbitrary node (initials, identicon, custom image).
+ *  - `assetName` (+ optional `src`) — delegated to {@link TokenAvatar}: HL CDN
+ *    icon (or the explicit `src` URL) with a 2-initials fallback. Pass the full
+ *    asset name incl. any `xyz:` prefix for HIP-3.
  */
 export function ModuleAsset({
   assetName,
+  src,
   kind = "auto",
   logo,
   name,
   sub,
-  tone = "brand",
 }: {
   /** Asset name resolved against the HL CDN (preferred). */
   assetName?: string;
+  /** Explicit image URL (backend logo) — overrides the CDN convention. */
+  src?: string | null;
   /** Override the URL convention — only useful for bare tickers (`spot`/`hip3`). */
   kind?: TokenKind;
   /** Escape hatch — override the avatar with arbitrary content. */
   logo?: ReactNode;
   name: ReactNode;
   sub?: ReactNode;
-  /** Avatar tint. "brand" (default) or "neutral" (minimal DS: surface-2 / secondary). */
-  tone?: "brand" | "neutral";
 }) {
-  const neutral = tone === "neutral";
   return (
-    <div className="flex items-center gap-2.5">
-      <div className={`w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold overflow-hidden ${neutral ? "bg-surface-2 text-text-secondary" : "bg-brand/10 text-brand"}`}>
-        {assetName ? (
-          <AssetAvatarImage assetName={assetName} kind={kind} />
-        ) : (
-          logo
-        )}
-      </div>
-      <div className="min-w-0">
-        <div className={`text-[12.5px] ${neutral ? "font-medium" : "font-semibold"} text-text-primary truncate`}>
-          {name}
+    <div className="flex items-center gap-2.5 min-w-0">
+      {logo != null ? (
+        <div className="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-[9px] font-semibold overflow-hidden bg-surface-2 text-text-secondary">
+          {logo}
         </div>
+      ) : assetName ? (
+        <TokenAvatar assetName={assetName} src={src} kind={kind} size="lg" />
+      ) : null}
+      <div className="min-w-0">
+        <div className="text-[12.5px] font-medium text-text-primary truncate">{name}</div>
         {sub != null && (
-          <div className="text-[10px] text-text-tertiary truncate">{sub}</div>
+          <div className="mono text-[10px] text-text-tertiary truncate">{sub}</div>
         )}
       </div>
     </div>
   );
 }
 
-/** HL CDN icon with 2-initials fallback on error. */
-function AssetAvatarImage({
-  assetName,
-  kind,
-}: {
-  assetName: string;
-  kind: TokenKind;
-}) {
-  const [errored, setErrored] = useState(false);
-  if (errored) {
-    return <>{getTokenInitials(assetName)}</>;
-  }
-  return (
-    <Image
-      src={getTokenIconUrl(assetName, kind)}
-      alt={assetName}
-      width={24}
-      height={24}
-      className="w-full h-full object-cover"
-      onError={() => setErrored(true)}
-      unoptimized
-    />
-  );
-}
-
 /** Titre de mini-section dans le corps d'un module (ex. "HIP-3 Perp DEXs"). */
 export function ModuleSubhead({ children }: { children: ReactNode }) {
   return (
-    <div className="px-3.5 pt-2.5 pb-1.5 text-[10px] uppercase tracking-[0.08em] text-text-tertiary font-medium">
+    <div className="px-3 pt-2.5 pb-1.5 text-[10px] uppercase tracking-[0.08em] text-text-tertiary font-medium">
       {children}
     </div>
   );

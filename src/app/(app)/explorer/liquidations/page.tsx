@@ -20,18 +20,22 @@ export default function LiquidationsPage() {
       <div className="space-y-8">
         <LiquidationsPageHeader />
 
-        <section className="space-y-2.5">
-          <SectionHead title="Overview" subtitle="24h snapshot · volume, count, long/short split" />
-          <LiquidationsKpiStrip />
-        </section>
+        {/* Overview (2×3 KPI grid) beside the history chart — the pre-V4
+            arrangement, kept on the V4 primitives. */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:items-stretch">
+          <section className="flex flex-col gap-2.5 min-w-0">
+            <SectionHead title="Overview" subtitle="24h snapshot · volume, count, long/short split" />
+            <LiquidationsKpiStrip />
+          </section>
 
-        <section className="space-y-2.5">
-          <SectionHead
-            title="History"
-            subtitle="Volume or count per bucket · bars colored by the dominant side"
-          />
-          <LiquidationsChartSection />
-        </section>
+          <section className="flex flex-col gap-2.5 min-w-0 md:col-span-2">
+            <SectionHead
+              title="History"
+              subtitle="Volume or count per bucket · bars colored by the dominant side"
+            />
+            <LiquidationsChartSection />
+          </section>
+        </div>
 
         <section className="space-y-2.5">
           <SectionHead

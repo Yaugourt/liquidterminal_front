@@ -9,7 +9,7 @@ import {
   useBuildersTop,
   type BuildersTimeframe,
 } from "@/services/indexer/builders";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import {
   BuildersGlobalStatsStrip,
   BuildersOverviewChart,
@@ -17,7 +17,7 @@ import {
   BuildersTopTable,
   BuildersAllTable,
 } from "@/components/market/builders";
-import { PageHeader, TimeframeTabs, PageFaq, DataStatus, SourceBadge, combinedSourceStatus } from "@/components/common";
+import { PageHeader, TimeframeTabs, PageFaq, DataStatus, SourceBadge, combinedSourceStatus, TableStat } from "@/components/common";
 import { BUILDERS_FAQ } from "@/lib/page-faqs";
 
 const TIMEFRAMES: BuildersTimeframe[] = ["1h", "24h", "7d", "30d"];
@@ -31,6 +31,19 @@ export default function MarketBuildersPage() {
   const allTf = useBuildersStatsAllTimeframes();
   const top = useBuildersTop({ timeframe: tf, sort: "volume", limit: 100 });
   const list = useBuildersList();
+  const [view, setView] = useState<"top" | "all">("top");
+
+  const viewTabs = (
+    <PillTabs
+      variant="text"
+      tabs={[
+        { value: "top", label: "Top builders" },
+        { value: "all", label: `All builders (${list.builders.length > 0 ? list.builders.length : "…"})` },
+      ]}
+      activeTab={view}
+      onTabChange={(v) => setView(v as "top" | "all")}
+    />
+  );
 
   const currentStats = useMemo(() => {
     if (!allTf.stats) return null;
@@ -94,48 +107,33 @@ export default function MarketBuildersPage() {
         />
       </div>
 
-      {/* Table card — single shell containing sub-tabs + meta in the header */}
-      <Tabs defaultValue="top" className="w-full">
-        <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-          {/* Card header: tabs (left) + meta (right) */}
-          <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle">
-            <TabsList className="bg-surface-2 p-0.5 rounded-md h-auto">
-              <TabsTrigger
-                value="top"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
-              >
-                Top builders
-              </TabsTrigger>
-              <TabsTrigger
-                value="all"
-                className="data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:shadow-none text-text-tertiary px-2.5 py-1 rounded text-[11px] font-medium transition-colors"
-              >
-                All builders ({list.builders.length > 0 ? list.builders.length : "…"})
-              </TabsTrigger>
-            </TabsList>
-            <span className="text-[10px] text-text-tertiary tracking-wide">
-              Sorted by volume · window <span className="mono">{top.data?.timeframe ?? tf}</span>
-            </span>
-          </div>
-
-          <TabsContent value="top" className="mt-0">
-            <BuildersTopTable
-              rows={top.data?.builders ?? []}
-              isLoading={top.isLoading}
-              error={top.error}
-              onRetry={top.refetch}
-            />
-          </TabsContent>
-          <TabsContent value="all" className="mt-0">
-            <BuildersAllTable
-              builders={list.builders}
-              isLoading={list.isLoading}
-              error={list.error}
-              onRetry={list.refetch}
-            />
-          </TabsContent>
-        </div>
-      </Tabs>
+      {/* Directory — one table at a time; the view switcher lives in its toolbar */}
+      {view === "top" ? (
+        <BuildersTopTable
+          rows={top.data?.builders ?? []}
+          isLoading={top.isLoading}
+          error={top.error}
+          onRetry={top.refetch}
+          toolbar={
+            <>
+              {viewTabs}
+              <TableStat
+                className="ml-auto"
+                label="Sorted by volume · window"
+                value={top.data?.timeframe ?? tf}
+              />
+            </>
+          }
+        />
+      ) : (
+        <BuildersAllTable
+          builders={list.builders}
+          isLoading={list.isLoading}
+          error={list.error}
+          onRetry={list.refetch}
+          tabs={viewTabs}
+        />
+      )}
       <PageFaq items={BUILDERS_FAQ} />
     </motion.div>
   );

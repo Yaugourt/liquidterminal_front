@@ -71,7 +71,6 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
       <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_260px] gap-4 items-start">
         <OverviewModule
           title="Projects"
-          tagVariant="plain"
           tag={
             totalCount > 0
               ? `${trackedCount} of ${totalCount} have DefiLlama metrics`

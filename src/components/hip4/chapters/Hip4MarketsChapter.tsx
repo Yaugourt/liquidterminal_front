@@ -13,56 +13,46 @@ import { useHip4MarketsScan } from "@/hooks/use-hip4-markets-scan";
 import { formatHypeWei, type Hip4ScanDeploymentResult, type Hip4ContestRow } from "@/services/hip4/markets-scan";
 import { RefreshCw } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { TypedDataTable, type Column } from "@/components/common";
 
-function buildScanColumns(result: Hip4ScanDeploymentResult): Column<Hip4ContestRow>[] {
-  return [
-    {
-      key: "id",
-      header: "Contest",
-      type: "address",
-      accessor: (r) => <span className="font-mono">#{r.id}</span>,
-    },
-    {
-      key: "pool",
-      header: (
-        <span>
-          Pool —{" "}
-          <span className="font-semibold text-text-primary">{result.label}</span>{" "}
-          <span className="font-mono text-[11px] text-brand">{result.address}</span>
-          {result.error ? (
-            <span className="ml-2 text-danger">RPC: {result.error}</span>
-          ) : null}
-        </span>
+const SCAN_COLUMNS: Column<Hip4ContestRow>[] = [
+  {
+    key: "id",
+    header: "Contest",
+    accessor: (r) => `#${r.id}`,
+  },
+  {
+    key: "pool",
+    header: "Pool",
+    type: "fees",
+    accessor: (r) => formatHypeWei(r.pool),
+  },
+  {
+    key: "status",
+    header: "Status",
+    accessor: (r) =>
+      r.root ? (
+        <StatusBadge variant="gold">Merkle root published</StatusBadge>
+      ) : (
+        <StatusBadge variant="neutral">{r.status}</StatusBadge>
       ),
-      type: "fees",
-      accessor: (r) => (
-        <span className="font-semibold text-gold">{formatHypeWei(r.pool)}</span>
-      ),
-    },
-    {
-      key: "status",
-      header: "Status",
-      accessor: (r) =>
-        r.root ? (
-          <Badge className="bg-gold/15 text-gold">Merkle root published</Badge>
-        ) : (
-          <Badge variant="outline" className="text-[10px]">
-            {r.status}
-          </Badge>
-        ),
-    },
-  ];
-}
+  },
+];
 
 function ScanSection({ result }: { result: Hip4ScanDeploymentResult | null }) {
   if (!result) return null;
   const visible = result.rows.filter((r) => r.pool > 0n || r.root);
   return (
     <TypedDataTable<Hip4ContestRow>
+      title={result.label}
+      subtitle={result.address}
+      headerAction={
+        // Wrapping text, not a nowrap badge: RPC errors can be long.
+        result.error ? <span className="min-w-0 break-words text-[11px] text-danger">RPC: {result.error}</span> : undefined
+      }
       data={visible}
-      columns={buildScanColumns(result)}
+      columns={SCAN_COLUMNS}
       getRowKey={(r) => r.id}
       emptyMessage="No contests with pool > 0 or published root in scan window."
       emptyDescription=""
@@ -108,13 +98,15 @@ export function Hip4MarketsChapter() {
         subtitle="Illustrative asset indices and price grid below. Outcome coins trade as #‑prefixed spot names on the native CLOB — not read from the EVM contest contracts."
       />
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>Sample assets</Hip4SectionTitle>
-        <p className="mb-4 text-xs text-text-secondary">
-          Illustrative mids / indices — not live API data.
-        </p>
+      <section className="space-y-3">
+        <div>
+          <Hip4SectionTitle className="!mb-1">Sample assets</Hip4SectionTitle>
+          <p className="text-xs text-text-secondary">
+            Illustrative mids / indices — not live API data.
+          </p>
+        </div>
         <Hip4AssetTable />
-      </Hip4GlassPanel>
+      </section>
 
       <Hip4GlassPanel>
         <Hip4SectionTitle>Reference price grid</Hip4SectionTitle>
@@ -146,21 +138,21 @@ export function Hip4MarketsChapter() {
         {error ? <span className="text-xs text-danger">{error}</span> : null}
       </div>
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>On-chain contests (RPC)</Hip4SectionTitle>
+      <section className="space-y-3">
+        <Hip4SectionTitle className="!mb-0">On-chain contests (RPC)</Hip4SectionTitle>
         {loading && !v1 && !v2 ? (
           <div className="flex items-center gap-2 py-8 text-text-secondary">
             <InlineSpinner className="h-6 w-6 text-brand" />
             Scanning ContestCreated logs…
           </div>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-4">
             <ScanSection result={v1} />
             <ScanSection result={v2} />
           </div>
         )}
-        <p className="mt-4 text-[11px] text-text-secondary">{footnote}</p>
-      </Hip4GlassPanel>
+        <p className="text-[11px] text-text-secondary">{footnote}</p>
+      </section>
     </Hip4ChapterShell>
   );
 }

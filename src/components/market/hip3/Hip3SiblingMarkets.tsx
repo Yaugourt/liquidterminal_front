@@ -34,7 +34,6 @@ export function Hip3SiblingMarkets({
   return (
     <OverviewModule
       title={`Other markets on ${venueName}`}
-      tagVariant="plain"
       viewAllLabel="All markets"
       href={`/market/perpdex/${dexId}`}
     >
@@ -55,7 +54,6 @@ export function Hip3SiblingMarkets({
                 key="asset"
                 assetName={sibling.coin}
                 name={sibling.ticker}
-                tone="neutral"
               />,
               <span key="mark" className="mono text-text-secondary">
                 {formatPrice(sibling.markPx, format)}

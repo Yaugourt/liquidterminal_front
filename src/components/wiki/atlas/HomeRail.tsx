@@ -70,7 +70,7 @@ export function HomeRail({ readLists, readListsLoading }: HomeRailProps) {
         </Link>
       </OverviewModule>
 
-      <OverviewModule title="Most saved" tag="read-list saves" tagVariant="plain">
+      <OverviewModule title="Most saved" tag="read-list saves">
         {popular.isLoading && popular.resources.length === 0 ? (
           <div className="space-y-2 p-3.5">
             {Array.from({ length: 2 }).map((_, i) => (

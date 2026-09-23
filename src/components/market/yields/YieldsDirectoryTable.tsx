@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Search, ExternalLink, X } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, ModuleAsset, TableStat, TableSearch, type Column } from "@/components/common";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,27 +40,32 @@ const TYPE_LABEL: Record<YieldOpportunity["type"], string> = {
   vault: "Vault",
 };
 
-const RISK_TONE: Record<YieldRiskLevel, string> = {
-  low: "text-success border-success/30 bg-success/10",
-  medium: "text-gold border-gold/30 bg-gold/10",
-  high: "text-danger border-danger/30 bg-danger/10",
+const RISK_VARIANT: Record<YieldRiskLevel, "success" | "gold" | "error"> = {
+  low: "success",
+  medium: "gold",
+  high: "error",
+};
+
+const RISK_LABEL: Record<YieldRiskLevel, string> = {
+  low: "Low",
+  medium: "Medium",
+  high: "High",
 };
 
 const initials = (name: string) => name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2).toUpperCase() || "?";
 
 const pct = (v: number) => `${v.toFixed(2)}%`;
 
+/** APY figure; the column types it (mono, tone). Adds the base/rewards split on hover. */
 function ApyCell({ y }: { y: YieldOpportunity }) {
   const hasSplit = y.apy.reward > 0 && y.apy.base !== y.apy.total;
-  const tone = y.type === "borrow" ? "text-danger" : y.apy.total > 0 ? "text-success" : "text-text-tertiary";
-  const value = <span className={`mono font-semibold ${tone}`}>{pct(y.apy.total)}</span>;
-  if (!hasSplit) return value;
+  if (!hasSplit) return <>{pct(y.apy.total)}</>;
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="inline-flex items-center gap-1 cursor-help border-b border-dotted border-border-default">
-            {value}
+          <span className="cursor-help border-b border-dotted border-border-default">
+            {pct(y.apy.total)}
           </span>
         </TooltipTrigger>
         <TooltipContent>
@@ -79,58 +85,55 @@ function buildColumns(format: NumberFormatType): Column<YieldOpportunity>[] {
       key: "protocol",
       header: "Protocol",
       accessor: (y) => (
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span className="w-6 h-6 shrink-0 rounded-md grid place-items-center text-[9px] font-semibold bg-surface-2 text-text-secondary">
-            {initials(y.protocol.name)}
-          </span>
-          <div className="min-w-0">
-            {y.protocol.website ? (
+        <ModuleAsset
+          logo={initials(y.protocol.name)}
+          name={
+            y.protocol.website ? (
               <a
                 href={y.protocol.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 text-sm font-medium text-text-primary hover:text-brand transition-colors"
+                className="inline-flex items-center gap-1 hover:text-brand transition-colors"
               >
                 {y.protocol.name}
                 <ExternalLink size={11} className="text-text-tertiary" />
               </a>
             ) : (
-              <div className="text-sm font-medium text-text-primary">{y.protocol.name}</div>
-            )}
-            <div className="text-[11px] text-text-tertiary">{TYPE_LABEL[y.type] ?? y.type}</div>
-          </div>
-        </div>
+              y.protocol.name
+            )
+          }
+          sub={TYPE_LABEL[y.type] ?? y.type}
+        />
       ),
     },
     {
       key: "name",
       header: "Pool / tokens",
+      className: "max-w-[280px]",
       sortable: true,
       accessor: (y) => (
-        <div className="min-w-0">
-          <div className="text-sm text-text-primary truncate max-w-[260px]">{y.poolName}</div>
-          {y.tokens.length > 0 && (
-            <div className="mono text-[11px] text-text-tertiary truncate">{y.tokens.join(" / ")}</div>
-          )}
-        </div>
+        <ModuleAsset
+          name={y.poolName}
+          sub={y.tokens.length > 0 ? y.tokens.join(" / ") : undefined}
+        />
       ),
     },
     {
       key: "category",
       header: "Category",
       accessor: (y) => (
-        <span className="inline-flex items-center rounded border border-border-subtle bg-surface-2 px-1.5 py-0.5 text-[10px] font-semibold text-text-secondary">
-          {CATEGORY_LABEL[y.category] ?? y.category}
-        </span>
+        <StatusBadge variant="neutral">{CATEGORY_LABEL[y.category] ?? y.category}</StatusBadge>
       ),
     },
     {
       key: "apy",
       header: "APY",
+      // JSX cell (tooltip split) → untyped column styled like a numeric one.
       align: "right",
-      headerAlign: "right",
+      className: "mono whitespace-nowrap",
       sortable: true,
+      tone: (y) => (y.type === "borrow" ? "danger" : y.apy.total > 0 ? "success" : "muted"),
       accessor: (y) => <ApyCell y={y} />,
     },
     {
@@ -158,14 +161,14 @@ function buildColumns(format: NumberFormatType): Column<YieldOpportunity>[] {
       align: "right",
       headerAlign: "right",
       accessor: (y) => (
-        <span
+        <StatusBadge
+          variant={RISK_VARIANT[y.risk.level]}
           title={[y.risk.impermanentLoss && "Impermanent loss", y.risk.liquidation && "Liquidation risk"]
             .filter(Boolean)
             .join(" · ")}
-          className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-semibold capitalize ${RISK_TONE[y.risk.level]}`}
         >
-          {y.risk.level}
-        </span>
+          {RISK_LABEL[y.risk.level] ?? y.risk.level}
+        </StatusBadge>
       ),
     },
   ];
@@ -249,28 +252,17 @@ export function YieldsDirectoryTable({ directory }: YieldsDirectoryTableProps) {
   );
 
   const toolbar = (
-    <div className="space-y-2.5">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[160px] max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
-          <Input
-            placeholder="Search pool or token…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-8 text-sm bg-transparent border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50"
-          />
-        </div>
-        <PillTabs
-          variant="text"
-          tabs={categoryTabs}
-          activeTab={query.category ?? "all"}
-          onTabChange={(v) => updateQuery({ category: v as YieldCategory | "all" })}
-        />
-        <span className="text-text-tertiary text-xs ml-auto shrink-0">
-          {fmt(total)} opportunit{total !== 1 ? "ies" : "y"}
-        </span>
-      </div>
-      <div className="flex flex-wrap items-center gap-2">
+    <>
+      <TableSearch value={search} onChange={setSearch} placeholder="Search pool or token…" />
+      <PillTabs
+        variant="text"
+        className="flex-wrap gap-y-1"
+        tabs={categoryTabs}
+        activeTab={query.category ?? "all"}
+        onTabChange={(v) => updateQuery({ category: v as YieldCategory | "all" })}
+      />
+      <TableStat className="ml-auto" label="Opportunities" value={fmt(total)} />
+      <div className="flex w-full flex-wrap items-center gap-2">
         <Select value={query.protocol ?? "all"} onValueChange={(v) => updateQuery({ protocol: v })}>
           <SelectTrigger className="h-8 w-[160px] text-xs">
             <SelectValue placeholder="All protocols" />
@@ -304,37 +296,35 @@ export function YieldsDirectoryTable({ directory }: YieldsDirectoryTableProps) {
           </Button>
         )}
       </div>
-    </div>
+    </>
   );
 
   return (
-    <div className="min-w-0 bg-surface border border-border-subtle rounded-lg">
-      <TypedDataTable<YieldOpportunity>
-        data={items}
-        columns={columns}
-        getRowKey={(y) => y.id}
-        isLoading={isLoading && items.length === 0}
-        error={error}
-        onErrorRetry={refetch}
-        errorTitle="Failed to load yields"
-        emptyMessage="No yield opportunities"
-        emptyDescription="Try loosening the filters."
-        headerFill={false}
-        toolbar={toolbar}
-        onSortChange={(field, direction) =>
-          updateQuery({ sortBy: field as YieldSortField, sortOrder: direction })
-        }
-        sortField={query.sortBy}
-        sortDirection={query.sortOrder}
-        paginationVariant="full"
-        total={total}
-        page={query.page - 1}
-        rowsPerPage={query.pageSize}
-        rowsPerPageOptions={[20, 50, 100]}
-        onPageChange={(p) => updateQuery({ page: p + 1 })}
-        onRowsPerPageChange={(rows) => updateQuery({ pageSize: rows, page: 1 })}
-        paginationDisabled={isLoading}
-      />
-    </div>
+    <TypedDataTable<YieldOpportunity>
+      className="min-w-0"
+      data={items}
+      columns={columns}
+      getRowKey={(y) => y.id}
+      isLoading={isLoading && items.length === 0}
+      error={error}
+      onErrorRetry={refetch}
+      errorTitle="Failed to load yields"
+      emptyMessage="No yield opportunities"
+      emptyDescription="Try loosening the filters."
+      toolbar={toolbar}
+      onSortChange={(field, direction) =>
+        updateQuery({ sortBy: field as YieldSortField, sortOrder: direction })
+      }
+      sortField={query.sortBy}
+      sortDirection={query.sortOrder}
+      paginationVariant="full"
+      total={total}
+      page={query.page - 1}
+      rowsPerPage={query.pageSize}
+      rowsPerPageOptions={[20, 50, 100]}
+      onPageChange={(p) => updateQuery({ page: p + 1 })}
+      onRowsPerPageChange={(rows) => updateQuery({ pageSize: rows, page: 1 })}
+      paginationDisabled={isLoading}
+    />
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import { CopyButton } from "@/components/ui/copy-button";
 import { TypedDataTable, type Column } from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { BlockTransactionListProps } from "@/components/types/explorer.types";
 import { useDateFormat } from "@/store/date-format.store";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -10,11 +10,11 @@ import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { BlockTransaction } from "@/services/explorer";
 
-export function BlockTransactionList({
-  transactions,
-  onTransactionClick,
-  onAddressClick,
-}: BlockTransactionListProps) {
+/**
+ * Transactions of one block. Hash and user cells are `AddressDisplay` links
+ * (`/explorer/transaction/…`, `/explorer/address/…`).
+ */
+export function BlockTransactionList({ transactions }: BlockTransactionListProps) {
   const { format: dateFormat } = useDateFormat();
   const { format: numberFormat } = useNumberFormat();
 
@@ -23,75 +23,50 @@ export function BlockTransactionList({
       key: "hash",
       header: "Hash",
       accessor: (tx) => (
-        <div className="flex items-center gap-2">
-          <span
-            className="text-brand text-sm cursor-pointer hover:text-brand/80 transition-colors"
-            onClick={() => onTransactionClick(tx.hash)}
-          >
-            {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
-          </span>
-          <CopyButton text={tx.hash} />
-        </div>
+        <AddressDisplay
+          address={tx.hash}
+          href={`/explorer/transaction/${tx.hash}`}
+          copyMessage="Hash copied to clipboard"
+        />
       ),
     },
     {
       key: "action",
       header: "Action",
-      accessor: (tx) => (
-        <span className="inline-block px-2 py-1 rounded-md text-xs font-bold bg-surface-2 text-text-secondary">
-          {tx.action.type}
-        </span>
-      ),
+      accessor: (tx) => <StatusBadge variant="neutral">{tx.action.type}</StatusBadge>,
     },
     {
       key: "block",
       header: "Block",
       type: "numeric",
-      accessor: (tx) => (
-        <span className="text-text-primary text-sm">
-          {formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 })}
-        </span>
-      ),
+      accessor: (tx) => formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 }),
     },
     {
       key: "time",
       header: "Time",
-      accessor: (tx) => (
-        <span className="text-text-primary text-sm">
-          {formatDateTime(tx.time, dateFormat)}
-        </span>
-      ),
+      type: "time",
+      accessor: (tx) => formatDateTime(tx.time, dateFormat),
     },
     {
       key: "user",
       header: "User",
-      accessor: (tx) => (
-        <div className="flex items-center gap-2">
-          <span
-            className="text-brand text-sm cursor-pointer hover:text-brand/80 transition-colors"
-            onClick={() => onAddressClick(tx.user)}
-          >
-            {tx.user.slice(0, 12)}...{tx.user.slice(-8)}
-          </span>
-          <CopyButton text={tx.user} />
-        </div>
-      ),
+      accessor: (tx) => <AddressDisplay address={tx.user} />,
     },
   ];
 
   return (
-    <Card className="p-4 flex flex-col">
-      <TypedDataTable<BlockTransaction>
-        data={transactions}
-        columns={columns}
-        getRowKey={(tx) => tx.hash}
-        emptyMessage="Aucune transaction dans ce bloc"
-        emptyDescription="Come later"
-        paginate
-        itemsPerPage={15}
-        rowsPerPageOptions={[10, 15, 25, 50]}
-        paginationVariant={transactions.length > 15 ? "full" : "none"}
-      />
-    </Card>
+    <TypedDataTable<BlockTransaction>
+      title="Transactions"
+      tag={transactions.length > 0 ? `${transactions.length} txs` : undefined}
+      data={transactions}
+      columns={columns}
+      getRowKey={(tx) => tx.hash}
+      emptyMessage="No transactions in this block"
+      emptyDescription=""
+      paginate
+      itemsPerPage={15}
+      rowsPerPageOptions={[10, 15, 25, 50]}
+      paginationVariant={transactions.length > 15 ? "full" : "none"}
+    />
   );
 }

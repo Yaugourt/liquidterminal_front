@@ -18,26 +18,10 @@ interface EventParam {
 }
 
 const PARAM_COLUMNS: Column<EventParam>[] = [
-  {
-    key: "param",
-    header: "Parameter",
-    accessor: (r) => <span className="font-mono text-brand">{r.param}</span>,
-  },
-  {
-    key: "type",
-    header: "Type",
-    accessor: (r) => <span className="font-mono text-xs text-purple-300">{r.type}</span>,
-  },
-  {
-    key: "indexed",
-    header: "Indexed",
-    accessor: (r) => <span className="text-xs">{r.indexed}</span>,
-  },
-  {
-    key: "pos",
-    header: "Position",
-    accessor: (r) => <span className="text-xs text-text-secondary">{r.pos}</span>,
-  },
+  { key: "param", header: "Parameter", type: "code", accessor: "param" },
+  { key: "type", header: "Type", type: "code", accessor: "type" },
+  { key: "indexed", header: "Indexed", accessor: "indexed" },
+  { key: "pos", header: "Position", accessor: "pos" },
 ];
 
 function ParamTable({ rows }: { rows: EventParam[] }) {
@@ -66,16 +50,16 @@ export function Hip4EventsChapter() {
         </p>
       </Hip4GlassPanel>
 
-      <Hip4GlassPanel>
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
           <Hip4SectionTitle className="!mb-0">V1 — DepositReceived</Hip4SectionTitle>
           <Badge className="bg-success/15 text-success">topic0 on-chain</Badge>
         </div>
-        <p className="mb-2 font-mono text-[11px] text-brand">
+        <p className="font-mono text-[11px] text-brand">
           DepositReceived(uint256 indexed contestId, uint256 indexed sideId, address depositor, uint256
           amount)
         </p>
-        <p className="mb-3 font-mono text-[11px] text-text-secondary break-all">
+        <p className="font-mono text-[11px] text-text-secondary break-all">
           topic0: 0xb3e6929bbc654f9c87cd601fc5a62d03406b85acbbb509c57e54ecf298eb8c41
         </p>
         <ParamTable
@@ -86,7 +70,7 @@ export function Hip4EventsChapter() {
             { param: "amount", type: "uint256", indexed: "no", pos: "data[32:64]" },
           ]}
         />
-      </Hip4GlassPanel>
+      </section>
 
       <Hip4GlassPanel>
         <div className="mb-3 flex flex-wrap items-center gap-2">

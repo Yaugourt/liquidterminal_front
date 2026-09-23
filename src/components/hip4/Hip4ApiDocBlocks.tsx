@@ -12,54 +12,22 @@ import type {
 } from "@/lib/hip4/api-info-spec";
 import { TypedDataTable, type Column } from "@/components/common";
 
-function RequiredStar() {
-  return <span className="ml-0.5 text-gold">*</span>;
-}
+/** Field name, with a trailing `*` when the field is required. */
+const fieldName = (name: string, required?: boolean) => (required ? `${name} *` : name);
 
 const HEADER_COLUMNS: Column<Hip4ApiHeaderRow>[] = [
-  {
-    key: "name",
-    header: "Name",
-    accessor: (h) => (
-      <span className="font-mono text-[11px] text-table-cell">
-        {h.name}
-        {h.required ? <RequiredStar /> : null}
-      </span>
-    ),
-  },
-  {
-    key: "value",
-    header: "Value",
-    accessor: (h) => (
-      <span className="text-table-cell text-text-secondary">{h.value}</span>
-    ),
-  },
+  { key: "name", header: "Name", type: "code", accessor: (h) => fieldName(h.name, h.required) },
+  { key: "value", header: "Value", accessor: "value" },
 ];
 
 const BODY_COLUMNS: Column<Hip4ApiBodyFieldRow>[] = [
-  {
-    key: "name",
-    header: "Name",
-    accessor: (f) => (
-      <span className="font-mono text-[11px] text-table-cell">
-        {f.name}
-        {f.required ? <RequiredStar /> : null}
-      </span>
-    ),
-  },
-  {
-    key: "type",
-    header: "Type",
-    accessor: (f) => (
-      <span className="text-table-cell text-text-secondary">{f.type}</span>
-    ),
-  },
+  { key: "name", header: "Name", type: "code", accessor: (f) => fieldName(f.name, f.required) },
+  { key: "type", header: "Type", type: "code", accessor: "type" },
   {
     key: "description",
     header: "Description",
-    accessor: (f) => (
-      <span className="text-table-cell text-text-secondary">{f.description}</span>
-    ),
+    className: "min-w-[200px]",
+    accessor: "description",
   },
 ];
 
@@ -81,21 +49,18 @@ export function Hip4ApiRestEndpointDoc({ spec }: { spec: Hip4RestEndpointSpec })
         <p className="mt-3 text-xs leading-relaxed text-text-secondary">{spec.intro}</p>
       ) : null}
 
-      <h3 className="mt-6 text-xs font-bold uppercase tracking-wider text-text-secondary">
-        Headers
-      </h3>
-      <div className="mt-2">
+      <div className="mt-6 space-y-4">
         <TypedDataTable<Hip4ApiHeaderRow>
+          title="Headers"
+          subtitle="* required"
           data={spec.headers}
           columns={HEADER_COLUMNS}
           getRowKey={(h) => h.name}
           density="compact"
         />
-      </div>
-
-      <h3 className="mt-6 text-xs font-bold uppercase tracking-wider text-text-secondary">Body</h3>
-      <div className="mt-2">
         <TypedDataTable<Hip4ApiBodyFieldRow>
+          title="Body"
+          subtitle="* required"
           data={spec.bodyFields}
           columns={BODY_COLUMNS}
           getRowKey={(f) => f.name}

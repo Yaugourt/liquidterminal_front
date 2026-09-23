@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
-import { cn } from "@/lib/utils";
 
 /**
  * Hip4CompareTable — static comparison table used in HIP-4 educational
@@ -11,7 +10,8 @@ import { cn } from "@/lib/utils";
  *
  * Built on top of the design-system primitive `TypedDataTable` to stay V4
  * compliant — column definitions are synthesised from the `headers` array
- * and each cell is rendered as-is via a custom accessor.
+ * and each cell is rendered as-is via a custom accessor. Cells are plain text
+ * (or bare inline markup) — the table owns the styling.
  */
 interface CompareRow {
   idx: number;
@@ -42,7 +42,7 @@ export function Hip4CompareTable({
       columns={columns}
       density="compact"
       getRowKey={(row) => row.idx}
-      className={cn("scrollbar-brand", className)}
+      className={className}
       emptyMessage="—"
       emptyDescription=""
     />

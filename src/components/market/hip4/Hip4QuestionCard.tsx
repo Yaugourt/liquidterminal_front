@@ -125,7 +125,9 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
 
       <div className="flex flex-col gap-2.5 mt-1 flex-1">
         {binary ? (
-          question.outcomes.map((o) => {
+          // Keyed with the index too: HypeDexer lists both sides of an ungrouped
+          // binary under one outcome_id (e.g. [141 Yes, 141 No]).
+          question.outcomes.map((o, i) => {
             const isYes = o.display_name === "Yes";
             const isNo = o.display_name === "No";
             const pct = o.mid_price != null && Number.isFinite(o.mid_price)
@@ -134,7 +136,7 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
             const variant: "success" | "danger" | "brand" = isYes ? "success" : isNo ? "danger" : "brand";
             return (
               <ProbRow
-                key={o.outcome_id}
+                key={`${o.outcome_id}-${i}`}
                 label={o.display_name}
                 pct={pct}
                 variant={variant}
@@ -144,7 +146,7 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
           })
         ) : (
           question.outcomes.map((o, i) => (
-            <Hip4OutcomeBar key={o.outcome_id} outcome={o} colorIndex={i} />
+            <Hip4OutcomeBar key={`${o.outcome_id}-${i}`} outcome={o} colorIndex={i} />
           ))
         )}
       </div>

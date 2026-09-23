@@ -3,7 +3,16 @@
 import { Liquidation } from "@/services/explorer/liquidation";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { TypedDataTable, TokenAvatar, DataStatus, type Column } from "@/components/common";
+import {
+  TypedDataTable,
+  ModuleAsset,
+  CellValue,
+  SideBadge,
+  toTradeSide,
+  TableStat,
+  DataStatus,
+  type Column,
+} from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
@@ -27,74 +36,55 @@ export function LiquidationsSection() {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
 
+  const usd = (n: number, digits: number) =>
+    `$${formatNumber(n, format, { maximumFractionDigits: digits })}`;
+
   const columns: Column<Liquidation>[] = [
     {
       key: "time",
       header: "Time",
-      accessor: (liq) => (
-        <span className="text-text-secondary text-sm">
-          {formatDateTime(liq.time, dateFormat)}
-        </span>
-      ),
+      type: "time",
+      accessor: (liq) => formatDateTime(liq.time, dateFormat),
     },
     {
       key: "coin",
       header: "Coin",
-      accessor: (liq) => (
-        <span className="inline-flex items-center gap-2">
-          <TokenAvatar assetName={liq.coin} size="md" />
-          <span className="text-brand font-medium">{liq.coin}</span>
-        </span>
-      ),
+      accessor: (liq) => <ModuleAsset assetName={liq.coin} name={liq.coin} />,
     },
     {
       key: "side",
       header: "Side",
-      accessor: (liq) => (
-        <StatusBadge variant={liq.liq_dir === "Long" ? "success" : "error"}>
-          {liq.liq_dir}
-        </StatusBadge>
-      ),
+      accessor: (liq) => {
+        const side = toTradeSide(liq.liq_dir);
+        return side ? <SideBadge side={side} /> : "—";
+      },
     },
     {
       key: "notional",
       header: "Notional",
       type: "numeric",
-      accessor: (liq) => (
-        <span className="font-medium">
-          ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
-        </span>
-      ),
+      accessor: (liq) => usd(liq.notional_total, 2),
     },
     {
       key: "size",
       header: "Size",
       type: "numeric",
       className: "max-lg:hidden",
-      accessor: (liq) => (
-        <span className="font-medium">
-          {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
-        </span>
-      ),
+      accessor: (liq) => formatNumber(liq.size_total, format, { maximumFractionDigits: 4 }),
     },
     {
       key: "fee",
       header: "Fee",
       type: "numeric",
+      tone: () => "muted",
       className: "max-md:hidden",
-      accessor: (liq) => (
-        <span className="text-text-tertiary">
-          ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
-        </span>
-      ),
+      accessor: (liq) => usd(liq.fee_total_liquidated, 4),
     },
     {
       key: "method",
       header: "Method",
       className: "max-lg:hidden",
-      accessor: (liq) => (
-        <span className="text-text-secondary">{liq.method}</span>
-      ),
+      accessor: (liq) => liq.method,
     },
     {
       // Fill VWAP vs mark: how far the forced fill printed from the mark price
@@ -106,18 +96,10 @@ export function LiquidationsSection() {
       // fill_px_vwap is nullable in the payload (some fills have no VWAP yet);
       // guard it so the cell never prints "$NaN".
       accessor: (liq) => (
-        <div className="flex flex-col items-end leading-tight">
-          <span className="mono text-text-primary">
-            {liq.mark_px != null
-              ? `$${formatNumber(liq.mark_px, format, { maximumFractionDigits: 4 })}`
-              : "—"}
-          </span>
-          <span className="mono text-[10px] text-text-tertiary">
-            {liq.fill_px_vwap != null
-              ? `vwap $${formatNumber(liq.fill_px_vwap, format, { maximumFractionDigits: 4 })}`
-              : "vwap —"}
-          </span>
-        </div>
+        <CellValue
+          value={liq.mark_px != null ? usd(liq.mark_px, 4) : "—"}
+          sub={liq.fill_px_vwap != null ? `vwap ${usd(liq.fill_px_vwap, 4)}` : "vwap —"}
+        />
       ),
     },
     {
@@ -128,16 +110,14 @@ export function LiquidationsSection() {
       className: "max-lg:hidden",
       accessor: (liq) =>
         liq.liquidators && liq.liquidators.length > 0 ? (
-          <span className="inline-flex items-center gap-1.5">
-            {liq.liquidator_count > 1 && (
-              <span className="mono text-[10px] text-text-tertiary px-1 rounded bg-surface-2 border border-border-subtle">
-                {liq.liquidator_count}
-              </span>
-            )}
+          <div className="inline-flex items-center gap-1.5">
             <AddressDisplay address={liq.liquidators[0]} />
-          </span>
+            {liq.liquidator_count > 1 && (
+              <StatusBadge variant="neutral">+{liq.liquidator_count - 1}</StatusBadge>
+            )}
+          </div>
         ) : (
-          <span className="text-text-tertiary">—</span>
+          "—"
         ),
     },
     {
@@ -149,7 +129,11 @@ export function LiquidationsSection() {
       key: "hash",
       header: "Hash",
       accessor: (liq) => (
-        <AddressDisplay address={liq.hash} showExternalLink showCopy />
+        <AddressDisplay
+          address={liq.hash}
+          href={`/explorer/transaction/${liq.hash}`}
+          copyMessage="Hash copied to clipboard"
+        />
       ),
     },
   ];
@@ -157,44 +141,42 @@ export function LiquidationsSection() {
   // V4 toolbar: min-notional filter as PillTabs, freshness cue + manual
   // refresh through <DataStatus> (WS feed fills the table, REST seeds it).
   const toolbar = (
-    <div className="flex flex-wrap items-center gap-3">
+    <>
       <PillTabs
+        variant="text"
         tabs={MIN_AMOUNT_TABS}
         activeTab={String(minAmount)}
         onTabChange={(v) => setMinAmount(Number(v) as MinAmountPreset)}
       />
-      <span className="text-text-tertiary text-xs shrink-0">
-        {allLiquidations.length} shown
-      </span>
+      <TableStat label="Shown" value={allLiquidations.length} />
       <DataStatus
         variant="polled"
         className="ml-auto"
         updatedAt={lastUpdated}
         onRefresh={refreshData}
       />
-    </div>
+    </>
   );
 
   return (
-    <div className="min-w-0 bg-surface border border-border-subtle rounded-lg">
-      <TypedDataTable<Liquidation>
-        data={allLiquidations}
-        columns={columns}
-        getRowKey={(liq, idx) => `${liq.tid}-${liq.time_ms}-${idx}`}
-        isLoading={isLoading}
-        error={error}
-        errorTitle="Failed to load liquidations"
-        emptyMessage={
-          minAmount > 0
-            ? `No liquidations above $${(minAmount / 1000).toFixed(0)}K`
-            : "No liquidations available"
-        }
-        paginate
-        itemsPerPage={25}
-        rowsPerPageOptions={[10, 25, 50, 100]}
-        paginationVariant="full"
-        toolbar={toolbar}
-      />
-    </div>
+    <TypedDataTable<Liquidation>
+      className="min-w-0"
+      data={allLiquidations}
+      columns={columns}
+      getRowKey={(liq, idx) => `${liq.tid}-${liq.time_ms}-${idx}`}
+      isLoading={isLoading}
+      error={error}
+      errorTitle="Failed to load liquidations"
+      emptyMessage={
+        minAmount > 0
+          ? `No liquidations above $${(minAmount / 1000).toFixed(0)}K`
+          : "No liquidations available"
+      }
+      paginate
+      itemsPerPage={25}
+      rowsPerPageOptions={[10, 25, 50, 100]}
+      paginationVariant="full"
+      toolbar={toolbar}
+    />
   );
 }

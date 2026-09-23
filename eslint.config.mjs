@@ -62,6 +62,21 @@ const eslintConfig = [
             'Utilise <Checkbox> de @/components/ui/checkbox au lieu de <input type="checkbox">.',
         },
         {
+          // Table cells are styled by the table (Column.type / Column.tone) or by
+          // a primitive (ModuleAsset, StatusBadge, SideBadge, AddressDisplay…).
+          // A column accessor never sets its own size, mono font or raw colour.
+          selector:
+            "Property[key.name='accessor'] JSXAttribute[name.name='className'] Literal[value=/(^|\\s)(text-(xs|sm|base|lg)|text-\\[[0-9.]+px\\]|font-mono|text-white|bg-white\\/|(text|bg|border)-(zinc|gray|slate|emerald|rose|green|red)-[0-9])/]",
+          message:
+            "Cellule de table stylée à la main. Utilise Column.type (numeric|change|fees|time|rank|address) + Column.tone, ou une primitive (ModuleAsset, CellValue, StatusBadge, SideBadge, AddressDisplay). Voir DESIGN_SYSTEM §5.",
+        },
+        {
+          selector:
+            "Property[key.name='accessor'] JSXAttribute[name.name='className'] TemplateElement[value.raw=/(^|\\s)(text-(xs|sm|base|lg)|text-\\[[0-9.]+px\\]|font-mono|text-white|bg-white\\/|(text|bg|border)-(zinc|gray|slate|emerald|rose|green|red)-[0-9])/]",
+          message:
+            "Cellule de table stylée à la main. Utilise Column.type (numeric|change|fees|time|rank|address) + Column.tone, ou une primitive (ModuleAsset, CellValue, StatusBadge, SideBadge, AddressDisplay). Voir DESIGN_SYSTEM §5.",
+        },
+        {
           // Match grid-cols-[…] with 3+ track segments AND at least one px-fixed
           // width — the typical signature of a hand-rolled table layout.
           // Layouts like grid-cols-[1fr_2fr] or grid-cols-[280px_1fr] are 2-col

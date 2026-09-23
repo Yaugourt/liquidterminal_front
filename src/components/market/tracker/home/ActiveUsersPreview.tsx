@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Users } from "lucide-react";
 import { useActiveUsers, type ActiveUser } from "@/services/market/activeusers";
-import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import {
   Select,
   SelectContent,
@@ -13,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TypedDataTable, type Column } from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 export function ActiveUsersPreview() {
@@ -26,70 +25,60 @@ export function ActiveUsersPreview() {
   const columns: Column<ActiveUser>[] = [
     {
       key: "rank",
-      header: "Rank",
-      accessor: (_u, _i, absoluteIndex) => (
-        <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
-      ),
+      header: "#",
+      type: "rank",
+      accessor: (_u, _i, absoluteIndex) => absoluteIndex + 1,
     },
     {
       key: "trader",
       header: "Trader",
       accessor: (u) => (
-        <Link
-          href={`/market/tracker/wallet/${u.user}`}
-          className="text-sm text-brand hover:underline"
-        >
-          {u.user.slice(0, 6)}...{u.user.slice(-4)}
-        </Link>
+        <AddressDisplay address={u.user} href={`/market/tracker/wallet/${u.user}`} showCopy={false} />
       ),
     },
     {
       key: "fill_count",
       header: "Fills",
       sortable: true,
-      align: "right",
       getSortValue: (u) => u.fill_count,
       type: "numeric",
-      accessor: (u) => formatLargeNumber(u.fill_count),
+      accessor: (u) => compactCount(u.fill_count),
     },
     {
       key: "total_volume",
       header: "Volume",
       sortable: true,
-      align: "right",
       getSortValue: (u) => u.total_volume,
       type: "numeric",
-      accessor: (u) => `$${formatLargeNumber(u.total_volume)}`,
+      accessor: (u) => compactUsd(u.total_volume),
     },
     {
       key: "unique_coins",
       header: "Coins",
       sortable: true,
-      align: "right",
       getSortValue: (u) => u.unique_coins,
       type: "numeric",
-      accessor: (u) => u.unique_coins,
+      className: "max-sm:hidden",
+      accessor: (u) => compactCount(u.unique_coins),
     },
     {
       key: "last_activity",
       header: "Last Active",
       sortable: true,
+      type: "time",
       align: "right",
       getSortValue: (u) => new Date(u.last_activity).getTime(),
-      accessor: (u) => (
-        <span className="mono text-text-tertiary">{timeAgo(u.last_activity)}</span>
-      ),
+      accessor: (u) => timeAgo(u.last_activity),
     },
   ];
 
   return (
     <TypedDataTable<ActiveUser>
       title="Active Users"
-      icon={<Users className="h-5 w-5 text-brand" />}
-      subtitle={`${metadata?.totalCount || users.length} users`}
+      tag={`${compactCount(metadata?.totalCount || users.length)} users`}
       headerAction={
         <Select value={hours.toString()} onValueChange={(val) => setHours(Number(val))}>
-          <SelectTrigger className="w-[120px]">
+          <SelectTrigger className="h-7 w-[110px] text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -111,6 +100,7 @@ export function ActiveUsersPreview() {
       emptyMessage="No active users data available"
       paginate
       itemsPerPage={10}
+      density="compact"
     />
   );
 }

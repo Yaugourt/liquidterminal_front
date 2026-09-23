@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { TypedDataTable, type Column, SearchBar } from "@/components/common";
+import { TypedDataTable, TableSearch, type Column } from "@/components/common";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { builderBrand } from "@/lib/builderBrands";
 import type { BuilderListRow } from "@/services/indexer/builders/types";
 import { BuilderIdentity, resolveBuilderLabel } from "./BuilderIdentity";
@@ -13,6 +14,8 @@ interface BuildersAllTableProps {
   error: Error | null;
   /** Refetch handler surfaced as a Retry button in the error state. */
   onRetry?: () => void;
+  /** View switcher owned by the page, rendered left of the search in the toolbar. */
+  tabs?: ReactNode;
 }
 
 const PAGE_SIZE = 25;
@@ -32,29 +35,23 @@ const COLUMNS: Column<BuilderListRow>[] = [
     sortable: true,
     className: "hidden md:table-cell",
     getSortValue: (row) => (row.address ?? "").toLowerCase(),
-    accessor: (row) => <span className="text-text-secondary">{row.address}</span>,
+    accessor: "address",
   },
   {
     key: "referrerStage",
     header: "Stage",
-    headerAlign: "right",
+    align: "right",
     sortable: true,
     getSortValue: (row) => (row.referrerStage ?? "").toLowerCase(),
-    accessor: (row) => (
-      <div className="text-right">
-        <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-surface-3 text-text-tertiary">
-          {row.referrerStage || "—"}
-        </span>
-      </div>
-    ),
+    accessor: (row) =>
+      row.referrerStage ? <StatusBadge variant="neutral">{row.referrerStage}</StatusBadge> : "—",
   },
 ];
 
-export function BuildersAllTable({ builders, isLoading, error, onRetry }: BuildersAllTableProps) {
+export function BuildersAllTable({ builders, isLoading, error, onRetry, tabs }: BuildersAllTableProps) {
   const router = useRouter();
   const [q, setQ] = useState("");
 
-  const handleSearch = useCallback((query: string) => setQ(query), []);
 
   // Search filter — sort + pagination are owned by TypedDataTable.
   const filtered = useMemo(() => {
@@ -91,11 +88,10 @@ export function BuildersAllTable({ builders, isLoading, error, onRetry }: Builde
       paginationVariant={filtered.length > PAGE_SIZE ? "full" : "none"}
       rowsPerPageOptions={[25]}
       toolbar={
-        <SearchBar
-          onSearch={handleSearch}
-          placeholder="Search by name or address…"
-          className="max-w-md"
-        />
+        <>
+          {tabs}
+          <TableSearch value={q} onChange={setQ} placeholder="Search by name or address…" className="ml-auto" />
+        </>
       }
     />
   );

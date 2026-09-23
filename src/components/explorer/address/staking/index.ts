@@ -1,2 +1,1 @@
-export { StakingTabButtons } from './StakingTabButtons';
-export { StakingTableContent } from './StakingTableContent'; 
+export { StakingTableContent } from './StakingTableContent';

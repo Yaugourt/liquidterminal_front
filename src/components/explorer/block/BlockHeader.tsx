@@ -49,7 +49,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
       </div>
 
       <Card className="p-5 hover:border-border-default transition-all duration-300 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-[60%_40%] gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6">
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-2 mb-2">

@@ -1,10 +1,9 @@
 "use client";
 
 import { useCallback, useMemo, useState, type ReactNode } from "react";
-import { Layers } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { DataStatus, SourceBadge, type SourceBadgeStatus } from "@/components/common";
+import { DataStatus, SourceBadge, TableStat, type SourceBadgeStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useDefiPositions, useEvmComposition } from "@/services/market/tracker/hyperfolio";
 import { DefiPositionsTab } from "./DefiPositionsTab";
@@ -23,6 +22,9 @@ const TABS: { value: EvmTabId; label: string }[] = [
   { value: "points", label: "Points" },
 ];
 
+/** Panels that are a `TypedDataTable` (own card); the others get one here. */
+const TABLE_PANELS: ReadonlySet<EvmTabId> = new Set(["tokens", "activity"]);
+
 interface HyperEvmCardProps {
   address: string;
 }
@@ -30,7 +32,8 @@ interface HyperEvmCardProps {
 /**
  * "On-chain · HyperEVM" block of the wallet page — everything Hyperfolio knows
  * about the EVM side of a wallet, behind the same pill tabs as the HyperCore
- * panels. Tabs mount on first visit and stay alive (hidden) afterwards so
+ * panels. Table panels (Tokens, Activity) render their own card; the others
+ * are wrapped in one here. Tabs mount on first visit and stay alive (hidden) afterwards so
  * switching back never re-fires their fetches (see AddressAnalyticsLayout).
  */
 export function HyperEvmCard({ address }: HyperEvmCardProps) {
@@ -76,18 +79,15 @@ export function HyperEvmCard({ address }: HyperEvmCardProps) {
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px] flex-wrap">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Layers size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">On-chain · HyperEVM</h3>
-        {headline && (
-          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-            {headline}
-          </span>
-        )}
-        <div className="ml-auto flex items-center gap-2">
+    <div className="space-y-3">
+      {/* Panel nav + HyperEVM-wide freshness. Kept outside the panel cards so
+          it stays usable while a table panel shows its loading state. */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="min-w-0 max-w-full overflow-x-auto scrollbar-brand">
+          <PillTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
+        </div>
+        <div className="ml-auto flex flex-wrap items-center gap-x-3 gap-y-1">
+          {headline && <TableStat label="HyperEVM" value={headline} />}
           <SourceBadge source="hyperfolio" status={sourceStatus} />
           <DataStatus
             variant="polled"
@@ -98,17 +98,17 @@ export function HyperEvmCard({ address }: HyperEvmCardProps) {
         </div>
       </div>
 
-      <div className="px-3.5 py-2 border-b border-border-subtle overflow-x-auto scrollbar-brand">
-        <PillTabs tabs={TABS} activeTab={activeTab} onTabChange={handleTabChange} />
-      </div>
-
       {TABS.map(({ value }) =>
         visited.has(value) ? (
           <div key={value} className={value === activeTab ? "" : "hidden"}>
-            {panels[value]()}
+            {TABLE_PANELS.has(value) ? (
+              panels[value]()
+            ) : (
+              <Card className="flex flex-col overflow-hidden">{panels[value]()}</Card>
+            )}
           </div>
         ) : null
       )}
-    </Card>
+    </div>
   );
 }

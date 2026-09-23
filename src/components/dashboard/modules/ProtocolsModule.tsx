@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Boxes } from "lucide-react";
 import { OverviewModule, ModuleTable, ModuleTableRow, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
 import { ProjectLogo } from "@/components/ecosystem/project/ProjectLogo";
 import { useRankedProjects, useChainStats } from "@/services/ecosystem/project";
@@ -30,7 +29,6 @@ export const ProtocolsModule = memo(function ProtocolsModule() {
   return (
     <OverviewModule
       title="Top Protocols"
-      icon={<Boxes size={13} className="text-brand" />}
       tag={stats?.tvl != null ? `${compactUsd(stats.tvl)} TVL` : undefined}
       viewAllLabel="All projects"
       href="/ecosystem/project"

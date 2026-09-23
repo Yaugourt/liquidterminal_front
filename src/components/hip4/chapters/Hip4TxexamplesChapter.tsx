@@ -2,7 +2,6 @@
 
 import {
   Hip4ChapterShell,
-  Hip4GlassPanel,
   Hip4SectionTitle,
 } from "@/components/hip4/Hip4ChapterShell";
 import { Hip4PageHeader } from "@/components/hip4/Hip4PageHeader";
@@ -34,22 +33,9 @@ const EXAMPLES: TxExample[] = [
 ];
 
 const COLUMNS: Column<TxExample>[] = [
-  {
-    key: "name",
-    header: "Function",
-    accessor: (ex) => <span className="font-mono text-brand">{ex.name}</span>,
-  },
-  {
-    key: "selector",
-    header: "Selector",
-    type: "address",
-    accessor: (ex) => <span className="font-mono text-[11px] break-all">{ex.selector}</span>,
-  },
-  {
-    key: "note",
-    header: "Note",
-    accessor: (ex) => <span className="text-xs text-text-secondary">{ex.note}</span>,
-  },
+  { key: "name", header: "Function", type: "code", accessor: "name" },
+  { key: "selector", header: "Selector", type: "code", className: "break-all", accessor: "selector" },
+  { key: "note", header: "Note", accessor: "note" },
 ];
 
 export function Hip4TxexamplesChapter() {
@@ -57,18 +43,20 @@ export function Hip4TxexamplesChapter() {
     <Hip4ChapterShell>
       <Hip4PageHeader />
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>Decoded examples (illustrative)</Hip4SectionTitle>
-        <p className="mb-4 text-xs text-text-secondary">
-          Shapes observed on testnet; verify against your own traces.
-        </p>
+      <section className="space-y-3">
+        <div>
+          <Hip4SectionTitle className="!mb-1">Decoded examples (illustrative)</Hip4SectionTitle>
+          <p className="text-xs text-text-secondary">
+            Shapes observed on testnet; verify against your own traces.
+          </p>
+        </div>
         <TypedDataTable<TxExample>
           data={EXAMPLES}
           columns={COLUMNS}
           getRowKey={(ex) => ex.name}
           density="compact"
         />
-      </Hip4GlassPanel>
+      </section>
     </Hip4ChapterShell>
   );
 }

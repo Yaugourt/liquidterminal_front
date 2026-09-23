@@ -38,7 +38,6 @@ export const PopularArticlesModule = memo(function PopularArticlesModule({
     <OverviewModule
       title="Most saved"
       tag="read-list saves"
-      tagVariant="plain"
       viewAllLabel="Open wiki"
       href="/wiki"
       className={className}

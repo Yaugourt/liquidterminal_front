@@ -133,6 +133,15 @@ export function usePerpDexMarketData() {
         ? fundingRates.reduce((a, b) => a + b, 0) / fundingRates.length
         : 0;
       const activeAssets = assetsWithMarketData.filter(a => !a.isDelisted).length;
+
+      // HL moved deployerFeeScale from perpDexs to each asset in allPerpMetas.
+      const activeMetas = dexMetas.filter(m => !m.isDelisted);
+      const feeScales = (activeMetas.length > 0 ? activeMetas : dexMetas)
+        .map(m => parseFloat(m.deployerFeeScale ?? ''))
+        .filter(Number.isFinite);
+      const feeScaleRange = feeScales.length > 0
+        ? { min: Math.min(...feeScales), max: Math.max(...feeScales) }
+        : null;
       
       // Recalculate totalAssets based on allPerpMetas count
       const totalAssetsFromMetas = dexMetas.length;
@@ -144,7 +153,8 @@ export function usePerpDexMarketData() {
         totalVolume24h,
         totalOpenInterest,
         avgFunding,
-        activeAssets
+        activeAssets,
+        feeScaleRange
       };
     });
   }, [dexs, metas, marketData]);

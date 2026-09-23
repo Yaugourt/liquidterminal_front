@@ -21,7 +21,7 @@ const COMPARE_ROWS: ReactNode[][] = [
   [
     "Source",
     "Bytecode only",
-    <>Shipped <code className="text-xs">HIP4Contest.sol</code></>,
+    <>Shipped <code>HIP4Contest.sol</code></>,
   ],
   [
     "deposit",
@@ -39,17 +39,19 @@ export function Hip4AbiChapter() {
     <Hip4ChapterShell>
       <Hip4PageHeader />
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle id="hip4-v1-v2-compare">V1 vs V2 — summary</Hip4SectionTitle>
+      <section className="space-y-3">
+        <Hip4SectionTitle id="hip4-v1-v2-compare" className="!mb-0 scroll-mt-28">
+          V1 vs V2 — summary
+        </Hip4SectionTitle>
         <Hip4CompareTable
           headers={["Aspect", "V1", "V2"]}
           rows={COMPARE_ROWS}
         />
-        <p className="mt-4 text-[11px] text-text-secondary">
+        <p className="text-[11px] text-text-secondary">
           V2 mystery selector <code className="text-gold">0xb2447e34</code> is{" "}
           <code>withdrawPlatformFee(uint256,uint256)</code> on the shipped source.
         </p>
-      </Hip4GlassPanel>
+      </section>
 
       <Hip4GlassPanel>
         <Hip4SectionTitle>Full ABI JSON</Hip4SectionTitle>

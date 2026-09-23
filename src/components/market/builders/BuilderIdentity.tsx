@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { ModuleAsset } from "@/components/common";
 import { avatarColor } from "@/lib/avatarColor";
 import { builderBrand, builderLogoUrl } from "@/lib/builderBrands";
 import { formatBuilderDisplayName } from "./formatBuilderDisplayName";
@@ -88,38 +89,27 @@ export function resolveBuilderLabel(
 }
 
 /**
- * Table cell for a builder: logo + brand name, with the raw on-chain builder
- * code kept alongside as a muted chip when it differs from the brand.
+ * Table cell for a builder: `<ModuleAsset>` with the brand logo (or the
+ * deterministic initial) as avatar, the brand name, and the raw on-chain
+ * builder code as sub-line when it differs from the brand.
  */
 export function BuilderIdentity({
   address,
   name,
-  size = 20,
   showCode = true,
 }: {
   address: string;
   /** Raw `builderName` from the indexer. */
   name: string | null | Record<string, unknown> | undefined;
-  size?: number;
   showCode?: boolean;
 }) {
   const { label, code, isAnonymous } = resolveBuilderLabel(address, name);
 
   return (
-    <div className="flex items-center gap-2 min-w-0">
-      <BuilderAvatar address={address} label={isAnonymous ? "—" : label} size={size} />
-      <span
-        className={`text-xs truncate ${
-          isAnonymous ? "mono text-text-secondary" : "text-text-primary font-medium"
-        }`}
-      >
-        {label}
-      </span>
-      {showCode && code && (
-        <span className="hidden lg:inline mono text-[10px] text-text-tertiary bg-surface-2 rounded px-1 py-px shrink-0">
-          {code}
-        </span>
-      )}
-    </div>
+    <ModuleAsset
+      logo={<BuilderAvatar address={address} label={isAnonymous ? "—" : label} size={24} />}
+      name={label}
+      sub={showCode && code ? code : undefined}
+    />
   );
 }

@@ -21,7 +21,7 @@ function MoverRows({ tokens }: { tokens: SpotToken[] }) {
           key={t.marketIndex}
           href={tokenHref(t.name)}
           cells={[
-            <ModuleAsset key="t" tone="neutral" assetName={t.name} kind="spot" name={t.name} />,
+            <ModuleAsset key="t" assetName={t.name} kind="spot" name={t.name} />,
             <span key="v" className="mono text-text-secondary">
               {compactUsd(t.volume)}
             </span>,
@@ -60,7 +60,7 @@ export function SpotLeaderboards({ directory, stables }: SpotLeaderboardsProps) 
     // Full-width 3-col row below xl; stacked vertical rail at xl, next to the
     // directory table (same responsive shape as the vaults leaderboards).
     <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-1 gap-4">
-      <OverviewModule title="Top gainers · 24h" tag="min $10K vol" tagVariant="plain">
+      <OverviewModule title="Top gainers · 24h" tag="min $10K vol">
         <ModuleTable columns={moverCols}>
           <MoverRows tokens={gainers} />
         </ModuleTable>
@@ -71,7 +71,7 @@ export function SpotLeaderboards({ directory, stables }: SpotLeaderboardsProps) 
         )}
       </OverviewModule>
 
-      <OverviewModule title="Top losers · 24h" tag="min $10K vol" tagVariant="plain">
+      <OverviewModule title="Top losers · 24h" tag="min $10K vol">
         <ModuleTable columns={moverCols}>
           <MoverRows tokens={losers} />
         </ModuleTable>
@@ -82,7 +82,7 @@ export function SpotLeaderboards({ directory, stables }: SpotLeaderboardsProps) 
         )}
       </OverviewModule>
 
-      <OverviewModule title="Stablecoins" tag="on-spot supply" tagVariant="plain">
+      <OverviewModule title="Stablecoins" tag="on-spot supply">
         <ModuleTable
           columns={[
             { header: "Coin" },
@@ -97,7 +97,6 @@ export function SpotLeaderboards({ directory, stables }: SpotLeaderboardsProps) 
               cells={[
                 <ModuleAsset
                   key="c"
-                  tone="neutral"
                   assetName={s.symbol}
                   kind="spot"
                   name={s.symbol}

@@ -98,7 +98,7 @@ export function WalletFundingCard({ address }: WalletFundingCardProps) {
               <ModuleTableRow
                 key={c.coin}
                 cells={[
-                  <ModuleAsset key="c" tone="neutral" assetName={c.coin} kind="auto" name={c.coin} />,
+                  <ModuleAsset key="c" assetName={c.coin} kind="auto" name={c.coin} />,
                   <span
                     key="n"
                     className={`mono font-medium ${c.net_usdc >= 0 ? "text-success" : "text-danger"}`}

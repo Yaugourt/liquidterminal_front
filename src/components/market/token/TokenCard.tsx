@@ -42,12 +42,13 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
     return `${sign}${formatNumber(Math.abs(value), format, { maximumFractionDigits: 2 })}%`;
   };
 
-  // Funding rates are tiny percentages: 2 decimals would flatten them to 0.00%
+  // `value` is HL's hourly funding as a fraction (0.0000125 = 0.00125%):
+  // ×100, and 4 decimals so it doesn't flatten to 0.00%.
   const formatFundingRate = (value: number) => {
     const sign = value >= 0 ? '+' : '-';
-    return `${sign}${formatNumber(Math.abs(value), format, {
-      minimumFractionDigits: 6,
-      maximumFractionDigits: 6,
+    return `${sign}${formatNumber(Math.abs(value) * 100, format, {
+      minimumFractionDigits: 4,
+      maximumFractionDigits: 4,
     })}%`;
   };
 

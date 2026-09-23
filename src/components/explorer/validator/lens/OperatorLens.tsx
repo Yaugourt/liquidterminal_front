@@ -8,11 +8,13 @@ import {
   ModuleTable,
   ModuleTableRow,
   ModuleAsset,
+  TableStat,
   DominanceBar,
   chartPalette,
   type Column,
   type KpiCell,
   type DominanceSegment,
+  TableSearch,
 } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PillTabs } from "@/components/ui/pill-tabs";
@@ -25,7 +27,7 @@ import {
 } from "@/services/explorer/validator/hooks";
 import type { Validator } from "@/services/explorer/validator/types/validators";
 import type { FormattedStakingValidation } from "@/services/explorer/validator/types/staking";
-import { compactHype } from "@/lib/formatters/numberFormatting";
+import { compactHype, truncateAddress } from "@/lib/formatters/numberFormatting";
 
 /** Destination of the "View all" links — the staking activity lives on the validator page. */
 const VALIDATIONS_HREF = "/explorer/validator";
@@ -36,11 +38,6 @@ type StatusFilter = "all" | "active" | "inactive";
 /** Foundation validators are name-prefixed (rule single-sourced server-side). */
 function isFoundationName(name: string): boolean {
   return name.startsWith("Hyper Foundation");
-}
-
-/** Truncate a 0x address to `0x1234…abcd`. */
-function truncateAddress(addr: string): string {
-  return addr.length > 14 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
 }
 
 /**
@@ -194,13 +191,9 @@ export function OperatorLens() {
       {
         key: "rank",
         header: "#",
-        align: "right",
+        type: "rank",
         width: 48,
-        accessor: (_row, _i, absoluteIndex) => (
-          <span className="mono text-[11px] text-text-tertiary">
-            {absoluteIndex + 1}
-          </span>
-        ),
+        accessor: (_row, _i, absoluteIndex) => absoluteIndex + 1,
       },
       {
         key: "validator",
@@ -208,15 +201,12 @@ export function OperatorLens() {
         accessor: (row) => (
           <div className="flex items-center gap-2 min-w-0">
             <ModuleAsset
-              tone="neutral"
               logo={initials(row.name)}
               name={row.name}
               sub={truncateAddress(row.validator)}
             />
             {isFoundationName(row.name) && (
-              <span className="shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-surface-2 border border-border-subtle text-text-tertiary">
-                Foundation
-              </span>
+              <StatusBadge variant="neutral">Foundation</StatusBadge>
             )}
           </div>
         ),
@@ -224,66 +214,43 @@ export function OperatorLens() {
       {
         key: "stake",
         header: "Stake",
-        align: "right",
-        accessor: (row) => (
-          <span className="mono text-[13px] text-text-primary">
-            {compactHype(row.stake)}
-          </span>
-        ),
+        type: "numeric",
+        accessor: (row) => compactHype(row.stake),
       },
       {
         key: "share",
         header: "Share",
-        align: "right",
-        accessor: (row) => (
-          <span className="mono text-[12.5px] text-text-tertiary">
-            {total ? ((row.stake / total) * 100).toFixed(1) : "0.0"}%
-          </span>
-        ),
+        type: "numeric",
+        tone: () => "muted",
+        accessor: (row) => `${total ? ((row.stake / total) * 100).toFixed(1) : "0.0"}%`,
       },
       {
         key: "apr",
         header: "APR",
-        align: "right",
+        type: "numeric",
         // APR is the staking yield → gold (DS: gold carries the reward/value accent).
-        accessor: (row) => (
-          <span className="mono text-[13px] text-gold">
-            {row.apr.toFixed(2)}%
-          </span>
-        ),
+        tone: () => "gold",
+        accessor: (row) => `${row.apr.toFixed(2)}%`,
       },
       {
         key: "uptime",
         header: "Uptime",
-        align: "right",
-        accessor: (row) => (
-          <span
-            className={`mono text-[13px] ${row.uptime >= 99.9 ? "text-success" : "text-text-secondary"}`}
-          >
-            {row.uptime.toFixed(1)}%
-          </span>
-        ),
+        type: "numeric",
+        tone: (row) => (row.uptime >= 99.9 ? "success" : undefined),
+        accessor: (row) => `${row.uptime.toFixed(1)}%`,
       },
       {
         key: "commission",
         header: "Comm.",
-        align: "right",
         // Commission is the validator's fee on rewards → gold (DS: gold = fees).
-        accessor: (row) => (
-          <span className="mono text-[12.5px] text-gold">
-            {row.commission.toFixed(1)}%
-          </span>
-        ),
+        type: "fees",
+        accessor: (row) => `${row.commission.toFixed(1)}%`,
       },
       {
         key: "blocks",
         header: "Blocks",
-        align: "right",
-        accessor: (row) => (
-          <span className="mono text-[13px] text-text-secondary">
-            {row.nRecentBlocks}
-          </span>
-        ),
+        type: "numeric",
+        accessor: (row) => row.nRecentBlocks,
       },
       {
         key: "status",
@@ -350,25 +317,20 @@ export function OperatorLens() {
 
   // Directory toolbar — search input + status text-tabs + count.
   const toolbar = (
-    <div className="flex flex-wrap items-center gap-3">
-      <div className="relative flex-1 min-w-[180px] max-w-xs">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search name or address…"
-          className="w-full px-3 h-8 text-[12.5px] bg-transparent border border-border-subtle rounded-md text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-border-default"
-        />
-      </div>
+    <>
+      <TableSearch value={search} onChange={setSearch} placeholder="Search name or address…" />
       <PillTabs
         variant="text"
         tabs={statusTabs}
         activeTab={statusFilter}
         onTabChange={(v) => setStatusFilter(v as StatusFilter)}
       />
-      <span className="text-text-tertiary text-[11.5px] ml-auto shrink-0">
-        {filteredValidators.length} validator{filteredValidators.length === 1 ? "" : "s"}
-      </span>
-    </div>
+      <TableStat
+        className="ml-auto"
+        label={filteredValidators.length === 1 ? "Validator" : "Validators"}
+        value={filteredValidators.length}
+      />
+    </>
   );
 
   return (
@@ -413,31 +375,27 @@ export function OperatorLens() {
         <SectionLabel title="Validator directory" hint="Sorted by stake" />
         <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
           {/* LEFT — searchable / filterable validator table */}
-          <div className="min-w-0 bg-surface border border-border-subtle rounded-lg overflow-hidden">
-            <TypedDataTable<Validator>
-              data={filteredValidators}
-              columns={columns}
-              getRowKey={(row) => row.validator}
-              density="compact"
-              headerFill={false}
-              paginationVariant="compact"
-              paginate
-              itemsPerPage={15}
-              toolbar={toolbar}
-              isLoading={isLoading}
-              error={error}
-              onErrorRetry={refetch}
-              errorTitle="Could not load validators"
-              emptyMessage="No validators match your filters"
-              emptyDescription="Try a different search or status."
-            />
-          </div>
+          <TypedDataTable<Validator>
+            className="min-w-0"
+            data={filteredValidators}
+            columns={columns}
+            getRowKey={(row) => row.validator}
+            paginationVariant="compact"
+            paginate
+            itemsPerPage={15}
+            toolbar={toolbar}
+            isLoading={isLoading}
+            error={error}
+            onErrorRetry={refetch}
+            errorTitle="Could not load validators"
+            emptyMessage="No validators match your filters"
+            emptyDescription="Try a different search or status."
+          />
 
           {/* RIGHT — slim recent staking activity rail */}
           <aside className="xl:sticky xl:top-6">
             <OverviewModule
               title="Recent staking activity"
-              tagVariant="plain"
               tag={validationsTotal > 0 ? `${validationsTotal} events` : undefined}
               href={VALIDATIONS_HREF}
               viewAllLabel="View all"
@@ -472,7 +430,7 @@ export function OperatorLens() {
                           {relativeTime(v.timestamp)}
                         </span>,
                         <div key="type" className="space-y-1">
-                          <StatusBadge variant="neutral" className="text-[10.5px] font-medium">
+                          <StatusBadge variant="neutral">
                             {v.type}
                           </StatusBadge>
                           <div className="mono text-[10px] text-text-tertiary truncate">

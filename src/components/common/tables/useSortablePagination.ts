@@ -81,7 +81,12 @@ export function useSortablePagination<T, F extends string>({
   }, [data, sort, getSortValue]);
 
   const totalPages = Math.max(1, Math.ceil(sortedData.length / itemsPerPage));
-  const startIndex = page * itemsPerPage;
+  // The data can shrink under the current page (a search or filter upstream):
+  // snap back to the last page that still has rows instead of rendering empty.
+  const lastPage = totalPages - 1;
+  if (page > lastPage) setPage(lastPage);
+  const currentPage = Math.min(page, lastPage);
+  const startIndex = currentPage * itemsPerPage;
   const paginatedData = useMemo(
     () => sortedData.slice(startIndex, startIndex + itemsPerPage),
     [sortedData, startIndex, itemsPerPage]
@@ -97,7 +102,7 @@ export function useSortablePagination<T, F extends string>({
   }, []);
 
   return {
-    page,
+    page: currentPage,
     setPage,
     sortField: sort.field,
     sortDirection: sort.direction,

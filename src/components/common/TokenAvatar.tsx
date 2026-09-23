@@ -73,7 +73,7 @@ export function TokenAvatar({
 
   return (
     <span
-      className={`${sizeClass} shrink-0 rounded-md flex items-center justify-center font-semibold bg-brand/10 text-brand overflow-hidden ${className}`}
+      className={`${sizeClass} shrink-0 rounded-md flex items-center justify-center font-semibold bg-surface-2 text-text-secondary overflow-hidden ${className}`}
     >
       {errored || !resolvedSrc ? (
         getTokenInitials(fallback ?? assetName)

@@ -74,8 +74,8 @@ export function Hip4CompareChapter() {
           </>
         }
       />
-      <Hip4GlassPanel>
-        <Hip4DocLead className="mb-4 text-xs">
+      <section className="space-y-3">
+        <Hip4DocLead className="text-xs">
           Read down the <strong className="text-text-primary">Feature</strong> column first; each cell is one
           sentence max.
         </Hip4DocLead>
@@ -85,13 +85,13 @@ export function Hip4CompareChapter() {
             cells.map((c, ci) => <span key={`${ri}-${ci}`}>{c}</span>)
           )}
         />
-        <p className="mt-4 text-xs text-text-tertiary leading-relaxed">
+        <p className="text-xs text-text-tertiary leading-relaxed">
           Instant L1 settlement in the HIP-4 column refers to outcomes resolved from the on-chain
           price feed; subjective or non-market-linked markets are not confirmed. Polymarket and Kalshi
           also offer continuous CLOB trading. A “dual system” (CLOB + parimutuel) on Hyperliquid
           remains a testnet observation, not confirmed design — see the research doc.
         </p>
-      </Hip4GlassPanel>
+      </section>
       <Hip4GlassPanel>
         <Hip4SectionTitle>Source</Hip4SectionTitle>
         <p className="text-xs text-text-secondary">

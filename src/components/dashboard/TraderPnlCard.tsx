@@ -33,7 +33,7 @@ function PnlList({ title, rows }: { title: string; rows: CoinPnl[] }) {
           <ModuleTableRow
             key={c.coin}
             cells={[
-              <ModuleAsset key="c" tone="neutral" assetName={c.coin} kind="auto" name={c.coin} />,
+              <ModuleAsset key="c" assetName={c.coin} kind="auto" name={c.coin} />,
               <span
                 key="p"
                 className={`mono font-medium ${c.pnl >= 0 ? "text-success" : "text-danger"}`}

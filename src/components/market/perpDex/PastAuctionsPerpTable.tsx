@@ -1,6 +1,7 @@
 "use client";
 
-import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
+import type { ReactNode } from "react";
+import { TypedDataTable, ModuleAsset, type Column } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
@@ -8,7 +9,6 @@ import { useNumberFormat, type NumberFormatType } from "@/store/number-format.st
 import { useDateFormat, type DateFormatType } from "@/store/date-format.store";
 import type { PastAuctionPerp } from "@/services/market/perpDex/types";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { ExternalLink } from "lucide-react";
 
 const PAGE_SIZE = 10;
 
@@ -20,13 +20,10 @@ function buildColumns(
     {
       key: "time",
       header: "Date",
+      type: "time",
       sortable: true,
       getSortValue: (row) => row.time.getTime(),
-      accessor: (row) => (
-        <span className="text-text-primary text-sm">
-          {formatDateTime(row.time, dateFormat)}
-        </span>
-      ),
+      accessor: (row) => formatDateTime(row.time, dateFormat),
     },
     {
       key: "symbol",
@@ -34,13 +31,7 @@ function buildColumns(
       sortable: true,
       getSortValue: (row) => row.symbol.toLowerCase(),
       accessor: (row) => (
-        <div className="flex items-center gap-2">
-          <TokenAvatar assetName={`xyz:${row.symbol}`} size="lg" />
-          <div className="flex flex-col">
-            <span className="text-text-primary text-sm font-medium">{row.symbol}</span>
-            <span className="text-brand text-xs">{row.coin}</span>
-          </div>
-        </div>
+        <ModuleAsset assetName={row.coin} name={row.symbol} sub={row.coin} />
       ),
     },
     {
@@ -48,14 +39,7 @@ function buildColumns(
       header: "DEX",
       sortable: true,
       getSortValue: (row) => row.dex.toLowerCase(),
-      accessor: (row) => (
-        <div className="flex flex-col">
-          <span className="text-text-primary text-sm font-medium">{row.dex}</span>
-          {row.dexFullName && (
-            <span className="text-text-tertiary text-xs">{row.dexFullName}</span>
-          )}
-        </div>
-      ),
+      accessor: (row) => <ModuleAsset name={row.dex} sub={row.dexFullName || undefined} />,
     },
     {
       key: "oraclePx",
@@ -77,6 +61,7 @@ function buildColumns(
       type: "fees",
       sortable: true,
       getSortValue: (row) => row.maxGas ?? 0,
+      tone: (row) => (row.maxGas ? undefined : "muted"),
       accessor: (row) =>
         row.maxGas !== null
           ? formatNumber(row.maxGas, numberFormat, {
@@ -90,27 +75,32 @@ function buildColumns(
       header: "Deployer",
       sortable: true,
       getSortValue: (row) => row.user.toLowerCase(),
-      accessor: (row) => <AddressDisplay address={row.user} showCopy={true} />,
+      accessor: (row) => <AddressDisplay address={row.user} />,
     },
     {
       key: "hash",
       header: "Tx",
       accessor: (row) => (
-        <a
-          href={`https://app.hyperliquid.xyz/explorer/tx/${row.hash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1 text-brand hover:text-text-primary transition-colors text-sm"
-        >
-          View
-          <ExternalLink className="w-3 h-3" />
-        </a>
+        <AddressDisplay
+          address={row.hash}
+          href={`/explorer/transaction/${row.hash}`}
+          copyMessage="Hash copied to clipboard"
+        />
       ),
     },
   ];
 }
 
-export function PastAuctionsPerpTable() {
+interface PastAuctionsPerpTableProps {
+  /** Card title — omit when the page frames the table with its own tabs. */
+  title?: ReactNode;
+  /** Right slot of the head (e.g. `SourceBadge`). Needs `title`. */
+  headerAction?: ReactNode;
+  /** Strip under the head (view switcher owned by the page). */
+  toolbar?: ReactNode;
+}
+
+export function PastAuctionsPerpTable({ title, headerAction, toolbar }: PastAuctionsPerpTableProps = {}) {
   const { format: numberFormat } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
   const { auctions, isLoading } = usePastAuctionsPerp();
@@ -128,6 +118,9 @@ export function PastAuctionsPerpTable() {
       initialSort={{ field: "time", direction: "desc" }}
       paginationVariant="full"
       rowsPerPageOptions={[5, 10, 15, 20]}
+      title={title}
+      headerAction={headerAction}
+      toolbar={toolbar}
     />
   );
 }

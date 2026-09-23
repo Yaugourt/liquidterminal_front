@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { TrendingUp } from "lucide-react";
 import {
   OverviewModule,
   ModuleTable,
@@ -78,7 +77,6 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
   return (
     <OverviewModule
       title={isSpot ? "Trending Spot" : "Trending Perpetuals"}
-      icon={<TrendingUp size={13} className="text-brand" />}
       tag={`${rows.length} markets`}
       viewAllLabel={isSpot ? "All spot" : "All perp"}
       href={`/market/${market}`}

@@ -17,6 +17,7 @@ import type {
   Hip4L2Book,
   Hip4Candle,
   Hip4CandleInterval,
+  Hip4OutcomeVolumes,
 } from "./types";
 
 const HIP4 = "/indexer/hip4";
@@ -116,31 +117,72 @@ export async function fetchHip4AllMids(): Promise<Record<string, string>> {
   }, "fetching HIP-4 allMids");
 }
 
+/** The LT backend validates `coin` as a string of at most 256 chars. */
+const ANALYTICS_COIN_PARAM_MAX = 256;
+/** Backend max for `limit`, which caps the rows of a request across all its coins. */
+const ANALYTICS_ROW_LIMIT = 2000;
+
+/** Packs coin ids into comma-joined `coin` params that each fit the backend cap. */
+function chunkCoinParam(coinIds: number[]): string[] {
+  const chunks: string[] = [];
+  let current = "";
+  for (const id of coinIds) {
+    const next = current ? `${current},${id}` : String(id);
+    if (current && next.length > ANALYTICS_COIN_PARAM_MAX) {
+      chunks.push(current);
+      current = String(id);
+    } else {
+      current = next;
+    }
+  }
+  if (current) chunks.push(current);
+  return chunks;
+}
+
 /** Cumulative notional volume per outcome coin, summed from the indexer's 1d
  * analytics buckets. HypeDexer ingests fills for the live coins even though it
- * omits them from markets-enriched, so this recovers their volume in one call.
- * Returns `{ encoding -> volume }`. Best-effort: callers should degrade if it
- * throws (the indexer `/analytics` can 402). */
+ * omits them from markets-enriched, so this recovers their volume. The coin
+ * list (~450 coins) is split into ≤256-char batches fetched in parallel.
+ * `partial` is set when a batch failed or hit the row limit; throws only when
+ * every batch failed (the indexer `/analytics` can 402). */
 export async function fetchHip4OutcomeVolumes(
   coinIds: number[]
-): Promise<Record<number, number>> {
-  if (coinIds.length === 0) return {};
-  return withErrorHandling(async () => {
-    const raw = await get<unknown>(`${HIP4}/analytics`, toQuery({
-      coin: coinIds.join(","),
-      interval: "1d",
-      limit: 365,
-    }));
-    const buckets = assertLtData<Hip4AnalyticsBucket[]>(raw);
-    const out: Record<number, number> = {};
-    for (const b of buckets) {
+): Promise<Hip4OutcomeVolumes> {
+  if (coinIds.length === 0) return { volumes: {}, partial: false };
+  const results = await Promise.allSettled(
+    chunkCoinParam(coinIds).map((coin) =>
+      withErrorHandling(async () => {
+        const raw = await get<unknown>(`${HIP4}/analytics`, {
+          coin,
+          interval: "1d",
+          limit: ANALYTICS_ROW_LIMIT,
+        });
+        return assertLtData<Hip4AnalyticsBucket[]>(raw);
+      }, "fetching HIP-4 outcome volumes")
+    )
+  );
+
+  const firstFailure = results.find(
+    (r): r is PromiseRejectedResult => r.status === "rejected"
+  );
+  if (firstFailure && results.every((r) => r.status === "rejected")) {
+    throw firstFailure.reason;
+  }
+
+  const volumes: Record<number, number> = {};
+  let partial = firstFailure !== undefined;
+  for (const r of results) {
+    if (r.status === "rejected") continue;
+    // A full page means the oldest buckets were cut off: sums are understated.
+    if (r.value.length >= ANALYTICS_ROW_LIMIT) partial = true;
+    for (const b of r.value) {
       if (!b.coin) continue;
       const id = parseInt(b.coin.replace(/^#/, ""), 10);
       if (Number.isNaN(id)) continue;
-      out[id] = (out[id] ?? 0) + (b.volume ?? 0);
+      volumes[id] = (volumes[id] ?? 0) + (b.volume ?? 0);
     }
-    return out;
-  }, "fetching HIP-4 outcome volumes");
+  }
+  return { volumes, partial };
 }
 
 /** Live L2 order book for an outcome coin (`POST /info { type:"l2Book" }`).

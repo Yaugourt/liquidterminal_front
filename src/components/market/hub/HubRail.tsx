@@ -85,10 +85,10 @@ export function FundingWatchCard({ markets }: { markets: PerpMarketData[] }) {
                 </span>
               )}
             </span>
-            {/* `funding` is already a percentage (same convention as the perp table). */}
+            {/* `funding` is HL's hourly rate as a fraction (0.0000125 = 0.00125%). */}
             <span className={`mono ${r.funding >= 0 ? "text-success" : "text-danger"}`}>
               {r.funding >= 0 ? "+" : ""}
-              {r.funding.toFixed(6)}%
+              {(r.funding * 100).toFixed(4)}%
             </span>
           </div>
         ))}

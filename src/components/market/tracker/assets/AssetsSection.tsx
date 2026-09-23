@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AssetsTable } from "./AssetsTable";
 import { useNumberFormat } from '@/store/number-format.store';
 import { formatAssetValue, formatAssetTokenAmount, formatAssetPercent } from '@/lib/formatters/numberFormatting';
@@ -15,10 +15,17 @@ import { Card } from "@/components/ui/card";
 interface AssetsSectionProps {
   initialViewType?: "spot" | "perp";
   addressOverride?: string;
+  /** External request to switch view (e.g. "open positions" from the wallet
+   *  profile). `at` makes a repeated request for the same view re-apply. */
+  focusView?: { view: "spot" | "perp"; at: number } | null;
 }
 
-export function AssetsSection({ initialViewType = "spot", addressOverride }: AssetsSectionProps) {
+export function AssetsSection({ initialViewType = "spot", addressOverride, focusView }: AssetsSectionProps) {
   const [viewType, setViewType] = useState<"spot" | "perp">(initialViewType);
+
+  useEffect(() => {
+    if (focusView) setViewType(focusView.view);
+  }, [focusView]);
   const { format } = useNumberFormat();
 
   const {
@@ -79,23 +86,21 @@ export function AssetsSection({ initialViewType = "spot", addressOverride }: Ass
   }
 
   return (
-    <div className="relative">
-      <AssetsTable
-        holdings={sortedHoldings}
-        isLoading={isLoading || isSpotMarketLoading || isPerpMarketLoading}
-        type={viewType}
-        onSort={requestSort}
-        activeSortKey={sortConfig.key as SortKey}
-        sortDirection={sortConfig.direction}
-        formatCurrency={(value) => formatAssetValue(Number(value), format)}
-        formatTokenAmount={(value) => formatAssetTokenAmount(Number(value), format)}
-        formatPercent={(value) => formatAssetPercent(value, format)}
-        onViewTypeChange={setViewType}
-        totalAssets={sortedHoldings.length}
-        walletDisplay={activeWalletDisplay}
-        onRefresh={handleRefresh}
-        isRefreshing={isRefreshing}
-      />
-    </div>
+    <AssetsTable
+      holdings={sortedHoldings}
+      isLoading={isLoading || isSpotMarketLoading || isPerpMarketLoading}
+      type={viewType}
+      onSort={requestSort}
+      activeSortKey={sortConfig.key as SortKey}
+      sortDirection={sortConfig.direction}
+      formatCurrency={(value) => formatAssetValue(Number(value), format)}
+      formatTokenAmount={(value) => formatAssetTokenAmount(Number(value), format)}
+      formatPercent={(value) => formatAssetPercent(value, format)}
+      onViewTypeChange={setViewType}
+      totalAssets={sortedHoldings.length}
+      walletDisplay={activeWalletDisplay}
+      onRefresh={handleRefresh}
+      isRefreshing={isRefreshing}
+    />
   );
 }

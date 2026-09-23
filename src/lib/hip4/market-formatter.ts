@@ -57,6 +57,16 @@ export function formatMarketTitle(market: Hip4MarketEnrichedRow): string {
   return market.coin || "Unknown market";
 }
 
+/**
+ * Stable React key for a question card. `question_id` and `singleton_outcome_id`
+ * share one number space (question 20 and singleton outcome 20 both exist), and
+ * ~50 HypeDexer rows carry neither, so key on the id kind + the outcome ids.
+ */
+export function hip4QuestionKey(q: Hip4QuestionWithOutcomesRow): string {
+  if (q.question_id != null) return `q${q.question_id}`;
+  return `o${q.outcomes.map((o) => o.outcome_id).join("-")}`;
+}
+
 export type Hip4EffectiveStatus = "live" | "expired_unresolved" | "settled";
 
 /**

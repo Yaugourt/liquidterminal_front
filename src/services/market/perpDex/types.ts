@@ -70,8 +70,7 @@ export interface PerpDexRaw {
   feeRecipient: string;
   assetToStreamingOiCap: [string, string][]; // [["xyz:AAPL", "25000000.0"], ...]
   subDeployers: [string, string[]][]; // [["setOracle", ["0x..."]], ...]
-  deployerFeeScale: string;
-  lastDeployerFeeScaleChangeTime: string;
+  // deployerFeeScale moved to per-asset metadata (allPerpMetas universe[]).
 }
 
 /**
@@ -85,8 +84,6 @@ export interface PerpDex {
   feeRecipient: string;
   assets: PerpDexAsset[];
   subDeployers: SubDeployer[];
-  deployerFeeScale: number;
-  lastDeployerFeeScaleChangeTime: Date | null;
   // Computed stats
   totalAssets: number;
   totalOiCap: number;
@@ -124,6 +121,9 @@ export interface PerpMetaAsset {
   isDelisted?: boolean;
   growthMode?: string;
   lastGrowthModeChangeTime?: string;
+  /** Per-asset deployer fee share multiplier, e.g. "1.0" (HIP-3 dexs only). */
+  deployerFeeScale?: string;
+  lastFeeScaleChangeTime?: string;
 }
 
 /**
@@ -234,6 +234,8 @@ export interface PerpDexWithMarketData extends PerpDex {
   totalOpenInterest: number;
   avgFunding: number;
   activeAssets: number; // Non-delisted assets
+  /** Deployer fee scale across the dex's active assets (all assets when every one is delisted); null when HL omits it. */
+  feeScaleRange: { min: number; max: number } | null;
 }
 
 /**

@@ -22,7 +22,7 @@ function MoverRows({ tokens }: { tokens: PerpMarketData[] }) {
           key={t.name}
           href={tokenHref(t.name)}
           cells={[
-            <ModuleAsset key="t" tone="neutral" assetName={t.name} kind="auto" name={t.name} />,
+            <ModuleAsset key="t" assetName={t.name} kind="auto" name={t.name} />,
             <span key="v" className="mono text-text-secondary">
               {compactUsd(t.volume)}
             </span>,
@@ -72,7 +72,7 @@ export function PerpLeaderboards() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <OverviewModule title="Top gainers · 24h" tag="min $10K vol" tagVariant="plain">
+      <OverviewModule title="Top gainers · 24h" tag="min $10K vol">
         <ModuleTable columns={moverCols}>
           <MoverRows tokens={gainers} />
         </ModuleTable>
@@ -83,7 +83,7 @@ export function PerpLeaderboards() {
         )}
       </OverviewModule>
 
-      <OverviewModule title="Top losers · 24h" tag="min $10K vol" tagVariant="plain">
+      <OverviewModule title="Top losers · 24h" tag="min $10K vol">
         <ModuleTable columns={moverCols}>
           <MoverRows tokens={losers} />
         </ModuleTable>

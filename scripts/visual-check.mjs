@@ -75,6 +75,34 @@ function collectClips() {
     );
   };
 
+  /**
+   * Content that sits inside its own horizontal scroller (a wide table in an
+   * `overflow-x-auto` wrapper) is reachable by scrolling, so it is not clipped
+   * by an `overflow-hidden` ancestor such as the table's Card. Skip any node
+   * with a scroll container between it and the clipping element.
+   */
+  const scrollerCache = new Map();
+  // `overflow-y-auto` alone also computes overflow-x to `auto`, so a vertical
+  // list would pass for a horizontal scroller and hide its content from the
+  // check. Only count the ones authored to scroll sideways.
+  const VERTICAL_ONLY = /(^|\s)overflow-y-(auto|scroll)(\s|$)/;
+  const HORIZONTAL = /(^|\s)overflow-(x-)?(auto|scroll)(\s|$)/;
+  const isScroller = (node) => {
+    if (!scrollerCache.has(node)) {
+      const ox = getComputedStyle(node).overflowX;
+      const cls = typeof node.className === "string" ? node.className : "";
+      const verticalOnly = VERTICAL_ONLY.test(cls) && !HORIZONTAL.test(cls);
+      scrollerCache.set(node, (ox === "auto" || ox === "scroll") && !verticalOnly);
+    }
+    return scrollerCache.get(node);
+  };
+  const inNestedScroller = (node, clipper) => {
+    for (let p = node.parentElement; p && p !== clipper; p = p.parentElement) {
+      if (isScroller(p)) return true;
+    }
+    return false;
+  };
+
   for (const el of document.querySelectorAll("body *")) {
     const style = getComputedStyle(el);
     const ox = style.overflowX;
@@ -92,6 +120,7 @@ function collectClips() {
     let contentOver = 0;
     for (const node of el.querySelectorAll("*")) {
       if (isDecorativeBleed(node)) continue;
+      if (inNestedScroller(node, el)) continue;
       const r = node.getBoundingClientRect();
       if (r.width === 0 && r.height === 0) continue;
       contentOver = Math.max(contentOver, r.right - rect.right, rect.left - r.left);
@@ -150,6 +179,16 @@ async function main() {
   console.log(`\nvisual-check ${route}  (${url})`);
   for (const bp of BREAKPOINTS) {
     const page = await browser.newPage({ viewport: { width: bp.width, height: bp.height } });
+    // Mark the first-visit welcome tour as done (zustand persist key of
+    // src/store/use-onboarding.ts) so its modal never hides the page under test.
+    await page.addInitScript(() => {
+      try {
+        localStorage.setItem(
+          "onboarding-storage",
+          JSON.stringify({ state: { hasCompletedOnboarding: true, hasSeenWelcome: true, currentStep: 0 }, version: 1 })
+        );
+      } catch {}
+    });
     try {
       await page.goto(url, { waitUntil: "networkidle", timeout: 30000 }).catch(() => {});
       await page.waitForTimeout(wait);

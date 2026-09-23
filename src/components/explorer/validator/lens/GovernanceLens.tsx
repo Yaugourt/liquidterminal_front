@@ -126,7 +126,7 @@ function VotersDisclosure({ vote }: { vote: ValidatorVote }) {
             <ModuleTableRow
               key={voter.validator}
               cells={[
-                <ModuleAsset key="name" tone="neutral" name={voter.name} />,
+                <ModuleAsset key="name" name={voter.name} />,
                 <span key="stake" className="mono text-[12px] text-text-secondary">
                   {compactHype(voter.stake)}
                 </span>,

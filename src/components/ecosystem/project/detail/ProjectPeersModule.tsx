@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Users } from "lucide-react";
-import { OverviewModule, ModuleTable, ModuleTableRow } from "@/components/common";
+import { OverviewModule, ModuleTable, ModuleTableRow, CellBar } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { ProjectPeer } from "@/services/ecosystem/project/types";
 
@@ -69,9 +68,7 @@ export function ProjectPeersModule({ title, tag, peers, showShare }: ProjectPeer
   return (
     <OverviewModule
       title={title}
-      icon={<Users className="w-3.5 h-3.5 text-brand" />}
       tag={tag}
-      tagVariant="plain"
       viewAllLabel="All projects"
       href="/ecosystem/project"
     >
@@ -100,17 +97,13 @@ export function ProjectPeersModule({ title, tag, peers, showShare }: ProjectPeer
             ...(showShare
               ? [
                   peer.shareOfCategoryPct != null ? (
-                    <span key="share" className="flex items-center gap-2">
-                      <span className="flex-1 h-1.5 rounded-full bg-surface-2 overflow-hidden min-w-[40px]">
-                        <span
-                          className={`block h-full ${peer.isCurrent ? "bg-brand" : "bg-brand/50"}`}
-                          style={{ width: `${Math.max(1, Math.min(100, peer.shareOfCategoryPct))}%` }}
-                        />
-                      </span>
-                      <span className="mono text-[11px] text-text-secondary w-11 text-right shrink-0">
-                        {peer.shareOfCategoryPct.toFixed(1)}%
-                      </span>
-                    </span>
+                    <CellBar
+                      key="share"
+                      width="full"
+                      value={Math.max(0.01, peer.shareOfCategoryPct / 100)}
+                      tone={peer.isCurrent ? "brand" : "muted"}
+                      label={`${peer.shareOfCategoryPct.toFixed(1)}%`}
+                    />
                   ) : (
                     <span key="share" />
                   ),

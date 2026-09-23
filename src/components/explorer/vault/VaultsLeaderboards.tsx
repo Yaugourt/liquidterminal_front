@@ -70,7 +70,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
     // directory table). Keeps cards roomy at 1024 (no clip) and tucks them to
     // the right on wide screens.
     <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-1 gap-4">
-      <OverviewModule title="Top APR · current" tag="min $1M" tagVariant="plain">
+      <OverviewModule title="Top APR · current" tag="min $1M">
         <ModuleTable
           columns={[{ header: "Vault" }, { header: "TVL", width: 84 }, { header: "APR", width: 72 }]}
         >
@@ -81,7 +81,6 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
               cells={[
                 <ModuleAsset
                   key="v"
-                  tone="neutral"
                   logo={initials(v.summary.name)}
                   name={v.summary.name}
                 />,
@@ -103,7 +102,6 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
       <OverviewModule
         title="Followers gained · 24h"
         tag="sampled 50"
-        tagVariant="plain"
         actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading)} />}
       >
         {leaderboardsLoading ? (
@@ -119,7 +117,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
               key={v.vaultAddress}
               href={vaultHref(v.vaultAddress)}
               cells={[
-                <ModuleAsset key="v" tone="neutral" logo={initials(v.name)} name={v.name} />,
+                <ModuleAsset key="v" logo={initials(v.name)} name={v.name} />,
                 <span key="t" className="mono text-text-secondary">
                   {compactCount(v.total)}
                 </span>,
@@ -136,7 +134,6 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
       <OverviewModule
         title="Largest outflows · 24h"
         tag="24h"
-        tagVariant="plain"
         actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading)} />}
       >
         {leaderboardsLoading ? (
@@ -152,7 +149,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
               key={v.vaultAddress}
               href={vaultHref(v.vaultAddress)}
               cells={[
-                <ModuleAsset key="v" tone="neutral" logo={initials(v.name)} name={v.name} />,
+                <ModuleAsset key="v" logo={initials(v.name)} name={v.name} />,
                 <span key="p" className="mono text-danger">
                   {`${(v.percentOfTvl * 100).toFixed(1)}%`}
                 </span>,

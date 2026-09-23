@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { useState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import { formatNumber, formatMetricValue, formatPrice, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
 import { useNumberFormat } from "@/store/number-format.store";
 
-import { TokenAvatar, formatPriceChange, TypedDataTable, type Column } from "@/components/common";
+import { ModuleAsset, formatPriceChange, TypedDataTable, type Column } from "@/components/common";
 import {
     SpotToken,
     PerpToken,
@@ -23,6 +22,8 @@ interface UniversalTokenTableProps {
     mode?: 'full' | 'compact';
     strict?: boolean; // Only for spot market
     searchQuery?: string;
+    /** Filters / search rendered in the table toolbar (under the head). */
+    toolbar?: ReactNode;
 }
 
 type TokenRow = SpotToken & PerpToken & SpotTokenService & PerpMarketData;
@@ -34,7 +35,8 @@ export function UniversalTokenTable({
     market,
     mode = 'full',
     strict = false,
-    searchQuery = ''
+    searchQuery = '',
+    toolbar,
 }: UniversalTokenTableProps) {
     const router = useRouter();
     const { format } = useNumberFormat();
@@ -168,14 +170,11 @@ export function UniversalTokenTable({
         key: "name",
         header: "Name",
         accessor: (t) => (
-            <div className="flex items-center gap-2 min-w-0">
-                <TokenAvatar
-                    assetName={t.name}
-                    kind={market === "spot" ? "spot" : "auto"}
-                    size="md"
-                />
-                <span className="text-text-primary text-sm font-medium truncate">{t.name}</span>
-            </div>
+            <ModuleAsset
+                assetName={t.name}
+                kind={market === "spot" ? "spot" : "auto"}
+                name={t.name}
+            />
         ),
     };
 
@@ -192,23 +191,17 @@ export function UniversalTokenTable({
         ),
     };
 
-    // Change 24h
+    // Change 24h — a signed figure, coloured by the table from its sign.
     const change24hCol: Column<TokenRow> = {
         key: "change24h",
         header: "24h",
+        type: "change",
         sortable: true,
-        align: "right",
+        getSortValue: (t) => t.change24h,
         accessor: (t) => (
             mode === 'compact'
-                ? (
-                    <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${t.change24h < 0 ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'}`}>
-                        {formatPriceChange(t.change24h)}
-                    </span>
-                ) : (
-                    <StatusBadge variant={t.change24h < 0 ? 'error' : 'success'}>
-                        {t.change24h > 0 ? '+' : ''}{formatNumber(t.change24h, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                    </StatusBadge>
-                )
+                ? formatPriceChange(t.change24h)
+                : `${t.change24h > 0 ? '+' : ''}${formatNumber(t.change24h, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`
         ),
     };
 
@@ -295,28 +288,23 @@ export function UniversalTokenTable({
                 {
                     key: "funding",
                     header: "Funding /1h",
-                    align: "right",
+                    type: "change",
                     width: '13%',
-                    accessor: (t) => (
-                        <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
-                            {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
-                        </StatusBadge>
-                    ),
+                    getSortValue: (t) => t.funding,
+                    // `funding` is HL's hourly rate as a fraction (0.0000125 = 0.00125%).
+                    accessor: (t) => `${t.funding > 0 ? '+' : ''}${formatNumber(t.funding * 100, format, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}%`,
                 },
                 {
                     // Annualized funding (per-hour rate × 24 × 365). HL funds hourly, so
                     // this is a derived read-out, not a backend-sortable field.
                     key: "fundingApr",
                     header: "Funding APR",
-                    align: "right",
+                    type: "change",
                     width: '13%',
+                    getSortValue: (t) => t.funding * 8760 * 100,
                     accessor: (t) => {
-                        const apr = t.funding * 8760;
-                        return (
-                            <StatusBadge variant={apr >= 0 ? 'success' : 'error'}>
-                                {apr > 0 ? '+' : ''}{formatNumber(apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                            </StatusBadge>
-                        );
+                        const apr = t.funding * 8760 * 100;
+                        return `${apr > 0 ? '+' : ''}${formatNumber(apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
                     },
                 },
             ];
@@ -337,6 +325,7 @@ export function UniversalTokenTable({
             error={error ?? null}
             emptyMessage="No tokens available"
             emptyDescription="Check back later"
+            toolbar={toolbar}
             className={mode === 'compact' ? 'h-full flex flex-col' : undefined}
             // No fixedLayout: auto layout lets the table exceed the viewport
             // and scroll horizontally on mobile (same treatment as the spot

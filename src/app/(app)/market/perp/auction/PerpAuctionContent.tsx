@@ -39,19 +39,15 @@ export function PerpAuctionContent() {
         </div>
       </div>
 
-      <div>
-        <div className="flex items-center mb-4">
-          <h2 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
-            Recent Auction Pairs
-          </h2>
+      <PastAuctionsPerpTable
+        title="Recent auction pairs"
+        headerAction={
           <SourceBadge
             source="hypurrscan"
             status={sourceStatus(pastAuctions.error, pastAuctions.isLoading)}
-            className="ml-auto"
           />
-        </div>
-        <PastAuctionsPerpTable />
-      </div>
+        }
+      />
 
       <PageFaq items={PERP_AUCTION_FAQ} />
     </>

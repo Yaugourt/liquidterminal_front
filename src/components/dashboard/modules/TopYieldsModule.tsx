@@ -1,7 +1,6 @@
 "use client";
 
 import { memo } from "react";
-import { Percent } from "lucide-react";
 import { OverviewModule, ModuleTable, ModuleTableRow, ModuleAsset, DataStatus, SourceBadge } from "@/components/common";
 import { useTopYields } from "@/services/market/yields";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
@@ -13,7 +12,6 @@ export const TopYieldsModule = memo(function TopYieldsModule() {
   return (
     <OverviewModule
       title="Top Yields"
-      icon={<Percent size={13} className="text-brand" />}
       tag="≥ $100k TVL"
       viewAllLabel="All yields"
       href="/market/yields"

@@ -101,7 +101,6 @@ export function SpotAuctionBand() {
             "between auctions"
           )
         }
-        tagVariant="plain"
       >
         <div className="px-4 py-3.5 flex flex-col flex-1">
           <div className="mono text-[26px] font-medium tracking-[-0.01em] leading-none text-text-primary">
@@ -149,7 +148,7 @@ export function SpotAuctionBand() {
       </OverviewModule>
 
       {/* Gas actually paid, last 90d */}
-      <OverviewModule title="Deploy gas paid" tag="90d · HYPE" tagVariant="plain">
+      <OverviewModule title="Deploy gas paid" tag="90d · HYPE">
         <div className="px-4 py-3.5 flex flex-col gap-3 flex-1">
           {gasEvents.length >= 2 ? (
             <div className="h-[180px]">
@@ -208,7 +207,6 @@ export function SpotAuctionBand() {
               cells={[
                 <ModuleAsset
                   key="t"
-                  tone="neutral"
                   assetName={a.name}
                   kind="spot"
                   name={a.name}

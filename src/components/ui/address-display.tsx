@@ -13,6 +13,8 @@ interface AddressDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
     showCopy?: boolean;
     showExternalLink?: boolean;
     href?: string;
+    /** `href` points off-site (block explorer…): open it in a new tab. */
+    external?: boolean;
     className?: string;
     copyMessage?: string;
     label?: React.ReactNode;
@@ -25,6 +27,7 @@ export function AddressDisplay({
     showCopy = true,
     showExternalLink = false,
     href,
+    external = false,
     className,
     copyMessage = "Address copied to clipboard",
     label,
@@ -49,24 +52,36 @@ export function AddressDisplay({
 
     return (
         <div className={cn("inline-flex items-center gap-1.5", className)} {...props}>
-            <Link
-                href={linkHref}
-                className="text-brand hover:text-white transition-colors"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {label || displayAddress}
-            </Link>
+            {external ? (
+                <a
+                    href={linkHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mono text-brand hover:text-brand-hover transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {label || displayAddress}
+                </a>
+            ) : (
+                <Link
+                    href={linkHref}
+                    className="mono text-brand hover:text-brand-hover transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {label || displayAddress}
+                </Link>
+            )}
 
             {showCopy && (
                 <button
                     onClick={handleCopy}
-                    className="group p-0.5 rounded-md hover:bg-white/10 transition-colors"
+                    className="group p-0.5 rounded-md hover:bg-surface-2 transition-colors"
                     aria-label="Copy address"
                 >
                     {copied ? (
                         <Check className="h-3 w-3 text-success" />
                     ) : (
-                        <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100" />
+                        <Copy className="h-3 w-3 text-text-tertiary group-hover:text-text-primary transition-colors" />
                     )}
                 </button>
             )}
@@ -75,7 +90,7 @@ export function AddressDisplay({
                 externalLinkHref ? (
                     <Link
                         href={externalLinkHref}
-                        className="text-text-tertiary hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="text-text-tertiary hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-surface-2"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ExternalLink className="h-3 w-3" />
@@ -85,7 +100,7 @@ export function AddressDisplay({
                         href={`https://app.hyperliquid.xyz/explorer/address/${address}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-text-tertiary hover:text-white transition-colors p-0.5 rounded-md hover:bg-white/10"
+                        className="text-text-tertiary hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-surface-2"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <ExternalLink className="h-3 w-3" />

@@ -160,9 +160,12 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
           <span className="h-1 w-1 rounded-full bg-brand" />
           Performance
         </div>
-        <div className="flex items-center gap-3">
+        {/* min-w-0 down the chain so the tab strip scrolls on a phone
+            instead of pushing the card past the viewport. */}
+        <div className="flex min-w-0 max-w-full items-center gap-3">
           <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
           <PillTabs
+            className="min-w-0"
             activeTab={activeTab}
             onTabChange={(v) => setActiveTab(v as TabId)}
             tabs={TABS.map((t) => ({ value: t.value, label: t.label }))}

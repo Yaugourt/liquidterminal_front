@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import { Gavel, Trophy, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import {
   OverviewModule,
   ModuleTable,
@@ -49,7 +49,6 @@ export const Hip3PastAuctionsCard = memo(function Hip3PastAuctionsCard() {
   return (
     <OverviewModule
       title="Past HIP-3 Auctions"
-      icon={<Gavel size={13} className="text-brand" />}
       tag={<HypeMark size="xs" />}
       viewAllLabel="View all"
       href="/market/perp/auction"
@@ -112,7 +111,6 @@ export const Hip3TopDeployersCard = memo(function Hip3TopDeployersCard() {
   return (
     <OverviewModule
       title="Top Deployers"
-      icon={<Trophy size={13} className="text-brand" />}
       tag="by 24h vol"
       viewAllLabel="View all"
       href="/market/perpdex"

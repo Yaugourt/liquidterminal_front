@@ -77,5 +77,13 @@ export function LiquidationsKpiStrip() {
     },
   ];
 
-  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-6" />;
+  // 2 columns × 3 rows: the ribbon sits beside the history chart and fills its
+  // height, so the cells stretch instead of leaving a gap under the strip.
+  return (
+    <KpiRibbon
+      cells={cells}
+      columns="grid-cols-2"
+      className="flex-1 [&>div]:h-full"
+    />
+  );
 }

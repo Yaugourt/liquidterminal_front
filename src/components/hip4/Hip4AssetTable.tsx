@@ -1,64 +1,46 @@
 "use client";
 
 import { TypedDataTable, type Column } from "@/components/common";
-import { HIP4_ASSETS, sideBadgeClass } from "@/lib/hip4/markets-static-data";
-import { cn } from "@/lib/utils";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { HIP4_ASSETS } from "@/lib/hip4/markets-static-data";
 
 type Hip4Asset = (typeof HIP4_ASSETS)[number];
+
+/** Yes / No legs read green / red; named sides (e.g. "Hypurr") stay neutral brand. */
+function sideVariant(name: string): "success" | "error" | "info" {
+  if (name === "Yes") return "success";
+  if (name === "No") return "error";
+  return "info";
+}
 
 const columns: Column<Hip4Asset>[] = [
   {
     key: "coin",
     header: "Coin",
-    type: "address",
-    accessor: (a) => (
-      <span className="font-mono font-bold text-brand">{a.coin}</span>
-    ),
+    accessor: "coin",
   },
   {
     key: "outcome",
     header: "Outcome",
-    accessor: (a) => (
-      <span className="text-xs">#{a.outcome} {a.outcomeName}</span>
-    ),
+    accessor: (a) => `#${a.outcome} ${a.outcomeName}`,
   },
   {
     key: "side",
     header: "Side",
-    accessor: (a) => (
-      <span
-        className={cn(
-          "inline-flex rounded-md border px-2 py-0.5 text-xs font-medium",
-          sideBadgeClass(a.sideName)
-        )}
-      >
-        {a.sideName}
-      </span>
-    ),
+    accessor: (a) => <StatusBadge variant={sideVariant(a.sideName)}>{a.sideName}</StatusBadge>,
   },
   {
     key: "assetIndex",
     header: "Asset index",
     type: "numeric",
-    accessor: (a) => {
-      const idx = 100_000_000 + parseInt(a.coin.slice(1), 10);
-      return (
-        <span className="font-mono text-[11px] text-gold">{idx}</span>
-      );
-    },
+    accessor: (a) => 100_000_000 + parseInt(a.coin.slice(1), 10),
   },
   {
     key: "mid",
     header: "Mid",
     type: "numeric",
-    accessor: (a) => {
-      const color = a.mid >= 0.5 ? "text-success" : "text-danger";
-      return (
-        <span className={cn("font-bold", color)}>
-          {(a.mid * 100).toFixed(1)}%
-        </span>
-      );
-    },
+    tone: (a) => (a.mid >= 0.5 ? "success" : "danger"),
+    accessor: (a) => `${(a.mid * 100).toFixed(1)}%`,
   },
 ];
 
@@ -68,6 +50,7 @@ export function Hip4AssetTable() {
       data={HIP4_ASSETS as unknown as Hip4Asset[]}
       columns={columns}
       getRowKey={(a) => `${a.coin}-${a.sideName}`}
+      density="compact"
     />
   );
 }

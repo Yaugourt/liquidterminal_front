@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback } from "react";
-import { TypedDataTable, type Column } from "@/components/common";
+import { useCallback, type ReactNode } from "react";
+import { TypedDataTable, ModuleAsset, CellValue, CellBar, type Column } from "@/components/common";
 import { formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
@@ -16,32 +16,25 @@ function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[]
       sortable: true,
       getSortValue: (row) => row.name.toLowerCase(),
       accessor: (row) => (
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-sm font-bold text-brand">
-            {row.name.charAt(0).toUpperCase()}
-          </div>
-          <div className="flex flex-col">
-            <span className="text-text-primary text-sm font-medium">{row.fullName}</span>
-            <span className="text-brand text-xs">{row.name}</span>
-          </div>
-        </div>
+        <ModuleAsset logo={row.name.charAt(0).toUpperCase()} name={row.fullName} sub={row.name} />
       ),
     },
     {
       key: "activeAssets",
       header: "Markets",
-      type: "numeric",
+      align: "right",
       sortable: true,
       getSortValue: (row) => row.activeAssets,
       accessor: (row) => (
-        <div className="flex flex-col items-start">
-          <span className="text-text-primary text-sm font-medium">{row.activeAssets}</span>
-          {row.activeAssets !== row.totalAssets && (
-            <span className="text-danger text-label">
-              +{row.totalAssets - row.activeAssets} delisted
-            </span>
-          )}
-        </div>
+        <CellValue
+          value={row.activeAssets}
+          sub={
+            row.activeAssets !== row.totalAssets
+              ? `+${row.totalAssets - row.activeAssets} delisted`
+              : undefined
+          }
+          subTone="danger"
+        />
       ),
     },
     {
@@ -79,49 +72,39 @@ function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[]
     {
       key: "avgFunding",
       header: "Avg Funding",
+      type: "change",
       sortable: true,
       getSortValue: (row) => row.avgFunding,
-      accessor: (row) => (
-        <span className={`text-sm font-medium ${row.avgFunding >= 0 ? 'text-success' : 'text-danger'}`}>
-          {row.avgFunding !== 0 ? formatFunding(row.avgFunding) : '-'}
-        </span>
-      ),
+      tone: (row) => (row.avgFunding === 0 ? "muted" : undefined),
+      accessor: (row) => (row.avgFunding !== 0 ? formatFunding(row.avgFunding) : '-'),
     },
     {
       key: "totalOiCap",
       header: "OI Cap",
-      accessor: (row) => (
-        <div className="flex flex-col items-start">
-          <span className="text-text-primary text-sm font-medium">
-            {formatNumber(row.totalOiCap, format, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-              currency: '$',
-              showCurrency: true,
-            })}
-          </span>
-          {row.totalOpenInterest > 0 && row.totalOiCap > 0 && (
-            <div className="flex items-center gap-1 mt-0.5">
-              <div className="w-12 h-1 bg-surface-2 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-brand rounded-full"
-                  style={{
-                    width: `${Math.min((row.totalOpenInterest / row.totalOiCap) * 100, 100)}%`,
-                  }}
-                />
-              </div>
-              <span className="text-label text-text-tertiary">
-                {((row.totalOpenInterest / row.totalOiCap) * 100).toFixed(1)}%
-              </span>
-            </div>
-          )}
-        </div>
-      ),
+      align: "right",
+      accessor: (row) => {
+        const cap = formatNumber(row.totalOiCap, format, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+          currency: '$',
+          showCurrency: true,
+        });
+        if (!(row.totalOpenInterest > 0 && row.totalOiCap > 0)) return <CellValue value={cap} />;
+        const used = (row.totalOpenInterest / row.totalOiCap) * 100;
+        return (
+          <CellBar value={used / 100} width={48} label={<CellValue value={cap} sub={`${used.toFixed(1)}% used`} />} />
+        );
+      },
     },
   ];
 }
 
-export function PerpDexTable() {
+interface PerpDexTableProps {
+  /** Strip under the head (view switcher owned by the page). */
+  toolbar?: ReactNode;
+}
+
+export function PerpDexTable({ toolbar }: PerpDexTableProps = {}) {
   const router = useRouter();
   const { format } = useNumberFormat();
   const { dexs, isLoading } = usePerpDexMarketData();
@@ -144,6 +127,7 @@ export function PerpDexTable() {
       onRowClick={handleDexClick}
       rowMotion
       initialSort={{ field: "totalVolume24h", direction: "desc" }}
+      toolbar={toolbar}
     />
   );
 }

@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { SearchX } from "lucide-react";
-import { SearchBar, Pagination, SkeletonGrid } from "@/components/common";
+import { TableSearch, Pagination, SkeletonGrid, CardHead } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { useWikiLibrary } from "@/services/wiki";
 import type { EducationalResource } from "@/services/wiki/types";
@@ -97,32 +98,77 @@ export function ArticleFeed({
   }, [resources, type]);
 
   const showSkeleton = isLoading && resources.length === 0;
+  // Table view stays mounted through loading and 0 results (the table renders
+  // both states): swapping trees would remount the search field mid-typing.
+  const tableMode = view === "table";
+  const showPager = !!pagination && pagination.totalPages > 1 && type === "all";
+
+  // Feed chrome, shared by the table (which owns its card) and the cards view.
+  const countTag =
+    pagination && !showSkeleton
+      ? `${pagination.total} ${pagination.total === 1 ? "resource" : "resources"}`
+      : undefined;
+  const viewToggle = (
+    <PillTabs tabs={VIEW_TABS} activeTab={view} onTabChange={(v) => setView(v as FeedView)} />
+  );
+  const toolbar = (
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-3">
+        <TableSearch
+          value={searchQuery}
+          onChange={handleSearch}
+          debounceMs={300}
+          placeholder={searchPlaceholder}
+          className="sm:max-w-[240px]"
+        />
+        <PillTabs
+          variant="text"
+          tabs={SORT_TABS}
+          activeTab={order}
+          onTabChange={handleOrder}
+          className="ml-auto"
+        />
+      </div>
+      <PillTabs variant="text" tabs={TYPE_TABS} activeTab={type} onTabChange={(v) => setType(v as "all" | ContentType)} />
+    </div>
+  );
+  const emptyText = searchQuery
+    ? `No resources match "${searchQuery}"`
+    : type !== "all"
+      ? `No ${CONTENT_TYPE_META[type].label.toLowerCase()} on this page`
+      : "No resources yet";
+  const pagerProps =
+    showPager && pagination
+      ? {
+          total: pagination.total,
+          page: page - 1,
+          rowsPerPage: PAGE_SIZE,
+          onPageChange: (zeroBased: number) => setPage(zeroBased + 1),
+          onRowsPerPageChange: () => {},
+        }
+      : undefined;
+
+  if (tableMode) {
+    return (
+      <AtlasArticleTable
+        resources={shown}
+        isLoading={isLoading}
+        showCategory={showCategory}
+        title={title}
+        tag={countTag}
+        headerAction={viewToggle}
+        toolbar={toolbar}
+        pagination={pagerProps}
+        emptyMessage={emptyText}
+      />
+    );
+  }
 
   return (
-    <div className="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
-      <div className="flex flex-wrap items-center gap-3 border-b border-border-subtle px-3.5 py-3">
-        <span className="text-[13px] font-semibold text-text-primary">{title}</span>
-        <PillTabs tabs={VIEW_TABS} activeTab={view} onTabChange={(v) => setView(v as FeedView)} />
-        <SearchBar
-          onSearch={handleSearch}
-          initialValue={defaultSearch}
-          placeholder={searchPlaceholder}
-          className="min-w-[160px] flex-1 sm:max-w-[240px]"
-        />
-        <div className="ml-auto flex shrink-0 items-center gap-3">
-          <PillTabs variant="text" tabs={SORT_TABS} activeTab={order} onTabChange={handleOrder} />
-          {pagination && !showSkeleton && (
-            <span className="hidden text-[11px] text-text-tertiary sm:inline">
-              <span className="mono">{pagination.total}</span>{" "}
-              {pagination.total === 1 ? "resource" : "resources"}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Content-type filter row */}
-      <div className="border-b border-border-subtle px-3.5 py-2">
-        <PillTabs variant="text" tabs={TYPE_TABS} activeTab={type} onTabChange={(v) => setType(v as "all" | ContentType)} />
+    <Card className="min-w-0 overflow-hidden">
+      <CardHead title={title} tag={countTag} actions={viewToggle} />
+      <div className="flex flex-wrap items-center gap-3 border-b border-border-subtle px-4 py-3">
+        {toolbar}
       </div>
 
       {/* Body */}
@@ -134,15 +180,9 @@ export function ArticleFeed({
         <div className="py-16 text-center">
           <SearchX className="mx-auto mb-3 h-8 w-8 text-text-tertiary/60" />
           <p className="text-sm text-text-secondary">
-            {searchQuery
-              ? `No resources match "${searchQuery}"`
-              : type !== "all"
-                ? `No ${CONTENT_TYPE_META[type].label.toLowerCase()} on this page`
-                : "No resources yet"}
+            {emptyText}
           </p>
         </div>
-      ) : view === "table" ? (
-        <AtlasArticleTable resources={shown} isLoading={isLoading} showCategory={showCategory} />
       ) : (
         <div className="grid grid-cols-1 gap-3 p-3.5 sm:grid-cols-2 2xl:grid-cols-3">
           {shown.map((r) => (
@@ -158,17 +198,11 @@ export function ArticleFeed({
       )}
 
       {/* Footer: server pagination */}
-      {pagination && pagination.totalPages > 1 && type === "all" && (
+      {pagerProps && (
         <div className="flex justify-center border-t border-border-subtle px-4 py-2">
-          <Pagination
-            total={pagination.total}
-            page={page - 1}
-            rowsPerPage={PAGE_SIZE}
-            onPageChange={(zeroBased) => setPage(zeroBased + 1)}
-            onRowsPerPageChange={() => {}}
-          />
+          <Pagination {...pagerProps} />
         </div>
       )}
-    </div>
+    </Card>
   );
 }

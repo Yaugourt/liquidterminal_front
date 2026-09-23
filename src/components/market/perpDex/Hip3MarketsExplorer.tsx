@@ -2,12 +2,17 @@
 
 import { memo, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Layers, Search } from "lucide-react";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { extractPerpDexAssetTicker } from "@/services/market/perpDex/utils";
 import type { PerpDexWithMarketData } from "@/services/market/perpDex/types";
-import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
-import { formatLargeNumber, formatPrice } from "@/lib/formatters/numberFormatting";
+import {
+  TypedDataTable,
+  ModuleAsset,
+  TableSearch,
+  formatPriceChange,
+  type Column,
+} from "@/components/common";
+import { compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
 /** One HIP-3 market flattened across every builder DEX. */
@@ -49,8 +54,7 @@ function flattenMarkets(dexs: PerpDexWithMarketData[]): Hip3MarketRow[] {
   return rows;
 }
 
-const usd = (v: number) =>
-  v > 0 ? formatLargeNumber(v, { prefix: "$", decimals: 1, forceDecimals: false }) : "-";
+const usd = (v: number) => (v > 0 ? compactUsd(v) : "-");
 
 /**
  * Ecosystem-wide HIP-3 markets explorer: every builder-deployed market across
@@ -78,84 +82,54 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
     {
       key: "market",
       header: "Market",
-      accessor: (r) => (
-        <div className="flex items-center gap-2">
-          <TokenAvatar assetName={r.coin} size="lg" />
-          <div className="flex flex-col leading-tight min-w-0">
-            <span className="text-text-primary text-[11px] font-medium truncate">{r.ticker}</span>
-            <span className="text-text-tertiary text-[10px] truncate">{r.dexName}</span>
-          </div>
-        </div>
-      ),
+      accessor: (r) => <ModuleAsset assetName={r.coin} name={r.ticker} sub={r.dexName} />,
     },
     {
       key: "markPx",
       header: "Price",
-      align: "right",
-      accessor: (r) => (
-        <span className="mono text-text-secondary">{formatPrice(r.markPx, format)}</span>
-      ),
+      type: "numeric",
+      accessor: (r) => formatPrice(r.markPx, format),
     },
     {
       key: "priceChange24h",
       header: "24h",
-      align: "right",
+      type: "change",
       sortable: true,
       getSortValue: (r) => r.priceChange24h,
-      accessor: (r) => (
-        <span className={`mono ${r.priceChange24h >= 0 ? "text-success" : "text-danger"}`}>
-          {r.priceChange24h >= 0 ? "+" : ""}
-          {r.priceChange24h.toFixed(2)}%
-        </span>
-      ),
+      accessor: (r) => formatPriceChange(r.priceChange24h),
     },
     {
       key: "volume24h",
       header: "Volume",
-      align: "right",
+      type: "numeric",
       sortable: true,
       getSortValue: (r) => r.volume24h,
-      accessor: (r) => <span className="mono text-text-secondary">{usd(r.volume24h)}</span>,
+      accessor: (r) => usd(r.volume24h),
     },
     {
       key: "openInterestUsd",
       header: "OI",
-      align: "right",
+      type: "numeric",
       sortable: true,
       getSortValue: (r) => r.openInterestUsd,
-      accessor: (r) => <span className="mono text-text-secondary">{usd(r.openInterestUsd)}</span>,
+      accessor: (r) => usd(r.openInterestUsd),
     },
     {
+      // Mark-vs-oracle premium; sub-1bp noise reads as flat.
       key: "basisBps",
       header: "Basis",
-      align: "right",
+      type: "change",
       sortable: true,
       getSortValue: (r) => (r.basisBps == null ? 0 : r.basisBps),
+      tone: (r) => (r.basisBps == null || Math.abs(r.basisBps) < 1 ? "muted" : undefined),
       accessor: (r) =>
-        r.basisBps == null ? (
-          <span className="text-text-tertiary">-</span>
-        ) : (
-          <span
-            className={`mono ${
-              Math.abs(r.basisBps) < 1
-                ? "text-text-tertiary"
-                : r.basisBps >= 0
-                  ? "text-success"
-                  : "text-danger"
-            }`}
-            title="Mark vs oracle premium"
-          >
-            {r.basisBps >= 0 ? "+" : ""}
-            {r.basisBps.toFixed(1)} bps
-          </span>
-        ),
+        r.basisBps == null ? "-" : `${r.basisBps >= 0 ? "+" : ""}${r.basisBps.toFixed(1)} bps`,
     },
   ];
 
   return (
     <TypedDataTable
       title="All HIP-3 markets"
-      icon={<Layers size={15} className="text-brand" />}
       subtitle="Every builder-deployed market, with mark-vs-oracle basis"
       columns={columns}
       data={rows}
@@ -168,15 +142,7 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
       emptyMessage="No markets"
       onRowClick={(r) => router.push(`/market/perpdex/${r.dexName}`)}
       toolbar={
-        <div className="relative">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-tertiary" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Filter market / DEX"
-            className="h-7 w-40 rounded-md bg-surface-2 border border-border-subtle pl-7 pr-2 text-[11px] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-brand/50"
-          />
-        </div>
+        <TableSearch value={query} onChange={setQuery} placeholder="Filter market / DEX" />
       }
     />
   );

@@ -1,6 +1,5 @@
 "use client";
 
-import { Percent } from "lucide-react";
 import { OverviewModule, ModuleTable, ModuleTableRow, SourceBadge } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useProtocolYields } from "@/services/market/yields";
@@ -30,7 +29,6 @@ export function ProjectYieldsModule({ project }: ProjectYieldsModuleProps) {
   return (
     <OverviewModule
       title="Yields on HyperEVM"
-      icon={<Percent className="w-3.5 h-3.5 text-brand" />}
       tag={`${total} pool${total !== 1 ? "s" : ""}`}
       actions={<SourceBadge source="hyperfolio" status="ok" />}
       viewAllLabel={`All ${protocol.label} yields`}

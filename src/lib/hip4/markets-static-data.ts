@@ -28,9 +28,3 @@ export const HIP4_PRICES: Record<string, number> = {
   "#20000": 0.5,
   "#20001": 0.5,
 };
-
-export function sideBadgeClass(name: string) {
-  if (name === "Yes") return "bg-success/15 text-success border-success/25";
-  if (name === "No") return "bg-danger/15 text-danger border-danger/25";
-  return "bg-brand/10 text-brand border-brand/20";
-}

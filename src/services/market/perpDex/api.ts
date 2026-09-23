@@ -31,12 +31,6 @@ const transformPerpDex = (raw: PerpDexRaw): PerpDex => {
 
   const totalOiCap = assets.reduce((sum, asset) => sum + asset.streamingOiCap, 0);
 
-  // Parse date - handle special "1970-01-01T00:00:00" as null
-  let lastChangeTime: Date | null = null;
-  if (raw.lastDeployerFeeScaleChangeTime && raw.lastDeployerFeeScaleChangeTime !== '1970-01-01T00:00:00') {
-    lastChangeTime = new Date(raw.lastDeployerFeeScaleChangeTime);
-  }
-
   return {
     name: raw.name,
     fullName: raw.fullName,
@@ -45,8 +39,6 @@ const transformPerpDex = (raw: PerpDexRaw): PerpDex => {
     feeRecipient: raw.feeRecipient,
     assets,
     subDeployers,
-    deployerFeeScale: parseFloat(raw.deployerFeeScale),
-    lastDeployerFeeScaleChangeTime: lastChangeTime,
     totalAssets: assets.length,
     totalOiCap
   };

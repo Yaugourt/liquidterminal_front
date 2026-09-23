@@ -1,4 +1,10 @@
-import { TypedDataTable, type Column } from "@/components/common";
+import {
+  TypedDataTable,
+  ModuleAsset,
+  SideBadge,
+  toTradeSide,
+  type Column,
+} from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { NumberFormatType } from "@/store/number-format.store";
@@ -9,7 +15,7 @@ import {
 } from "@/services/explorer/validator/types/staking";
 import { VaultSummary } from "@/services/explorer/vault/types";
 import { Liquidation } from "@/services/explorer/liquidation";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { useDateFormat } from "@/store/date-format.store";
 import { formatDate, formatDateTime } from "@/lib/formatters/dateFormatting";
 import { PaginationProps } from "@/components/common";
@@ -49,6 +55,17 @@ interface TableContentProps {
   pagination?: PaginationProps;
 }
 
+/** Tx hash cell — links to the transaction page (not the address page). */
+function TxHash({ hash }: { hash: string }) {
+  return (
+    <AddressDisplay
+      address={hash}
+      href={`/explorer/transaction/${hash}`}
+      copyMessage="Hash copied to clipboard"
+    />
+  );
+}
+
 export function TableContent({
   activeTab,
   validatorSubTab,
@@ -81,13 +98,13 @@ export function TableContent({
   } = liquidationsData;
   const { format: dateFormat } = useDateFormat();
 
+  const hype = (n: number) => `${formatNumber(n, format, { maximumFractionDigits: 2 })} HYPE`;
+
   const getValidatorName = (validatorAddress: string) => {
     const validator = validators.find(
       (v: Validator) => v.address === validatorAddress || v.validator === validatorAddress
     );
-    return validator
-      ? validator.name
-      : `${validatorAddress.slice(0, 6)}...${validatorAddress.slice(-4)}`;
+    return validator ? validator.name : truncateAddress(validatorAddress);
   };
 
   // ── Validators tab ──────────────────────────────────────────────────────
@@ -95,19 +112,26 @@ export function TableContent({
     const validatorsSlice = validators.slice(startIndex, endIndex);
 
     if (validatorSubTab === "all") {
+      const pct = (n: number, digits: number) =>
+        `${formatNumber(n, format, { minimumFractionDigits: digits, maximumFractionDigits: digits })}%`;
+
       const columns: Column<Validator>[] = [
         {
           key: "name",
           header: "Name",
           accessor: (v) => (
-            <span className="text-sm text-brand font-medium">{v.name}</span>
+            <ModuleAsset
+              logo={v.name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2).toUpperCase() || "?"}
+              name={v.name}
+              sub={truncateAddress(v.validator)}
+            />
           ),
         },
         {
           key: "status",
           header: "Status",
           accessor: (v) => (
-            <StatusBadge variant={v.isActive ? "success" : "error"}>
+            <StatusBadge variant={v.isActive ? "success" : "inactive"}>
               {v.isActive ? "Active" : "Inactive"}
             </StatusBadge>
           ),
@@ -116,63 +140,36 @@ export function TableContent({
           key: "stake",
           header: "Staked HYPE",
           type: "numeric",
-          accessor: (v) => (
-            <span className="font-medium">
-              {formatNumber(v.stake, format, { maximumFractionDigits: 2 })}
-            </span>
-          ),
+          accessor: (v) => formatNumber(v.stake, format, { maximumFractionDigits: 2 }),
         },
         {
           key: "apr",
           header: "APR",
           type: "numeric",
-          accessor: (v) => (
-            <span className="text-success font-medium">
-              {formatNumber(v.apr, format, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}%
-            </span>
-          ),
+          tone: () => "success",
+          accessor: (v) => pct(v.apr, 2),
         },
         {
           key: "commission",
           header: "Commission",
-          type: "numeric",
-          accessor: (v) => (
-            <span className="font-medium">
-              {formatNumber(v.commission, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })}%
-            </span>
-          ),
+          type: "fees",
+          accessor: (v) => pct(v.commission, 0),
         },
         {
           key: "uptime",
           header: "Uptime",
           type: "numeric",
-          accessor: (v) => (
-            <span className="font-medium">
-              {formatNumber(v.uptime, format, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}%
-            </span>
-          ),
+          accessor: (v) => pct(v.uptime, 2),
         },
         {
           key: "nRecentBlocks",
           header: "Recent Blocks",
           type: "numeric",
-          accessor: (v) => (
-            <span className="text-brand font-medium">
-              {formatNumber(v.nRecentBlocks, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })}
-            </span>
-          ),
+          accessor: (v) =>
+            formatNumber(v.nRecentBlocks, format, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }),
         },
       ];
 
@@ -192,6 +189,7 @@ export function TableContent({
           onPageChange={pagination?.onPageChange}
           onRowsPerPageChange={pagination?.onRowsPerPageChange}
           rowsPerPageOptions={pagination?.rowsPerPageOptions}
+          density="compact"
         />
       );
     }
@@ -201,11 +199,8 @@ export function TableContent({
         {
           key: "timestamp",
           header: "Time",
-          accessor: (tx) => (
-            <span className="font-medium">
-              {formatDateTime(tx.timestamp, dateFormat)}
-            </span>
-          ),
+          type: "time",
+          accessor: (tx) => formatDateTime(tx.timestamp, dateFormat),
         },
         {
           key: "user",
@@ -216,37 +211,26 @@ export function TableContent({
           key: "type",
           header: "Type",
           accessor: (tx) => (
-            <StatusBadge variant={tx.type === "Undelegate" ? "error" : "success"}>
-              {tx.type}
-            </StatusBadge>
+            <StatusBadge variant={tx.type === "Undelegate" ? "sell" : "buy"}>{tx.type}</StatusBadge>
           ),
         },
         {
           key: "amount",
           header: "Amount",
           type: "numeric",
-          accessor: (tx) => (
-            <span className="font-medium">
-              {formatNumber(tx.amount, format, { maximumFractionDigits: 2 })} HYPE
-            </span>
-          ),
+          accessor: (tx) => hype(tx.amount),
         },
         {
           key: "validator",
           header: "Validator",
           accessor: (tx) => (
-            <AddressDisplay
-              address={tx.validator}
-              label={getValidatorName(tx.validator)}
-            />
+            <AddressDisplay address={tx.validator} label={getValidatorName(tx.validator)} />
           ),
         },
         {
           key: "hash",
           header: "Hash",
-          accessor: (tx) => (
-            <AddressDisplay address={tx.hash} showExternalLink showCopy />
-          ),
+          accessor: (tx) => <TxHash hash={tx.hash} />,
         },
       ];
 
@@ -266,6 +250,7 @@ export function TableContent({
           onPageChange={pagination?.onPageChange}
           onRowsPerPageChange={pagination?.onRowsPerPageChange}
           rowsPerPageOptions={pagination?.rowsPerPageOptions}
+          density="compact"
         />
       );
     }
@@ -275,11 +260,8 @@ export function TableContent({
         {
           key: "timestamp",
           header: "Time",
-          accessor: (item) => (
-            <span className="font-medium">
-              {formatDateTime(item.timestamp, dateFormat)}
-            </span>
-          ),
+          type: "time",
+          accessor: (item) => formatDateTime(item.timestamp, dateFormat),
         },
         {
           key: "user",
@@ -290,11 +272,7 @@ export function TableContent({
           key: "amount",
           header: "Amount",
           type: "numeric",
-          accessor: (item) => (
-            <span className="font-medium">
-              {formatNumber(item.amount, format, { maximumFractionDigits: 2 })} HYPE
-            </span>
-          ),
+          accessor: (item) => hype(item.amount),
         },
       ];
 
@@ -314,6 +292,7 @@ export function TableContent({
           onPageChange={pagination?.onPageChange}
           onRowsPerPageChange={pagination?.onRowsPerPageChange}
           rowsPerPageOptions={pagination?.rowsPerPageOptions}
+          density="compact"
         />
       );
     }
@@ -327,67 +306,49 @@ export function TableContent({
       {
         key: "time",
         header: "Time",
-        accessor: (liq) => (
-          <span className="font-medium">
-            {formatDateTime(liq.time, dateFormat)}
-          </span>
-        ),
+        type: "time",
+        accessor: (liq) => formatDateTime(liq.time, dateFormat),
       },
       {
         key: "coin",
         header: "Coin",
-        accessor: (liq) => (
-          <span className="text-brand font-medium">{liq.coin}</span>
-        ),
+        accessor: (liq) => <ModuleAsset assetName={liq.coin} name={liq.coin} />,
       },
       {
         key: "side",
         header: "Side",
-        accessor: (liq) => (
-          <StatusBadge variant={liq.liq_dir === "Long" ? "success" : "error"}>
-            {liq.liq_dir}
-          </StatusBadge>
-        ),
+        accessor: (liq) => {
+          const side = toTradeSide(liq.liq_dir);
+          return side ? <SideBadge side={side} /> : "—";
+        },
       },
       {
         key: "notional",
         header: "Notional",
         type: "numeric",
-        accessor: (liq) => (
-          <span className="font-medium">
-            ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
-          </span>
-        ),
+        accessor: (liq) => `$${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}`,
       },
       {
         key: "size",
         header: "Size",
         type: "numeric",
         className: "max-lg:hidden",
-        accessor: (liq) => (
-          <span className="font-medium">
-            {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
-          </span>
-        ),
+        accessor: (liq) => formatNumber(liq.size_total, format, { maximumFractionDigits: 4 }),
       },
       {
         key: "fee",
         header: "Fee",
         type: "numeric",
+        tone: () => "muted",
         className: "max-md:hidden",
-        accessor: (liq) => (
-          <span className="text-text-tertiary">
-            ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
-          </span>
-        ),
+        accessor: (liq) =>
+          `$${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}`,
       },
       {
         key: "method",
         header: "Method",
         className: "max-lg:hidden",
-        accessor: (liq) => (
-          <span className="text-text-secondary">{liq.method}</span>
-        ),
+        accessor: (liq) => <StatusBadge variant="neutral">{liq.method}</StatusBadge>,
       },
       {
         key: "user",
@@ -397,9 +358,7 @@ export function TableContent({
       {
         key: "hash",
         header: "Hash",
-        accessor: (liq) => (
-          <AddressDisplay address={liq.hash} showExternalLink showCopy />
-        ),
+        accessor: (liq) => <TxHash hash={liq.hash} />,
       },
     ];
 
@@ -419,6 +378,7 @@ export function TableContent({
         onPageChange={pagination?.onPageChange}
         onRowsPerPageChange={pagination?.onRowsPerPageChange}
         rowsPerPageOptions={pagination?.rowsPerPageOptions}
+        density="compact"
       />
     );
   }
@@ -429,14 +389,18 @@ export function TableContent({
       key: "name",
       header: "Name",
       accessor: (v) => (
-        <span className="font-medium">{v.summary.name}</span>
+        <ModuleAsset
+          logo={v.summary.name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2).toUpperCase() || "?"}
+          name={v.summary.name}
+          sub={truncateAddress(v.summary.vaultAddress)}
+        />
       ),
     },
     {
       key: "status",
       header: "Status",
       accessor: (v) => (
-        <StatusBadge variant={!v.summary.isClosed ? "success" : "error"}>
+        <StatusBadge variant={!v.summary.isClosed ? "success" : "inactive"}>
           {!v.summary.isClosed ? "Open" : "Closed"}
         </StatusBadge>
       ),
@@ -445,21 +409,16 @@ export function TableContent({
       key: "tvl",
       header: "TVL",
       type: "numeric",
-      accessor: (v) => (
-        <span className="font-medium">
-          ${formatNumber(parseFloat(v.summary.tvl), format, { maximumFractionDigits: 2 })}
-        </span>
-      ),
+      accessor: (v) =>
+        `$${formatNumber(parseFloat(v.summary.tvl), format, { maximumFractionDigits: 2 })}`,
     },
     {
       key: "apr",
       header: "APR",
-      type: "numeric",
-      accessor: (v) => (
-        <span className={`font-medium ${v.apr >= 0 ? "text-success" : "text-danger"}`}>
-          {formatNumber(v.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-        </span>
-      ),
+      type: "change",
+      getSortValue: (v) => v.apr,
+      accessor: (v) =>
+        `${formatNumber(v.apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`,
     },
     {
       key: "leader",
@@ -469,11 +428,9 @@ export function TableContent({
     {
       key: "created",
       header: "Created",
-      accessor: (v) => (
-        <span className="font-medium">
-          {formatDate(v.summary.createTimeMillis, dateFormat)}
-        </span>
-      ),
+      type: "time",
+      align: "right",
+      accessor: (v) => formatDate(v.summary.createTimeMillis, dateFormat),
     },
   ];
 
@@ -493,6 +450,7 @@ export function TableContent({
       onPageChange={pagination?.onPageChange}
       onRowsPerPageChange={pagination?.onRowsPerPageChange}
       rowsPerPageOptions={pagination?.rowsPerPageOptions}
+      density="compact"
     />
   );
 }

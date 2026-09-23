@@ -1,7 +1,7 @@
 "use client";
 
-import { TypedDataTable, type Column } from "@/components/common";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { TypedDataTable, ModuleAsset, SideBadge, toTradeSide, type Column } from "@/components/common";
+import { formatAssetValue } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { OpenOrder } from "@/services/explorer/address/types";
 import { formatNumberValue } from "@/services/explorer/address";
@@ -17,90 +17,74 @@ export function OpenOrdersList({ orders, isLoading, error }: OpenOrdersListProps
 
   const columns: Column<OpenOrder>[] = [
     {
+      key: "coin",
+      header: "Token",
+      accessor: (o) => <ModuleAsset assetName={o.coin} name={o.coin} />,
+    },
+    {
       key: "orderType",
       header: "Method",
-      accessor: (o) => <span className="text-text-primary">{o.orderType}</span>,
+      type: "text",
+      accessor: (o) => o.orderType,
     },
     {
       key: "side",
       header: "Side",
-      accessor: (o) => (
-        <span
-          className={`px-2 py-1 rounded text-xs font-medium ${
-            o.side === "A"
-              ? "bg-success/10 text-success"
-              : "bg-danger/10 text-danger"
-          }`}
-        >
-          {o.side === "A" ? "Buy" : "Sell"}
-        </span>
-      ),
+      // HL book side: "B" = bid (buy), "A" = ask (sell).
+      accessor: (o) => {
+        const side = toTradeSide(o.side);
+        return side ? <SideBadge side={side} /> : "—";
+      },
     },
     {
       key: "sz",
       header: "Size",
       type: "numeric",
-      accessor: (o) => (
-        <span className="text-text-primary">{formatNumberValue(o.sz, format)}</span>
-      ),
-    },
-    {
-      key: "coin",
-      header: "Token",
-      accessor: (o) => <span className="text-text-primary">{o.coin}</span>,
+      accessor: (o) => formatNumberValue(o.sz, format),
     },
     {
       key: "limitPx",
       header: "Price",
       type: "numeric",
-      accessor: (o) => (
-        <span className="text-text-primary">
-          {o.limitPx ? formatNumberValue(o.limitPx, format) : "Market"}
-        </span>
-      ),
+      accessor: (o) => (o.limitPx ? formatNumberValue(o.limitPx, format) : "Market"),
     },
     {
       key: "value",
       header: "Value",
       type: "numeric",
-      accessor: (o) => (
-        <span className="text-text-primary">
-          {o.limitPx
-            ? `$${formatNumber(parseFloat(o.sz) * parseFloat(o.limitPx), format)}`
-            : "-"}
-        </span>
-      ),
+      accessor: (o) =>
+        o.limitPx ? formatAssetValue(parseFloat(o.sz) * parseFloat(o.limitPx), format) : "—",
     },
     {
       key: "reduceOnly",
-      header: "Reduce Only",
-      accessor: (o) => (
-        <span className="text-text-primary">{o.reduceOnly ? "Yes" : "No"}</span>
-      ),
+      header: "Reduce only",
+      type: "text",
+      tone: (o) => (o.reduceOnly ? undefined : "muted"),
+      accessor: (o) => (o.reduceOnly ? "Yes" : "No"),
     },
     {
       key: "tif",
-      header: "Time in Force",
-      accessor: (o) => <span className="text-text-primary">{o.tif}</span>,
+      header: "TIF",
+      type: "text",
+      accessor: (o) => o.tif ?? "—",
     },
   ];
 
   return (
-    <div className="space-y-0">
-      <TypedDataTable<OpenOrder>
-        data={orders}
-        columns={columns}
-        getRowKey={(o, idx) => `${o.coin}-${o.side}-${idx}`}
-        isLoading={isLoading}
-        error={error}
-        errorTitle="Error loading orders"
-        emptyMessage="No open orders found"
-        emptyDescription="Your active orders will appear here"
-        paginate
-        itemsPerPage={10}
-        rowsPerPageOptions={[5, 10, 25, 50]}
-        paginationVariant={orders.length > 0 ? "full" : "none"}
-      />
-    </div>
+    <TypedDataTable<OpenOrder>
+      data={orders}
+      columns={columns}
+      getRowKey={(o, idx) => `${o.coin}-${o.side}-${idx}`}
+      isLoading={isLoading}
+      error={error}
+      errorTitle="Error loading orders"
+      emptyMessage="No open orders found"
+      emptyDescription="Your active orders will appear here"
+      paginate
+      itemsPerPage={10}
+      rowsPerPageOptions={[5, 10, 25, 50]}
+      paginationVariant={orders.length > 0 ? "full" : "none"}
+      density="compact"
+    />
   );
 }

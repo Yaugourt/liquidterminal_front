@@ -1,12 +1,19 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Edit, Trash2, Shield, ShieldCheck, ShieldX, Copy, Check } from 'lucide-react';
+import { StatusBadge } from '@/components/ui/status-badge';
+import { Edit, Trash2, Copy, Check } from 'lucide-react';
 import { User } from '@/services/auth/types';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { TypedDataTable, type Column } from '@/components/common';
+import { TypedDataTable, ModuleAsset, type Column, type PaginationProps } from '@/components/common';
+import { formatDate } from '@/lib/formatters/dateFormatting';
+import { useDateFormat } from '@/store/date-format.store';
+
+type UserPagination = Pick<
+  PaginationProps,
+  'total' | 'page' | 'rowsPerPage' | 'onPageChange' | 'onRowsPerPageChange'
+>;
 
 interface UserTableProps {
   users: User[];
@@ -16,6 +23,46 @@ interface UserTableProps {
   onEditUser: (user: User) => void;
   onDeleteUser: (userId: string) => void;
   onVerifiedChange: (userId: string, verified: boolean) => void;
+  /** Right slot of the card head (freshness / refresh). */
+  headerAction?: ReactNode;
+  /** Search + role filter, under the head. */
+  toolbar?: ReactNode;
+  /** Server pagination (omit to hide the footer). */
+  pagination?: UserPagination;
+  /** Greys out the pagination footer while a request is in flight. */
+  paginationDisabled?: boolean;
+}
+
+const ROLE_VARIANT: Record<User['role'], 'error' | 'gold' | 'neutral'> = {
+  ADMIN: 'error',
+  MODERATOR: 'gold',
+  USER: 'neutral',
+};
+
+/** Referral code + copy. Not an address, so no `AddressDisplay` (it always links to the explorer). */
+function ReferralCodeCell({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div className="inline-flex items-center gap-1.5">
+      {code}
+      <button
+        onClick={copy}
+        className="group p-0.5 rounded-md hover:bg-surface-2 transition-colors"
+        aria-label="Copy referral code"
+      >
+        {copied ? (
+          <Check className="h-3 w-3 text-success" />
+        ) : (
+          <Copy className="h-3 w-3 text-text-tertiary group-hover:text-text-primary transition-colors" />
+        )}
+      </button>
+    </div>
+  );
 }
 
 export function UserTable({
@@ -25,68 +72,32 @@ export function UserTable({
   isUpdating,
   onEditUser,
   onDeleteUser,
-  onVerifiedChange
+  onVerifiedChange,
+  headerAction,
+  toolbar,
+  pagination,
+  paginationDisabled,
 }: UserTableProps) {
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-
-  const copyReferralCode = (code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
-  };
-
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return 'N/A';
-    return new Date(date).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'ADMIN':
-        return <Shield className="w-3 h-3 text-danger" />;
-      case 'MODERATOR':
-        return <ShieldCheck className="w-3 h-3 text-gold" />;
-      default:
-        return <ShieldX className="w-3 h-3 text-text-tertiary" />;
-    }
-  };
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'ADMIN':
-        return 'text-danger';
-      case 'MODERATOR':
-        return 'text-gold';
-      default:
-        return 'text-text-secondary';
-    }
-  };
+  const { format: dateFormat } = useDateFormat();
+  const date = (d: Date | undefined) => (d ? formatDate(d, dateFormat) : '—');
 
   const columns: Column<User>[] = [
     {
       key: 'user',
       header: 'User',
       accessor: (user) => (
-        <div>
-          <p className="font-medium text-text-primary text-sm">{user.name}</p>
-          <p className="text-xs text-text-tertiary">{user.email || 'No email'}</p>
-        </div>
+        <ModuleAsset
+          logo={user.name?.slice(0, 2).toUpperCase()}
+          name={user.name}
+          sub={user.email || 'No email'}
+        />
       ),
     },
     {
       key: 'role',
       header: 'Role',
       accessor: (user) => (
-        <div className="flex items-center gap-1.5">
-          {getRoleIcon(user.role)}
-          <span className={`font-medium text-xs ${getRoleColor(user.role)}`}>
-            {user.role}
-          </span>
-        </div>
+        <StatusBadge variant={ROLE_VARIANT[user.role] ?? 'neutral'}>{user.role}</StatusBadge>
       ),
     },
     {
@@ -100,82 +111,46 @@ export function UserTable({
             disabled={isUpdating}
             className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-surface-2 scale-75"
           />
-          <span className={`text-xs ${user.verified ? 'text-success' : 'text-text-tertiary'}`}>
+          <StatusBadge variant={user.verified ? 'success' : 'inactive'}>
             {user.verified ? 'Verified' : 'Unverified'}
-          </span>
+          </StatusBadge>
         </div>
       ),
     },
     {
       key: 'referrals',
       header: 'Referrals',
-      accessor: (user) =>
-        user.referralCount > 0 ? (
-          <span className="px-2 py-1 rounded-md text-xs font-bold bg-brand/10 text-brand">
-            {user.referralCount}
-          </span>
-        ) : (
-          <span className="text-text-tertiary text-xs">—</span>
-        ),
+      type: 'numeric',
+      tone: (user) => (user.referralCount > 0 ? 'brand' : 'muted'),
+      accessor: (user) => (user.referralCount > 0 ? user.referralCount : '—'),
     },
     {
       key: 'referredBy',
       header: 'Referred By',
-      accessor: (user) =>
-        user.referredBy ? (
-          <span className="text-xs text-text-secondary">{user.referredBy}</span>
-        ) : (
-          <span className="text-text-tertiary text-xs">—</span>
-        ),
+      accessor: (user) => user.referredBy || '—',
     },
     {
       key: 'referralCode',
       header: 'Referral Code',
       accessor: (user) =>
-        user.referralCode ? (
-          <div className="flex items-center gap-1">
-            <code className="text-xs text-text-secondary bg-surface-2 px-1.5 py-0.5 rounded">
-              {user.referralCode}
-            </code>
-            <button
-              onClick={() => copyReferralCode(user.referralCode!)}
-              className="p-1 rounded hover-subtle"
-            >
-              {copiedCode === user.referralCode ? (
-                <Check className="w-3 h-3 text-success" />
-              ) : (
-                <Copy className="w-3 h-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
-              )}
-            </button>
-          </div>
-        ) : (
-          <span className="text-text-tertiary text-xs">—</span>
-        ),
+        user.referralCode ? <ReferralCodeCell code={user.referralCode} /> : '—',
     },
     {
-      key: 'dates',
-      header: 'Dates',
-      accessor: (user) => (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="text-xs text-text-tertiary cursor-help border-b border-dotted border-border-default">
-                {formatDate(user.createdAt)}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent side="top" className="bg-surface border-border-default">
-              <div className="text-xs space-y-1">
-                <p><span className="text-text-secondary">Joined:</span> <span className="text-text-primary">{formatDate(user.createdAt)}</span></p>
-                <p><span className="text-text-secondary">Updated:</span> <span className="text-text-primary">{formatDate(user.updatedAt)}</span></p>
-              </div>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ),
+      key: 'joined',
+      header: 'Joined',
+      type: 'time',
+      accessor: (user) => date(user.createdAt),
+    },
+    {
+      key: 'updated',
+      header: 'Updated',
+      type: 'time',
+      className: 'max-xl:hidden',
+      accessor: (user) => date(user.updatedAt),
     },
     {
       key: 'actions',
-      header: <span className="text-right w-full block">Actions</span>,
+      header: 'Actions',
       align: 'right',
       accessor: (user) => (
         <div className="flex items-center justify-end gap-1">
@@ -184,6 +159,7 @@ export function UserTable({
             size="sm"
             onClick={() => onEditUser(user)}
             className="text-text-tertiary hover:text-text-primary hover:bg-surface-2 h-7 w-7 p-0"
+            aria-label="Edit user"
           >
             <Edit className="w-3.5 h-3.5" />
           </Button>
@@ -193,6 +169,7 @@ export function UserTable({
             disabled={user.id === currentUserId}
             onClick={() => onDeleteUser(user.id)}
             className="text-text-tertiary hover:text-danger hover:bg-danger/10 h-7 w-7 p-0 disabled:opacity-30"
+            aria-label="Delete user"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </Button>
@@ -203,12 +180,19 @@ export function UserTable({
 
   return (
     <TypedDataTable<User>
+      title="Accounts"
+      tag="admin"
+      headerAction={headerAction}
+      toolbar={toolbar}
       data={users}
       columns={columns}
       getRowKey={(user) => user.id}
       isLoading={isLoading && users.length === 0}
       emptyMessage="No users found"
       emptyDescription="Try adjusting your filters"
+      {...pagination}
+      rowsPerPageOptions={[10, 25, 50, 100]}
+      paginationDisabled={paginationDisabled}
     />
   );
 }

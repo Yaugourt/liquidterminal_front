@@ -3,7 +3,11 @@
 import { useMemo } from "react";
 import { Layers } from "lucide-react";
 import { categorizeQuestion } from "@/lib/hip4-category";
-import { effectiveStatus, type Hip4EffectiveStatus } from "@/lib/hip4/market-formatter";
+import {
+  effectiveStatus,
+  hip4QuestionKey,
+  type Hip4EffectiveStatus,
+} from "@/lib/hip4/market-formatter";
 import { Hip4QuestionCard } from "./Hip4QuestionCard";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
 
@@ -61,8 +65,8 @@ export function Hip4RelatedMarkets({ questions, current, max = 4 }: Hip4RelatedM
         <span className="mono text-text-tertiary/70">· {related.length}</span>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {related.map((q, i) => (
-          <Hip4QuestionCard key={q.primary_coin ?? q.question_id ?? `rel-${i}`} question={q} />
+        {related.map((q) => (
+          <Hip4QuestionCard key={hip4QuestionKey(q)} question={q} />
         ))}
       </div>
     </section>

@@ -11,8 +11,6 @@ export interface BlockHeaderProps {
 
 export interface BlockTransactionListProps {
   transactions: BlockTransaction[];
-  onTransactionClick: (hash: string) => void;
-  onAddressClick: (address: string) => void;
 }
 
 /**

@@ -83,21 +83,16 @@ export function Hip4InfoApiChapter() {
               right-hand <strong className="text-text-primary">On this page</strong> menu (desktop) or the
               inline chips above to jump.
             </Hip4DocLead>
-            <div className="space-y-6">
+            <div className="space-y-10">
               {HIP4_REST_INFO_ENDPOINTS.map((spec) => (
-                <div
-                  key={spec.id}
-                  className="rounded-lg border border-border-subtle bg-surface/30 p-5 sm:p-6"
-                >
-                  <Hip4ApiRestEndpointDoc spec={spec} />
-                </div>
+                <Hip4ApiRestEndpointDoc key={spec.id} spec={spec} />
               ))}
             </div>
           </div>
 
-          <Hip4GlassPanel id="outcome-types">
-            <Hip4SectionTitle>Outcome types</Hip4SectionTitle>
-            <Hip4DocLead className="mb-3 text-xs">
+          <section id="outcome-types" className="scroll-mt-28 space-y-3">
+            <Hip4SectionTitle className="!mb-0">Outcome types</Hip4SectionTitle>
+            <Hip4DocLead className="text-xs">
               How <code className="font-mono text-[11px]">outcomeMeta</code> rows map to market
               shapes we observed on testnet.
             </Hip4DocLead>
@@ -107,11 +102,11 @@ export function Hip4InfoApiChapter() {
                 cells.map((c, ci) => <span key={`${ri}-${ci}`}>{c}</span>)
               )}
             />
-            <p className="mt-4 text-xs text-text-secondary">
+            <p className="text-xs text-text-secondary">
               Multi-outcome <Hip4GoldHighlight>questions</Hip4GoldHighlight> group several outcomes;
               each outcome still trades as its own YES/NO pair on the CLOB.
             </p>
-          </Hip4GlassPanel>
+          </section>
 
           <Hip4GlassPanel id="coin-mapping" className="border-gold/15">
             <Hip4SectionTitle>Coin ID mapping</Hip4SectionTitle>
@@ -142,14 +137,9 @@ export function Hip4InfoApiChapter() {
               <Hip4GoldHighlight>markPx</Hip4GoldHighlight> on YES legs reads like implied
               probability.
             </Hip4DocLead>
-            <div className="space-y-6">
+            <div className="space-y-10">
               {HIP4_WS_EXAMPLES.map((spec) => (
-                <div
-                  key={spec.id}
-                  className="rounded-lg border border-border-subtle bg-surface/30 p-5 sm:p-6"
-                >
-                  <Hip4ApiWsEndpointDoc spec={spec} />
-                </div>
+                <Hip4ApiWsEndpointDoc key={spec.id} spec={spec} />
               ))}
             </div>
           </div>

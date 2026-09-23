@@ -34,9 +34,12 @@ export { DataStatus } from './DataStatus';
 export { SourceBadge, sourceStatus, combinedSourceStatus } from './SourceBadge';
 export type { SourceBadgeStatus, SourceId } from './SourceBadge';
 
+// Card head (minimal) — shared by TypedDataTable + OverviewModule
+export { CardHead } from './CardHead';
+
 // Tables
 export { TypedDataTable } from './DataTable';
-export type { Column, ColumnType } from './DataTable';
+export type { Column, ColumnType, CellTone } from './DataTable';
 export { ScrollableTable } from './ScrollableTable';
 export {
   OverviewModule,

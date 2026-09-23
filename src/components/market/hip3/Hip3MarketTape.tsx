@@ -1,16 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { TypedDataTable, SourceBadge, sourceStatus, type Column } from "@/components/common";
-import { compactUsd, formatPrice, truncateAddress } from "@/lib/formatters/numberFormatting";
+import {
+  TypedDataTable,
+  SideBadge,
+  toTradeSide,
+  SourceBadge,
+  sourceStatus,
+  type Column,
+} from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import { compactUsd, formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
 import { useHip3CoinFills, type Hip3Fill } from "@/services/indexer/hip3";
 
 const THRESHOLDS = [
-  { label: "$10K", value: 10_000 },
-  { label: "$25K", value: 25_000 },
-  { label: "$100K", value: 100_000 },
+  { label: "$10K", value: "10000" },
+  { label: "$25K", value: "25000" },
+  { label: "$100K", value: "100000" },
+];
+
+const FILL_KINDS = [
+  { label: "All fills", value: "all" },
+  { label: "Liquidations", value: "liq" },
 ];
 
 function buildColumns(format: NumberFormatType): Column<Hip3Fill>[] {
@@ -18,75 +32,54 @@ function buildColumns(format: NumberFormatType): Column<Hip3Fill>[] {
     {
       key: "time",
       header: "Time",
-      align: "left",
-      accessor: (fill) => (
-        <span className="mono text-text-tertiary">{fill.time.slice(11, 19)}</span>
-      ),
+      type: "time",
+      accessor: (fill) => fill.time.slice(11, 19),
     },
     {
       key: "side",
       header: "Side",
-      align: "left",
-      width: "88px",
-      accessor: (fill) => (
-        <span className="inline-flex items-center gap-1.5">
-          <span className={`font-medium ${fill.side === "B" ? "text-success" : "text-danger"}`}>
-            {fill.side === "B" ? "BUY" : "SELL"}
+      width: "120px",
+      accessor: (fill) => {
+        const side = toTradeSide(fill.side);
+        return (
+          <span className="inline-flex items-center gap-1.5">
+            {side ? <SideBadge side={side} /> : "—"}
+            {fill.is_liquidation === 1 && <StatusBadge variant="error">LIQ</StatusBadge>}
           </span>
-          {fill.is_liquidation === 1 && (
-            <span className="text-[10px] px-1 py-0.5 rounded bg-danger/10 border border-danger/25 text-danger font-medium">
-              LIQ
-            </span>
-          )}
-        </span>
-      ),
+        );
+      },
     },
     {
       key: "px",
       header: "Price",
-      align: "right",
-      accessor: (fill) => <span className="mono">{formatPrice(fill.px, format)}</span>,
+      type: "numeric",
+      accessor: (fill) => formatPrice(fill.px, format),
     },
     {
       key: "sz",
       header: "Size",
-      align: "right",
-      accessor: (fill) => (
-        <span className="mono text-text-secondary">
-          {fill.sz.toLocaleString(undefined, { maximumFractionDigits: 4 })}
-        </span>
-      ),
+      type: "numeric",
+      tone: () => "muted",
+      accessor: (fill) => formatNumber(fill.sz, format, { maximumFractionDigits: 4 }),
     },
     {
       key: "notional",
       header: "Notional",
-      align: "right",
-      accessor: (fill) => <span className="mono">{compactUsd(fill.notional)}</span>,
+      type: "numeric",
+      accessor: (fill) => compactUsd(fill.notional),
     },
     {
       key: "fee",
       header: "Fee",
-      align: "right",
+      type: "fees",
       // Raw floats arrive with binary artefacts (2.6014340000000002). Sub-dollar
       // fees still need real precision, so scale the decimals to the magnitude.
-      accessor: (fill) => (
-        <span className="mono text-gold">
-          ${fill.fee < 1 ? fill.fee.toFixed(4) : fill.fee.toFixed(2)}
-        </span>
-      ),
+      accessor: (fill) => compactUsd(fill.fee, fill.fee < 1 ? { decimals: 4 } : undefined),
     },
     {
       key: "user",
       header: "Trader",
-      align: "left",
-      accessor: (fill) => (
-        <Link
-          href={`/explorer/address/${fill.user}`}
-          className="mono text-text-secondary hover:text-brand transition-colors"
-        >
-          {truncateAddress(fill.user)}
-        </Link>
-      ),
+      accessor: (fill) => <AddressDisplay address={fill.user} showCopy={false} />,
     },
   ];
 }
@@ -102,7 +95,7 @@ function buildColumns(format: NumberFormatType): Column<Hip3Fill>[] {
  */
 export function Hip3MarketTape({ coin }: { coin: string }) {
   const { format } = useNumberFormat();
-  const [threshold, setThreshold] = useState(THRESHOLDS[1].value);
+  const [threshold, setThreshold] = useState(Number(THRESHOLDS[1].value));
   const [liquidationsOnly, setLiquidationsOnly] = useState(false);
 
   const { fills, isLoading, error, refetch } = useHip3CoinFills({
@@ -114,56 +107,35 @@ export function Hip3MarketTape({ coin }: { coin: string }) {
   // The proxy answers 402 when the HypeDexer subscription lapses. The page core
   // is Hyperliquid-only, so this card fails on its own without taking anything
   // else down — but it must offer a retry, since polling stops on a 4xx.
-  if (error) {
-    return (
-      <div className="bg-surface border border-border-subtle rounded-lg px-4 py-6 text-center">
-        <div className="text-[13px] text-text-secondary">Large fills unavailable</div>
-        <button
-          onClick={refetch}
-          className="mt-2 h-7 px-2.5 text-[11px] font-medium inline-flex items-center rounded-md border border-border-default bg-surface-2 text-text-secondary hover:text-text-primary transition-colors"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
   return (
     <TypedDataTable<Hip3Fill>
       title="Large fills"
       subtitle={`≥ ${compactUsd(threshold)} notional`}
-      headerAction={
-        <div className="flex items-center gap-3 text-xs">
-          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
-          {THRESHOLDS.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => setThreshold(option.value)}
-              className={
-                threshold === option.value
-                  ? "text-brand font-medium"
-                  : "text-text-tertiary hover:text-text-primary transition-colors"
-              }
-            >
-              {option.label}
-            </button>
-          ))}
-          <button
-            onClick={() => setLiquidationsOnly((previous) => !previous)}
-            className={
-              liquidationsOnly
-                ? "text-brand font-medium"
-                : "text-text-tertiary hover:text-text-primary transition-colors"
-            }
-          >
-            Liquidations
-          </button>
-        </div>
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+      toolbar={
+        <>
+          <PillTabs
+            variant="text"
+            tabs={THRESHOLDS}
+            activeTab={String(threshold)}
+            onTabChange={(value) => setThreshold(Number(value))}
+          />
+          <PillTabs
+            variant="text"
+            className="ml-auto"
+            tabs={FILL_KINDS}
+            activeTab={liquidationsOnly ? "liq" : "all"}
+            onTabChange={(value) => setLiquidationsOnly(value === "liq")}
+          />
+        </>
       }
       data={fills}
       columns={buildColumns(format)}
       getRowKey={(fill) => `${fill.tid}-${fill.user}-${fill.time}`}
       isLoading={isLoading}
+      error={error}
+      onErrorRetry={refetch}
+      errorTitle="Large fills unavailable"
       density="compact"
       // A server-side notional floor reaches back days, so the result set is
       // long by design. Paginate rather than let it stretch the page.

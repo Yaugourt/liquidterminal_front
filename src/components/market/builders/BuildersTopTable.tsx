@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { TypedDataTable, type Column } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
@@ -13,6 +14,8 @@ interface BuildersTopTableProps {
   error: Error | null;
   /** Refetch handler surfaced as a Retry button in the error state. */
   onRetry?: () => void;
+  /** View switcher + window meta, rendered in the table toolbar (owned by the page). */
+  toolbar?: ReactNode;
 }
 
 const PAGE_SIZE = 25;
@@ -23,10 +26,9 @@ function buildColumns(format: NumberFormatType): Column<BuilderTopRow>[] {
     {
       key: "rank",
       header: "#",
+      type: "rank",
       width: "50px",
-      accessor: (_row, _idx, abs) => (
-        <span className="mono text-[11px] text-text-tertiary">{abs + 1}</span>
-      ),
+      accessor: (_row, _idx, abs) => abs + 1,
     },
     {
       key: "name",
@@ -70,12 +72,9 @@ function buildColumns(format: NumberFormatType): Column<BuilderTopRow>[] {
       type: "numeric",
       sortable: true,
       className: "hidden md:table-cell",
+      tone: () => "muted",
       getSortValue: (row) => row.uniqueUsers ?? 0,
-      accessor: (row) => (
-        <span className="text-text-secondary">
-          {formatNumber(row.uniqueUsers, format, { maximumFractionDigits: 0 })}
-        </span>
-      ),
+      accessor: (row) => formatNumber(row.uniqueUsers, format, { maximumFractionDigits: 0 }),
     },
     {
       key: "fillCount",
@@ -83,17 +82,14 @@ function buildColumns(format: NumberFormatType): Column<BuilderTopRow>[] {
       type: "numeric",
       sortable: true,
       className: "hidden lg:table-cell",
+      tone: () => "muted",
       getSortValue: (row) => row.fillCount ?? 0,
-      accessor: (row) => (
-        <span className="text-text-secondary">
-          {formatNumber(row.fillCount, format, { maximumFractionDigits: 0 })}
-        </span>
-      ),
+      accessor: (row) => formatNumber(row.fillCount, format, { maximumFractionDigits: 0 }),
     },
   ];
 }
 
-export function BuildersTopTable({ rows, isLoading, error, onRetry }: BuildersTopTableProps) {
+export function BuildersTopTable({ rows, isLoading, error, onRetry, toolbar }: BuildersTopTableProps) {
   const router = useRouter();
   const { format } = useNumberFormat();
 
@@ -117,6 +113,7 @@ export function BuildersTopTable({ rows, isLoading, error, onRetry }: BuildersTo
       initialSort={{ field: "totalVolume", direction: "desc" }}
       paginationVariant={rows.length > PAGE_SIZE ? "full" : "none"}
       rowsPerPageOptions={[25]}
+      toolbar={toolbar}
     />
   );
 }

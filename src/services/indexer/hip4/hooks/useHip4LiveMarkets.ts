@@ -8,6 +8,7 @@ import { buildLiveMarkets } from "@/lib/hip4/outcome-meta";
 import type {
   Hip4LiveMarkets,
   Hip4MarketEnrichedRow,
+  Hip4OutcomeVolumes,
   Hip4QuestionWithOutcomesRow,
   UseHip4LiveMarketsResult,
 } from "../types";
@@ -19,6 +20,30 @@ import type {
 const EMPTY_QUESTIONS: Hip4QuestionWithOutcomesRow[] = [];
 const EMPTY_MARKETS_BY_COIN: Record<string, Hip4MarketEnrichedRow> = {};
 const EMPTY_MIDS: Record<string, string> = {};
+
+// Lifetime volume moves slowly and costs ~11 uncached indexer calls (the coin
+// filter is capped at 256 chars), so reuse it across the 15s price polls.
+// Outcomes created since the last load show no volume until the next refresh.
+const VOLUME_TTL_MS = 5 * 60_000;
+let volumeCache: { at: number; pending: Promise<Hip4OutcomeVolumes> } | null = null;
+
+function loadOutcomeVolumes(encodings: number[]): Promise<Hip4OutcomeVolumes> {
+  if (volumeCache && Date.now() - volumeCache.at < VOLUME_TTL_MS) {
+    return volumeCache.pending;
+  }
+  const pending = fetchHip4OutcomeVolumes(encodings).catch((err: unknown) => {
+    // Analytics can 402 (indexer instability). Degrade to no volume rather than
+    // dropping the markets, but surface it so the UI doesn't present a bare 0 as
+    // authoritative.
+    console.warn(
+      "[hip4] live-market volumes unavailable, showing partial totals:",
+      err instanceof Error ? err.message : String(err)
+    );
+    return { volumes: {}, partial: true };
+  });
+  volumeCache = { at: Date.now(), pending };
+  return pending;
+}
 
 /**
  * Fetches the canonical live markets that HypeDexer's aggregation tables omit:
@@ -33,22 +58,9 @@ async function fetchHip4LiveMarkets(): Promise<Hip4LiveMarkets> {
   ]);
 
   const encodings = meta.flatMap((o) => [o.outcome * 10, o.outcome * 10 + 1]);
-  let volByEncoding: Record<number, number> = {};
-  let volumesUnavailable = false;
-  try {
-    volByEncoding = (await fetchHip4OutcomeVolumes(encodings)) ?? {};
-  } catch (err) {
-    // Analytics can 402 (indexer instability). Degrade to no volume rather than
-    // dropping the markets, but surface it so the UI doesn't present a bare 0 as
-    // authoritative.
-    volumesUnavailable = true;
-    console.warn(
-      "[hip4] live-market volumes unavailable, showing partial totals:",
-      err instanceof Error ? err.message : String(err)
-    );
-  }
+  const { volumes, partial } = await loadOutcomeVolumes(encodings);
 
-  return { ...buildLiveMarkets(meta, mids, volByEncoding), volumesUnavailable };
+  return { ...buildLiveMarkets(meta, mids, volumes), volumesUnavailable: partial };
 }
 
 export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {

@@ -6,7 +6,6 @@ import { TwapTable } from "@/components/dashboard/twap/TwapTable";
 import { TwapTableData } from "@/components/dashboard/twap/types";
 import { useTwapOrders } from "@/services/market/order";
 import { EnrichedTwapOrder } from "@/services/market/order/types";
-import { Card } from "@/components/ui/card";
 import { sourceStatus, type SourceBadgeStatus } from "@/components/common";
 
 // Transformer les données enrichies en format tableau
@@ -73,17 +72,14 @@ export const TokenTwapSection = memo(({ tokenName, onSourceStatus }: TokenTwapSe
     showPagination: true
   };
 
+  // TwapTable owns its card — no wrapper here.
   return (
-    <Card className="w-full">
-      <div className="min-h-[300px]">
-        <TwapTable
-          twaps={paginatedTwaps}
-          isLoading={isLoading}
-          error={error}
-          {...paginationProps}
-        />
-      </div>
-    </Card>
+    <TwapTable
+      twaps={paginatedTwaps}
+      isLoading={isLoading}
+      error={error}
+      {...paginationProps}
+    />
   );
 });
 

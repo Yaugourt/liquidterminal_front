@@ -216,8 +216,8 @@ Minimal DS for filters: no container/indicator, active text-brand, count in mono
   <!-- ───────────── OverviewModule + ModuleTable + ModuleAsset ───────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset  (minimal)</div>
-    <div class="kit-jsx">React: &lt;OverviewModule title tagVariant="plain" tag? href?&gt;&lt;ModuleTable headerFill={false}&gt;&lt;ModuleTableRow cells=[&lt;ModuleAsset tone="neutral"/&gt;, …] /&gt;…&lt;/&gt;&lt;/&gt;
-Minimal DS: no brand icon square, tag as plain text, neutral avatars, no header fill, medium weight. icon stays optional.</div>
+    <div class="kit-jsx">React: &lt;OverviewModule title tag? href?&gt;&lt;ModuleTable&gt;&lt;ModuleTableRow cells=[&lt;ModuleAsset/&gt;, …] /&gt;…&lt;/&gt;&lt;/&gt;
+Head = &lt;CardHead&gt; (no icon square, plain tag). Neutral avatars, no header fill, medium weight — all defaults now.</div>
     <div class="bg-surface border border-border-subtle rounded-lg flex flex-col mt-2 max-w-md">
       <div class="flex items-baseline gap-2 px-4 py-3 border-b border-border-subtle">
         <h3 class="text-[13px] font-medium text-text-primary truncate">Top Vaults</h3>
@@ -284,8 +284,8 @@ stat.label is optional — omit it for a value-only dense row.</div>
   <!-- ───────────────────────── TypedDataTable (page table) ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">TypedDataTable  (full-width page table) + toolbar</div>
-    <div class="kit-jsx">React: &lt;TypedDataTable data columns getRowKey paginate headerFill={false} toolbar={…} /&gt;  ·  @/components/common
-Minimal DS: no header fill, rows py-3, neutral avatars, text tabs. Column.type: "numeric"|"fees"|"change"|"address"|"text" auto-styles cells.</div>
+    <div class="kit-jsx">React: &lt;TypedDataTable title? tag? headerAction? toolbar={…} data columns getRowKey density? /&gt;  ·  @/components/common
+Owns its Card (+ &lt;CardHead&gt; when title). No header fill, rows px-4 py-3 13px (compact: px-3 py-2 12px). Column.type: numeric|change|fees|rank|time|address auto-styles cells; Column.tone colours per row. Cells: ModuleAsset · CellValue · CellBar · SideBadge · StatusBadge · AddressDisplay; toolbar: TableSearch (the input below) + PillTabs variant="text" + TableStat.</div>
     <div class="min-w-0 bg-surface border border-border-subtle rounded-lg mt-2 overflow-hidden">
       <div class="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-border-subtle">
         <div class="relative flex-1 min-w-[180px] max-w-xs">
@@ -327,7 +327,8 @@ Minimal DS: no header fill, rows py-3, neutral avatars, text tabs. Column.type: 
   <!-- ───────────────────────── StatusBadge / pills ───────────────────────── -->
   <section class="space-y-3 kit-sec pt-8">
     <div class="kit-label">StatusBadge / pills</div>
-    <div class="kit-jsx">React: &lt;StatusBadge variant="success"|"inactive"|"warning"&gt;Open&lt;/StatusBadge&gt;  ·  @/components/ui/status-badge</div>
+    <div class="kit-jsx">React: &lt;StatusBadge variant="success"|"inactive"|"warning"|"gold"|"buy"|"sell" dot?&gt;Open&lt;/StatusBadge&gt;  ·  @/components/ui/status-badge
+Long/Short/Buy/Sell: &lt;SideBadge side /&gt; (@/components/common) — same pill, fixed labels.</div>
     <div class="flex items-center gap-3 mt-2">
       <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-success/10 border border-success/25 text-success font-medium"><span class="w-1.5 h-1.5 rounded-full bg-success"></span>Open</span>
       <span class="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-md bg-surface-2 border border-border-subtle text-text-tertiary font-medium"><span class="w-1.5 h-1.5 rounded-full bg-text-tertiary"></span>Closed</span>

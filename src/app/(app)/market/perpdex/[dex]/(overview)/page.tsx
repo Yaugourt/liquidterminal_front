@@ -26,6 +26,12 @@ import {
   type PerpDexMarketsSortField,
 } from "@/lib/perpDexMarketsSort";
 
+function formatFeeScale(range: { min: number; max: number } | null): string {
+  if (!range) return "—";
+  const pct = (v: number) => `${(v * 100).toFixed(0)}%`;
+  return range.min === range.max ? pct(range.min) : `${pct(range.min)}–${pct(range.max)}`;
+}
+
 export default function PerpDexDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -226,7 +232,7 @@ export default function PerpDexDetailPage() {
             <span className="text-stat-label">Fee Scale</span>
           </div>
           <span className="text-text-primary font-bold text-lg">
-            {(dex.deployerFeeScale * 100).toFixed(0)}%
+            {formatFeeScale(dex.feeScaleRange)}
           </span>
         </div>
       </div>

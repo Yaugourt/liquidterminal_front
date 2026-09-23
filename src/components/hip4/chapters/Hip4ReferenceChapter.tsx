@@ -28,55 +28,28 @@ import { HYPERLIQUID_INFO_SPOT_DOC_URL } from "@/lib/hip4/api-info-spec";
 import { TypedDataTable, type Column } from "@/components/common";
 
 const WS_COLUMNS: Column<Hip4WsChannelRow>[] = [
-  {
-    key: "channel",
-    header: "Channel",
-    accessor: (r) => (
-      <span className="font-mono text-table-cell text-gold">{r.channel}</span>
-    ),
-  },
-  {
-    key: "purpose",
-    header: "Purpose",
-    accessor: (r) => (
-      <span className="text-table-cell text-text-secondary">{r.purpose}</span>
-    ),
-  },
+  { key: "channel", header: "Channel", type: "code", accessor: "channel" },
+  { key: "purpose", header: "Purpose", accessor: "purpose" },
 ];
 
 const L1_COLUMNS: Column<Hip4L1ActionRow>[] = [
-  {
-    key: "type",
-    header: "type",
-    accessor: (r) => (
-      <span className="font-mono text-sm text-table-cell text-gold">{r.type}</span>
-    ),
-  },
-  {
-    key: "role",
-    header: "Role",
-    accessor: (r) => (
-      <span className="text-table-cell text-text-secondary">{r.role}</span>
-    ),
-  },
+  { key: "type", header: "type", type: "code", accessor: "type" },
+  { key: "role", header: "Role", accessor: "role" },
 ];
 
 const WALLET_COLUMNS: Column<Hip4SystemWalletRow>[] = [
   {
     key: "address",
     header: "Address",
-    type: "address",
-    accessor: (r) => (
-      <span className="font-mono text-[11px] text-table-cell">{r.address}</span>
-    ),
+    // Testnet-only wallets: full address as text, no link to our mainnet explorer.
+    type: "code",
+    accessor: "address",
   },
   {
     key: "role",
     header: "Role",
     className: "min-w-[200px]",
-    accessor: (r) => (
-      <span className="text-table-cell text-text-secondary">{r.role}</span>
-    ),
+    accessor: "role",
   },
   {
     key: "proof",
@@ -88,32 +61,19 @@ const WALLET_COLUMNS: Column<Hip4SystemWalletRow>[] = [
           href={r.evidenceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-brand underline-offset-2 hover:underline"
+          className="text-brand hover:text-brand-hover transition-colors"
         >
           Tx
         </Link>
       ) : (
-        <span className="text-text-tertiary">—</span>
+        "—"
       ),
   },
 ];
 
 const S3_COLUMNS: Column<Hip4S3DatasetRow>[] = [
-  {
-    key: "path",
-    header: "Path / dataset",
-    type: "address",
-    accessor: (r) => (
-      <span className="font-mono text-[11px] text-table-cell">{r.path}</span>
-    ),
-  },
-  {
-    key: "notes",
-    header: "Notes",
-    accessor: (r) => (
-      <span className="text-table-cell text-text-secondary">{r.notes}</span>
-    ),
-  },
+  { key: "path", header: "Path / dataset", type: "code", accessor: "path" },
+  { key: "notes", header: "Notes", accessor: "notes" },
 ];
 
 export function Hip4ReferenceChapter() {
@@ -203,9 +163,9 @@ export function Hip4ReferenceChapter() {
         <p className="text-xs leading-relaxed text-text-secondary">{HIP4_COIN_ID_NOTE}</p>
       </Hip4GlassPanel>
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>WebSocket channels (summary)</Hip4SectionTitle>
-        <Hip4DocLead className="mb-3 text-xs">
+      <section className="space-y-3">
+        <Hip4SectionTitle className="!mb-0">WebSocket channels (summary)</Hip4SectionTitle>
+        <Hip4DocLead className="text-xs">
           Channels we used for live HIP-4 book and mark research. Detail and subscribe examples on{" "}
           <Link href="/hip4/info-api#hip4-ws-block" className="text-brand hover:underline">
             Info endpoint
@@ -218,11 +178,11 @@ export function Hip4ReferenceChapter() {
           getRowKey={(r) => r.channel}
           density="compact"
         />
-      </Hip4GlassPanel>
+      </section>
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>L1 action types</Hip4SectionTitle>
-        <Hip4DocLead className="mb-3 text-xs">
+      <section className="space-y-3">
+        <Hip4SectionTitle className="!mb-0">L1 action types</Hip4SectionTitle>
+        <Hip4DocLead className="text-xs">
           High-level <code className="font-mono text-[11px]">type</code> strings seen in explorer /
           research. Full JSON payloads:{" "}
           <code className="font-mono text-[11px] text-text-tertiary">HIP4-research-complete.md</code>.
@@ -233,15 +193,15 @@ export function Hip4ReferenceChapter() {
           getRowKey={(r) => r.type}
           density="compact"
         />
-        <p className="mt-3 text-xs text-text-tertiary">
+        <p className="text-xs text-text-tertiary">
           Examples for <Hip4GoldHighlight>registerTokensAndStandaloneOutcome</Hip4GoldHighlight> and{" "}
           <Hip4GoldHighlight>VoteGlobalAction</Hip4GoldHighlight> in the markdown file above.
         </p>
-      </Hip4GlassPanel>
+      </section>
 
-      <Hip4GlassPanel id="system-wallets">
-        <Hip4SectionTitle>System wallets</Hip4SectionTitle>
-        <Hip4DocLead className="mb-3 text-xs">
+      <section id="system-wallets" className="scroll-mt-28 space-y-3">
+        <Hip4SectionTitle className="!mb-0">System wallets</Hip4SectionTitle>
+        <Hip4DocLead className="text-xs">
           Eight linked Core addresses traced as one cluster; two roles mapped (HIP-4 operator + oracle),
           six unmapped. Testnet only — mainnet distribution unknown. None overlap the HyperEVM
           parimutuel deployer — see{" "}
@@ -256,11 +216,11 @@ export function Hip4ReferenceChapter() {
           getRowKey={(r) => r.address}
           density="compact"
         />
-      </Hip4GlassPanel>
+      </section>
 
-      <Hip4GlassPanel>
-        <Hip4SectionTitle>S3</Hip4SectionTitle>
-        <Hip4DocLead className="mb-3 text-xs">
+      <section className="space-y-3">
+        <Hip4SectionTitle className="!mb-0">S3</Hip4SectionTitle>
+        <Hip4DocLead className="text-xs">
           Datasets and paths referenced in research (fills, EVM blocks). Requester pays where noted.
         </Hip4DocLead>
         <TypedDataTable<Hip4S3DatasetRow>
@@ -269,7 +229,7 @@ export function Hip4ReferenceChapter() {
           getRowKey={(r) => r.path}
           density="compact"
         />
-      </Hip4GlassPanel>
+      </section>
     </Hip4ChapterShell>
   );
 }

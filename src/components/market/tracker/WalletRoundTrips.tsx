@@ -1,25 +1,26 @@
 "use client";
 
-import { TypedDataTable, TokenAvatar, SourceBadge, sourceStatus, type Column } from "@/components/common";
-import { StatusBadge } from "@/components/ui/status-badge";
+import {
+  TypedDataTable,
+  ModuleAsset,
+  SideBadge,
+  toTradeSide,
+  SourceBadge,
+  sourceStatus,
+  type Column,
+} from "@/components/common";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
-import { formatDateTime } from "@/lib/formatters/dateFormatting";
+import { formatNumber, formatPrice, signedCompactUsd } from "@/lib/formatters/numberFormatting";
+import { formatDateTime, formatDuration } from "@/lib/formatters/dateFormatting";
 import { useWalletRoundTrips } from "@/services/market/tracker/wallet-performance";
 import type { WalletRoundTrip } from "@/services/market/tracker/wallet-performance";
 
+/** Cap on the round-trips fetched per wallet. */
+const ROUND_TRIPS_LIMIT = 100;
+
 interface WalletRoundTripsProps {
   address: string;
-}
-
-// Compact human duration from seconds: 29s · 12m · 3.4h · 2.1d.
-function fmtDuration(s: number): string {
-  if (!Number.isFinite(s) || s < 0) return "—";
-  if (s < 60) return `${Math.round(s)}s`;
-  if (s < 3600) return `${Math.round(s / 60)}m`;
-  if (s < 86400) return `${(s / 3600).toFixed(1)}h`;
-  return `${(s / 86400).toFixed(1)}d`;
 }
 
 /**
@@ -30,86 +31,67 @@ function fmtDuration(s: number): string {
 export function WalletRoundTrips({ address }: WalletRoundTripsProps) {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
-  const { trades, isLoading, error, refetch } = useWalletRoundTrips(address, 100);
-
-  const signedUsd = (v: number) =>
-    `${v >= 0 ? "+" : "-"}$${formatNumber(Math.abs(v), format, { maximumFractionDigits: 2 })}`;
+  const { trades, isLoading, error, refetch } = useWalletRoundTrips(address, ROUND_TRIPS_LIMIT);
 
   const columns: Column<WalletRoundTrip>[] = [
     {
       key: "coin",
       header: "Coin",
-      accessor: (t) => (
-        <span className="inline-flex items-center gap-2">
-          <TokenAvatar assetName={t.coin} size="sm" kind="auto" />
-          <span className="text-text-primary font-medium">{t.coin}</span>
-        </span>
-      ),
+      accessor: (t) => <ModuleAsset assetName={t.coin} name={t.coin} />,
     },
     {
       key: "direction",
       header: "Side",
-      accessor: (t) => (
-        <StatusBadge variant={t.direction?.toLowerCase() === "long" ? "success" : "error"}>
-          {t.direction?.toLowerCase() === "long" ? "Long" : "Short"}
-        </StatusBadge>
-      ),
+      accessor: (t) => {
+        const side = toTradeSide(t.direction);
+        return side ? <SideBadge side={side} /> : "—";
+      },
     },
     {
       key: "entryexit",
       header: "Entry → Exit",
-      align: "right",
-      accessor: (t) => (
-        <span className="mono text-text-secondary">
-          {formatPrice(t.entry_price, format)} → {formatPrice(t.exit_price, format)}
-        </span>
-      ),
+      type: "numeric",
+      accessor: (t) => `${formatPrice(t.entry_price, format)} → ${formatPrice(t.exit_price, format)}`,
     },
     {
       key: "size",
       header: "Size",
-      align: "right",
+      type: "numeric",
       className: "max-lg:hidden",
-      accessor: (t) => (
-        <span className="mono text-text-secondary">
-          {formatNumber(t.size_close, format, { maximumFractionDigits: 4 })}
-        </span>
-      ),
+      accessor: (t) => formatNumber(t.size_close, format, { maximumFractionDigits: 4 }),
     },
     {
       key: "pnl",
       header: "Realized PnL",
-      align: "right",
+      type: "change",
       sortable: true,
       getSortValue: (t) => t.pnl_realized,
-      accessor: (t) => (
-        <span className={`mono font-medium ${t.pnl_realized >= 0 ? "text-success" : "text-danger"}`}>
-          {signedUsd(t.pnl_realized)}
-        </span>
-      ),
+      accessor: (t) => signedCompactUsd(t.pnl_realized),
     },
     {
       key: "duration",
       header: "Held",
-      align: "right",
+      type: "numeric",
+      tone: () => "muted",
       sortable: true,
       getSortValue: (t) => t.duration_s,
-      accessor: (t) => <span className="mono text-text-tertiary">{fmtDuration(t.duration_s)}</span>,
+      accessor: (t) => formatDuration(t.duration_s),
     },
     {
       key: "closed",
       header: "Closed",
+      type: "time",
       align: "right",
       className: "max-md:hidden",
-      accessor: (t) => (
-        <span className="text-text-tertiary text-xs">{formatDateTime(t.end_time, dateFormat)}</span>
-      ),
+      accessor: (t) => formatDateTime(t.end_time, dateFormat),
     },
   ];
 
   return (
     <TypedDataTable<WalletRoundTrip>
       title="Round-trip trades"
+      // The fetch is capped: at the cap, say "last N", not a lifetime total.
+      tag={trades.length > 0 ? `${trades.length >= ROUND_TRIPS_LIMIT ? "last " : ""}${trades.length} trades` : undefined}
       headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
       data={trades}
       columns={columns}
@@ -124,6 +106,7 @@ export function WalletRoundTrips({ address }: WalletRoundTripsProps) {
       itemsPerPage={20}
       rowsPerPageOptions={[10, 20, 50]}
       paginationVariant="full"
+      density="compact"
     />
   );
 }

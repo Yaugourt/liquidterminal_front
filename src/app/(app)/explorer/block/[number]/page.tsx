@@ -18,11 +18,6 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
     const { number } = use(params)
     const { blockDetails, isLoading, error } = useBlockDetails(number);
 
-    // Gérer la navigation vers la page de transaction
-    const handleTransactionClick = useCallback((hash: string) => {
-        router.push(`/explorer/transaction/${hash}`);
-    }, [router]);
-
     // Gérer la navigation vers la page d'adresse
     const handleAddressClick = useCallback((address: string) => {
         router.push(`/explorer/address/${address}`);
@@ -56,11 +51,7 @@ export default function BlockDetails({ params }: BlockDetailsProps) {
             />
 
             {/* Transactions List */}
-            <TransactionList
-                transactions={blockDetails.txs}
-                onTransactionClick={handleTransactionClick}
-                onAddressClick={handleAddressClick}
-            />
+            <TransactionList transactions={blockDetails.txs} />
         </>
     );
 }

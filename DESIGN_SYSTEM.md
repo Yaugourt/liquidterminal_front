@@ -99,29 +99,23 @@
 - `<Card>` from `@/components/ui/card` — encodes `bg-surface` + `border border-border-subtle` + `rounded-lg`.
 - Default padding: **none**. The content manages its own padding.
 
-### V4 card-head (apply everywhere)
+### Card head — `<CardHead>` (minimal, apply everywhere)
+
+**One component**, `CardHead` from `@/components/common`. `TypedDataTable` (`title` prop) and `OverviewModule` both render it — never re-type the markup.
 
 ```tsx
-<div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
-  <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-    <Icon size={13} className="text-brand" />
-  </span>
-  <h3 className="text-[13px] font-semibold text-text-primary">{title}</h3>
-  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded
-                   bg-surface-2 text-text-tertiary border border-border-subtle">
-    {tag}
-  </span>
-  <Link href={…} className="ml-auto flex items-center gap-1 text-[11px]
-                            font-medium text-brand hover:text-brand-hover">
-    View all <ArrowRight size={12} />
-  </Link>
-</div>
+<CardHead
+  title="Round-trip trades"          // 13px, font-medium
+  subtitle="Closed entry → exit"     // optional, 11px tertiary, truncates
+  tag="48 trades"                    // optional plain figure, pinned right
+  actions={<SourceBadge … />}        // optional right slot (DataStatus, Select, Button…)
+  href="/market/…" viewAllLabel="All" // optional "All →" link, tertiary
+/>
 ```
 
-### `tag` pills
+Renders `flex flex-wrap items-center gap-x-2 px-4 py-3 min-h-[44px] border-b border-border-subtle`. **No brand icon square, no pill chrome** (DS minimal, `DS_MINIMAL_SPEC.md` §A3). A `LIVE` state goes in `actions` as a `StatusBadge variant="success" dot`.
 
-- Sober: `text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle`.
-- **LIVE / FEED** variant: `bg-success/10 text-success border-success/25` + pulsing dot `<span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />`.
+> Legacy: ~58 non-table cards still inline the old V4 head (icon square + pill). Migrate them to `<CardHead>` when touched.
 
 ### Section sub-head (above grids)
 
@@ -133,107 +127,80 @@
 
 ## 5. Tables
 
-**Hard rule**: raw `<Table>` from `@/components/ui/table` is **forbidden outside `src/components/common/`** (ESLint). Two patterns depending on context:
+**Hard rule**: raw `<Table>` from `@/components/ui/table` is **forbidden outside `src/components/common/`** (ESLint). A table is **declared, not styled**: columns say *what* a cell is, the primitives decide *how* it looks. ESLint blocks hand-styled cells (`text-xs/sm`, `text-[Npx]`, `font-mono`, `white`, raw palettes inside a column `accessor`).
 
-### 5.a — Page tables (market, explorer, …)
-
-For a standalone table inside a page, use `<TypedDataTable<Row>>` from `@/components/common`:
+### 5.a — Page tables (`TypedDataTable`)
 
 ```tsx
 <TypedDataTable<Row>
-  title={…}
-  icon={…}
+  title="Round-trip trades"                 // optional → <CardHead>
+  subtitle="…" tag="48 trades"              // optional
+  headerAction={<SourceBadge … />}          // optional, right of the head
+  viewAllHref="/market/tracker" viewAllLabel="All traders" // optional "All →" link
+  toolbar={<>…TableSearch, PillTabs variant="text", TableStat…</>} // optional, under the head (stays visible while loading)
   columns={[
-    { key: "name",   header: "Token",  accessor: (r) => <TokenCell … /> },
-    { key: "price",  header: "Price",  type: "numeric",  accessor: (r) => fmtPrice(r.price) },
-    { key: "fees",   header: "Fees",   type: "fees",     accessor: (r) => compactUsd(r.fees) },
-    { key: "chg",    header: "24h",    type: "change",   accessor: (r) => r.change24h },
+    { key: "coin",  header: "Coin",  accessor: (r) => <ModuleAsset assetName={r.coin} name={r.coin} /> },
+    { key: "side",  header: "Side",  accessor: (r) => <SideBadge side={toTradeSide(r.dir)!} /> },
+    { key: "px",    header: "Price", type: "numeric", accessor: (r) => formatPrice(r.px, format) },
+    { key: "pnl",   header: "PnL",   type: "change",  getSortValue: (r) => r.pnl, accessor: (r) => signedCompactUsd(r.pnl) },
+    { key: "fees",  header: "Fees",  type: "fees",    accessor: (r) => compactUsd(r.fees) },
+    { key: "amt",   header: "Amount", type: "numeric", tone: (r) => (r.out ? "danger" : "success"), accessor: (r) => fmt(r.amt) },
+    { key: "age",   header: "Age",   type: "time",    accessor: (r) => formatAge(r.time) },
   ]}
-  data={rows}
-  getRowKey={(r, i) => `${r.name}-${i}`}
+  data={rows} getRowKey={(r) => r.id}
   isLoading={…} error={…}
-  density="compact"
-  onRowClick={…}
-  rowMotion
+  density="compact"                          // tab panels, previews, feeds · "comfortable" (default) for directories
 />
 ```
 
-`Column.type` automatically applies `.mono` + right alignment + signed color depending on the type.
+- **The table owns its surface**: it always renders its `<Card>`. Never wrap it in a `Card`/bordered `div`, never pass surface classes in `className` (only sizing: `max-h-[600px]`, grid placement). Filters, sub-tabs and totals go in `toolbar`; heading in `title`.
+- **Densities**: `comfortable` = `px-4 py-3 text-[13px]`, `compact` = `px-3 py-2 text-[12px]`. Header: 10px uppercase `tracking-[0.08em]` tertiary, **no fill**. Hover `bg-surface-2/60`.
+
+**Column types** (the accessor returns a formatted *value*, the table styles it):
+
+| `type` | Look | Align |
+|---|---|---|
+| `numeric` | mono | right |
+| `change` | mono, green/red from the sign of the raw value or `getSortValue(row)` | right |
+| `fees` | mono, gold, medium | right |
+| `rank` | mono 11px tertiary | right |
+| `time` | mono secondary, nowrap | left (set `align`) |
+| `code` | mono, wraps (field names, types, selectors in doc tables) | left |
+| `address` | key accessor only — identicon + truncated mono | left |
+| `text` / omitted | none — the accessor returns a **primitive** | left |
+
+`tone: (row) => "success" | "danger" | "gold" | "brand" | "muted" | "primary"` colours a typed cell per row (e.g. a signed amount whose colour depends on direction). Never return a coloured `<span>` from a typed column.
+
+**Cell primitives** (for untyped columns):
+
+| Cell | Primitive |
+|---|---|
+| Token / entity name (+ sub-line) | `<ModuleAsset assetName name sub? />` (or `logo` for initials/identicon, `src` for a backend logo) |
+| Figure + caption on 2 lines | `<CellValue value sub tone? subTone? align? />` |
+| Long / Short / Buy / Sell | `<SideBadge side />` + `toTradeSide(raw)` |
+| Status, method, flag | `<StatusBadge variant dot?>` (`success·buy·error·sell·warning·gold·info·neutral·inactive`) |
+| Address / tx hash (+ copy) | `<AddressDisplay address href? external? showCopy? />` (mono, brand link; `external` = new tab) |
+| Progress / share / long-short split | `<CellBar value tone? label? width? />` or `segments={[{value, tone}]}` |
+| Toolbar total / balance | `<TableStat label value sub? tone? />` |
+| Toolbar search | `<TableSearch value onChange placeholder debounceMs? />` (controlled; `debounceMs` when the query hits the network) |
+
+Number/date formatting always from `@/lib/formatters/*` (`compactUsd`, `signedCompactUsd`, `formatPrice`, `formatNumber`, `formatDateTime`, `formatAge`…).
 
 ### 5.b — Compact table cards (`ModuleTable`)
 
-**`ModuleTable` is THE primitive for any compact table rendered inside a card.** Use cases all share the same visual contract: card-head + dense rows + per-column alignment + hover. It covers, but is not limited to:
-
-| Use case | Density | Example |
-|---|---|---|
-| Leaderboard (top N) | `comfortable` | Top Vaults / Top Validators / Top Builders |
-| Live feed (streaming) | `compact` | Latest blocks, latest transactions, live fills |
-| Recent activity | `compact` | Token deploys, bridge events, recent liquidations |
-
-Source: `src/components/common/OverviewModule.tsx`. App-wide primitive — consumed by `dashboard/`, `explorer/`, and any future leaderboard surface.
-
-#### Hard rules
-
-- **Never** write `<div className="grid grid-cols-[Npx_…]">` to build a table inside a card. Blocked by ESLint (`no-restricted-syntax`, regex on `grid-cols-[…_…_…]` with a `px` track).
-- **Never** put `TypedDataTable` inside a card — `TypedDataTable` is reserved for **standalone** page tables (§5.a).
-- Column widths live **once** on `columns[].width`. Header and rows stay aligned automatically through `<colgroup>` — no chance of header/row mismatch.
-
-#### API
+**`ModuleTable` is THE primitive for any compact table rendered inside a card** (leaderboards, live feeds, recent activity) — usually inside `<OverviewModule>`:
 
 ```tsx
-<ModuleTable
-  density="compact"            // optional, default "comfortable"
-  columns={[
-    { header: "Block",    align: "left",  width: 90 },   // fixed px
-    { header: "Age",      align: "left",  width: 60 },
-    { header: "Txs",      align: "left",  width: 56 },
-    { header: "Proposer", align: "left"               },  // omit width → flex
-  ]}
->
-  {rows.map((b) => (
-    <ModuleTableRow
-      key={b.height}
-      href={`/explorer/block/${b.height}`}   // optional, makes the row clickable
-      cells={[
-        <span key="block"    className="mono font-semibold text-brand">{b.height}</span>,
-        <span key="age"      className="mono text-text-tertiary">{timeAgo(b.blockTime)}</span>,
-        <span key="txs"      className="mono text-text-primary">{b.numTxs}</span>,
-        <span key="proposer" className="mono text-text-secondary">{truncateAddr(b.proposer)}</span>,
-      ]}
-    />
-  ))}
-</ModuleTable>
-```
-
-#### Leaderboard example (`OverviewModule` wrapper)
-
-When the card-head is the standard "icon + title + tag + View all" with a single `href`, wrap `ModuleTable` in `<OverviewModule>` to factor it out:
-
-```tsx
-<OverviewModule
-  title="Top Vaults"
-  icon={<Vault size={13} className="text-brand" />}
-  tag={`${compactUsd(totalTvl)} TVL`}
-  viewAllLabel="All vaults"
-  href="/explorer/vaults"
->
-  <ModuleTable
-    columns={[
-      { header: "Vault" },
-      { header: "APR" },
-      { header: "TVL" },
-      { header: "Leader" },
-    ]}
-  >
+<OverviewModule title="Top Vaults" tag={`${compactUsd(totalTvl)} TVL`} href="/explorer/vaults" viewAllLabel="All">
+  <ModuleTable density="compact" columns={[{ header: "Vault" }, { header: "APR", width: 80 }, { header: "TVL", width: 88 }]}>
     {rows.map((v) => (
       <ModuleTableRow
         key={v.address}
         href={`/explorer/vaults/${v.address}`}
         cells={[
-          <ModuleAsset key="vault" assetName={`xyz:${v.symbol}`} name={v.name} />,
-          <span key="apr"    className="mono text-success">{v.apr.toFixed(1)}%</span>,
-          <span key="tvl"    className="mono text-text-primary">{compactUsd(v.tvl)}</span>,
-          <span key="leader" className="mono text-text-secondary">{truncateAddress(v.leader)}</span>,
+          <ModuleAsset key="v" logo={initials(v.name)} name={v.name} />,
+          <span key="apr" className="mono text-success">{v.apr.toFixed(1)}%</span>,
+          <span key="tvl" className="mono text-text-secondary">{compactUsd(v.tvl)}</span>,
         ]}
       />
     ))}
@@ -241,26 +208,10 @@ When the card-head is the standard "icon + title + tag + View all" with a single
 </OverviewModule>
 ```
 
-#### Live feed example (custom card-head)
-
-When the card-head needs more than one pill, a `LIVE` indicator, or a custom layout, render `<Card>` + the V4 card-head markup inline (§4) and put `ModuleTable` inside:
-
-```tsx
-<Card className="overflow-hidden flex flex-col">
-  <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle">
-    <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-      <Boxes size={13} className="text-brand" />
-    </span>
-    <h3 className="text-[13px] font-semibold text-text-primary">Latest blocks</h3>
-    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-      10 newest
-    </span>
-    <LivePill connected={isConnected} />
-    <Link href="/explorer" className="ml-auto …">View all <ArrowRight size={12} /></Link>
-  </div>
-  <ModuleTable density="compact" columns={…}>{…}</ModuleTable>
-</Card>
-```
+- Header without fill, `tracking-[0.08em] font-medium`; cells `px-3 py-2 text-[12.5px]` (`compact`: `py-1.5`); hover `bg-surface-2/60`.
+- Column widths live **once** on `columns[].width` (`<colgroup>`). **Never** hand-roll `grid-cols-[Npx_…]` (ESLint).
+- **Never** put `TypedDataTable` inside a card — it has its own.
+- `ModuleTableRow` cells are the one place where `<span className="mono …">` figures are the documented idiom.
 
 ### 5.c — Token avatars (HL CDN)
 
@@ -277,7 +228,7 @@ The standalone "small coin badge" for tables, feeds, modal headers, anywhere out
 <TokenAvatar assetName="USDC" kind="spot" />          /* force spot lookup */
 ```
 
-Sizes: `xs` (16px), `sm` (18px), `md` (20px, default), `lg` (24px). Always `rounded-md bg-brand/10 text-brand`. On load failure, falls back to 2 uppercase initials via `getTokenInitials`.
+Sizes: `xs` (16px), `sm` (18px), `md` (20px, default), `lg` (24px). Always `rounded-md`, neutral fallback (`bg-surface-2 text-text-secondary`). On load failure, falls back to 2 uppercase initials via `getTokenInitials`.
 
 **Never** roll your own `<Image src=… onError=…>` inline — go through `<TokenAvatar>` so HL CDN naming and the fallback look stay consistent.
 
@@ -302,7 +253,7 @@ The **single "name + avatar" cell** used in leaderboard cards.
 <ModuleAsset logo={<Image src={…} />} name={displayName} />   /* custom image */
 ```
 
-Wrapper geometry: `w-6 h-6 rounded-md bg-brand/10 text-brand overflow-hidden`. When an image is rendered, it fills the wrapper (`object-cover`). The `name` label is `text-[12.5px] font-semibold`, `sub` is `text-[10px] text-text-tertiary`.
+Avatar: `<TokenAvatar size="lg">` (24px, `rounded-md`, neutral `bg-surface-2` fallback) — `src` passes a backend logo. `logo` renders in the same neutral square. The `name` label is `text-[12.5px] font-medium`, `sub` is `mono text-[10px] text-text-tertiary`. Used in **both** `ModuleTable` rows and `TypedDataTable` name columns.
 
 **Never**:
 - re-implement a custom avatar (square, circle, anything else) inside a leaderboard card — use `<ModuleAsset>` or `<TokenAvatar>`;
@@ -498,7 +449,7 @@ Generic composition patterns, **applicable everywhere** in the app (dashboard, m
 
 Building blocks:
 
-- `<OverviewModule title icon tag href viewAllLabel>` — wrapper with the standard V4 card-head (icon + title + tag + `View all` link). Use it whenever the card-head fits the standard shape. Always pass an icon. For non-standard heads (multiple pills, `LIVE` indicator, no link), use `<Card>` + the inline card-head markup from §4.
+- `<OverviewModule title subtitle? tag? actions? href viewAllLabel>` — wrapper rendering `<CardHead>` (§4). For a custom body under a standard head, use `<Card>` + `<CardHead>` directly.
 - `<ModuleTable columns density?><ModuleTableRow cells href? /></ModuleTable>` — the table itself. **One single source of truth for column widths** (`columns[].width`), header and rows stay pixel-aligned through `<colgroup>`. Two densities: `comfortable` (default, leaderboards) and `compact` (feeds, recent activity).
 - `<ModuleAsset assetName name sub />` — standard asset cell (see §5.c).
 - `<ModuleRow rank logo name sub stats={[{label,value}]} href? />` — alternative "leaderboard list" layout (no table, explicit ranks). Use when a header-less layout makes more sense.
@@ -646,7 +597,9 @@ Documenting these limits to avoid running into them again:
 ## 12. Index of V4 primitives & components
 
 ### Primitives (`src/components/common/`)
-- `TypedDataTable`, `Column<T>` — tables (standalone pages, see §5.a).
+- `TypedDataTable`, `Column<T>`, `CellTone` — tables (standalone pages, see §5.a).
+- `CardHead` — the one card header (see §4).
+- `CellValue`, `CellBar`, `SideBadge` + `toTradeSide`, `TableStat`, `TableSearch` — table cell / toolbar primitives (see §5.a).
 - `TokenAvatar` — inline HL-CDN token badge (see §5.c). Single source for any "small coin icon" outside leaderboard cells.
 - `LiquidMark` — the Liquid Terminal mark as inline SVG, two-tone or `currentColor` (see §13). Use instead of `<Image src="/logo.svg">`.
 - `DataFlow` — decorative streamline field poured from one origin (see §13).

@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PageHeader, TypedDataTable, OverviewModule, ModuleRow, type Column } from "@/components/common";
-import { SearchBar } from "@/components/common";
+import { PageHeader, TypedDataTable, OverviewModule, ModuleRow, ModuleAsset, type Column } from "@/components/common";
+import { TableSearch } from "@/components/common";
 import { safeHref } from "@/lib/safeUrl";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { usePublicReadLists } from "@/services/wiki/readList/hooks/usePublicReadLists";
@@ -30,6 +30,7 @@ function hostnameOf(url: string): string {
 export function ReadListsIndex() {
   const router = useRouter();
   const { readLists, pagination, loading, updateParams } = usePublicReadLists({ limit: 24 });
+  const [search, setSearch] = useState("");
   const popular = usePopularWikiResources(5);
 
   const detailHref = (list: PublicReadList) => `/wiki/readlists/${slugify(list.name)}-${list.id}`;
@@ -39,48 +40,37 @@ export function ReadListsIndex() {
       {
         key: "name",
         header: "List",
-        accessor: (l) => (
-          <div className="min-w-0">
-            <div className="truncate text-[13px] font-medium text-text-primary">{l.name}</div>
-            {l.description && (
-              <div className="truncate text-[11.5px] text-text-tertiary">{l.description}</div>
-            )}
-          </div>
-        ),
+        accessor: (l) => <ModuleAsset name={l.name} sub={l.description || undefined} />,
       },
       {
         key: "curator",
         header: "Curator",
         width: "150px",
         accessor: (l) => (
-          <div className="flex items-center gap-2">
-            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-surface-2 text-[9px] font-semibold uppercase text-text-secondary">
-              {l.creator.name?.slice(0, 2)}
-            </span>
-            <span className="truncate text-[12px] text-text-secondary">{l.creator.name}</span>
-          </div>
+          <ModuleAsset logo={l.creator.name?.slice(0, 2).toUpperCase() ?? "?"} name={l.creator.name ?? "Anonymous"} />
         ),
       },
       {
         key: "items",
         header: "Items",
         width: "80px",
-        align: "right",
-        accessor: (l) => <span className="mono text-[12.5px] text-text-primary">{l.itemsCount}</span>,
+        type: "numeric",
+        accessor: (l) => l.itemsCount,
       },
       {
         key: "reads",
         header: "Reads",
         width: "80px",
-        align: "right",
-        accessor: (l) => <span className="mono text-[12.5px] text-text-secondary">{l.readCount ?? 0}</span>,
+        type: "numeric",
+        accessor: (l) => l.readCount ?? 0,
       },
       {
         key: "updated",
         header: "Updated",
         width: "100px",
+        type: "time",
         align: "right",
-        accessor: (l) => <span className="mono text-[11.5px] text-text-secondary">{timeAgo(l.updatedAt)}</span>,
+        accessor: (l) => timeAgo(l.updatedAt),
       },
     ],
     []
@@ -104,20 +94,22 @@ export function ReadListsIndex() {
       />
 
       <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="min-w-0 overflow-hidden rounded-lg border border-border-subtle bg-surface">
-          <div className="flex flex-wrap items-center gap-3 border-b border-border-subtle px-3.5 py-3">
-            <span className="text-[13px] font-semibold text-text-primary">All lists</span>
-            <SearchBar
-              onSearch={(q) => updateParams({ search: q })}
-              placeholder="Search lists or curators"
-              className="min-w-[160px] flex-1 sm:max-w-[260px]"
-            />
-            <span className="ml-auto text-[11px] text-text-tertiary">
-              <span className="mono">{pagination?.total ?? readLists.length}</span> lists
-            </span>
-          </div>
-
+        <div className="min-w-0 space-y-2">
           <TypedDataTable
+            title="All lists"
+            tag={`${pagination?.total ?? readLists.length} lists`}
+            toolbar={
+              <TableSearch
+                value={search}
+                onChange={(q) => {
+                  setSearch(q);
+                  updateParams({ search: q });
+                }}
+                debounceMs={300}
+                placeholder="Search lists or curators"
+                className="sm:max-w-[260px]"
+              />
+            }
             data={readLists}
             columns={columns}
             getRowKey={(l) => l.id}
@@ -126,17 +118,17 @@ export function ReadListsIndex() {
           />
 
           {readLists.length > 0 && (
-            <div className="flex items-center gap-1.5 border-t border-border-subtle bg-surface-2/40 px-4 py-2.5 text-[12px] text-text-tertiary">
-              Read lists are new. Curate a path and share its URL.
+            <p className="px-1 text-[12px] text-text-tertiary">
+              Read lists are new. Curate a path and share its URL.{" "}
               <Link href="/wiki/readlist" className="font-medium text-brand transition-colors hover:text-brand-hover">
                 Create yours →
               </Link>
-            </div>
+            </p>
           )}
         </div>
 
         <aside className="min-w-0 space-y-4 xl:sticky xl:top-6">
-          <OverviewModule title="How lists work" tagVariant="plain">
+          <OverviewModule title="How lists work">
             <div className="space-y-2 px-4 py-3 text-[12px] text-text-secondary">
               <p>Save articles as you read.</p>
               <p>Order them into a path.</p>
@@ -144,7 +136,7 @@ export function ReadListsIndex() {
             </div>
           </OverviewModule>
 
-          <OverviewModule title="Most saved" tag="read-list saves" tagVariant="plain">
+          <OverviewModule title="Most saved" tag="read-list saves">
             {popular.resources.length === 0 ? (
               <p className="px-3.5 py-4 text-[11.5px] text-text-tertiary">No saved resource yet.</p>
             ) : (

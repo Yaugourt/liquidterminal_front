@@ -6,12 +6,11 @@ import { Download } from "lucide-react";
 import { useVaultLedger } from "@/services/explorer/vault/hooks/useVaultLedger";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { TypedDataTable, SourceBadge, sourceStatus, type Column } from "@/components/common";
+import { TypedDataTable, TableSearch, SourceBadge, sourceStatus, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import type { VaultLedgerEntry } from "@/services/explorer/vault/types";
@@ -94,11 +93,8 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
     {
       key: "time",
       header: "Time",
-      accessor: (e) => (
-        <span className="text-text-secondary text-xs whitespace-nowrap">
-          {formatDateTime(e.time, dateFormat)}
-        </span>
-      ),
+      type: "time",
+      accessor: (e) => formatDateTime(e.time, dateFormat),
     },
     {
       key: "type",
@@ -106,7 +102,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
       accessor: (e) => {
         const type = classifyLedger(e, vaultAddress);
         return (
-          <StatusBadge variant={type === "deposit" ? "success" : "error"}>
+          <StatusBadge variant={type === "deposit" ? "buy" : "sell"}>
             {type === "deposit" ? "Deposit" : "Withdraw"}
           </StatusBadge>
         );
@@ -124,35 +120,59 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
     {
       key: "amount",
       header: "Amount",
-      align: "right",
-      headerAlign: "right",
+      type: "numeric",
+      tone: (e) => (classifyLedger(e, vaultAddress) === "deposit" ? "success" : "danger"),
       accessor: (e) => {
-        const type = classifyLedger(e, vaultAddress);
-        const sign = type === "deposit" ? "+" : "-";
-        return (
-          <span
-            className={`mono font-medium ${type === "deposit" ? "text-success" : "text-danger"}`}
-          >
-            {sign}${formatNumber(e.amount, format, { maximumFractionDigits: 2 })}{" "}
-            <span className="text-text-tertiary text-[10px]">{e.token}</span>
-          </span>
-        );
+        const sign = classifyLedger(e, vaultAddress) === "deposit" ? "+" : "-";
+        return `${sign}$${formatNumber(e.amount, format, { maximumFractionDigits: 2 })} ${e.token}`;
       },
     },
     {
       key: "txHash",
       header: "Tx",
-      accessor: (e) => <AddressDisplay address={e.txHash} showExternalLink showCopy />,
+      accessor: (e) => (
+        <AddressDisplay
+          address={e.txHash}
+          href={`/explorer/transaction/${e.txHash}`}
+          copyMessage="Hash copied to clipboard"
+        />
+      ),
     },
   ];
 
+  const headerAction = (
+    <div className="flex items-center gap-2">
+      <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-7 px-3 text-xs"
+        onClick={() => setLimit((l) => l + PAGE_SIZE)}
+        disabled={isLoading || entries.length < limit}
+        title={entries.length < limit ? "All available entries loaded" : "Load 2 000 more"}
+      >
+        Load more
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-7 px-3 text-xs gap-1.5"
+        onClick={() => downloadLedgerCsv(filtered, vaultAddress)}
+        disabled={filtered.length === 0}
+        title={
+          filtered.length === 0 ? "No rows to export" : `Export ${filtered.length} filtered rows`
+        }
+      >
+        <Download className="h-3 w-3" />
+        Export
+      </Button>
+    </div>
+  );
+
   const toolbar = (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-      <span className="flex items-center gap-3">
-        <h3 className="text-sm font-semibold text-text-primary">Activity</h3>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
-      </span>
+    <>
       <PillTabs
+        variant="text"
         activeTab={typeFilter}
         onTabChange={(v) => setTypeFilter(v as LedgerTypeFilter)}
         tabs={[
@@ -164,49 +184,13 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
           },
         ]}
       />
-      <Input
-        placeholder="Filter by address or hash…"
+      <TableSearch
         value={filterQuery}
-        onChange={(e) => handleFilterChange(e.target.value)}
-        className="h-7 px-3 text-xs bg-white/5 border-border-subtle text-text-primary placeholder:text-text-tertiary focus:border-brand/50 max-w-xs sm:ml-auto"
+        onChange={handleFilterChange}
+        placeholder="Filter by address or hash…"
+        className="max-w-xs sm:ml-auto"
       />
-    </div>
-  );
-
-  const footer = (
-    <div className="flex flex-wrap items-center justify-between gap-3 px-3 py-2 border-t border-border-subtle text-[11px] text-text-tertiary">
-      <span>
-        <span className="mono text-text-primary">{filtered.length}</span> shown ·{" "}
-        <span className="mono text-text-primary">{entries.length}</span> loaded
-      </span>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-7 px-3 text-xs"
-          onClick={() => setLimit((l) => l + PAGE_SIZE)}
-          disabled={isLoading || entries.length < limit}
-          title={entries.length < limit ? "All available entries loaded" : "Load 2 000 more"}
-        >
-          Load more
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-7 px-3 text-xs gap-1.5"
-          onClick={() => downloadLedgerCsv(filtered, vaultAddress)}
-          disabled={filtered.length === 0}
-          title={
-            filtered.length === 0
-              ? "No rows to export"
-              : `Export ${filtered.length} filtered rows`
-          }
-        >
-          <Download className="h-3 w-3" />
-          Export
-        </Button>
-      </div>
-    </div>
+    </>
   );
 
   return (
@@ -214,9 +198,13 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2, duration: 0.35 }}
-      className="bg-surface border border-border-subtle rounded-lg"
+      className="min-w-0"
     >
       <TypedDataTable<VaultLedgerEntry>
+        title="Activity"
+        // Exact counts: "Load more" adding 43 rows must show, "2.0K" would hide it.
+        tag={`${formatNumber(filtered.length, format, { maximumFractionDigits: 0 })} shown · ${formatNumber(entries.length, format, { maximumFractionDigits: 0 })} loaded`}
+        headerAction={headerAction}
         data={filtered}
         columns={columns}
         getRowKey={(e) => `${e.txHash}-${e.time}`}
@@ -233,9 +221,9 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
         itemsPerPage={20}
         rowsPerPageOptions={[20, 50, 100]}
         paginationVariant="full"
+        density="compact"
         toolbar={toolbar}
       />
-      {footer}
     </motion.div>
   );
 }

@@ -94,7 +94,9 @@ export function Hip4SubNav() {
             <details
               key={`${sectionId}-${slug}`}
               className="group rounded-lg border border-border-subtle bg-base/80"
-              {...({ defaultOpen: openDefault } as React.HTMLAttributes<HTMLDetailsElement>)}
+              // Initial state only: the key remounts it per chapter, then the
+              // user toggles freely (`defaultOpen` isn't a DOM attribute).
+              open={openDefault}
             >
               <summary
                 className={cn(

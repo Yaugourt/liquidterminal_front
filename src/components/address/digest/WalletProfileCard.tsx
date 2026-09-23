@@ -428,7 +428,7 @@ export function WalletProfileCard({ model }: WalletProfileCardProps) {
               <ModuleTableRow
                 key={r.coin}
                 cells={[
-                  <ModuleAsset key="c" tone="neutral" assetName={r.coin} kind="auto" name={r.coin} />,
+                  <ModuleAsset key="c" assetName={r.coin} kind="auto" name={r.coin} />,
                   <span key="v" className="mono text-text-secondary">{compactUsd(r.volume)}</span>,
                   <span key="s" className="mono text-text-tertiary">{r.share != null ? pct(r.share) : "—"}</span>,
                   <span key="p" className={cn("mono font-medium", r.pnl >= 0 ? "text-success" : "text-danger")}>

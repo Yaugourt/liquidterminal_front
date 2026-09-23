@@ -1,10 +1,15 @@
 "use client";
 
-import { Activity } from "lucide-react";
-import { TypedDataTable, type Column } from "@/components/common";
-import { LoadingState } from "@/components/ui/loading-state";
-import { Card } from "@/components/ui/card";
-import { compactUsd, compactCount, truncateAddress } from "@/lib/formatters/numberFormatting";
+import {
+  TypedDataTable,
+  ModuleAsset,
+  SideBadge,
+  toTradeSide,
+  type Column,
+} from "@/components/common";
+import { AddressDisplay } from "@/components/ui/address-display";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import type { Hip4FillRow } from "@/services/indexer/hip4";
 
 /** Per-coin metadata used to label fills. `sideName` is only set when the
@@ -23,36 +28,32 @@ interface Hip4RecentFillsProps {
   marketIndex?: Record<string, Hip4FillMarketMeta>;
 }
 
-export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFillsProps) {
-  if (isLoading && fills.length === 0) return <LoadingState message="Loading fills..." withCard />;
+function outcomeVariant(outcomeName: string): "success" | "error" | "info" {
+  const v = outcomeName.toLowerCase();
+  if (v === "yes") return "success";
+  if (v === "no") return "error";
+  return "info";
+}
 
+export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFillsProps) {
   const columns: Column<Hip4FillRow>[] = [
     {
       key: "market",
       header: "Market",
-      className: "max-w-[180px]",
       accessor: (row) => {
         const meta = marketIndex?.[row.coin];
         const outcomeName = meta?.isBinary ? meta.sideName ?? null : null;
         return (
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[12px] font-semibold text-text-primary truncate">
-              {meta?.name || row.coin}
+          <span className="flex items-center gap-1.5 min-w-0">
+            {/* Cap the name, not the cell: a long outcome chip then widens the
+                column instead of spilling over the Side cell. */}
+            <span className="min-w-0 max-w-[9rem]">
+              <ModuleAsset name={meta?.name || row.coin} />
             </span>
             {outcomeName && (
-              <span
-                className={`shrink-0 text-[9px] font-bold px-1 py-0.5 rounded ${
-                  outcomeName.toLowerCase() === "yes"
-                    ? "bg-success/15 text-success"
-                    : outcomeName.toLowerCase() === "no"
-                    ? "bg-danger/15 text-danger"
-                    : "bg-brand/15 text-brand"
-                }`}
-              >
-                {outcomeName}
-              </span>
+              <StatusBadge variant={outcomeVariant(outcomeName)}>{outcomeName}</StatusBadge>
             )}
-          </div>
+          </span>
         );
       },
     },
@@ -60,12 +61,8 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
       key: "side",
       header: "Side",
       accessor: (row) => {
-        const isBuy = row.side === "B" || row.side === "buy";
-        return (
-          <span className={`text-[11px] font-semibold ${isBuy ? "text-success" : "text-danger"}`}>
-            {isBuy ? "Buy" : "Sell"}
-          </span>
-        );
+        const side = toTradeSide(row.side);
+        return side ? <SideBadge side={side} /> : "—";
       },
     },
     {
@@ -74,23 +71,16 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
       type: "numeric",
       sortable: true,
       getSortValue: (row) => row.px ?? 0,
-      accessor: (row) => (
-        <span className="mono text-[12px] text-text-primary">
-          {row.px != null ? `${(row.px * 100).toFixed(2)}%` : "—"}
-        </span>
-      ),
+      accessor: (row) => (row.px != null ? `${(row.px * 100).toFixed(2)}%` : "—"),
     },
     {
       key: "sz",
       header: "Size",
       type: "numeric",
+      tone: () => "muted",
       sortable: true,
       getSortValue: (row) => row.sz ?? 0,
-      accessor: (row) => (
-        <span className="mono text-[12px] text-text-secondary">
-          {row.sz != null ? compactCount(row.sz) : "—"}
-        </span>
-      ),
+      accessor: (row) => (row.sz != null ? compactCount(row.sz) : "—"),
     },
     {
       key: "notional",
@@ -98,72 +88,53 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
       type: "numeric",
       sortable: true,
       getSortValue: (row) => row.notional ?? 0,
-      accessor: (row) => (
-        <span className="mono text-[12px] text-text-secondary">
-          {row.notional != null ? compactUsd(row.notional) : "—"}
-        </span>
-      ),
+      accessor: (row) => (row.notional != null ? compactUsd(row.notional) : "—"),
     },
     {
       key: "fee",
       header: "Fee",
-      type: "numeric",
+      type: "fees",
       sortable: true,
       getSortValue: (row) => row.fee ?? 0,
-      accessor: (row) => (
-        <span className="mono text-[12px] text-gold">
-          {row.fee != null ? compactUsd(row.fee) : "—"}
-        </span>
-      ),
+      accessor: (row) => (row.fee != null ? compactUsd(row.fee) : "—"),
     },
     {
       key: "user",
       header: "User",
-      accessor: (row) => (
-        <span className="mono text-[11px] text-text-tertiary">{truncateAddress(row.user)}</span>
-      ),
+      accessor: (row) => <AddressDisplay address={row.user} showCopy={false} />,
     },
     {
       key: "time",
       header: "Time",
-      type: "numeric",
+      type: "time",
+      align: "right",
       sortable: true,
       getSortValue: (row) => new Date(row.time).getTime(),
-      accessor: (row) => (
-        <span className="mono text-[10.5px] text-text-tertiary">
-          {new Date(row.time).toLocaleTimeString()}
-        </span>
-      ),
+      accessor: (row) => new Date(row.time).toLocaleTimeString(),
     },
   ];
 
   return (
-    <Card className="overflow-hidden flex flex-col">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0">
-          <Activity size={13} className="text-brand" />
-        </span>
-        <h3 className="text-[13px] font-semibold text-text-primary">Recent Fills</h3>
-        <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/25 inline-flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+    <TypedDataTable<Hip4FillRow>
+      title="Recent Fills"
+      tag={fills.length}
+      headerAction={
+        <StatusBadge variant="success" dot>
           Feed
-        </span>
-        <span className="ml-auto mono text-[11px] text-text-tertiary">{fills.length}</span>
-      </div>
-
-      <TypedDataTable<Hip4FillRow>
-        data={fills}
-        columns={columns}
-        getRowKey={(row, i) => `${row.hash}-${i}`}
-        density="compact"
-        emptyMessage="No fills yet"
-        emptyDescription="Prediction market fills will appear here."
-        paginate
-        paginationVariant="full"
-        itemsPerPage={10}
-        rowsPerPageOptions={[5, 10, 25, 40, 50]}
-        initialSort={{ field: "time", direction: "desc" }}
-      />
-    </Card>
+        </StatusBadge>
+      }
+      data={fills}
+      columns={columns}
+      getRowKey={(row, i) => `${row.hash}-${i}`}
+      isLoading={isLoading && fills.length === 0}
+      density="compact"
+      emptyMessage="No fills yet"
+      emptyDescription="Prediction market fills will appear here."
+      paginate
+      paginationVariant="full"
+      itemsPerPage={10}
+      rowsPerPageOptions={[5, 10, 25, 40, 50]}
+      initialSort={{ field: "time", direction: "desc" }}
+    />
   );
 }
