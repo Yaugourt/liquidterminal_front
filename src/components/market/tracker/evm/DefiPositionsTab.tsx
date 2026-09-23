@@ -63,15 +63,19 @@ function ProtocolGroup({ protocol }: { protocol: DefiProtocol }) {
     <div className="border-t border-border-subtle first:border-t-0">
       <div className="flex items-center gap-2.5 px-3.5 py-2.5 min-h-[44px] flex-wrap">
         <ProtocolAvatar name={protocol.name} logo={protocol.logo} />
-        <a
-          href={protocol.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-[13px] font-semibold text-text-primary hover:text-brand transition-colors"
-        >
-          {protocol.name}
-          <ExternalLink size={12} className="text-text-tertiary" />
-        </a>
+        {protocol.url ? (
+          <a
+            href={protocol.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-[13px] font-semibold text-text-primary hover:text-brand transition-colors"
+          >
+            {protocol.name}
+            <ExternalLink size={12} className="text-text-tertiary" />
+          </a>
+        ) : (
+          <span className="text-[13px] font-semibold text-text-primary">{protocol.name}</span>
+        )}
         {protocol.partial && (
           <span
             title={protocol.warning ?? "Partial data: some token prices were unavailable"}

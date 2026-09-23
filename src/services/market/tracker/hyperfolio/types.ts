@@ -278,7 +278,8 @@ export interface DefiProtocol {
   id: string;
   name: string;
   logo: string | null;
-  url: string;
+  /** Absolute http(s) only — null when upstream sent anything else. */
+  url: string | null;
   totalValue: number;
   weightedApy: number | null;
   positions: DefiPosition[];

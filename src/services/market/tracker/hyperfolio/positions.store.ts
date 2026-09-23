@@ -172,8 +172,13 @@ export const useDefiPositionsStore = create<DefiPositionsStore>((set, get) => {
         if (!c) return;
         c.subscribers -= 1;
         if (c.subscribers <= 0) {
+          // A stream cut before `complete` would leave the wallet "streaming"
+          // with no connection behind it; the next mount only opens from
+          // `idle`, so it would spin forever. Reset it so a remount re-streams.
+          const interrupted = Boolean(c.source) && !c.completed;
           closeSource(c);
           connections.delete(k);
+          if (interrupted) patch(address, { status: 'idle', progress: null });
           // Keep the data in the store so a remount is instant; only the
           // connection is torn down.
         }

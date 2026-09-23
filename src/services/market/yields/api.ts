@@ -1,5 +1,6 @@
 import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
+import { safeExternalHref } from '@/lib/safeUrl';
 import type { RawYieldOpportunity, RawYieldResponse, YieldOpportunity, YieldsPage, YieldsQuery } from './types';
 
 interface Envelope<T> {
@@ -19,7 +20,7 @@ export const normalizeYield = (raw: RawYieldOpportunity): YieldOpportunity => {
   }
   return {
     id: raw.id,
-    protocol: { id: raw.protocol.id, name: raw.protocol.name, website: raw.protocol.website ?? null },
+    protocol: { id: raw.protocol.id, name: raw.protocol.name, website: safeExternalHref(raw.protocol.website) },
     category: raw.category,
     type: raw.type,
     poolName: raw.pool.name,

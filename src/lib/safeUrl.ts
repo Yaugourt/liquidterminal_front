@@ -43,3 +43,14 @@ export function safeHref(url: string | null | undefined): string | undefined {
     return undefined;
   }
 }
+
+/**
+ * Off-site link from third-party data (aggregator APIs): absolute http(s) only,
+ * otherwise `null`. Stricter than {@link safeHref}, which also lets relative
+ * paths through — a relative value from an upstream API would silently point
+ * at our own origin.
+ */
+export function safeExternalHref(url: string | null | undefined): string | null {
+  const safe = safeHref(url);
+  return safe && /^https?:\/\//i.test(safe) ? safe : null;
+}

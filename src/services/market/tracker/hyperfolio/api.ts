@@ -1,6 +1,7 @@
 import { get } from '@/services/api/axios-config';
 import { withErrorHandling } from '@/services/api/error-handler';
 import { API_URLS } from '@/services/api/constants';
+import { safeExternalHref } from '@/lib/safeUrl';
 import type {
   DefiPortfolioStats,
   DefiPosition,
@@ -50,16 +51,24 @@ const numOrNull = (value: unknown): number | null => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
+/** Image URL taken from upstream data (token / NFT art): http(s) or an inline image only. */
+export const imageUrl = (url: string | null | undefined): string | null => {
+  const trimmed = url?.trim();
+  if (!trimmed) return null;
+  return /^https?:\/\//i.test(trimmed) || /^data:image\//i.test(trimmed) ? trimmed : null;
+};
+
 /** Hyperfolio returns protocol logos relative to its own site (`/hyperlend.jpg`). */
 export const resolveHyperfolioLogo = (logo: string | null | undefined): string | null => {
   if (!logo) return null;
-  if (/^https?:\/\//.test(logo)) return logo;
-  if (logo.startsWith('/')) return `${API_URLS.HYPERFOLIO_ASSETS}${logo}`;
+  if (/^https?:\/\//i.test(logo)) return logo;
+  if (logo.startsWith('/') && !logo.startsWith('//')) return `${API_URLS.HYPERFOLIO_ASSETS}${logo}`;
   return null;
 };
 
-/** External explorer page for a HyperEVM transaction hash. */
-export const hyperEvmTxUrl = (hash: string): string => `${API_URLS.HYPEREVMSCAN}/tx/${hash}`;
+/** External explorer page for a HyperEVM transaction hash (encoded: the hash comes from upstream). */
+export const hyperEvmTxUrl = (hash: string): string =>
+  `${API_URLS.HYPEREVMSCAN}/tx/${encodeURIComponent(hash)}`;
 
 /** Absolute URL of the backend SSE proxy for `/positions/stream`. */
 export const buildPositionsStreamUrl = (address: string): string => {
@@ -78,7 +87,7 @@ export const normalizeComposition = (raw: RawCompositionResponse): EvmCompositio
       balance: num(t.balance),
       price: num(t.usdPrice),
       value: num(t.usdValue),
-      logo: t.image_url || null,
+      logo: imageUrl(t.image_url),
     }))
     .sort((a, b) => b.value - a.value),
   totalValue: num(raw.data?.totalWalletValue),
@@ -90,7 +99,7 @@ const normalizePositionToken = (t: RawPositionToken): DefiPositionToken => ({
   address: t.address.toLowerCase(),
   symbol: t.symbol,
   name: t.name,
-  logo: t.image_url || null,
+  logo: imageUrl(t.image_url),
   amount: num(t.formattedBalance || t.balance),
   value: num(t.usdValue),
 });
@@ -118,7 +127,7 @@ export const normalizeProtocol = (p: RawProtocol): DefiProtocol => ({
   id: p.id,
   name: p.name,
   logo: resolveHyperfolioLogo(p.logo),
-  url: p.url,
+  url: safeExternalHref(p.url),
   totalValue: num(p.totalValueUSD),
   weightedApy: p.protocolStats?.weightedApyPercent ?? null,
   positions: (p.positions ?? []).map(normalizePosition).sort((a, b) => b.value - a.value),
@@ -208,7 +217,7 @@ const normalizeNft = (n: RawNft, index: number): WalletNft => ({
   collectionName: n.collection_name || n.symbol,
   name: n.name,
   tokenId: n.tokenId ?? null,
-  image: n.image_url || n.image || null,
+  image: imageUrl(n.image_url) ?? imageUrl(n.image),
   price: numOrNull(n.price),
   floorPrice: numOrNull(n.floorPrice ?? n.floor_price),
 });
