@@ -180,22 +180,22 @@ export const getAmountColorClass = (tx: TransactionData, config: TransactionForm
   // Pour les positions Short/Long, appliquer les couleurs en tenant compte de open/close
   if (tx.isShort) {
     if (tx.isClose) {
-      return 'text-[#4ADE80]'; // Close short: vert
+      return 'text-success'; // Close short: vert
     } else {
-      return 'text-[#FF5757]'; // Open short: rouge
+      return 'text-danger'; // Open short: rouge
     }
   }
   if (tx.isLong) {
     if (tx.isClose) {
-      return 'text-[#FF5757]'; // Close long: rouge
+      return 'text-danger'; // Close long: rouge
     } else {
-      return 'text-[#4ADE80]'; // Open long: vert
+      return 'text-success'; // Open long: vert
     }
   }
   
   // Pour accountClassTransfer et cStakingTransfer, toujours vert (transfert interne)
   if (tx.method === 'accountClassTransfer' || tx.method === 'cStakingTransfer') {
-    return 'text-[#4ADE80]'; // Vert pour transfert interne
+    return 'text-success'; // Vert pour transfert interne
   }
   
   // Pour spotTransfer, déterminer la couleur selon la direction
@@ -204,13 +204,13 @@ export const getAmountColorClass = (tx: TransactionData, config: TransactionForm
     const isIncoming = currentAddress && tx.to && tx.to.toLowerCase() === currentAddress.toLowerCase();
     
     if (isOutgoing) {
-      return 'text-[#FF5757]'; // Rouge pour sortant
+      return 'text-danger'; // Rouge pour sortant
     } else if (isIncoming) {
-      return 'text-[#4ADE80]'; // Vert pour entrant
+      return 'text-success'; // Vert pour entrant
     }
   }
   
-  return 'text-white'; // Blanc par défaut
+  return 'text-text-primary';
 };
 
 // Note: formatAddress et formatHash sont déjà définis dans hooks/useTransactions.ts 

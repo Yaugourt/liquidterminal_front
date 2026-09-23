@@ -29,7 +29,8 @@ export const useWalletFundingSummary = (address: string) => {
 
 export const useWalletRoundTrips = (address: string, limit = 50) => {
   const { data, isLoading, error, refetch } = useDataFetching<WalletRoundTrip[]>({
-    fetchFn: () => fetchWalletRoundTrips(address, limit),
+    // Empty address = feed disabled (the digest opens it on demand).
+    fetchFn: () => (address ? fetchWalletRoundTrips(address, limit) : Promise.resolve([])),
     dependencies: [address, limit],
     refreshInterval: 60000,
     maxRetries: 1,

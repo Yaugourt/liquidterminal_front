@@ -104,6 +104,29 @@ export function isHip2Address(address: string): boolean {
     return address === HIP2_ADDRESS;
 }
 
+/**
+ * HL stamps system-generated rows (TWAP slices, liquidation-engine fills, some
+ * `cStakingTransfer`s) with an all-zero hash: it identifies nothing, so such
+ * rows must never be grouped or matched by hash.
+ */
+export function isNullHash(hash: string | undefined): boolean {
+    return !hash || /^0x0*$/.test(hash);
+}
+
+/**
+ * Unique row keys. The hash alone is not one: null hashes repeat, and a single
+ * tx can emit several ledger deltas. Repeats get a `:n` suffix.
+ */
+export function withRowIds<T extends { hash: string; time: number }>(rows: T[]): (T & { id: string })[] {
+    const seen = new Map<string, number>();
+    return rows.map(row => {
+        const base = isNullHash(row.hash) ? `null:${row.time}` : row.hash;
+        const n = seen.get(base) ?? 0;
+        seen.set(base, n + 1);
+        return { ...row, id: n === 0 ? base : `${base}:${n}` };
+    });
+}
+
 export function mergeFillsByHash(fills: UserFill[]): UserFill[] {
     if (!fills || !Array.isArray(fills)) {
         return [];
@@ -111,12 +134,13 @@ export function mergeFillsByHash(fills: UserFill[]): UserFill[] {
 
     const fillsByHash = new Map<string, UserFill[]>();
     
-    // Grouper les fills par hash
+    // Grouper les fills par hash (un fill à hash nul reste seul, clé = trade id)
     fills.forEach(fill => {
-        if (!fillsByHash.has(fill.hash)) {
-            fillsByHash.set(fill.hash, []);
+        const key = isNullHash(fill.hash) ? `tid:${fill.tid}` : fill.hash;
+        if (!fillsByHash.has(key)) {
+            fillsByHash.set(key, []);
         }
-        fillsByHash.get(fill.hash)!.push(fill);
+        fillsByHash.get(key)!.push(fill);
     });
 
     // Fusionner les fills avec le même hash

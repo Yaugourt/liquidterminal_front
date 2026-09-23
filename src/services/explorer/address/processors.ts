@@ -1,7 +1,7 @@
-import { UserTransaction, UserFill, NonFundingLedgerUpdate, FormattedUserTransaction } from './types';
+import { UserTransaction, UserFill, NonFundingLedgerUpdate, UserTransactionRow } from './types';
 import { getTransactionAddresses, formatAge, mergeFillsByHash, getFillAddresses, getTwapOrderAddresses } from './utils';
 
-export function processFillTransactions(fills: UserFill[], address: string): FormattedUserTransaction[] {
+export function processFillTransactions(fills: UserFill[], address: string): UserTransactionRow[] {
     return mergeFillsByHash(fills).map(fill => {
         const isSpot = fill.coin.startsWith('@');
         let isClosePosition = false;
@@ -41,13 +41,18 @@ export function processFillTransactions(fills: UserFill[], address: string): For
     });
 }
 
+// Pre-2024-05 RPC actions are tuples — `["withdraw2", "Arbitrum", [user, usd, nonce]]` — not objects.
+function actionType(tx: UserTransaction): string {
+    return Array.isArray(tx.action) ? String(tx.action[0]) : tx.action.type;
+}
+
 export function processUserTransactions(
     txs: UserTransaction[], 
     address: string, 
     processedHashes: Set<string>,
     ledgerMap: Map<string, NonFundingLedgerUpdate>,
     fillsMap?: Map<string, UserFill>
-): FormattedUserTransaction[] {
+): UserTransactionRow[] {
     return txs
         .filter((tx: UserTransaction) => {
             if (processedHashes.has(tx.hash)) return false;
@@ -111,7 +116,7 @@ export function processUserTransactions(
             
             return {
                 hash: tx.hash,
-                method: (tx.action.type === 'order' || tx.action.type === 'twapOrder') && order && order.a > 10000 ? (order.b ? 'Buy' : 'Sell') : tx.action.type,
+                method: (tx.action.type === 'order' || tx.action.type === 'twapOrder') && order && order.a > 10000 ? (order.b ? 'Buy' : 'Sell') : actionType(tx),
                 age: formatAge(tx.time),
                 from: addresses.from,
                 to: addresses.to,
@@ -129,7 +134,7 @@ export function processOrphanLedgerUpdates(
     ledgerUpdates: NonFundingLedgerUpdate[],
     allHashes: Set<string>,
     address: string
-): FormattedUserTransaction[] {
+): UserTransactionRow[] {
     return ledgerUpdates
         .filter(update => !allHashes.has(update.hash) && update.delta.type !== "withdraw3")
         .map(ledgerUpdate => {

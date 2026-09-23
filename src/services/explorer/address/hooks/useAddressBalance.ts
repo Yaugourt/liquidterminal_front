@@ -120,6 +120,8 @@ export function useAddressBalance(address: string, options: UseAddressBalanceOpt
 
   return {
     balances,
+    /** Raw spot balances (HL `spotClearinghouseState`) — for the distribution chart. */
+    spotBalances,
     /** Raw perp clearinghouse state (open positions, margin) — for callers
      *  that need position-level detail without opening a second feed. */
     perpPositions,

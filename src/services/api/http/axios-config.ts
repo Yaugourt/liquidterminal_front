@@ -163,6 +163,50 @@ export async function axiosWithConfig<T>(
     if (cached) return cached;
   }
 
+  // Identical reads fired at the same moment (several hooks mounting on one
+  // page) share one request instead of each hitting the upstream — the HL
+  // info API rate-limits per IP and the address page alone opened the same
+  // ledger three times.
+  if (isShareableRead(client, requestConfig, useCache)) {
+    const pending = inflight.get(cacheKey) as Promise<T> | undefined;
+    if (pending) return pending;
+    const request = runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError).finally(() => {
+      inflight.delete(cacheKey);
+    });
+    inflight.set(cacheKey, request);
+    return request;
+  }
+
+  return runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError);
+}
+
+/** In-flight reads, keyed like the response cache. */
+const inflight = new Map<string, Promise<unknown>>();
+
+/** Read-only HL endpoints — POST bodies there are queries, never actions. */
+const HL_READ_URLS = new Set([
+  `${API_URLS.HYPERLIQUID_API}/info`,
+  `${API_URLS.HYPERLIQUID_UI_API}/info`,
+  `${API_URLS.HYPERLIQUID_RPC}/explorer`,
+]);
+
+function isShareableRead(
+  client: AxiosInstance,
+  config: AxiosRequestConfig,
+  useCache: boolean
+): boolean {
+  const method = config.method?.toLowerCase();
+  if (method === 'get') return useCache;
+  return method === 'post' && client === externalApiClient && HL_READ_URLS.has(config.url ?? '');
+}
+
+async function runRequest<T>(
+  client: AxiosInstance,
+  requestConfig: ExtendedAxiosRequestConfig,
+  cacheKey: string,
+  useCache: boolean,
+  retryOnError: boolean
+): Promise<T> {
   let retries = 0;
   let lastError: Error | null = null;
 

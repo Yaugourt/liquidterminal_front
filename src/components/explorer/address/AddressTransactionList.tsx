@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Copy, Check } from "lucide-react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { TransactionListProps } from "@/components/types/explorer.types";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { usePerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
-import { TypedDataTable, type Column } from "@/components/common";
+import { TypedDataTable, type Column, type CellTone } from "@/components/common";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatPrice } from "@/lib/formatters/numberFormatting";
 import {
-  formatHash,
   isHip2Address,
+  isNullHash,
   getTokenPrice,
   getTokenName,
   calculateValueWithDirection,
@@ -31,8 +30,8 @@ interface FormatterConfig {
 }
 
 /**
- * Renders a single "from" / "to" address cell, handling special markers
- * (Spot / Perp / Staking / Arbitrum / HIP2) the same way the legacy row did.
+ * "From" / "to" cell: Arbitrum + HIP-2 as links, real addresses via
+ * `AddressDisplay`, anything else (Spot / Perp / Staking, "limit") as text.
  */
 function AddressCell({
   address,
@@ -41,17 +40,14 @@ function AddressCell({
   address: string;
   currentAddress?: string;
 }) {
-  if (!address) return <span className="text-text-primary">-</span>;
+  if (!address) return <span className="text-text-tertiary">—</span>;
 
-  if (["Spot", "Perp", "Staking"].includes(address)) {
-    return <span className="text-text-primary">{address}</span>;
-  }
 
   if (address === "Arbitrum") {
     return (
       <Link
         href={`https://arbiscan.io/address/${currentAddress}#tokentxns`}
-        className="text-brand hover:text-brand/80 truncate block"
+        className="text-brand hover:text-brand-hover transition-colors"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -64,68 +60,31 @@ function AddressCell({
     return (
       <Link
         href={`/explorer/address/${address}`}
-        className="text-brand hover:text-brand/80 truncate block"
+        className="text-brand hover:text-brand-hover transition-colors"
       >
         HIP2
       </Link>
     );
   }
 
+  // Venue markers (Spot / Perp / Staking) and order kinds ("limit") — not addresses.
+  if (!/^0x[0-9a-fA-F]{40}$/.test(address)) {
+    return <span className="text-text-secondary">{address}</span>;
+  }
+
   const isCurrent =
     !!currentAddress &&
     address.toLowerCase() === currentAddress.toLowerCase();
 
-  return (
-    <AddressDisplay
-      address={address}
-      showCopy={isCurrent}
-      showExternalLink={false}
-      className={isCurrent ? "text-text-primary" : "text-brand"}
-      href={isCurrent ? undefined : `/explorer/address/${address}`}
-    />
-  );
+  return <AddressDisplay address={address} showCopy={isCurrent} />;
 }
 
-/**
- * Hash cell with click-to-copy button. Local state keeps copy feedback
- * isolated per row.
- */
-function HashCell({ hash }: { hash: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const copy = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    try {
-      await navigator.clipboard.writeText(hash);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Silently ignore clipboard errors.
-    }
-  };
-
-  return (
-    <div className="flex items-center gap-1.5">
-      <Link
-        href={`/explorer/transaction/${hash}`}
-        prefetch={false}
-        className="text-brand hover:text-text-primary transition-colors"
-        title={hash}
-      >
-        {formatHash(hash)}
-      </Link>
-      <button
-        onClick={copy}
-        className="group text-text-tertiary hover:text-text-primary transition-colors p-0.5 rounded-md hover:bg-surface-2"
-      >
-        {copied ? (
-          <Check className="h-3 w-3 text-success" />
-        ) : (
-          <Copy className="h-3 w-3 text-gold opacity-60 group-hover:opacity-100 transition-all duration-200" />
-        )}
-      </button>
-    </div>
-  );
+/** Sign of a transaction amount, read off the direction-aware display string. */
+function amountTone(display: string, colorClass: string): CellTone | undefined {
+  if (display === "-") return "muted";
+  if (colorClass.includes("success")) return "success";
+  if (colorClass.includes("danger")) return "danger";
+  return undefined;
 }
 
 export function AddressTransactionList({
@@ -157,11 +116,22 @@ export function AddressTransactionList({
       {
         key: "hash",
         header: "Hash",
-        accessor: (tx) => <HashCell hash={tx.hash} />,
+        // System rows (TWAP slices, liquidation-engine fills) carry a null hash — no tx to open.
+        accessor: (tx) =>
+          isNullHash(tx.hash) ? (
+            <span className="text-text-tertiary">—</span>
+          ) : (
+            <AddressDisplay
+              address={tx.hash}
+              href={`/explorer/transaction/${tx.hash}`}
+              copyMessage="Hash copied to clipboard"
+            />
+          ),
       },
       {
         key: "method",
         header: "Method",
+        type: "text",
         accessor: (tx) =>
           tx.method === "accountClassTransfer" ||
           tx.method === "cStakingTransfer"
@@ -171,6 +141,7 @@ export function AddressTransactionList({
       {
         key: "age",
         header: "Age",
+        type: "time",
         accessor: (tx) => tx.age,
       },
       {
@@ -189,41 +160,29 @@ export function AddressTransactionList({
       },
       {
         key: "token",
-        header: "Token",
-        accessor: (tx) => (
-          <span className={getAmountColorClass(tx, formatterConfig)}>
-            {formatAmountWithDirection(tx, formatterConfig)}
-          </span>
-        ),
+        header: "Amount",
+        type: "numeric",
+        accessor: (tx) => formatAmountWithDirection(tx, formatterConfig),
+        tone: (tx) =>
+          amountTone(
+            formatAmountWithDirection(tx, formatterConfig),
+            getAmountColorClass(tx, formatterConfig)
+          ),
       },
       {
         key: "price",
         header: "Price",
-        align: "right",
+        type: "numeric",
         accessor: (tx) => {
           const tokenName = getTokenName(tx.token, spotTokens, perpMarkets);
-          const tokenPrice = getTokenPrice(tokenName, spotTokens);
-          if (tx.price) {
-            return formatNumber(parseFloat(tx.price), format, {
-              currency: "$",
-              showCurrency: true,
-              minimumFractionDigits: 4,
-            });
-          }
-          if (tokenPrice > 0) {
-            return formatNumber(tokenPrice, format, {
-              currency: "$",
-              showCurrency: true,
-              minimumFractionDigits: 4,
-            });
-          }
-          return "-";
+          const price = tx.price ? parseFloat(tx.price) : getTokenPrice(tokenName, spotTokens);
+          return price > 0 ? formatPrice(price, format) : "—";
         },
       },
       {
         key: "value",
         header: "Value",
-        align: "right",
+        type: "numeric",
         accessor: (tx) => calculateValueWithDirection(tx, formatterConfig),
       },
     ],
@@ -234,13 +193,13 @@ export function AddressTransactionList({
     <TypedDataTable<TransactionType>
       data={paginatedTxs}
       columns={columns}
-      getRowKey={(tx) => tx.hash}
+      getRowKey={(tx) => tx.id}
       isLoading={isLoading}
       error={error}
       errorTitle="Failed to load transactions"
       emptyMessage="No transactions found"
       emptyDescription=""
-      density="comfortable"
+      density="compact"
       total={total}
       page={page}
       rowsPerPage={rowsPerPage}
@@ -250,7 +209,7 @@ export function AddressTransactionList({
         setPage(0);
       }}
       paginationDisabled={isLoading}
-      className="max-h-[600px] bg-surface/60 border border-border-subtle rounded-lg"
+      className="max-h-[600px]"
     />
   );
 }

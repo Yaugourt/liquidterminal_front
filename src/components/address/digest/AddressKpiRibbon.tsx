@@ -12,6 +12,7 @@ interface AddressKpiRibbonProps {
 }
 
 const tone = (v: number): KpiCell["tone"] => (v >= 0 ? "success" : "danger");
+const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
 
 /**
  * The address page's headline strip: net worth, exchange-reported PnL, the
@@ -19,10 +20,15 @@ const tone = (v: number): KpiCell["tone"] => (v >= 0 ? "success" : "danger");
  * for a trading wallet so the strip tiles cleanly at 2 / 3 / 6 columns.
  * Cells whose feed has nothing for this wallet are dropped rather than shown
  * as dashes, so an on-chain-only address gets a 2-cell ribbon, not 6 blanks.
+ *
+ * Tracker variant: the recency cell gives way to the open exposure (what a
+ * copier would be holding right now) and the win-rate cell carries the
+ * recent-form delta.
  */
 export function AddressKpiRibbon({ model }: AddressKpiRibbonProps) {
   const { format: dateFormat } = useDateFormat();
-  const { netWorth, pnl, trading, activity, isLoading } = model;
+  const { variant, netWorth, pnl, trading, cadence, exposure, activity, isLoading, evm } = model;
+  const isTracker = variant === "tracker";
 
   const cells = useMemo<KpiCell[]>(() => {
     const out: KpiCell[] = [];
@@ -37,15 +43,23 @@ export function AddressKpiRibbon({ model }: AddressKpiRibbonProps) {
       key: "networth",
       label: "Net worth",
       value: isLoading ? <Skeleton className="h-5 w-20 rounded" /> : compactUsd(netWorth.total),
-      sub: isLoading ? " " : dominant || "HyperCore",
+      sub: isLoading
+        ? " "
+        : isTracker && evm.enabled && netWorth.hyperEvm > 0
+          ? `core ${compactUsd(netWorth.hyperCore)} · EVM ${compactUsd(netWorth.hyperEvm)}`
+          : dominant || (isTracker ? "HyperCore + HyperEVM" : "HyperCore"),
     });
 
     if (pnl.allTime != null) {
+      const spot = pnl.perpAllTime != null ? pnl.allTime - pnl.perpAllTime : null;
       out.push({
         key: "pnl",
         label: "PnL · all-time",
         value: signedCompactUsd(pnl.allTime),
-        sub: "exchange-reported",
+        sub:
+          isTracker && spot != null && Math.abs(spot) >= 1
+            ? `perp ${signedCompactUsd(pnl.perpAllTime as number)} · spot ${signedCompactUsd(spot)}`
+            : "exchange-reported",
         tone: tone(pnl.allTime),
       });
     }
@@ -60,14 +74,17 @@ export function AddressKpiRibbon({ model }: AddressKpiRibbonProps) {
     }
 
     if (trading) {
+      const recent =
+        isTracker && cadence && cadence.sample >= 20
+          ? `last ${cadence.sample}: ${pct(cadence.recentWinRate)}`
+          : trading.wins != null && trading.losses != null
+            ? `${compactCount(trading.wins)}W / ${compactCount(trading.losses)}L`
+            : `${compactCount(trading.trades)} trades`;
       out.push({
         key: "winrate",
         label: "Win rate",
-        value: `${(trading.winRate * 100).toFixed(1)}%`,
-        sub:
-          trading.wins != null && trading.losses != null
-            ? `${compactCount(trading.wins)}W / ${compactCount(trading.losses)}L`
-            : `${compactCount(trading.trades)} trades`,
+        value: pct(trading.winRate),
+        sub: recent,
       });
       if (trading.profitFactor != null) {
         out.push({
@@ -80,7 +97,28 @@ export function AddressKpiRibbon({ model }: AddressKpiRibbonProps) {
       }
     }
 
-    if (activity.lastSeen != null) {
+    if (isTracker) {
+      if (exposure.grossNotional > 0 && exposure.longShare != null) {
+        const leaning = exposure.longShare >= 0.5 ? "long" : "short";
+        const share = leaning === "long" ? exposure.longShare : 1 - exposure.longShare;
+        out.push({
+          key: "exposure",
+          label: "Open exposure",
+          value: compactUsd(exposure.grossNotional),
+          sub: `${Math.round(share * 100)}% ${leaning}${
+            exposure.effectiveLeverage != null ? ` · ${exposure.effectiveLeverage.toFixed(1)}× eff.` : ""
+          }`,
+          tone: leaning === "long" ? "success" : "danger",
+        });
+      } else if (activity.lastSeen != null) {
+        out.push({
+          key: "active",
+          label: "Active",
+          value: `${timeAgo(activity.lastSeen)} ago`,
+          sub: "no open perp position",
+        });
+      }
+    } else if (activity.lastSeen != null) {
       out.push({
         key: "active",
         label: "Active",
@@ -90,7 +128,7 @@ export function AddressKpiRibbon({ model }: AddressKpiRibbonProps) {
     }
 
     return out;
-  }, [netWorth, pnl, trading, activity, isLoading, dateFormat]);
+  }, [netWorth, pnl, trading, cadence, exposure, activity, isLoading, dateFormat, isTracker, evm.enabled]);
 
   return <KpiRibbon cells={cells} />;
 }

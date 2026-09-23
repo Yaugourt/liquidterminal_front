@@ -12,6 +12,7 @@ export type {
   
   
   PortfolioPeriodData,
+  NonFundingLedgerUpdate,
   
   TransactionType,
   
@@ -25,6 +26,7 @@ export {
   useUserTwapOrders,
   
   useAddressBalance,
+  useLedgerUpdates,
   
   formatHash,
   formatNumberValue,
@@ -44,6 +46,7 @@ export {
 // Utils exports
 export {
   isHip2Address,
+  isNullHash,
   
   
   

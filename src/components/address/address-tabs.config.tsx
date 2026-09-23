@@ -2,6 +2,7 @@
 
 import {
   Activity,
+  Blocks,
   Wallet,
   ListOrdered,
   Timer,
@@ -20,7 +21,8 @@ export type AddressTabId =
   | "fills"
   | "roundtrips"
   | "vaults"
-  | "staking";
+  | "staking"
+  | "hyperevm";
 
 export interface AddressTabDefinition {
   id: AddressTabId;
@@ -37,6 +39,7 @@ export const ADDRESS_TAB_REGISTRY: Record<AddressTabId, AddressTabDefinition> = 
   roundtrips: { id: "roundtrips", label: "Round-trips", icon: Repeat },
   vaults: { id: "vaults", label: "Vaults", icon: Layers },
   staking: { id: "staking", label: "Staking", icon: Coins },
+  hyperevm: { id: "hyperevm", label: "HyperEVM", icon: Blocks },
 };
 
 /** Full tab list, in the canonical order. */
@@ -49,6 +52,7 @@ export const ALL_ADDRESS_TABS: AddressTabId[] = [
   "roundtrips",
   "vaults",
   "staking",
+  "hyperevm",
 ];
 
 export function resolveTabs(ids?: AddressTabId[]): AddressTabDefinition[] {

@@ -271,7 +271,7 @@ export function compactUsd(
  * `compactUsd` avec signe explicite — `+$1.23M` / `-$45.6K` / `+$0.00`.
  *
  * Pour les deltas et PnL où le `+` porte l'information. Remplace les
- * `signedUsd` locaux (WalletScorecard, TraderPnlCard, SmartMoney*, …).
+ * `signedUsd` locaux (TraderPnlCard, SmartMoney*, …).
  */
 export function signedCompactUsd(
   n: number | null | undefined,

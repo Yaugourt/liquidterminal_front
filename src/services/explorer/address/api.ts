@@ -14,6 +14,7 @@ import {
     processUserTransactions,
     processOrphanLedgerUpdates
 } from './processors';
+import { isNullHash, withRowIds } from './utils';
 
 async function getUserTransactionsRaw(address: string): Promise<UserTransactionsResponse> {
     return withErrorHandling(async () => {
@@ -25,7 +26,11 @@ async function getUserTransactionsRaw(address: string): Promise<UserTransactions
     }, 'fetching raw transactions');
 }
 
-async function getUserNonFundingLedgerUpdates(address: string): Promise<NonFundingLedgerUpdate[]> {
+/**
+ * Raw HL non-funding ledger (deposits, withdrawals, transfers, vault moves,
+ * liquidations) since 2022 — the capital-flow source for the address digest.
+ */
+export async function getUserNonFundingLedgerUpdates(address: string): Promise<NonFundingLedgerUpdate[]> {
     return withErrorHandling(async () => {
         const url = `${API_URLS.HYPERLIQUID_API}/info`;
         return await postExternal<NonFundingLedgerUpdate[]>(url, {
@@ -56,22 +61,27 @@ export async function getUserTransactions(address: string): Promise<FormattedUse
 
         const fillTransactions = processFillTransactions(fills, address);
 
+        // Les hashs nuls ne relient rien entre eux : exclus de tous les index par hash
+        const realHashes = (rows: { hash: string }[]) => rows.map(row => row.hash).filter(hash => !isNullHash(hash));
+
         // Créer un Set des hashs déjà traités
-        const processedHashes = new Set(fillTransactions.map(tx => tx.hash));
-        const ledgerMap = new Map(ledgerUpdates.map(update => [update.hash, update]));
-        const fillsMap = new Map(fills.map(fill => [fill.hash, fill]));
+        const processedHashes = new Set(realHashes(fillTransactions));
+        const ledgerMap = new Map(ledgerUpdates.filter(update => !isNullHash(update.hash)).map(update => [update.hash, update]));
+        const fillsMap = new Map(fills.filter(fill => !isNullHash(fill.hash)).map(fill => [fill.hash, fill]));
 
         const userTransactions = processUserTransactions(rawTransactions.txs, address, processedHashes, ledgerMap, fillsMap);
 
         // Ajout des ledgerUpdates orphelins (withdraw/deposit sans tx brute associée)
         const allHashes = new Set([
-            ...fillTransactions.map(tx => tx.hash),
-            ...userTransactions.map(tx => tx.hash)
+            ...realHashes(fillTransactions),
+            ...realHashes(userTransactions)
         ]);
         const orphanLedgerUpdates = processOrphanLedgerUpdates(ledgerUpdates, allHashes, address);
 
-        return [...fillTransactions, ...userTransactions, ...orphanLedgerUpdates]
-            .sort((a, b) => b.time - a.time);
+        return withRowIds(
+            [...fillTransactions, ...userTransactions, ...orphanLedgerUpdates]
+                .sort((a, b) => b.time - a.time)
+        );
     }, 'fetching user transactions');
 }
 

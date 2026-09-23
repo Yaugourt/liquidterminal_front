@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,9 +17,6 @@ import {
 
 import { AddressTransactionList } from "@/components/explorer/address";
 import { AssetsSection } from "@/components/market/tracker/assets";
-import { WalletScorecard } from "@/components/market/tracker/WalletScorecard";
-import { WalletConcentration } from "@/components/market/tracker/WalletConcentration";
-import { WalletFundingCard } from "@/components/market/tracker/WalletFundingCard";
 import { HyperEvmCard } from "@/components/market/tracker/evm/HyperEvmCard";
 import { WalletRoundTrips } from "@/components/market/tracker/WalletRoundTrips";
 import {
@@ -41,8 +38,8 @@ interface AddressAnalyticsLayoutProps {
   defaultTab?: AddressTabId;
   /**
    * Summary variant.
-   * - `explorer` (default): 3 stat cards, on-chain emphasis.
-   * - `tracker`: PortfolioStats + PerformanceChart, trading emphasis.
+   * - `explorer` (default): KPI ribbon + wallet-profile card.
+   * - `tracker`: same digest with the performance chart beside the card.
    */
   summaryVariant?: AddressSummaryVariant;
   /** Override the default page title ("Address 0x1234...abcd"). */
@@ -55,9 +52,9 @@ interface AddressAnalyticsLayoutProps {
  *
  * Key features:
  * - Validates the address format up-front (shows a friendly invalid-state card).
- * - Shared hero + summary + tab bar. The explorer variant keeps the summary to
- *   a ribbon + one card so the tab content (transactions) starts within the
- *   first screen; the tracker variant stacks its trading cards.
+ * - Shared hero + summary + tab bar. The summary wraps the tabs: ribbon,
+ *   insights (+ chart on the tracker) and the detailed wallet profile above,
+ *   holdings / transactions at the bottom of the page.
  * - Lazy-mount + keep-alive pattern for tab panels: each panel is only mounted
  *   on first visit, then stays in memory so switching tabs is instant.
  */
@@ -88,6 +85,9 @@ export function AddressAnalyticsLayout({
   );
 
   const isValidAddress = ADDRESS_REGEX.test(address);
+  const tabBarRef = useRef<HTMLDivElement>(null);
+  /** Bumped when the profile asks for the perp holdings — re-applies the view. */
+  const [holdingsFocus, setHoldingsFocus] = useState<{ view: "spot" | "perp"; at: number } | null>(null);
 
   useEffect(() => {
     const title =
@@ -106,6 +106,13 @@ export function AddressAnalyticsLayout({
       return updated;
     });
   }, []);
+
+  const hasHoldings = visibleTabs.some((t) => t.id === "holdings");
+  const showPositions = useCallback(() => {
+    handleTabChange("holdings");
+    setHoldingsFocus({ view: "perp", at: Date.now() });
+    tabBarRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [handleTabChange]);
 
   if (!isValidAddress) {
     return (
@@ -133,41 +140,37 @@ export function AddressAnalyticsLayout({
     <div className="space-y-6">
       <AddressHero address={address} />
 
-      <AddressSummary address={address} variant={summaryVariant} />
+      <AddressSummary
+        address={address}
+        variant={summaryVariant}
+        onShowPositions={hasHoldings ? showPositions : undefined}
+      >
+        {/* The bar sticks while its panels scroll. */}
+        <div ref={tabBarRef} className="space-y-4 scroll-mt-16">
+          <AddressTabBar
+            tabs={visibleTabs}
+            activeTab={activeTab}
+            onChange={handleTabChange}
+          />
 
-      {/* The explorer digest already folds scorecard, concentration and funding
-          into its profile card; the tracker keeps them as standalone cards. */}
-      {summaryVariant === "tracker" && (
-        <>
-          <WalletScorecard address={address} />
-          <WalletConcentration address={address} />
-          <WalletFundingCard address={address} />
-          <HyperEvmCard address={address} />
-        </>
-      )}
-
-      <AddressTabBar
-        tabs={visibleTabs}
-        activeTab={activeTab}
-        onChange={handleTabChange}
-      />
-
-      <div>
-        {visibleTabs.map((tab) => {
-          if (!visitedTabs.has(tab.id)) return null;
-          const isActive = tab.id === activeTab;
-          return (
-            <div
-              key={tab.id}
-              className={isActive ? "animate-in fade-in duration-200" : "hidden"}
-              role="tabpanel"
-              aria-hidden={!isActive}
-            >
-              <AddressTabPanel tabId={tab.id} address={address} />
-            </div>
-          );
-        })}
-      </div>
+          <div>
+            {visibleTabs.map((tab) => {
+              if (!visitedTabs.has(tab.id)) return null;
+              const isActive = tab.id === activeTab;
+              return (
+                <div
+                  key={tab.id}
+                  className={isActive ? "animate-in fade-in duration-200" : "hidden"}
+                  role="tabpanel"
+                  aria-hidden={!isActive}
+                >
+                  <AddressTabPanel tabId={tab.id} address={address} holdingsFocus={holdingsFocus} />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </AddressSummary>
     </div>
   );
 }
@@ -175,14 +178,15 @@ export function AddressAnalyticsLayout({
 interface AddressTabPanelProps {
   tabId: AddressTabId;
   address: string;
+  holdingsFocus: { view: "spot" | "perp"; at: number } | null;
 }
 
-function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
+function AddressTabPanel({ tabId, address, holdingsFocus }: AddressTabPanelProps) {
   switch (tabId) {
     case "transactions":
       return <TransactionsTabPanel address={address} />;
     case "holdings":
-      return <AssetsSection initialViewType="spot" addressOverride={address} />;
+      return <AssetsSection initialViewType="spot" addressOverride={address} focusView={holdingsFocus} />;
     case "orders":
       return <OrdersSection address={address} />;
     case "twap":
@@ -195,6 +199,8 @@ function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
       return <VaultDepositList address={address} />;
     case "staking":
       return <StakingTable address={address} />;
+    case "hyperevm":
+      return <HyperEvmCard address={address} />;
     default: {
       const _exhaustive: never = tabId;
       void _exhaustive;

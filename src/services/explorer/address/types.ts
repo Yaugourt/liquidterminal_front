@@ -83,8 +83,8 @@ export interface UserFill {
     [key: string]: unknown; // Add index signature for compatibility with FillData
 }
 
-// Transaction formatée pour l'affichage
-export interface FormattedUserTransaction {
+// Transaction formatée pour l'affichage, avant attribution de sa clé de ligne (`withRowIds`)
+export interface UserTransactionRow {
     hash: string;
     method: string;
     age: string;
@@ -99,6 +99,11 @@ export interface FormattedUserTransaction {
     isLong?: boolean;
     isClose?: boolean;
     [key: string]: unknown; // Add index signature for compatibility
+}
+
+export interface FormattedUserTransaction extends UserTransactionRow {
+    /** Unique row key — `hash` is not one (see `withRowIds`). */
+    id: string;
 }
 
 export interface UseTransactionsResult {
@@ -117,6 +122,7 @@ export type PortfolioApiResponse = [string, PortfolioPeriodData][];
 
 // Update TransactionType to match the actual return type from useTransactions
 export interface TransactionType {
+  id: string;
   hash: string;
   method: string;
   age: string;
