@@ -2,6 +2,9 @@
   "name": "liquidterminal_front",
   "version": "0.1.0",
   "private": true,
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "dev": "node scripts/predev-clean.mjs && NODE_OPTIONS=--max-old-space-size=4096 next dev --turbo --hostname 127.0.0.1 --port 3000",
     "build": "next build",

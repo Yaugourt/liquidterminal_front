@@ -23,6 +23,9 @@ const MAX_RECENT_ITEMS = 100;
 
 export const useLiquidationWSStore = create<LiquidationWSStore>((set, get) => {
   let client: WebSocketClient | null = null;
+  // Ref-counted: the dashboard card and the liquidations page both hold it,
+  // and one releasing must not close the socket under the other.
+  let refCount = 0;
 
   return {
     // État initial
@@ -34,8 +37,14 @@ export const useLiquidationWSStore = create<LiquidationWSStore>((set, get) => {
     onLiquidation: undefined,
 
     connect: () => {
-      // Éviter les doubles connexions
-      if (client?.isConnected()) return;
+      refCount++;
+
+      // Reuse the existing client: connect() is a no-op while OPEN/CONNECTING
+      // (the old isConnected() guard let a CONNECTING socket leak).
+      if (client) {
+        client.connect();
+        return;
+      }
 
       client = new WebSocketClient({
         url: WS_URL,
@@ -106,6 +115,9 @@ export const useLiquidationWSStore = create<LiquidationWSStore>((set, get) => {
     },
 
     disconnect: () => {
+      refCount = Math.max(0, refCount - 1);
+      if (refCount > 0) return;
+
       if (client) {
         client.disconnect();
         client = null;

@@ -92,7 +92,14 @@ const eslintConfig = [
         {
           patterns: [
             {
-              group: ["@/components/common/*"],
+              // lwcTheme is the one exception: it pulls the lightweight-charts
+              // runtime, so it's kept out of the barrel (and the app shell).
+              group: [
+                "@/components/common/*",
+                "!@/components/common/charts",
+                "@/components/common/charts/*",
+                "!@/components/common/charts/lwcTheme",
+              ],
               message:
                 "Import depuis '@/components/common' (barrel), pas le fichier interne. Si l'export est manquant, ajoute-le au barrel.",
             },

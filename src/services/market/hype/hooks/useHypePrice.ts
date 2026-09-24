@@ -3,32 +3,31 @@ import { useHypePriceStore } from '../websocket.service';
 import { UseHypePriceResult } from '../types';
 
 /**
- * Custom hook to get the real-time HYPE token price
+ * Keeps the shared HYPE trade socket open. The socket is intentionally never
+ * closed on unmount (many components share it app-wide); this re-arms it when
+ * it drops.
  */
-export function useHypePrice(): UseHypePriceResult {
-  const { 
-    currentPrice, 
-    lastSide, 
-    isConnected, 
-    error, 
-    connect, 
-  } = useHypePriceStore();
+function useHypePriceConnection(): boolean {
+  const isConnected = useHypePriceStore((s) => s.isConnected);
+  const connect = useHypePriceStore((s) => s.connect);
 
-  // Connect to WebSocket when component mounts
   useEffect(() => {
-    // Connect to WebSocket if not already connected
     if (!isConnected) {
       connect();
     }
-
-    // Cleanup: disconnect WebSocket when component unmounts
-    return () => {
-      // We don't want to disconnect if other components are using the same WebSocket
-      // Only disconnect if navigating away or unmounting the last component using it
-      // For simplicity, we'll leave the connection open
-      // disconnect();
-    };
   }, [isConnected, connect]);
+
+  return isConnected;
+}
+
+/**
+ * Custom hook to get the real-time HYPE token price
+ */
+export function useHypePrice(): UseHypePriceResult {
+  const isConnected = useHypePriceConnection();
+  const currentPrice = useHypePriceStore((s) => s.currentPrice);
+  const lastSide = useHypePriceStore((s) => s.lastSide);
+  const error = useHypePriceStore((s) => s.error);
 
   return {
     price: currentPrice || null,
@@ -36,4 +35,14 @@ export function useHypePrice(): UseHypePriceResult {
     isLoading: !isConnected,
     error
   };
-} 
+}
+
+/**
+ * Live HYPE price only. Unlike `useHypePrice`, it doesn't re-render on the
+ * buy/sell flash (`lastSide`) or on repeated trades at the same price — use it
+ * wherever the price is just an input to a computation.
+ */
+export function useHypeLivePrice(): number | null {
+  useHypePriceConnection();
+  return useHypePriceStore((s) => s.currentPrice) || null;
+}

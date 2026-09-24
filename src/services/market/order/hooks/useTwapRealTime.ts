@@ -5,8 +5,12 @@ import {
   type TwapRealTimeData,
 } from "../twap-real-time";
 
+const TICK_MS = 1_000;
+
 /**
- * Polls real-time TWAP progression at 50ms for ultra-smooth UI updates.
+ * Recomputes real-time TWAP progression once per second. The displayed
+ * values (1-decimal %, USD value) barely move faster than that, and a 50ms tick
+ * re-rendered whole tables 20×/s.
  *
  * Returns a `Map<id, TwapRealTimeData>` keyed by `twap.id`. Only **active**
  * orders (not `ended` and not in an `error` state) are tracked.
@@ -33,7 +37,7 @@ export function useTwapRealTime<
     };
 
     update();
-    const interval = setInterval(update, 50);
+    const interval = setInterval(update, TICK_MS);
     return () => clearInterval(interval);
   }, [twaps]);
 

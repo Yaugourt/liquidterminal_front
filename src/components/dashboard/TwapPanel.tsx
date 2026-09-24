@@ -103,7 +103,7 @@ export const TwapPanel = memo(function TwapPanel() {
    * HIP-3 orders have `totalValueUSD = 0` (no upstream price) → derive from
    * oracle price × remaining size instead.
    *
-   * We use the static `progressionPercent` snapshot (not the 50ms realtime
+   * We use the static `progressionPercent` snapshot (not the 1s realtime
    * tick) to keep the order stable between ticks. */
   const sortedOrders = useMemo(() => {
     const remainingUsd = (o: (typeof orders)[number]): number => {
@@ -135,7 +135,7 @@ export const TwapPanel = memo(function TwapPanel() {
     [sortedOrders, safePage],
   );
 
-  // Real-time tick (50ms) for the rows currently on screen — keeps Filled %
+  // Real-time tick (1s) for the rows currently on screen — keeps Filled %
   // and remaining amount/value moving live, like the full TwapTable.
   const realtimeInputs = useMemo<
     (TwapProgressionInput & { ended?: string | null; error?: string | null })[]

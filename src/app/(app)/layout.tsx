@@ -7,10 +7,12 @@ import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
 import { SidebarToggle, LegalFooter } from "@/components/common";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useSidebarUi } from "@/store/use-sidebar-ui";
-import { OnboardingGate } from "@/components/onboarding";
-import { MissionsGate } from "@/components/missions";
+// Direct paths (not the barrels): the barrels also re-export the lazy-loaded
+// tour / widget, which would pull them back into the shell.
+import { OnboardingGate } from "@/components/onboarding/OnboardingGate";
+import { MissionsGate } from "@/components/missions/MissionsGate";
 import { Providers } from "@/components/Providers";
-import { GlobalSearchPalette } from "@/components/search/GlobalSearchPalette";
+import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -69,7 +71,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             <OnboardingGate />
             <MissionsGate />
-            <GlobalSearchPalette />
+            <GlobalSearch />
         </div>
         </Providers>
     );

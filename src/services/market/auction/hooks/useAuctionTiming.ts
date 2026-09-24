@@ -3,7 +3,7 @@ import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchAuctionTiming } from '../api';
 import { UseAuctionTimingResult, AuctionState, AuctionTiming } from '../types';
 import { useLatestAuctions } from './useAuctions';
-import { useHypePrice } from '@/services/market/hype/hooks/useHypePrice';
+import { useHypeLivePrice } from '@/services/market/hype/hooks/useHypePrice';
 
 // Prix de base selon la doc : descend toujours vers 500 HYPE
 const BASE_PRICE = 500;
@@ -92,7 +92,7 @@ export const useAuctionTiming = (): UseAuctionTimingResult => {
   const { auctions: latestAuctions, isLoading: auctionsLoading } = useLatestAuctions(200, "HYPE");
 
   // Récupérer le prix HYPE en temps réel via WebSocket
-  const { price: hypePrice } = useHypePrice();
+  const hypePrice = useHypeLivePrice();
 
   // Calculer l'état de l'auction en temps réel
   const auctionState = useMemo((): AuctionState => {

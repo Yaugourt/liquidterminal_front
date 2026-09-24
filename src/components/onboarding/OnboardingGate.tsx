@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { useLogin } from "@privy-io/react-auth";
 import { useOnboardingStore } from "@/store/use-onboarding";
-import { OnboardingTour } from "./OnboardingTour";
+import dynamic from "next/dynamic";
+
+// The tour only ever shows once per browser — keep it out of the app shell.
+const OnboardingTour = dynamic(
+  () => import("./OnboardingTour").then((m) => m.OnboardingTour),
+  { ssr: false }
+);
 
 /** Small delay so the app shell paints before the tour fades in. */
 const SHOW_DELAY_MS = 600;

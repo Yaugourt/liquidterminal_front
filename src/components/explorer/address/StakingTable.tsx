@@ -8,7 +8,7 @@ import { useStakingValidationsPaginated } from "@/services/explorer/validator/ho
 import { useDelegatorHistory } from "@/services/explorer/validator/hooks/delegator/useDelegatorHistory";
 import { useDelegatorRewards } from "@/services/explorer/validator/hooks/delegator/useDelegatorRewards";
 import { useDelegatorSummary } from "@/services/explorer/validator/hooks/delegator/useDelegatorSummary";
-import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
+import { useHypeLivePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useState, useCallback, useEffect, useMemo } from "react";
 
 type StakingSubTab = 'delegations' | 'history' | 'rewards';
@@ -58,7 +58,7 @@ export function StakingTable({ address }: StakingTableProps) {
   } = useDelegatorSummary(address);
 
   // Hook pour le prix HYPE en temps réel
-  const { price: hypePrice } = useHypePrice();
+  const hypePrice = useHypeLivePrice();
 
   // Hook pour l'historique des transactions de staking avec pagination (backup)
   const {

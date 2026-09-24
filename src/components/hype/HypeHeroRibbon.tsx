@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { KpiRibbon, HypeMark } from "@/components/common";
 import type { KpiCell } from "@/components/common";
-import { useHypeOverview, useHypePrice, useHypeVolume } from "@/services/market/hype";
+import { useHypeOverview, useHypeLivePrice, useHypeVolume } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import { formatPrice, compactHype } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -17,7 +17,7 @@ import { fmtUsd, fmtSignedPct, fmtPct } from "./format";
  */
 export const HypeHeroRibbon = memo(function HypeHeroRibbon() {
   const { overview } = useHypeOverview();
-  const { price: livePrice } = useHypePrice();
+  const livePrice = useHypeLivePrice();
   const { volume } = useHypeVolume();
   const { format } = useNumberFormat();
   const { breakdown } = useRevenueBreakdown("7d");

@@ -16,7 +16,13 @@ import { useOnboardingStore } from "@/store/use-onboarding";
 import { useMissionsStore } from "@/store/use-missions";
 import { useMissions } from "@/services/missions";
 import { MissionTracker } from "./MissionTracker";
-import { MissionsWidget } from "./MissionsWidget";
+import dynamic from "next/dynamic";
+
+// Only rendered after onboarding and until dismissed — load it on demand.
+const MissionsWidget = dynamic(
+  () => import("./MissionsWidget").then((m) => m.MissionsWidget),
+  { ssr: false }
+);
 
 export function MissionsGate() {
   // Render nothing on the server and on the hydration pass — the widget

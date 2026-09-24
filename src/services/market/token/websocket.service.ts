@@ -14,6 +14,9 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
   let client: WebSocketClient | null = null;
   let resetTimeout: NodeJS.Timeout | null = null;
   let currentCoinId: string | null = null;
+  // TokenCard, TradingViewChart, OrderBook and RecentTrades share this socket;
+  // one unmounting (e.g. a chart toggle) must not freeze the others.
+  let refCount = 0;
 
   return {
     currentPrice: 0,
@@ -31,6 +34,8 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
       if (typeof window === 'undefined') {
         return;
       }
+      // Counted before validation so every connect() pairs with one disconnect().
+      refCount++;
 
       // Validate coinId
       if (!coinId || coinId.trim() === '') {
@@ -142,6 +147,9 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
     },
 
     disconnect: () => {
+      refCount = Math.max(0, refCount - 1);
+      if (refCount > 0) return;
+
       if (resetTimeout) {
         clearTimeout(resetTimeout);
         resetTimeout = null;

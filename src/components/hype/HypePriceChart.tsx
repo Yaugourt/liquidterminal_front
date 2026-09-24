@@ -4,7 +4,7 @@ import { Fragment, memo, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { AuroraAreaChart, CardHead, chartPalette } from "@/components/common";
 import { useTokenCandles } from "@/services/market/token";
-import { useHypePrice, HYPE_SPOT_COIN } from "@/services/market/hype";
+import { useHypeLivePrice, HYPE_SPOT_COIN } from "@/services/market/hype";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { fmtSignedPct } from "./format";
@@ -36,7 +36,7 @@ const fmtUsdAxis = (v: number): string => {
 export const HypePriceChart = memo(function HypePriceChart() {
   const [tf, setTf] = useState<TF>("30D");
   const { format } = useNumberFormat();
-  const { price: livePrice } = useHypePrice();
+  const livePrice = useHypeLivePrice();
   const cfg = TF_CFG[tf];
 
   const startTime = useMemo(() => Date.now() - cfg.days * DAY, [cfg.days]);

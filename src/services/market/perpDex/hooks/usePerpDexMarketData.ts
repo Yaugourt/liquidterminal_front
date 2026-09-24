@@ -40,13 +40,11 @@ export function usePerpDexMarketData() {
   });
 
   // WebSocket market data
-  const { 
-    marketData, 
-    isConnected: wsConnected, 
-    connect: wsConnect, 
-    disconnect: wsDisconnect,
-    lastUpdate 
-  } = usePerpDexMarketDataStore();
+  const marketData = usePerpDexMarketDataStore((s) => s.marketData);
+  const wsConnected = usePerpDexMarketDataStore((s) => s.isConnected);
+  const lastUpdate = usePerpDexMarketDataStore((s) => s.lastUpdate);
+  const wsConnect = usePerpDexMarketDataStore((s) => s.connect);
+  const wsDisconnect = usePerpDexMarketDataStore((s) => s.disconnect);
 
   // Connect to WebSocket on mount
   useEffect(() => {

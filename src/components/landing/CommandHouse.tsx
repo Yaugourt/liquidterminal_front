@@ -6,7 +6,7 @@ import { SearchTrigger } from "@/components/search/SearchTrigger";
 import { KpiRibbon, LiquidMark, LiquidSurface, type KpiCell } from "@/components/common";
 import { useDashboardStats } from "@/services/dashboard";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
-import { useHypePrice } from "@/services/market/hype/hooks";
+import { useHypeLivePrice } from "@/services/market/hype/hooks";
 import { compactCount, compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { trackBotCta, trackConnectStarted } from "@/lib/analytics";
@@ -201,7 +201,7 @@ function Hero() {
 function LivePulse() {
   const { stats, isLoading: statsLoading } = useDashboardStats();
   const { stats: perpStats } = usePerpGlobalStats();
-  const { price: hypePrice } = useHypePrice();
+  const hypePrice = useHypeLivePrice();
   const { format } = useNumberFormat();
 
   const { mood, label: moodLabel, change24h: hypeChange } = useHypeMood();

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useDelegatorSummary } from "@/services/explorer/validator/hooks/delegator/useDelegatorSummary";
-import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
+import { useHypeLivePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useVaultDeposits } from "@/services/explorer/vault/hooks/useVaultDeposits";
 import { useEvmComposition, useDefiPositions, useWalletNfts } from "@/services/market/tracker/hyperfolio";
 
@@ -21,7 +21,7 @@ export function useAddressBalance(address: string, options: UseAddressBalanceOpt
   const { spotBalances, perpPositions, isLoading: balancesLoading, error: balancesError, refresh: refreshBalances } = useWalletsBalances(address);
   const { data: spotMarketTokens, isLoading: tokensLoading, error: tokensError, refetch: refreshTokens } = useSpotTokens({ limit: 100 });
   const { summary: stakingSummary, isLoading: stakingLoading, error: stakingError, refetch: refreshStaking } = useDelegatorSummary(address);
-  const { price: hypePrice } = useHypePrice();
+  const hypePrice = useHypeLivePrice();
   // Vault equity from HL userVaultEquities (keyless); folded into the totals below.
   const { totalEquity: vaultTotal, isLoading: vaultLoading } = useVaultDeposits(address);
 

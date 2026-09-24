@@ -1,7 +1,7 @@
 import { memo, useCallback } from "react";
 import { useStakingHoldersPaginated } from "@/services/explorer/validator";
 import { useNumberFormat } from "@/store/number-format.store";
-import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
+import { useHypeLivePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { TypedDataTable, type Column } from "@/components/common";
@@ -20,7 +20,7 @@ export const StakersTable = memo(function StakersTable() {
     onRowsPerPageChange,
   } = usePagination({ initialRowsPerPage: 25 });
   const { format } = useNumberFormat();
-  const { price: hypePrice } = useHypePrice();
+  const hypePrice = useHypeLivePrice();
 
   const { holders, total, isLoading, error, updateParams } = useStakingHoldersPaginated({
     limit: rowsPerPage,

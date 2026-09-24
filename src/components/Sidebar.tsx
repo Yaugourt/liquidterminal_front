@@ -20,7 +20,13 @@ import {
     type NavigationItem,
     type NavigationAccent,
 } from "@/lib/sidebar-config"
-import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
+import dynamic from "next/dynamic"
+
+// dnd-kit + the customize UI load on first open, not with the app shell.
+const CustomizeSidebarModal = dynamic(
+    () => import("@/components/CustomizeSidebarModal").then((m) => m.CustomizeSidebarModal),
+    { ssr: false }
+)
 
 /**
  * Rail entries whose sub-routes are scope tabs (carried by a scope bar on the
@@ -58,6 +64,11 @@ interface FlyoutState {
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+    // Mounted from the first open on, so the close animation still plays.
+    const [customizeArmed, setCustomizeArmed] = useState(false);
+    useEffect(() => {
+        if (isCustomizeOpen) setCustomizeArmed(true);
+    }, [isCustomizeOpen]);
     const { user } = useAuthContext();
     const pathname = usePathname();
 
@@ -569,10 +580,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 </div>
             )}
 
-            <CustomizeSidebarModal
-                isOpen={isCustomizeOpen}
-                onClose={() => setIsCustomizeOpen(false)}
-            />
+            {customizeArmed && (
+                <CustomizeSidebarModal
+                    isOpen={isCustomizeOpen}
+                    onClose={() => setIsCustomizeOpen(false)}
+                />
+            )}
         </>
     )
 }

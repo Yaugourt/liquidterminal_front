@@ -21,12 +21,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Radio, ChevronDown } from "lucide-react";
 import {
   useTokenCandles,
-  useTokenWebSocket,
+  useTokenLivePrice,
   marketIndexToCoinId,
 } from "@/services/market/token";
 import { Card } from "@/components/ui/card";
 import { ChartLoading, ChartEmpty, ChartError } from "@/components/common";
-import { chartColors, createLwcChartOptions } from "@/components/common";
+import { chartColors } from "@/components/common";
+import { createLwcChartOptions } from "@/components/common/charts/lwcTheme";
 import {
   TIMEFRAMES,
   QUICK_TIMEFRAMES,
@@ -132,7 +133,7 @@ export function TradingViewChart({
     coin: overlayPerpCoinId ?? null,
     interval: selectedTimeframe,
   });
-  const { price: currentPrice, isLoading: wsLoading } = useTokenWebSocket(coinId || "");
+  const { price: currentPrice, isLoading: wsLoading } = useTokenLivePrice(coinId || "");
 
   // ── Derived stats over the loaded candle history ─────────────────────
   // Stats window follows the selected timeframe: intraday intervals keep a

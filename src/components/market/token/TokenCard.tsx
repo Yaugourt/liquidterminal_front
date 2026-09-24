@@ -8,7 +8,7 @@ import { useNumberFormat } from "@/store/number-format.store";
 import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import {
-  useTokenWebSocket,
+  useTokenLivePrice,
   marketIndexToCoinId,
 } from "@/services/market/token";
 import { Card } from "@/components/ui/card";
@@ -23,7 +23,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   const coinId = perpCoinId || (token.marketIndex !== undefined ? marketIndexToCoinId(token.marketIndex, token.name) : '');
   // Price/orderbook/trades are WebSocket-pushed. The hook surfaces the socket
   // state as `isLoading` (== !isConnected); invert it for the live cue.
-  const { price: livePrice, lastSide, isLoading: wsLoading } = useTokenWebSocket(coinId);
+  const { price: livePrice, lastSide, isLoading: wsLoading } = useTokenLivePrice(coinId);
 
   const formatPriceValue = (value: number) => {
     return formatPrice(value, format);

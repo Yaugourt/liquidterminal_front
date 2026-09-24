@@ -16,7 +16,9 @@ interface PerpDexMarketDataStore {
   isConnected: boolean;
   error: string | null;
   lastUpdate: Date | null;
+  /** Acquire the shared socket (ref-counted — pair every call with `disconnect`). */
   connect: () => void;
+  /** Release the shared socket; it only closes when the last consumer releases. */
   disconnect: () => void;
   getMarketData: (dexName: string) => DexMarketData | undefined;
   getAllMarketData: () => DexMarketData[];
@@ -69,6 +71,9 @@ const parseDexCtx = (dexName: string, assetCtxs: AssetMarketCtx[]): DexMarketDat
 
 export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, get) => {
   let client: WebSocketClient | null = null;
+  // Several components mount this store at once (5 on /market/perpdex); one
+  // unmounting must not tear the socket down under the others.
+  let refCount = 0;
 
   return {
     marketData: new Map(),
@@ -79,6 +84,7 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
     connect: () => {
       // SSR protection
       if (typeof window === 'undefined') return;
+      refCount++;
 
       // Reuse the existing client; connect() is a no-op while OPEN/CONNECTING
       // and reconnects if the socket has closed.
@@ -135,6 +141,9 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
 
     disconnect: () => {
       if (typeof window === 'undefined') return;
+
+      refCount = Math.max(0, refCount - 1);
+      if (refCount > 0) return;
 
       if (client) {
         client.disconnect();

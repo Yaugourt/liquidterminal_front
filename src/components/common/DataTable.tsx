@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { Database } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -365,14 +365,17 @@ export function TypedDataTable<T>({
         itemsPerPage ?? rowsPerPage ?? 10
     );
 
-    // Local sort+pagination engine (used when `paginate` or any sortable column).
-    const local = useSortablePagination<T, string>({
-        data: useLocalSort || hasLocalPagination ? data : EMPTY,
-        itemsPerPage: hasLocalPagination
-            ? localRowsPerPage
-            : (itemsPerPage ?? rowsPerPage ?? 10),
-        getSortValue: (row, field) => {
-            const col = columns.find((c, i) => (c.key ?? `col-${i}`) === field);
+    // Stable per `columns` so the sort memo in useSortablePagination only
+    // re-sorts when data / sort / columns change — an inline callback re-sorted
+    // the whole dataset on every render. Field → column lookup is precomputed.
+    const getSortValue = useMemo(() => {
+        const byField = new Map<string, Column<T>>();
+        columns.forEach((c, i) => {
+            const k = c.key ?? `col-${i}`;
+            if (!byField.has(k)) byField.set(k, c); // first match wins, as .find() did
+        });
+        return (row: T, field: string): number | string => {
+            const col = byField.get(field);
             if (!col) return "";
             if (col.getSortValue) return col.getSortValue(row);
             if (typeof col.accessor === "string" || typeof col.accessor === "number" || typeof col.accessor === "symbol") {
@@ -382,7 +385,16 @@ export function TypedDataTable<T>({
             // Function accessor without explicit getSortValue: fall back to its rendered text.
             const rendered = (col.accessor as (item: T, index: number) => ReactNode)(row, 0);
             return typeof rendered === "string" || typeof rendered === "number" ? rendered : "";
-        },
+        };
+    }, [columns]);
+
+    // Local sort+pagination engine (used when `paginate` or any sortable column).
+    const local = useSortablePagination<T, string>({
+        data: useLocalSort || hasLocalPagination ? data : EMPTY,
+        itemsPerPage: hasLocalPagination
+            ? localRowsPerPage
+            : (itemsPerPage ?? rowsPerPage ?? 10),
+        getSortValue,
         initialSort: initialSort
             ? { field: initialSort.field as string, direction: initialSort.direction }
             : undefined,

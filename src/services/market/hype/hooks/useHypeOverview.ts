@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useHypePrice } from './useHypePrice';
+import { useHypeLivePrice } from './useHypePrice';
 import { useHypeSupply } from './useHypeSupply';
 import { useAssistanceFund } from '../../assistanceFund';
 import type { AssistanceFundData } from '../../assistanceFund';
@@ -52,7 +52,7 @@ export interface UseHypeOverviewResult {
  * consistent with the rest of the app.
  */
 export function useHypeOverview(): UseHypeOverviewResult {
-  const { price: livePrice } = useHypePrice();
+  const livePrice = useHypeLivePrice();
   const { supply } = useHypeSupply();
   const { data: af } = useAssistanceFund();
 

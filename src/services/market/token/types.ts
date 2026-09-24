@@ -36,7 +36,7 @@ export interface TokenOrderBookResponse {
   data: TokenOrderBookData;
 }
 
-interface TokenWebSocketState {
+export interface TokenWebSocketState {
   currentPrice: number;
   lastSide: "A" | "B" | null;
   orderBook: {

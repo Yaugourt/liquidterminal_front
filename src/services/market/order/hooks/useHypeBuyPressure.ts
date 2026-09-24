@@ -70,8 +70,9 @@ export function useHypeBuyPressure(): HypeBuyPressureResult {
     // Initial calculation
     updateRealTimeData();
 
-    // Update every 100ms for progression calculation (not order list)
-    const interval = setInterval(updateRealTimeData, 100);
+    // Recompute progression once per second (not the order list). A 100ms tick
+    // re-rendered every consumer 10×/s for a headline number.
+    const interval = setInterval(updateRealTimeData, 1_000);
 
     return () => clearInterval(interval);
   }, [orders]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTokenWebSocket } from "@/services/market/token";
+import { useTokenTrades } from "@/services/market/token";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 
@@ -11,7 +11,7 @@ interface RecentTradesProps {
 }
 
 export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps) {
-    const { trades, isLoading } = useTokenWebSocket(coinId);
+    const { trades, isLoading } = useTokenTrades(coinId);
 
     const formatPrice = (price: string | number) => {
         const numPrice = typeof price === 'string' ? parseFloat(price) : price;

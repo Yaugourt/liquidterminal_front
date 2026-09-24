@@ -1,4 +1,4 @@
-export { useHypePrice } from './useHypePrice';
+export { useHypePrice, useHypeLivePrice } from './useHypePrice';
 export { useHypeSupply } from './useHypeSupply';
 export type { HypeSupply, UseHypeSupplyResult } from './useHypeSupply';
 export { useHypeOverview } from './useHypeOverview';

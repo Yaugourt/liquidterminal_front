@@ -4,7 +4,7 @@ import { useHoldersStats } from "@/services/explorer/validator/hooks/useHoldersS
 import { useUnstakingStatsData } from "@/services/explorer/validator/hooks/staking";
 import { useNumberFormat } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
-import { useHypePrice } from "@/services/market/hype/hooks/useHypePrice";
+import { useHypeLivePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { KpiRibbon, type KpiCell } from "@/components/common";
 
 /**
@@ -16,7 +16,7 @@ export const ValidatorStatsCard = memo(function ValidatorStatsCard() {
   const { stats: holdersStats } = useHoldersStats();
   const { upcomingUnstaking } = useUnstakingStatsData();
   const { format } = useNumberFormat();
-  const { price: hypePrice } = useHypePrice();
+  const hypePrice = useHypeLivePrice();
 
   const totalStaked = stats?.totalHypeStaked ?? 0;
   const fmt = (n: number) => formatNumber(n, format, { maximumFractionDigits: 0 });

@@ -115,13 +115,11 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
   const hasLoadedRef = useRef(false);
   
   // WebSocket store
-  const { 
-    isConnected, 
-    isSubscribed, 
-    connect: wsConnect, 
-    disconnect: wsDisconnect,
-    setOnLiquidation 
-  } = useLiquidationWSStore();
+  const isConnected = useLiquidationWSStore((s) => s.isConnected);
+  const isSubscribed = useLiquidationWSStore((s) => s.isSubscribed);
+  const wsConnect = useLiquidationWSStore((s) => s.connect);
+  const wsDisconnect = useLiquidationWSStore((s) => s.disconnect);
+  const setOnLiquidation = useLiquidationWSStore((s) => s.setOnLiquidation);
 
   // Callback pour les nouvelles liquidations via WebSocket
   const handleNewLiquidation = useCallback((newLiq: Liquidation) => {
@@ -268,7 +266,9 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
   // every window it returns, so exposing a per-window selector would be fake.
   const stats = allData?.["24h"]?.stats || defaultStats;
 
-  const value: LiquidationsContextValue = {
+  // Memoized so consumers don't all re-render on unrelated provider renders.
+  const statsAvailable = allData != null;
+  const value = useMemo<LiquidationsContextValue>(() => ({
     liquidations,
     filteredLiquidations,
     isLoading,
@@ -279,14 +279,18 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     setMinAmount,
     stats,
     statsLoading: dataLoading,
-    statsAvailable: allData != null,
+    statsAvailable,
     chartBuckets,
     chartLoading,
     chartPeriod,
     setChartPeriod,
     lastUpdated,
     refreshData,
-  };
+  }), [
+    liquidations, filteredLiquidations, isLoading, error, isConnected, isSubscribed,
+    minAmount, stats, dataLoading, statsAvailable, chartBuckets, chartLoading,
+    chartPeriod, lastUpdated, refreshData,
+  ]);
 
   return (
     <LiquidationsContext.Provider value={value}>

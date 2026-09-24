@@ -45,7 +45,7 @@ const UserTwapTableComponent = ({
   headerAction,
 }: UserTwapTableProps) => {
   const { format } = useNumberFormat();
-  // Ticks every 50ms: the value / remaining / progress cells read it live.
+  // Ticks every second: the value / remaining / progress cells read it live.
   const realTimeData = useTwapRealTime(twaps);
 
   const columns: Column<TwapTableData>[] = useMemo(

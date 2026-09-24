@@ -97,35 +97,15 @@ function ResultRow({ result, onSelect }: { result: SearchResult; onSelect: (r: S
  * wiki resources, named addresses and pages.
  */
 export function GlobalSearchPalette() {
-  const { open, setOpen, toggle } = useGlobalSearch();
+  const { open, setOpen } = useGlobalSearch();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [index, setIndex] = useState<SearchResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [recents, setRecents] = useState<SearchResult[]>([]);
 
-  // Hotkeys: Cmd/Ctrl+K everywhere, "/" outside editable fields.
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        toggle();
-        return;
-      }
-      if (e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey) {
-        const target = e.target as HTMLElement | null;
-        const editable =
-          target &&
-          (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable);
-        if (!editable) {
-          e.preventDefault();
-          setOpen(true);
-        }
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [toggle, setOpen]);
+  // Hotkeys (Cmd/Ctrl+K, "/") live in the always-mounted `GlobalSearch`
+  // wrapper — this component is lazy-loaded on first open.
 
   // Lazy-load the index on first open; refresh recents each open.
   useEffect(() => {

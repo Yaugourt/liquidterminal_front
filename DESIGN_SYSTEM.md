@@ -369,6 +369,8 @@ The donut owns the Recharts plumbing (gradients, ActiveArc, drop-shadow). The ca
 
 Single entry point for any production LWC chart. The factory deep-merges your overrides into `lwcDefaults` so layout / grid / crosshair / scale defaults stay consistent.
 
+Import it **by path** — `import { createLwcChartOptions } from "@/components/common/charts/lwcTheme"` — not from the `@/components/common` barrel: `lwcTheme.ts` pulls the `lightweight-charts` runtime, which must stay out of the app shell (the barrel is imported by the sidebar/header).
+
 ```ts
 const chart = createChart(container, createLwcChartOptions({
   layout: { background: { type: ColorType.Solid, color: "transparent" } },
@@ -608,7 +610,8 @@ Documenting these limits to avoid running into them again:
 - `AuroraAreaChart`, `AuroraHistogramChart` — Recharts wrappers, mono-series / histogram (see §6.1).
 - `DonutTopN` — Recharts donut "Top N + Rest" with hover ActiveArc (see §6.4).
 - `FlowGrid` + `FlowBar` — Top-N ranking with animated bars, Builders-style stagger (see §6.5).
-- `chartTheme.ts` — SSOT for chart colors + `createLwcChartOptions()` LWC factory (see §6.6).
+- `chartTheme.ts` — SSOT for chart colors (no runtime imports — safe to import anywhere).
+- `lwcTheme.ts` — `createLwcChartOptions()` LWC factory (see §6.6), imported by path only.
 - `AuroraAreaChart` — standard single-series chart.
 - `MultiSeriesAreaChart` — dual-axis multi-series chart (lives in `@/components/dashboard/chart`, but usable outside the dashboard).
 - `chartPalette` — chart palette (cyan, gold, violet, down, multiSeries[0–7]).

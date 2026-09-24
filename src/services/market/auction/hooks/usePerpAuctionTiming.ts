@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchPerpAuctionTiming } from '../api';
 import { UseAuctionTimingResult, AuctionState, PerpAuctionTiming } from '../types';
-import { useHypePrice } from '@/services/market/hype/hooks/useHypePrice';
+import { useHypeLivePrice } from '@/services/market/hype/hooks/useHypePrice';
 import { usePastAuctionsPerp } from '@/services/market/perpDex/hooks/usePastAuctionsPerp';
 
 // Prix de base selon la doc : descend toujours vers 500 HYPE
@@ -89,7 +89,7 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
   });
 
   // Récupérer le prix HYPE en temps réel via WebSocket
-  const { price: hypePrice } = useHypePrice();
+  const hypePrice = useHypeLivePrice();
 
   // Past perp auctions — feeds the "last sold" stat under the live progress bar.
   const { auctions: pastPerpAuctions } = usePastAuctionsPerp();
