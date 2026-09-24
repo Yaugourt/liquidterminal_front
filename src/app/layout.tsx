@@ -4,6 +4,7 @@ import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/site-config";
+import { GlobalSearch } from "@/components/search/GlobalSearch";
 
 /** Inter for body / headings / UI. */
 const inter = Inter({
@@ -108,6 +109,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className} font-sans`}>
       <body className={`${inter.className} font-sans antialiased bg-base`}>
         {children}
+        {/* Cmd+K palette, mounted once for every route (landing hero search,
+            app header, legal pages). The palette itself loads on first open. */}
+        <GlobalSearch />
         <SpeedInsights />
         <Analytics />
       </body>

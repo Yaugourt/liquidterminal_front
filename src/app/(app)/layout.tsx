@@ -12,7 +12,6 @@ import { useSidebarUi } from "@/store/use-sidebar-ui";
 import { OnboardingGate } from "@/components/onboarding/OnboardingGate";
 import { MissionsGate } from "@/components/missions/MissionsGate";
 import { Providers } from "@/components/Providers";
-import { GlobalSearch } from "@/components/search/GlobalSearch";
 import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -71,7 +70,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             <OnboardingGate />
             <MissionsGate />
-            <GlobalSearch />
+            {/* The Cmd+K palette is mounted once in the root layout. */}
         </div>
         </Providers>
     );
