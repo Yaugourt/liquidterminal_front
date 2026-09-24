@@ -60,15 +60,26 @@ const cleanupCache = (): void => {
  * Get cached data if valid
  */
 export const getCache = <T>(key: string): T | null => {
+  return getCacheEntry<T>(key)?.data ?? null;
+};
+
+/**
+ * Get the cache entry (data + time it was stored) if it is valid and no older
+ * than `maxAgeMs` (capped by the global TTL). An entry that is merely too old
+ * for this caller stays in place — another caller may still accept it.
+ */
+export const getCacheEntry = <T>(key: string, maxAgeMs?: number): CacheEntry<T> | null => {
   const cached = cache.get(key);
   if (!cached) return null;
-  
-  if (Date.now() - cached.timestamp > CACHE_DURATION) {
+
+  const age = Date.now() - cached.timestamp;
+  if (age > CACHE_DURATION) {
     cache.delete(key);
     return null;
   }
-  
-  return cached.data as T;
+  if (maxAgeMs !== undefined && age > maxAgeMs) return null;
+
+  return cached as CacheEntry<T>;
 };
 
 /**

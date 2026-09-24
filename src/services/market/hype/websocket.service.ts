@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { HypePriceStore, HypeTradeResponse } from './types';
-import { WebSocketClient } from '@/lib/websocket-client';
+import { WebSocketClient, HIDDEN_TAB_PAUSE_MS } from '@/lib/websocket-client';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const HYPE_COIN_ID = '@107';
@@ -31,6 +31,8 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
           url: WS_URL,
           maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
           baseReconnectDelay: BASE_RECONNECT_DELAY,
+          // Only the latest trade price is kept: pausing loses nothing.
+          pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
           onOpen: () => {
             set({ isConnected: true, error: null });
 

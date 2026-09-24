@@ -9,7 +9,22 @@ export interface WebSocketClientConfig {
     maxReconnectAttempts?: number;
     baseReconnectDelay?: number;
     debug?: boolean;
+    /**
+     * Close the socket once the tab has been hidden this long (ms) and reopen
+     * it when the tab is visible again — `onOpen` runs again and re-subscribes.
+     * The pause is silent (no `onClose`), so the UI doesn't flash "offline" on
+     * return. Only for streams where nothing is lost: every message is a full
+     * snapshot, or the store keeps a rolling window that refills in seconds.
+     * A stream that accumulates history would get a gap.
+     */
+    pauseWhenHidden?: number;
 }
+
+/**
+ * Grace period before a `pauseWhenHidden` stream closes in a background tab:
+ * a quick tab switch never reconnects.
+ */
+export const HIDDEN_TAB_PAUSE_MS = 60_000;
 
 export class WebSocketClient {
     private ws: WebSocket | null = null;
@@ -17,6 +32,10 @@ export class WebSocketClient {
     private reconnectTimeout: NodeJS.Timeout | null = null;
     private config: WebSocketClientConfig;
     private isExplicitlyClosed = false;
+    /** Closed because the tab is hidden (`pauseWhenHidden`); reopened on return. */
+    private paused = false;
+    private pauseTimeout: ReturnType<typeof setTimeout> | null = null;
+    private watchingVisibility = false;
 
     constructor(config: WebSocketClientConfig) {
         this.config = {
@@ -29,6 +48,10 @@ export class WebSocketClient {
 
     public connect() {
         if (typeof window === 'undefined') return;
+
+        this.watchVisibility();
+        // Paused while the tab is hidden: the visibility handler reconnects.
+        if (this.paused) return;
 
         // Don't connect if already connected or connecting
         if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
@@ -65,7 +88,7 @@ export class WebSocketClient {
                 this.log('Closed', event.code, event.reason);
                 if (this.config.onClose) this.config.onClose();
 
-                if (!this.isExplicitlyClosed) {
+                if (!this.isExplicitlyClosed && !this.paused) {
                     this.handleReconnect();
                 }
             };
@@ -80,6 +103,7 @@ export class WebSocketClient {
     public disconnect() {
         this.isExplicitlyClosed = true;
         this.clearReconnectTimeout();
+        this.unwatchVisibility();
 
         if (this.ws) {
             this.ws.close();
@@ -115,6 +139,67 @@ export class WebSocketClient {
         } else {
             this.log('Max reconnect attempts reached');
             if (this.config.onReconnectFailed) this.config.onReconnectFailed();
+        }
+    }
+
+    private watchVisibility() {
+        if (!this.config.pauseWhenHidden || this.watchingVisibility || typeof document === 'undefined') return;
+        this.watchingVisibility = true;
+        document.addEventListener('visibilitychange', this.handleVisibilityChange);
+        // Created in a background tab: start the grace period right away.
+        if (document.visibilityState === 'hidden') this.handleVisibilityChange();
+    }
+
+    private unwatchVisibility() {
+        if (this.watchingVisibility && typeof document !== 'undefined') {
+            document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+        }
+        this.watchingVisibility = false;
+        if (this.pauseTimeout) {
+            clearTimeout(this.pauseTimeout);
+            this.pauseTimeout = null;
+        }
+        this.paused = false;
+    }
+
+    private handleVisibilityChange = () => {
+        if (document.visibilityState === 'hidden') {
+            if (this.paused || this.pauseTimeout) return;
+            this.pauseTimeout = setTimeout(() => {
+                this.pauseTimeout = null;
+                if (document.visibilityState === 'hidden' && !this.isExplicitlyClosed) {
+                    this.pause();
+                }
+            }, this.config.pauseWhenHidden);
+            return;
+        }
+
+        if (this.pauseTimeout) {
+            clearTimeout(this.pauseTimeout);
+            this.pauseTimeout = null;
+        }
+        if (this.paused) {
+            this.paused = false;
+            this.reconnectAttempts = 0;
+            this.log('Resuming (tab visible)');
+            this.connect();
+        }
+    };
+
+    private pause() {
+        this.log('Pausing (tab hidden)');
+        this.paused = true;
+        this.clearReconnectTimeout();
+        if (this.ws) {
+            const ws = this.ws;
+            this.ws = null;
+            // Silent close: detach the handlers so the old socket can't report
+            // a late close (or reconnect) after the resumed one is open.
+            ws.onopen = null;
+            ws.onmessage = null;
+            ws.onerror = null;
+            ws.onclose = null;
+            ws.close(1000, 'Tab hidden');
         }
     }
 

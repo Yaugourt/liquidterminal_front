@@ -5,7 +5,7 @@ import {
   AllDexsAssetCtxsMessage,
   AssetMarketCtx
 } from './types';
-import { WebSocketClient } from '@/lib/websocket-client';
+import { WebSocketClient, HIDDEN_TAB_PAUSE_MS } from '@/lib/websocket-client';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const MAX_RECONNECT_ATTEMPTS = 5;
@@ -93,6 +93,8 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
           url: WS_URL,
           maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
           baseReconnectDelay: BASE_RECONNECT_DELAY,
+          // Each allDexsAssetCtxs message is a full snapshot: pausing loses nothing.
+          pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
           onOpen: () => {
             set({ isConnected: true, error: null });
 

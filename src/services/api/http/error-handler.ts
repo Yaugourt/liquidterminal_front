@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 import { StandardError } from '../types';
+import { isTransportRetried } from './axios-config';
 
 /**
  * Gère les erreurs axios de façon standardisée
@@ -147,6 +148,10 @@ export const withErrorHandling = async <T>(
   try {
     return await apiCall();
   } catch (error) {
-    throw handleAxiosError(error, context);
+    const standardError = handleAxiosError(error, context);
+    // Keep the transport's "already retried" mark so useDataFetching doesn't
+    // stack a second full retry cycle on top of it.
+    if (isTransportRetried(error)) standardError.transportRetried = true;
+    throw standardError;
   }
 }; 

@@ -31,12 +31,15 @@ const buildQueryParams = (params: LiquidationsParams): string => {
  * @returns Réponse paginée avec les liquidations récentes
  */
 export const fetchRecentLiquidations = async (
-  params: LiquidationsParams = {}
+  params: LiquidationsParams = {},
+  signal?: AbortSignal
 ): Promise<LiquidationResponse> => {
   return withErrorHandling(async () => {
     const queryString = buildQueryParams(params);
     const response = await get<LiquidationResponse>(
-      `${ENDPOINTS.LIQUIDATIONS_RECENT}${queryString}`
+      `${ENDPOINTS.LIQUIDATIONS_RECENT}${queryString}`,
+      undefined,
+      { signal }
     );
     return response;
   }, 'fetching recent liquidations');

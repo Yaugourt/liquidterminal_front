@@ -5,6 +5,7 @@ import { Liquidation } from "@/services/explorer/liquidation";
 import { fetchRecentLiquidations, fetchLiquidationsData, fetchLiquidationsHistoricalChart } from "@/services/explorer/liquidation/api";
 import { useLiquidationWSStore } from "@/services/explorer/liquidation/websocket.store";
 import { mergeLiquidationRows } from "@/services/explorer/liquidation/merge";
+import { setVisibleInterval } from "@/lib/visibility";
 import { LiquidationStats, ChartDataBucket, HistoricalChartBucket, HistoricalChartPeriod, LiquidationsPeriodData } from "@/services/explorer/liquidation/types";
 
 type PeriodKey = "2h" | "4h" | "8h" | "12h" | "24h";
@@ -193,7 +194,8 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     if (isLoading) return;
 
     const REFRESH_INTERVAL = 60_000;
-    const intervalId = setInterval(async () => {
+    // Paused while the tab is hidden, with a catch-up tick on return.
+    return setVisibleInterval(async () => {
       try {
         const dataResponse = await fetchLiquidationsData();
         if (dataResponse.success) {
@@ -204,8 +206,6 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
         // Silent: the initial data remains visible; next tick retries
       }
     }, REFRESH_INTERVAL);
-
-    return () => clearInterval(intervalId);
   }, [isLoading]);
 
   // Chart buckets from the local DB endpoint (the robust liquidations source).
@@ -229,11 +229,11 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     };
 
     loadChart(true);
-    const intervalId = setInterval(() => loadChart(false), 60_000);
+    const stopPolling = setVisibleInterval(() => loadChart(false), 60_000);
 
     return () => {
       cancelled = true;
-      clearInterval(intervalId);
+      stopPolling();
     };
   }, [chartPeriod]);
 

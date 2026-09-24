@@ -1,10 +1,11 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, CanceledError } from 'axios';
 import { API_URLS } from '../constants';
 import { RequestOptions, ExtendedAxiosRequestConfig } from '../types';
 import { getPrivyToken, handleLogout, isPrivyAuthenticated } from '../auth/privy.service';
 import { formatAuthHeader } from '../auth/jwt.service';
 import { handleTokenRefresh, isTokenRefreshing } from '../auth/token.service';
-import { generateCacheKey, getCache, setCache } from '../cache/cache.service';
+import { generateCacheKey, getCacheEntry, setCache } from '../cache/cache.service';
+import { currentRequestPolicy, recordDataTimestamp } from './request-policy';
 
 // Configuration constants
 const TIMEOUT_MS = 10000;
@@ -12,6 +13,8 @@ const MAX_RETRIES = 3;
 const BASE_RETRY_DELAY = 1000;
 const REFRESH_CIRCUIT_COOLDOWN_MS = 60_000;
 const RETRY_JITTER_RATIO = 0.2;
+/** A rate limit is retried once, and only if the server asks for no longer than this. */
+const MAX_RETRY_AFTER_MS = 10_000;
 
 // Refresh circuit breaker: once a refresh fails, every subsequent 401 in the
 // cooldown window short-circuits to logout instead of attempting another refresh.
@@ -142,7 +145,12 @@ export async function axiosWithConfig<T>(
   config: AxiosRequestConfig,
   options: RequestOptions = {}
 ): Promise<T> {
-  const { useCache = true, retryOnError = true, timeoutMs } = options;
+  // Read synchronously, before any await: the policy is only set while the
+  // calling fetchFn runs its synchronous part (see request-policy.ts).
+  const policy = currentRequestPolicy();
+  const { useCache = true, timeoutMs, signal } = options;
+  // An explicit option wins; otherwise the hook's own retries run single-shot.
+  const retryOnError = options.retryOnError ?? policy?.transportRetries ?? true;
 
   const requestConfig: ExtendedAxiosRequestConfig = {
     ...config,
@@ -159,29 +167,103 @@ export async function axiosWithConfig<T>(
 
   // Check cache for GET requests
   if (useCache && requestConfig.method?.toLowerCase() === 'get') {
-    const cached = getCache<T>(cacheKey);
-    if (cached) return cached;
+    const cached = getCacheEntry<T>(cacheKey, policy?.maxCacheAgeMs);
+    if (cached && cached.data) {
+      recordDataTimestamp(policy, cached.timestamp);
+      return cached.data;
+    }
   }
 
   // Identical reads fired at the same moment (several hooks mounting on one
   // page) share one request instead of each hitting the upstream — the HL
   // info API rate-limits per IP and the address page alone opened the same
   // ledger three times.
-  if (isShareableRead(client, requestConfig, useCache)) {
-    const pending = inflight.get(cacheKey) as Promise<T> | undefined;
-    if (pending) return pending;
-    const request = runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError).finally(() => {
-      inflight.delete(cacheKey);
-    });
-    inflight.set(cacheKey, request);
-    return request;
-  }
+  const data = isShareableRead(client, requestConfig, useCache)
+    ? await joinSharedRead<T>(
+        cacheKey,
+        (sharedSignal) => runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError, sharedSignal),
+        signal
+      )
+    : await runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError, signal);
 
-  return runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError);
+  recordDataTimestamp(policy, Date.now());
+  return data;
+}
+
+/**
+ * An in-flight read shared by every caller asking for the same key. It is only
+ * cancelled once all its callers have cancelled — never while a caller that
+ * cannot cancel (no signal) still waits on it.
+ */
+interface SharedRead {
+  promise: Promise<unknown>;
+  controller: AbortController;
+  /** Callers with a signal that are still waiting. */
+  cancellableWaiters: number;
+  /** A caller without a signal waits on it: never cancel. */
+  pinned: boolean;
 }
 
 /** In-flight reads, keyed like the response cache. */
-const inflight = new Map<string, Promise<unknown>>();
+const inflight = new Map<string, SharedRead>();
+
+function joinSharedRead<T>(
+  key: string,
+  start: (signal: AbortSignal) => Promise<T>,
+  callerSignal?: AbortSignal
+): Promise<T> {
+  if (callerSignal?.aborted) return Promise.reject(new CanceledError());
+
+  let entry = inflight.get(key);
+  if (!entry) {
+    const created: SharedRead = {
+      promise: Promise.resolve(),
+      controller: new AbortController(),
+      cancellableWaiters: 0,
+      pinned: false,
+    };
+    created.promise = start(created.controller.signal).finally(() => {
+      if (inflight.get(key) === created) inflight.delete(key);
+    });
+    // Every caller observes the outcome through its own chain; this branch only
+    // keeps a read nobody waits on anymore (all cancelled) from being reported
+    // as an unhandled rejection.
+    created.promise.catch(() => {});
+    inflight.set(key, created);
+    entry = created;
+  }
+
+  const shared = entry;
+  const promise = shared.promise as Promise<T>;
+  if (!callerSignal) {
+    shared.pinned = true;
+    return promise;
+  }
+
+  shared.cancellableWaiters++;
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => {
+      shared.cancellableWaiters--;
+      if (shared.cancellableWaiters === 0 && !shared.pinned) {
+        // Next caller starts a fresh request instead of joining a cancelled one.
+        if (inflight.get(key) === shared) inflight.delete(key);
+        shared.controller.abort();
+      }
+      reject(new CanceledError());
+    };
+    callerSignal.addEventListener('abort', onAbort, { once: true });
+    promise.then(
+      (value) => {
+        callerSignal.removeEventListener('abort', onAbort);
+        resolve(value);
+      },
+      (error: unknown) => {
+        callerSignal.removeEventListener('abort', onAbort);
+        reject(error);
+      }
+    );
+  });
+}
 
 /** Read-only HL endpoints — POST bodies there are queries, never actions. */
 const HL_READ_URLS = new Set([
@@ -200,19 +282,77 @@ function isShareableRead(
   return method === 'post' && client === externalApiClient && HL_READ_URLS.has(config.url ?? '');
 }
 
+/**
+ * Marks an error whose retry policy the transport layer already applied, so
+ * `useDataFetching` doesn't stack its own full retry cycle on top of it.
+ */
+function markTransportRetried(error: unknown): void {
+  if (error && typeof error === 'object') {
+    (error as { transportRetried?: boolean }).transportRetried = true;
+  }
+}
+
+/** True if the transport layer already retried the request behind `error`. */
+export function isTransportRetried(error: unknown): boolean {
+  return (
+    !!error &&
+    typeof error === 'object' &&
+    (error as { transportRetried?: unknown }).transportRetried === true
+  );
+}
+
+/** `Retry-After` (delta-seconds or HTTP date) in ms, if the response exposes it. */
+function parseRetryAfterMs(headers: unknown): number | null {
+  if (!headers || typeof headers !== 'object') return null;
+  const raw = (headers as Record<string, unknown>)['retry-after'];
+  if (typeof raw !== 'string' && typeof raw !== 'number') return null;
+  const seconds = Number(raw);
+  if (Number.isFinite(seconds)) return Math.max(0, seconds * 1000);
+  const date = Date.parse(String(raw));
+  return Number.isNaN(date) ? null : Math.max(0, date - Date.now());
+}
+
+function backoffDelay(retries: number): number {
+  const baseDelay = BASE_RETRY_DELAY * Math.pow(2, retries);
+  const jitter = baseDelay * RETRY_JITTER_RATIO * (Math.random() * 2 - 1);
+  return Math.max(0, Math.round(baseDelay + jitter));
+}
+
+/** Waits `ms`, rejecting early with a CanceledError if `signal` aborts. */
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new CanceledError());
+      return;
+    }
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(new CanceledError());
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
 async function runRequest<T>(
   client: AxiosInstance,
   requestConfig: ExtendedAxiosRequestConfig,
   cacheKey: string,
   useCache: boolean,
-  retryOnError: boolean
+  retryOnError: boolean,
+  signal?: AbortSignal
 ): Promise<T> {
   let retries = 0;
+  let rateLimitRetried = false;
   let lastError: Error | null = null;
+  const config: ExtendedAxiosRequestConfig = signal ? { ...requestConfig, signal } : requestConfig;
 
   while (retries <= MAX_RETRIES) {
     try {
-      const response = await client(requestConfig);
+      const response = await client(config);
       const data = response.data;
 
       // Cache successful GET responses
@@ -225,21 +365,33 @@ async function runRequest<T>(
       lastError = error instanceof Error ? error : new Error('Request failed');
 
       // Determine if the error is retryable (network/timeout/5xx/429). Do not retry 4xx like 404.
+      // A cancellation (ERR_CANCELED) is never retryable.
       const axiosError = error as AxiosError;
       const status = axiosError?.response?.status;
       const code = (axiosError as unknown as { code?: string })?.code;
 
-      const isRetryableStatus = status === 429 || (typeof status === 'number' && status >= 500);
+      const isRateLimited = status === 429;
+      const isRetryableStatus = isRateLimited || (typeof status === 'number' && status >= 500);
       const isNetworkOrTimeout = code === 'ECONNABORTED' || code === 'ETIMEDOUT' || code === 'ERR_NETWORK';
 
-      const canRetry = retryOnError && (isRetryableStatus || isNetworkOrTimeout) && retries < MAX_RETRIES;
+      if (!retryOnError || !(isRetryableStatus || isNetworkOrTimeout)) break;
+      markTransportRetried(error);
+      if (retries >= MAX_RETRIES) break;
 
-      if (!canRetry) break;
+      let delay = backoffDelay(retries);
+      if (isRateLimited) {
+        // Hammering a rate limit only extends it: retry once, honouring
+        // Retry-After when the server sends (and CORS exposes) one.
+        if (rateLimitRetried) break;
+        const retryAfter = parseRetryAfterMs(axiosError.response?.headers);
+        if (retryAfter !== null) {
+          if (retryAfter > MAX_RETRY_AFTER_MS) break;
+          delay = retryAfter;
+        }
+        rateLimitRetried = true;
+      }
 
-      const baseDelay = BASE_RETRY_DELAY * Math.pow(2, retries);
-      const jitter = baseDelay * RETRY_JITTER_RATIO * (Math.random() * 2 - 1);
-      const delay = Math.max(0, Math.round(baseDelay + jitter));
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await sleep(delay, signal);
       retries++;
     }
   }

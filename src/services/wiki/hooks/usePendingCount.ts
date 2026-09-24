@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { fetchPendingCount } from '../api';
+import { setVisibleInterval } from '@/lib/visibility';
 
 interface UsePendingCountResult {
     count: number;
@@ -30,10 +31,9 @@ export function usePendingCount(pollInterval?: number): UsePendingCountResult {
     useEffect(() => {
         fetchData();
 
-        // Optional polling for real-time badge updates
+        // Optional polling for real-time badge updates (paused while the tab is hidden)
         if (pollInterval && pollInterval > 0) {
-            const interval = setInterval(fetchData, pollInterval);
-            return () => clearInterval(interval);
+            return setVisibleInterval(fetchData, pollInterval);
         }
     }, [fetchData, pollInterval]);
 

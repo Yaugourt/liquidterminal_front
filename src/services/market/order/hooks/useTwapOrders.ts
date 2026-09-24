@@ -29,9 +29,9 @@ export function useTwapOrders({
     error,
     refetch
   } = useDataFetching<TwapOrderPaginatedResponse>({
-    fetchFn: async () => {
+    fetchFn: async (signal) => {
 
-      const response = await fetchTwapOrders(params);
+      const response = await fetchTwapOrders(params, signal);
 
       return response;
     },

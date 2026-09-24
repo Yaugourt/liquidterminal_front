@@ -5,11 +5,11 @@ import { API_URLS } from '../../api/constants';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse, buildQueryParams } from '../../common';
 
-export async function fetchPerpMarkets(params: PerpMarketParams): Promise<PaginatedResponse<PerpMarketData>> {
+export async function fetchPerpMarkets(params: PerpMarketParams, signal?: AbortSignal): Promise<PaginatedResponse<PerpMarketData>> {
   return withErrorHandling(async () => {
     const queryParams = buildQueryParams(params);
     const url = `/market/perp?${queryParams.toString()}`;
-    return await get<PaginatedResponse<PerpMarketData>>(url);
+    return await get<PaginatedResponse<PerpMarketData>>(url, undefined, { signal });
   }, 'fetching perp markets');
 }
 

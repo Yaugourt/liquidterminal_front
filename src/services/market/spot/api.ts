@@ -22,11 +22,11 @@ export const fetchSpotTokens = async (params: {
   page?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-}): Promise<PaginatedResponse<SpotToken>> => {
+}, signal?: AbortSignal): Promise<PaginatedResponse<SpotToken>> => {
   return withErrorHandling(async () => {
     const queryParams = buildQueryParams(params);
     const url = `/market/spot?${queryParams.toString()}`;
-    return await get<PaginatedResponse<SpotToken>>(url);
+    return await get<PaginatedResponse<SpotToken>>(url, undefined, { signal });
   }, 'fetching spot tokens');
 };
 

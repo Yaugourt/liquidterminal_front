@@ -2,7 +2,10 @@ import { create } from 'zustand';
 
 import { Block, Transaction, ExplorerStore } from './types';
 
-import { WebSocketClient } from '@/lib/websocket-client';
+import { WebSocketClient, HIDDEN_TAB_PAUSE_MS } from '@/lib/websocket-client';
+
+// Blocks and txs keep a 500-item rolling window that the chain refills within
+// seconds, so the firehose can pause in a background tab without a visible gap.
 
 const WS_URL = 'wss://rpc.hyperliquid.xyz/ws';
 
@@ -25,6 +28,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
 
     const client = new WebSocketClient({
       url: WS_URL,
+      pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
       onOpen: () => {
         set({ isBlocksConnected: true, error: null });
         client.send({
@@ -65,6 +69,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
 
     const client = new WebSocketClient({
       url: WS_URL,
+      pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
       onOpen: () => {
         set({ isTransactionsConnected: true, error: null });
         client.send({

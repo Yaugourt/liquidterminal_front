@@ -25,7 +25,7 @@ export function useSpotTokens({
     refetch,
     dataUpdatedAt
   } = useDataFetching<SpotMarketResponse>({
-    fetchFn: async () => {
+    fetchFn: async (signal) => {
       if (!strict) {
         // Mode ALL : pagination côté serveur
         const response = await fetchSpotTokens({
@@ -33,7 +33,7 @@ export function useSpotTokens({
           page,
           sortBy,
           sortOrder
-        });
+        }, signal);
         return {
           data: response.data,
           total: response.pagination.total,
@@ -51,7 +51,7 @@ export function useSpotTokens({
           page: 1,
           sortBy,
           sortOrder
-        });
+        }, signal);
         const filteredData = response.data.filter(token => strictList.includes(token.name.trim()));
         const start = (page - 1) * limit;
         const end = start + limit;

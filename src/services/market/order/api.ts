@@ -11,11 +11,11 @@ import { AllPerpMetasResponse } from '../perpDex/types';
 /**
  * Récupère tous les ordres TWAP depuis l'API
  */
-const fetchAllTwapOrders = async (): Promise<TwapOrder[]> => {
+const fetchAllTwapOrders = async (signal?: AbortSignal): Promise<TwapOrder[]> => {
   return withErrorHandling(async () => {
     // L'API retourne directement un array d'ordres TWAP
     const url = `${API_URLS.HYPURRSCAN_API}/twap/*`;
-    return await getExternal<TwapOrder[]>(url);
+    return await getExternal<TwapOrder[]>(url, undefined, { signal });
   }, 'fetching all TWAP orders');
 };
 
@@ -139,10 +139,14 @@ const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<EnrichedTwapOr
 /**
  * Récupère les ordres TWAP avec pagination et filtres
  */
-export const fetchTwapOrders = async (params: TwapOrderParams = {}): Promise<TwapOrderPaginatedResponse> => {
+export const fetchTwapOrders = async (
+  params: TwapOrderParams = {},
+  signal?: AbortSignal
+): Promise<TwapOrderPaginatedResponse> => {
   return withErrorHandling(async () => {
-    // Récupérer toutes les données d'abord
-    const allOrders = await fetchAllTwapOrders();
+    // Récupérer toutes les données d'abord (the full dump is the heavy part:
+    // cancel it when the caller moves on)
+    const allOrders = await fetchAllTwapOrders(signal);
     
     // Enrichir avec les données de marché
     const enrichedOrders = await enrichTwapOrders(allOrders);

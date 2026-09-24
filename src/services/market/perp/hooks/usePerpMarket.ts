@@ -28,9 +28,9 @@ export function usePerpMarkets({
     refetch,
     dataUpdatedAt
   } = useDataFetching<PerpMarketResponse>({
-    fetchFn: async () => {
+    fetchFn: async (signal) => {
 
-      const response = await fetchPerpMarkets(params);
+      const response = await fetchPerpMarkets(params, signal);
 
       return {
         data: response.data,

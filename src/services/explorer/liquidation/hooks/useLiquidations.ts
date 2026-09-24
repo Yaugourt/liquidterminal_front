@@ -35,7 +35,7 @@ export const useRecentLiquidations = ({
   }, [hours]);
 
   const { data, isLoading, error, refetch } = useDataFetching<LiquidationResponse>({
-    fetchFn: () => fetchRecentLiquidations(params),
+    fetchFn: (signal) => fetchRecentLiquidations(params, signal),
     dependencies: [params],
     refreshInterval
   });
