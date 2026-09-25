@@ -13,6 +13,14 @@ export interface RequestOptions {
    * cancelled.
    */
   signal?: AbortSignal;
+  /**
+   * For endpoints whose response depends on who is asking (optional auth), or
+   * that need auth and are fetched on mount: on a signed-in visitor's first
+   * page load, wait for the on-demand Privy SDK so the request carries the
+   * token. Other requests never wait — sent before Privy has loaded, they go
+   * out without a token.
+   */
+  awaitAuth?: boolean;
 }
 
 export interface CacheEntry<T = unknown> {
@@ -35,6 +43,8 @@ export interface JWTPayload {
 
 export interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
+  /** See `RequestOptions.awaitAuth`; read by the request interceptor. */
+  awaitAuth?: boolean;
 }
 
 // Interface pour les erreurs standardisées

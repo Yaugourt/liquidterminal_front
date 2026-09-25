@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { AlertCircle } from "lucide-react";
 import { useAuthContext } from "@/contexts/auth.context";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { useReadLists } from "@/store/use-readlists";
 import { ReadListSidebar } from "./ReadListSidebar";
 import { ReadListContent } from "./ReadListContent";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import { usePrivy, useModalStatus } from "@privy-io/react-auth";
+import { usePrivy, useModalStatus } from "@/services/auth/privy";
 import { useWallets } from "@/store/use-wallets";
 import { Button } from "@/components/ui/button";
 import {

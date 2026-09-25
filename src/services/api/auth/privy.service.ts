@@ -7,7 +7,9 @@
  * On logout, we clear a strict whitelist of known Privy SDK keys as best-effort.
  */
 
-type AccessTokenGetter = () => Promise<string | null>;
+import type { AccessTokenOptions } from '@/services/auth/privy';
+
+type AccessTokenGetter = (options?: AccessTokenOptions) => Promise<string | null>;
 
 let accessTokenGetter: AccessTokenGetter | null = null;
 let privyLogout: (() => void) | null = null;
@@ -37,10 +39,10 @@ export const isPrivyAuthenticated = (): boolean => privyAuthenticated;
  * Get Privy access token via the registered SDK getter.
  * Returns null if no getter has been registered yet (e.g. before AuthProvider mounts).
  */
-export const getPrivyToken = async (): Promise<string | null> => {
+export const getPrivyToken = async (options?: AccessTokenOptions): Promise<string | null> => {
   if (!accessTokenGetter) return null;
   try {
-    const token = await accessTokenGetter();
+    const token = await accessTokenGetter(options);
     return token || null;
   } catch {
     return null;

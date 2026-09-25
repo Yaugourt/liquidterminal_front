@@ -28,7 +28,8 @@ export const fetchPublicGoods = async (params?: PublicGoodQueryParams): Promise<
     }
     
     const endpoint = `/publicgoods${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await get<PublicGoodsResponse>(endpoint);
+    // Optional auth: a moderator's non-approved statuses depend on the token.
+    return await get<PublicGoodsResponse>(endpoint, undefined, { awaitAuth: true });
   }, 'fetching public goods');
 };
 
@@ -37,7 +38,9 @@ export const fetchPublicGoods = async (params?: PublicGoodQueryParams): Promise<
  */
 export const fetchPublicGood = async (id: number): Promise<PublicGoodDetailResponse> => {
   return withErrorHandling(async () => {
-    return await get<PublicGoodDetailResponse>(`/publicgoods/${id}`);
+    // Optional auth: a pending/rejected item is visible to its submitter and
+    // moderators only (404 for anyone else).
+    return await get<PublicGoodDetailResponse>(`/publicgoods/${id}`, undefined, { awaitAuth: true });
   }, 'fetching public good');
 };
 
@@ -58,7 +61,8 @@ export const fetchMyPublicGoods = async (params?: Omit<PublicGoodQueryParams, 's
     }
     
     const endpoint = `/publicgoods/my-submissions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await get<PublicGoodsResponse>(endpoint);
+    // Fetched on mount, before the page knows the user: wait for the session.
+    return await get<PublicGoodsResponse>(endpoint, undefined, { awaitAuth: true });
   }, 'fetching my public goods');
 };
 
@@ -79,7 +83,8 @@ export const fetchPendingPublicGoods = async (params?: Omit<PublicGoodQueryParam
     }
     
     const endpoint = `/publicgoods/pending${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return await get<PublicGoodsResponse>(endpoint);
+    // Fetched on mount, before the page knows the user: wait for the session.
+    return await get<PublicGoodsResponse>(endpoint, undefined, { awaitAuth: true });
   }, 'fetching pending public goods');
 };
 

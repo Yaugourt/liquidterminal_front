@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import {
   Tooltip,
   TooltipContent,

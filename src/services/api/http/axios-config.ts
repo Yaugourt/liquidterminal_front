@@ -67,7 +67,11 @@ apiClient.interceptors.request.use(
   async (config) => {
     try {
       if (targetsBackend(config.url)) {
-        const token = await getPrivyToken();
+        // Before the on-demand Privy SDK has loaded, only requests that opt in
+        // (`awaitAuth`) wait for it; the others go out without a token.
+        const token = await getPrivyToken({
+          waitForSession: (config as ExtendedAxiosRequestConfig).awaitAuth === true,
+        });
 
         if (token) {
           config.headers.Authorization = formatAuthHeader(token);
@@ -148,13 +152,14 @@ export async function axiosWithConfig<T>(
   // Read synchronously, before any await: the policy is only set while the
   // calling fetchFn runs its synchronous part (see request-policy.ts).
   const policy = currentRequestPolicy();
-  const { useCache = true, timeoutMs, signal } = options;
+  const { useCache = true, timeoutMs, signal, awaitAuth } = options;
   // An explicit option wins; otherwise the hook's own retries run single-shot.
   const retryOnError = options.retryOnError ?? policy?.transportRetries ?? true;
 
   const requestConfig: ExtendedAxiosRequestConfig = {
     ...config,
     ...(timeoutMs !== undefined ? { timeout: timeoutMs } : {}),
+    ...(awaitAuth ? { awaitAuth } : {}),
   };
 
   // Generate cache key

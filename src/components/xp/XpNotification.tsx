@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, createContext, useCallback, ReactNode } from "react";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { useXp } from "@/services/xp";
 import { toast } from "sonner";
 import { Star, Flame, TrendingUp } from "lucide-react";

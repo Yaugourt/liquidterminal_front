@@ -23,7 +23,7 @@ import {
 import { LogIn } from "lucide-react";
 import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
-import { usePrivy, useModalStatus } from "@privy-io/react-auth";
+import { usePrivy, useModalStatus } from "@/services/auth/privy";
 
 // Telegram brand icon
 const TelegramIcon = ({ className }: { className?: string }) => (

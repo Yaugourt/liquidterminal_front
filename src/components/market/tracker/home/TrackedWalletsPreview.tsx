@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWallets } from "@/store/use-wallets";
 import { useAuthContext } from "@/contexts/auth.context";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { Wallet, LogIn, ArrowRight, TrendingUp, BarChart3, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

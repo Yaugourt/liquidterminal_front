@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy } from '@/services/auth/privy';
 import { generateTelegramLink, getTelegramLinkStatus, unlinkTelegram } from '../api';
 import {
   TelegramLinkState,

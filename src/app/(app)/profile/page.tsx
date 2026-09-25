@@ -20,7 +20,7 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSearchParams } from "next/navigation";
 import { MySubmissionsList } from "@/components/wiki/MySubmissionsList";

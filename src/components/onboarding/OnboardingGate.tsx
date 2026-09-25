@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLogin } from "@privy-io/react-auth";
+import { useLogin } from "@/services/auth/privy";
 import { useOnboardingStore } from "@/store/use-onboarding";
 import dynamic from "next/dynamic";
 
@@ -47,8 +47,8 @@ export function OnboardingGate() {
   }, []);
 
   // Secondary trigger: authenticated first login. `useLogin` callbacks fire
-  // for any login completion under the PrivyProvider, so no existing login
-  // button needs to change.
+  // for any login completion (relayed from the on-demand Privy SDK), so no
+  // existing login button needs to change.
   useLogin({
     onComplete: ({ isNewUser, wasAlreadyAuthenticated }) => {
       if (

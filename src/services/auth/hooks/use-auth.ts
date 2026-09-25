@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { authService, User, AuthError, LoginCredentials } from "../index";
 import { registerPrivyAccessTokenGetter, registerPrivyLogout, setPrivyAuthenticated } from "../../api/privy.service";
 

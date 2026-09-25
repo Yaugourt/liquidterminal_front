@@ -7,7 +7,7 @@ import { Trophy, Medal, Crown, User } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Button } from "@/components/ui/button";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { showXpGainToast } from "./XpNotification";
 
 interface XpLeaderboardProps {

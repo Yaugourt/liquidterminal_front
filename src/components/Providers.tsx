@@ -1,12 +1,10 @@
 "use client";
 
-import { PrivyProvider } from "@privy-io/react-auth";
 import { AuthProvider } from "@/contexts/auth.context";
 import { Toaster } from "@/components/ui/sonner";
-import { env } from "@/lib/env";
 import { XpNotificationProvider } from "@/components/xp";
 import { XpProvider } from "@/services/xp";
-import { chartPalette } from "@/components/common";
+import { LazyPrivy } from "@/services/auth/privy";
 
 // NOTE: the app Sidebar is mounted by `src/app/(app)/layout.tsx` (single
 // source of truth). It used to be duplicated here, which stacked two fixed
@@ -14,27 +12,8 @@ import { chartPalette } from "@/components/common";
 
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const privyAppId = env.NEXT_PUBLIC_PRIVY_AUDIENCE;
-
   return (
-    <PrivyProvider
-      appId={privyAppId}
-      config={{
-        appearance: {
-          accentColor: chartPalette.accent,
-          theme: chartPalette.brandTertiary,
-          showWalletLoginFirst: false,
-          logo: "/logo.svg",
-        },
-        loginMethods: ["twitter"],
-        embeddedWallets: {
-          ethereum: {
-            createOnLogin: "off",
-          },
-          showWalletUIs: false,
-        },
-      }}
-    >
+    <>
       <AuthProvider>
         <XpProvider>
           <XpNotificationProvider>
@@ -43,6 +22,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
           </XpNotificationProvider>
         </XpProvider>
       </AuthProvider>
-    </PrivyProvider>
+      {/* The Privy SDK is loaded on demand and mounted next to the tree, not
+          around it: the app reads auth through `@/services/auth/privy`. */}
+      <LazyPrivy />
+    </>
   );
 }

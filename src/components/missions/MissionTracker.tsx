@@ -16,7 +16,7 @@
  */
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { markMissionComplete, useMissionsStore } from "@/store/use-missions";
 import { useGlobalSearch } from "@/store/use-global-search";
 import { useSidebarPreferences } from "@/store/use-sidebar-preferences";

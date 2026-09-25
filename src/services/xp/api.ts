@@ -81,7 +81,8 @@ export const xpService = {
     total: number;
   }> => {
     return withErrorHandling(async () => {
-      const response = await get<XpLeaderboardResponse>('/xp/leaderboard', params as Record<string, unknown>);
+      // Optional auth: userRank is only returned with the token.
+      const response = await get<XpLeaderboardResponse>('/xp/leaderboard', params as Record<string, unknown>, { awaitAuth: true });
       return response.data;
     }, 'fetching leaderboard');
   },

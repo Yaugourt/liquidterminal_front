@@ -3,11 +3,11 @@
 /**
  * Assembled missions view: catalog x persisted progress x auth state.
  *
- * Uses Privy directly (like XpProvider) so it works anywhere under
- * PrivyProvider, without requiring AuthContext.
+ * Reads Privy through its facade (like XpProvider) so it works anywhere,
+ * without requiring AuthContext.
  */
 import { useMemo } from "react";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { useMissionsStore } from "@/store/use-missions";
 import {
   MISSIONS,

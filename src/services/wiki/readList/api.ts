@@ -64,9 +64,11 @@ export const getReadListItems = async (
   params?: { page?: number; limit?: number }
 ): Promise<{success: boolean, data: ReadListItem[], message?: string, pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }}> => {
   return withErrorHandling(async () => {
+    // Optional auth: a private list's items are readable by its owner only.
     const response = await get<{success: boolean, data: ReadListItem[], message?: string, pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }}>(
       `/readlists/${listId}/items`,
-      params as Record<string, unknown>
+      params as Record<string, unknown>,
+      { awaitAuth: true }
     );
     if (!response) return {success: true, data: []};
     return { ...response, data: (response.data || []).map(decodeItemPreview) };

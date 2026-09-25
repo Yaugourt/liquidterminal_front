@@ -2,7 +2,7 @@
  * missions/ barrel — onboarding-missions UI.
  *
  * <MissionsGate /> is the only component that needs mounting (once, inside
- * the app shell under PrivyProvider + AuthProvider). Everything else is
+ * the app shell under AuthProvider). Everything else is
  * exported for targeted reuse (e.g. <MissionsCard /> on the profile page).
  */
 export { MissionsGate } from "./MissionsGate";

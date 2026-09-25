@@ -190,6 +190,43 @@ const eslintConfig = [
       "no-restricted-imports": "off",
     },
   },
+  /**
+   * Privy is loaded on demand, outside the app shell (~500 KB gzipped with the
+   * wallet SDKs it bundles). Code reads auth through `@/services/auth/privy`;
+   * only the lazily imported PrivyRoot may import the SDK at runtime. Type
+   * imports stay allowed (erased at build time).
+   *
+   * The typescript-eslint variant is used for `allowTypeImports`, and because
+   * a separate rule name can't override the core `no-restricted-imports`
+   * design-system config above.
+   */
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/services/auth/privy/PrivyRoot.tsx"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@privy-io/react-auth",
+              allowTypeImports: true,
+              message:
+                "Le SDK Privy est chargé à la demande. Utilise usePrivy / useLogin / useModalStatus depuis '@/services/auth/privy' (seul PrivyRoot.tsx importe le SDK).",
+            },
+          ],
+          patterns: [
+            {
+              group: ["@privy-io/*/*"],
+              allowTypeImports: true,
+              message:
+                "Le SDK Privy est chargé à la demande : ses sous-modules ne doivent pas entrer dans le shell. Passe par '@/services/auth/privy'.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   {
     ignores: [
       "node_modules/**",

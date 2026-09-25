@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useWallets } from "@/store/use-wallets";
 import { useAuthContext } from "@/contexts/auth.context";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { AddWalletDialog } from "./AddWalletDialog";
 import { DeleteWalletDialog } from "./DeleteWalletDialog";
 import { CreateWalletListDialog } from "./walletlists/CreateWalletListDialog";

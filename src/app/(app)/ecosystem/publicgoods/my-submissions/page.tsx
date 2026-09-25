@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LoadingState } from "@/components/ui/loading-state";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@/services/auth/privy";
 import { Plus, ArrowLeft, LogIn } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";

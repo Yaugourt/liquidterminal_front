@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, useContext } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy } from '@/services/auth/privy';
 import { xpService } from '../api';
 import { XpStats, XpTransaction, DailyLoginData } from '../types';
 import { XpContext } from '../context';

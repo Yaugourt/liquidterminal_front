@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy } from '@/services/auth/privy';
 import { xpService } from './api';
 import { 
   XpStats, 

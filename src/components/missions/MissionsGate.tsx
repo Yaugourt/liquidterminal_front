@@ -4,7 +4,7 @@
  * Single integration mount point for the missions layer.
  *
  * Mount once inside the app shell (e.g. next to <Toaster /> in
- * Providers.tsx — must live under PrivyProvider + AuthProvider). Renders
+ * Providers.tsx — must live under AuthProvider). Renders
  * nothing until:
  * - the client has mounted (SSR-safe: persisted stores need localStorage),
  * - the welcome tour is finished (`useOnboardingStore.hasCompletedOnboarding`),
