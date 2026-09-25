@@ -1,5 +1,3 @@
-"use client";
-
 import { Suspense } from "react";
 import { LandingViewport } from "@/components/landing/LandingViewport";
 import { JsonLd } from "@/components/JsonLd";
@@ -8,6 +6,9 @@ import {
   softwareApplicationSchema,
   websiteSchema,
 } from "@/components/JsonLd";
+
+// Server component: the JSON-LD blocks render into the HTML only and ship no
+// JS; the interactive landing is the <LandingViewport> client island.
 
 function HomePageContent() {
   return <LandingViewport />;
