@@ -7,7 +7,7 @@ import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumUsers } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
-import { EMPTY, EXPLORER, Empty, ExtLink, completeDays, pct, short } from "./shared";
+import { AddrLink, EMPTY, Empty, completeDays, pct } from "./shared";
 
 /** Retention cell tinted by strength so the cohort table reads at a glance. */
 function RetentionCell({ v }: { v: number | null }) {
@@ -107,7 +107,7 @@ export function ElysiumUsers() {
                   {data.topSenders24h.map((s) => (
                     <tr key={s.address} className="border-t border-border-subtle first:border-t-0">
                       <td className="py-1.5 pr-2 whitespace-nowrap">
-                        <ExtLink href={`${EXPLORER}/address/${s.address}`} className="text-text-secondary">{short(s.address)}</ExtLink>
+                        <AddrLink address={s.address} className="text-text-secondary" />
                       </td>
                       <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactCount(s.txs)} tx</td>
                       <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap">{pct(s.share, 1)}</td>

@@ -7,7 +7,7 @@ import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumBridgeAnalytics } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
-import { EMPTY, EXPLORER, Empty, ExtLink, completeDays, duration, short } from "./shared";
+import { AddrLink, EMPTY, Empty, completeDays, duration } from "./shared";
 
 /**
  * Elysium · Bridge: daily HYPE flows in and out, per-token volumes, real
@@ -95,7 +95,7 @@ export function ElysiumBridgeAnalyticsView() {
                   {data.topBridgers.map((b) => (
                     <tr key={b.address} className="border-t border-border-subtle first:border-t-0">
                       <td className="py-1.5 pr-2 whitespace-nowrap">
-                        <ExtLink href={`${EXPLORER}/address/${b.address}`} className="text-text-secondary">{short(b.address)}</ExtLink>
+                        <AddrLink address={b.address} className="text-text-secondary" />
                       </td>
                       <td className="py-1.5 pr-2 text-right text-success whitespace-nowrap">+{n(b.hypeIn)}</td>
                       <td className="py-1.5 pr-2 text-right text-danger whitespace-nowrap">-{n(b.hypeOut)}</td>

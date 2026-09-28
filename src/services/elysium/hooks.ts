@@ -19,8 +19,21 @@ import {
   fetchElysiumEconomics,
   fetchElysiumIngestStatus,
   fetchElysiumUsers,
+  fetchElysiumAddressProfile,
+  fetchElysiumDex,
+  fetchElysiumMethods,
+  fetchElysiumTokenLaunches,
+  fetchElysiumUserActivity,
+  fetchElysiumUserBalances,
+  fetchElysiumUserBridge,
 } from "./api";
 import type {
+  ElysiumAddressProfile,
+  ElysiumDexAnalytics,
+  ElysiumMethodsAnalytics,
+  ElysiumTokensAnalytics,
+  ElysiumUserActivity,
+  ElysiumUserBalances,
   ElysiumBridgeAnalytics,
   ElysiumContractRow,
   ElysiumDeploymentsAnalytics,
@@ -77,3 +90,18 @@ export const useElysiumBridgeAnalytics = (days = 14) =>
   usePoll<ElysiumBridgeAnalytics>(() => fetchElysiumBridgeAnalytics(days), 60_000, [days]);
 export const useElysiumEconomics = (days = 14) =>
   usePoll<ElysiumEconomicsAnalytics>(() => fetchElysiumEconomics(days), 60_000, [days]);
+export const useElysiumDex = (days = 14) => usePoll<ElysiumDexAnalytics>(() => fetchElysiumDex(days), 60_000, [days]);
+export const useElysiumTokenLaunches = (days = 14) =>
+  usePoll<ElysiumTokensAnalytics>(() => fetchElysiumTokenLaunches(days), 60_000, [days]);
+export const useElysiumMethods = (window: "24h" | "7d" = "24h") =>
+  usePoll<ElysiumMethodsAnalytics>(() => fetchElysiumMethods(window), 60_000, [window]);
+
+// Per-address reads.
+export const useElysiumAddressProfile = (address: string) =>
+  usePoll<ElysiumAddressProfile>(() => fetchElysiumAddressProfile(address), 60_000, [address]);
+export const useElysiumUserBalances = (address: string) =>
+  usePoll<ElysiumUserBalances>(() => fetchElysiumUserBalances(address), 30_000, [address]);
+export const useElysiumUserActivity = (address: string, limit = 50) =>
+  usePoll<ElysiumUserActivity[]>(() => fetchElysiumUserActivity(address, limit), 30_000, [address, limit]);
+export const useElysiumUserBridge = (address: string, limit = 20) =>
+  usePoll<ElysiumBridgeTransfer[]>(() => fetchElysiumUserBridge(address, limit), 60_000, [address, limit]);

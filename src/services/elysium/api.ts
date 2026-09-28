@@ -1,6 +1,12 @@
 import { get, postExternal } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
 import type {
+  ElysiumAddressProfile,
+  ElysiumDexAnalytics,
+  ElysiumMethodsAnalytics,
+  ElysiumTokensAnalytics,
+  ElysiumUserActivity,
+  ElysiumUserBalances,
   ElysiumBridgeAnalytics,
   ElysiumContractRow,
   ElysiumDeploymentsAnalytics,
@@ -110,3 +116,23 @@ export const fetchElysiumContracts = (window: "24h" | "7d" = "24h") =>
 export const fetchElysiumUsers = (days = 14) => getAnalytics<ElysiumUsersAnalytics>("/users", { days });
 export const fetchElysiumBridgeAnalytics = (days = 14) => getAnalytics<ElysiumBridgeAnalytics>("/bridge", { days });
 export const fetchElysiumEconomics = (days = 14) => getAnalytics<ElysiumEconomicsAnalytics>("/economics", { days });
+export const fetchElysiumDex = (days = 14) => getAnalytics<ElysiumDexAnalytics>("/dex", { days });
+export const fetchElysiumTokenLaunches = (days = 14) => getAnalytics<ElysiumTokensAnalytics>("/tokens", { days });
+export const fetchElysiumMethods = (window: "24h" | "7d" = "24h") => getAnalytics<ElysiumMethodsAnalytics>("/methods", { window });
+/** Tags and counts computed from our tables for one address. */
+export const fetchElysiumAddressProfile = (address: string) =>
+  getAnalytics<ElysiumAddressProfile>(`/address/${address.toLowerCase()}`);
+
+// ── Per-address pass-through (provider routes) ───────────────────────────────
+
+/** Native HYPE + token balances of an address. */
+export const fetchElysiumUserBalances = (address: string) =>
+  getData<ElysiumUserBalances>(`/user/${address.toLowerCase()}/balances`, undefined, "user balances");
+
+/** Transactions and token transfers touching an address, newest first. */
+export const fetchElysiumUserActivity = (address: string, limit = 50) =>
+  getData<ElysiumUserActivity[]>(`/user/${address.toLowerCase()}/activity`, { limit }, "user activity");
+
+/** Bridge transfers of an address. */
+export const fetchElysiumUserBridge = (address: string, limit = 20) =>
+  getData<ElysiumBridgeTransfer[]>(`/user/${address.toLowerCase()}/bridge`, { limit }, "user bridge");

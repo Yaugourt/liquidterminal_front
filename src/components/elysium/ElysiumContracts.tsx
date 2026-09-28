@@ -1,15 +1,15 @@
 "use client";
 
 import { memo, useState } from "react";
-import { Boxes, Flame, Hammer, Rocket } from "lucide-react";
+import { Boxes, Flame, Hammer, Rocket, SquareFunction } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHeading, KpiRibbon, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { elysiumTimeMs, useElysiumContracts, useElysiumDeployments, type ElysiumContractKind } from "@/services/elysium";
+import { elysiumTimeMs, useElysiumContracts, useElysiumDeployments, useElysiumMethods, type ElysiumContractKind } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
-import { EMPTY, EXPLORER, Empty, ExtLink, ago, completeDays, delta, short, useNow } from "./shared";
+import { AddrLink, EMPTY, Empty, ago, completeDays, delta, pct, short, useNow } from "./shared";
 
 const KIND_TONE: Record<ElysiumContractKind, string> = {
   precompile: "bg-surface-2 text-text-tertiary",
@@ -49,6 +49,7 @@ const TopContracts = memo(function TopContracts() {
                 <th className="text-right font-semibold px-2 py-2">Txs</th>
                 <th className="text-right font-semibold px-2 py-2">vs prev.</th>
                 <th className="text-right font-semibold px-2 py-2">Callers</th>
+                <th className="text-left font-semibold px-2 py-2 hidden md:table-cell">Top methods</th>
                 <th className="text-left font-semibold px-3.5 py-2 hidden lg:table-cell">Deployed by</th>
               </tr>
             </thead>
@@ -58,9 +59,9 @@ const TopContracts = memo(function TopContracts() {
                 return (
                   <tr key={r.address} className="border-t border-border-subtle">
                     <td className="px-3.5 py-1.5 whitespace-nowrap">
-                      <ExtLink href={`${EXPLORER}/address/${r.address}`} className="text-text-primary">
+                      <AddrLink address={r.address} className="text-text-primary">
                         {r.label || r.symbol || short(r.address)}
-                      </ExtLink>
+                      </AddrLink>
                       {(r.label || r.symbol) && <span className="text-text-tertiary"> {short(r.address)}</span>}
                     </td>
                     <td className="px-2 py-1.5">
@@ -69,9 +70,21 @@ const TopContracts = memo(function TopContracts() {
                     <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(r.txs)}</td>
                     <td className={`px-2 py-1.5 text-right ${d ? (d.up ? "text-success" : "text-danger") : "text-text-tertiary"}`}>{d?.text ?? EMPTY}</td>
                     <td className="px-2 py-1.5 text-right text-text-secondary">{compactCount(r.callers)}</td>
+                    <td className="px-2 py-1.5 hidden md:table-cell max-w-[220px]">
+                      <div className="truncate text-text-secondary">
+                        {(r.topMethods ?? []).length === 0
+                          ? EMPTY
+                          : (r.topMethods ?? []).map((m, i) => (
+                              <span key={`${m.methodId}-${i}`} title={m.signature ?? m.methodId}>
+                                {i > 0 && <span className="text-text-tertiary">, </span>}
+                                <span className={m.name ? "" : "text-text-tertiary"}>{m.name ?? (m.methodId || "transfer")}</span>
+                              </span>
+                            ))}
+                      </div>
+                    </td>
                     <td className="px-3.5 py-1.5 whitespace-nowrap hidden lg:table-cell">
                       {r.deployer ? (
-                        <ExtLink href={`${EXPLORER}/address/${r.deployer}`} className="text-text-tertiary">{short(r.deployer)}</ExtLink>
+                        <AddrLink address={r.deployer} className="text-text-tertiary" />
                       ) : (
                         <span className="text-text-tertiary">{r.kind === "precompile" ? "system" : EMPTY}</span>
                       )}
@@ -81,6 +94,69 @@ const TopContracts = memo(function TopContracts() {
               })}
             </tbody>
           </table>
+        )}
+      </div>
+    </Card>
+  );
+});
+
+const TopMethods = memo(function TopMethods() {
+  const [window, setWindow] = useState<"24h" | "7d">("24h");
+  const { data, error } = useElysiumMethods(window);
+  return (
+    <Card className="overflow-hidden flex flex-col">
+      <CardHeading
+        icon={<SquareFunction size={13} className="text-brand" />}
+        title="Most called methods"
+        meta={data ? `names for ${data.resolver.found} of the ${data.resolver.lookedUp} most used selectors` : "spam excluded"}
+        metaVariant="plain"
+        actions={
+          <PillTabs
+            tabs={[{ value: "24h", label: "24h" }, { value: "7d", label: "7d" }]}
+            activeTab={window}
+            onTabChange={(v) => setWindow(v as "24h" | "7d")}
+          />
+        }
+      />
+      <div className="overflow-x-auto">
+        {!data ? (
+          <Empty>{error ? "Analytics are unavailable right now." : "Loading methods…"}</Empty>
+        ) : data.rows.length === 0 ? (
+          <Empty>No contract call indexed yet.</Empty>
+        ) : (
+          <>
+            <table className="w-full mono text-[12px]">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
+                  <th className="text-left font-semibold px-3.5 py-2">Method</th>
+                  <th className="text-right font-semibold px-2 py-2">Calls</th>
+                  <th className="text-right font-semibold px-2 py-2">Share</th>
+                  <th className="text-right font-semibold px-2 py-2">Senders</th>
+                  <th className="text-right font-semibold px-3.5 py-2 hidden sm:table-cell">Contracts</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.rows.map((m) => (
+                  <tr key={m.methodId} className="border-t border-border-subtle">
+                    <td className="px-3.5 py-1.5 max-w-[320px]">
+                      <div className="truncate" title={m.signature ?? undefined}>
+                        {m.name ? <span className="text-text-primary">{m.name}</span> : <span className="text-text-tertiary">unknown</span>}
+                        <span className="text-text-tertiary"> {m.methodId}</span>
+                      </div>
+                    </td>
+                    <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(m.txs)}</td>
+                    <td className="px-2 py-1.5 text-right text-text-secondary">{pct(m.share, 1)}</td>
+                    <td className="px-2 py-1.5 text-right text-text-secondary">{compactCount(m.senders)}</td>
+                    <td className="px-3.5 py-1.5 text-right text-text-tertiary hidden sm:table-cell">{compactCount(m.contracts)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="px-3.5 py-2 text-[11px] text-text-tertiary border-t border-border-subtle">
+              Share of {compactCount(data.totals.calls)} contract calls. Not counted above: {compactCount(data.totals.plainTransfers)} plain HYPE
+              transfers and {compactCount(data.totals.contractCreations)} contract creations.
+            </div>
+          </>
         )}
       </div>
     </Card>
@@ -144,7 +220,7 @@ export function ElysiumContracts() {
                   {data.trending.map((c) => (
                     <tr key={c.address} className="border-t border-border-subtle first:border-t-0">
                       <td className="py-1.5 pr-2 whitespace-nowrap">
-                        <ExtLink href={`${EXPLORER}/address/${c.address}`} className="text-text-primary">{c.symbol || short(c.address)}</ExtLink>
+                        <AddrLink address={c.address} className="text-text-primary">{c.symbol || short(c.address)}</AddrLink>
                       </td>
                       <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactCount(c.callers24h)} callers</td>
                       <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap">{compactCount(c.txs24h)} tx</td>
@@ -167,7 +243,7 @@ export function ElysiumContracts() {
                   {data.topDeployers.map((d) => (
                     <tr key={d.address} className="border-t border-border-subtle first:border-t-0">
                       <td className="py-1.5 pr-2 whitespace-nowrap">
-                        <ExtLink href={`${EXPLORER}/address/${d.address}`} className="text-text-secondary">{short(d.address)}</ExtLink>
+                        <AddrLink address={d.address} className="text-text-secondary" />
                       </td>
                       <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactCount(d.deployments)} contracts</td>
                       <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap">last {ago(elysiumTimeMs(d.lastDeploy), now)} ago</td>
@@ -180,8 +256,10 @@ export function ElysiumContracts() {
         </Card>
       </div>
       <TopContracts />
+      <TopMethods />
       <p className="text-[11px] text-text-tertiary flex items-center gap-1.5">
-        <Boxes size={12} /> Precompiles are Arbitrum system contracts (withdrawals, retryable tickets…). Testnet deployments include load tests.
+        <Boxes size={12} /> Precompiles are Arbitrum system contracts (withdrawals, retryable tickets…). Testnet deployments include load tests. Method names come
+        from a public signature database; a selector can collide with other signatures, so treat names as best effort.
       </p>
     </div>
   );

@@ -162,6 +162,8 @@ export interface ElysiumContractRow {
   gasUsed: number;
   txsPrev: number;
   callersPrev: number;
+  /** Up to 3 most called selectors on this contract in the window. */
+  topMethods?: (ElysiumMethodRef & { txs: number })[];
 }
 
 export interface ElysiumUsersAnalytics {
@@ -185,4 +187,101 @@ export interface ElysiumEconomicsAnalytics {
 
 export interface ElysiumIngestStatus {
   streams: { stream: string; cursor: string | null; rows: number; backfillDone: boolean; lastError: string | null; lagSeconds: number | null }[];
+}
+
+/** A 4-byte selector and, when a public signature database knows it, its signature. */
+export interface ElysiumMethodRef {
+  /** "0x…" selector; empty for a plain value transfer or a contract creation. */
+  methodId: string;
+  signature: string | null;
+  /** Function name (signature without arguments), or a fixed label. */
+  name: string | null;
+}
+
+export interface ElysiumMethodsAnalytics {
+  window: "24h" | "7d";
+  totals: { calls: number; plainTransfers: number; contractCreations: number };
+  resolver: { lookedUp: number; found: number };
+  rows: (ElysiumMethodRef & { txs: number; share: number; senders: number; contracts: number })[];
+  /** Every resolved selector -> signature (top ~200 by frequency). */
+  names: Record<string, string>;
+}
+
+export interface ElysiumDexPoolRef {
+  pool: string;
+  version: string;
+  /** V3 fee in hundredths of a bip (3000 = 0.3%); null for V2. */
+  fee: number | null;
+  token0: string | null;
+  token1: string | null;
+  token0Symbol: string | null;
+  token1Symbol: string | null;
+}
+
+export interface ElysiumDexAnalytics {
+  totals: { pools: number; swaps: number; pools24h: number; swaps24h: number; traders24h: number };
+  daily: (ElysiumDailyFlag & { poolsCreated: number; swaps: number; activePools: number })[];
+  factories: { address: string; versions: string[]; pools: number; swaps24h: number; lastPoolAt: string | null }[];
+  topPools24h: (ElysiumDexPoolRef & { swaps24h: number; traders24h: number })[];
+  newPools: (ElysiumDexPoolRef & { factory: string; pair: string | null; createdAt: string; swaps24h: number })[];
+}
+
+export interface ElysiumTokenLaunch {
+  address: string;
+  name: string | null;
+  symbol: string;
+  decimals: number | null;
+  origin: string | null;
+  firstSeen: string | null;
+  transfers: number;
+  /** Latest holder snapshot (top tokens only), null when not snapshotted. */
+  holders: number | null;
+  holdersAt: string | null;
+}
+
+export interface ElysiumTokensAnalytics {
+  totals: { tokens: number; named: number; launched24h: number; named24h: number };
+  daily: (ElysiumDailyFlag & { launched: number; named: number })[];
+  newTokens24h: ElysiumTokenLaunch[];
+  topTokens: ElysiumTokenLaunch[];
+}
+
+export interface ElysiumAddressTag {
+  id: "deployer" | "dex-trader" | "bridger" | "bot-like";
+  label: string;
+  detail: string;
+}
+
+export interface ElysiumAddressProfile {
+  address: string;
+  firstSeen: string | null;
+  activity: { userTxs: number; activeDays: number; txs24h: number; share24h: number; networkTxs24h: number };
+  deployer: { contracts: number; lastDeploy: string | null };
+  dex: { swaps: number; pools: number; swaps24h: number };
+  bridge: { deposits: number; withdrawals: number; hypeIn: number; hypeOut: number };
+  topMethods: (ElysiumMethodRef & { txs: number })[];
+  botRule: { txs24h: number; share24h: number };
+  tags: ElysiumAddressTag[];
+}
+
+export interface ElysiumUserBalances {
+  address: string;
+  block: number | null;
+  native_balance_wei: string;
+  native_balance: number;
+  tokens: { token: string; standard: string; symbol: string; name: string; decimals: number; balance_raw: string; balance: number }[];
+}
+
+export interface ElysiumUserActivity {
+  time: string;
+  block_number: number;
+  tx_hash: string;
+  kind: string;
+  direction: string;
+  counterparty: string;
+  token: string;
+  symbol: string;
+  amount_raw: string;
+  amount: number;
+  detail: string;
 }

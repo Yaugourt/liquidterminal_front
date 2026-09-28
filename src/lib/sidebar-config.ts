@@ -22,6 +22,8 @@ import {
   Cpu,
   Download,
   Share2,
+  ArrowLeftRight,
+  Coins,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -265,6 +267,8 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Overview', href: '/elysium', icon: null, IconComponent: Home },
       { name: 'Contracts', href: '/elysium/contracts', icon: null, IconComponent: Blocks },
+      { name: 'DEX', href: '/elysium/dex', icon: null, IconComponent: ArrowLeftRight },
+      { name: 'Tokens', href: '/elysium/tokens', icon: null, IconComponent: Coins },
       { name: 'Users', href: '/elysium/users', icon: null, IconComponent: Wallet },
       { name: 'Bridge', href: '/elysium/bridge', icon: null, IconComponent: Network },
       { name: 'Economics', href: '/elysium/economics', icon: null, IconComponent: Fuel },

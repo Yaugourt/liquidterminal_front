@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, type ReactNode } from "react";
+import { ExternalLink } from "lucide-react";
 
 /** Public Elysium testnet explorer; its /tx, /address and /block routes resolve. */
 export const EXPLORER = "https://test-explorer.elysium.kinetiq.xyz";
@@ -41,6 +43,55 @@ export function ExtLink({ href, children, className = "" }: { href: string; chil
       {children}
     </a>
   );
+}
+
+/** Internal Elysium address page. */
+export const addressHref = (address: string) => `/elysium/address/${address.toLowerCase()}`;
+
+/**
+ * Address link: the label opens our Elysium address page, a small icon opens
+ * the public explorer. `explorer={false}` hides the icon in dense rows.
+ */
+export function AddrLink({
+  address,
+  children,
+  className = "",
+  explorer = true,
+}: {
+  address: string;
+  children?: ReactNode;
+  className?: string;
+  explorer?: boolean;
+}) {
+  if (!address) return <span className="text-text-tertiary">{EMPTY}</span>;
+  return (
+    <span className="inline-flex items-center gap-1 max-w-full">
+      <Link href={addressHref(address)} className={`hover:text-brand truncate ${className}`}>
+        {children ?? short(address)}
+      </Link>
+      {explorer && (
+        <a
+          href={`${EXPLORER}/address/${address}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open in the Elysium explorer"
+          title="Open in the Elysium explorer"
+          className="text-text-tertiary hover:text-brand shrink-0"
+        >
+          <ExternalLink size={10} />
+        </a>
+      )}
+    </span>
+  );
+}
+
+/** Label for a selector: resolved name, else the raw selector. */
+export function methodLabel(methodId: string | null | undefined, names?: Record<string, string> | null): string {
+  if (!methodId) return "transfer";
+  const sig = names?.[methodId];
+  if (!sig) return methodId;
+  const i = sig.indexOf("(");
+  return i > 0 ? sig.slice(0, i) : sig;
 }
 
 export function Empty({ children }: { children: ReactNode }) {

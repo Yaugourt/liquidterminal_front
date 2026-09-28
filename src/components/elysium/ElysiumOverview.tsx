@@ -17,7 +17,7 @@ import { MultiSeriesAreaChart } from "@/components/dashboard/chart";
 import type { MultiSeries } from "@/components/dashboard/chart/MultiSeriesAreaChart";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { EMPTY, EXPLORER, Empty, ExtLink, ago, duration, short, useNow } from "./shared";
+import { AddrLink, EMPTY, EXPLORER, Empty, ExtLink, ago, duration, methodLabel, short, useNow } from "./shared";
 import {
   elysiumTimeMs,
   useElysiumBatches,
@@ -31,6 +31,7 @@ import {
   useElysiumStats,
   useElysiumTokens,
   useElysiumTransactions,
+  useElysiumMethods,
   type ElysiumBlock,
 } from "@/services/elysium";
 
@@ -141,6 +142,9 @@ const ElysiumActivity = memo(function ElysiumActivity() {
 // ── Live lists ───────────────────────────────────────────────────────────────
 const ElysiumTransactions = memo(function ElysiumTransactions() {
   const { data: txs, error } = useElysiumTransactions(14);
+  // Selector -> signature map (our backend, top selectors only); hex stays when unknown.
+  const { data: methods } = useElysiumMethods("24h");
+  const names = methods?.names;
   const now = useNow(3_000);
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -165,17 +169,24 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
                     </ExtLink>
                   </td>
                   <td className="py-1.5 pr-2 whitespace-nowrap">
-                    <ExtLink href={`${EXPLORER}/address/${t.from_addr}`} className="text-text-secondary">{short(t.from_addr)}</ExtLink>
+                    <AddrLink address={t.from_addr} className="text-text-secondary" explorer={false} />
                   </td>
                   <td className="py-1.5 pr-2 text-text-tertiary">→</td>
                   <td className="py-1.5 pr-2 whitespace-nowrap">
                     {t.contract_address ? (
-                      <ExtLink href={`${EXPLORER}/address/${t.contract_address}`} className="text-gold">new contract</ExtLink>
+                      <AddrLink address={t.contract_address} className="text-gold" explorer={false}>new contract</AddrLink>
                     ) : (
-                      <ExtLink href={`${EXPLORER}/address/${t.to_addr}`} className="text-text-secondary">{short(t.to_addr)}</ExtLink>
+                      <AddrLink address={t.to_addr} className="text-text-secondary" explorer={false} />
                     )}
                   </td>
-                  <td className="py-1.5 pr-2 whitespace-nowrap text-text-tertiary hidden sm:table-cell">{t.method_id || "transfer"}</td>
+                  <td
+                    className={`py-1.5 pr-2 whitespace-nowrap hidden sm:table-cell max-w-[140px] truncate ${
+                      t.method_id && names?.[t.method_id] ? "text-text-secondary" : "text-text-tertiary"
+                    }`}
+                    title={(t.method_id && names?.[t.method_id]) || t.method_id || undefined}
+                  >
+                    {t.contract_address ? "deploy" : methodLabel(t.method_id, names)}
+                  </td>
                   <td className={`py-1.5 text-right ${t.success ? "text-success" : "text-danger"}`}>{t.success ? "ok" : "fail"}</td>
                 </tr>
               ))}
@@ -273,7 +284,7 @@ const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
                       {t.amount > 0 ? formatNumber(t.amount, format, { maximumFractionDigits: t.amount < 1 ? 4 : 2 }) : EMPTY}
                     </td>
                     <td className="py-1.5 pr-2 whitespace-nowrap hidden sm:table-cell">
-                      <ExtLink href={`${EXPLORER}/address/${t.from_addr}`} className="text-text-tertiary">{short(t.from_addr)}</ExtLink>
+                      <AddrLink address={t.from_addr} className="text-text-tertiary" explorer={false} />
                     </td>
                     <td className="py-1.5 pr-2 text-right whitespace-nowrap text-text-tertiary" title="Time from initiation to completion">
                       {done ? duration(t.duration_s) : ago(elysiumTimeMs(t.initiated_time), now)}
@@ -420,7 +431,7 @@ const ElysiumTokens = memo(function ElysiumTokens() {
               {tokens.map((t) => (
                 <tr key={t.address} className="border-t border-border-subtle first:border-t-0">
                   <td className="py-1.5 pr-2 whitespace-nowrap">
-                    <ExtLink href={`${EXPLORER}/address/${t.address}`} className="text-text-primary">{t.symbol || short(t.address)}</ExtLink>
+                    <AddrLink address={t.address} className="text-text-primary" explorer={false}>{t.symbol || short(t.address)}</AddrLink>
                   </td>
                   <td className="py-1.5 pr-2 text-text-tertiary whitespace-nowrap truncate max-w-[140px] hidden xl:table-cell">{t.name}</td>
                   <td className="py-1.5 pr-2 text-text-tertiary">{t.origin}</td>
