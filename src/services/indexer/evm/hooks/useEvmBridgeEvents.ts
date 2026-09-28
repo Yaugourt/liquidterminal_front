@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { fetchEvmBridgeEvents } from "../api";
 import type { EvmBridgeEvent, UseEvmBridgeEventsResult } from "../types";
@@ -20,20 +19,16 @@ export function useEvmBridgeEvents(
   limit = 100,
   hours = 24
 ): UseEvmBridgeEventsResult {
-  // Round to the nearest minute so the request keys stay stable across
-  // unrelated React re-renders.
-  const { start_time, end_time } = useMemo(() => {
-    const nowMs = Math.floor(Date.now() / 60_000) * 60_000;
-    return {
-      end_time: nowMs,
-      start_time: nowMs - hours * 3_600_000,
-    };
-  }, [hours]);
-
   const { data, isLoading, error, refetch } = useDataFetching<EvmBridgeEvent[]>({
-    fetchFn: () =>
-      fetchEvmBridgeEvents({ limit, start_time, end_time }),
-    dependencies: [limit, start_time, end_time],
+    // The window is computed per fetch so polls move it forward (it used to be
+    // frozen at mount: a tab left open kept asking for the same minutes).
+    // Floored to the minute, so visitors in the same minute share one backend
+    // cache entry.
+    fetchFn: () => {
+      const end_time = Math.floor(Date.now() / 60_000) * 60_000;
+      return fetchEvmBridgeEvents({ limit, start_time: end_time - hours * 3_600_000, end_time });
+    },
+    dependencies: [limit, hours],
     refreshInterval: 30_000,
     maxRetries: 3,
   });
