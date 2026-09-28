@@ -41,6 +41,20 @@ export interface LiquidationResponse {
   has_more: boolean;
 }
 
+/** Windows accepted by /liquidations/historical/top. */
+export type TopLiquidationsPeriod = "1h" | "24h" | "7d";
+
+/**
+ * Largest liquidations of a window, from the local DB
+ * (/liquidations/historical/top): one row per liquidation, largest first.
+ */
+export interface TopLiquidationsResponse {
+  success: boolean;
+  data: Liquidation[];
+  filters: { period: TopLiquidationsPeriod; minAmountDollars: number; limit: number };
+  metadata: { computedAt: string };
+}
+
 /**
  * Paramètres de requête pour les liquidations
  */

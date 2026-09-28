@@ -6,7 +6,9 @@ import {
   LiquidationsParams,
   LiquidationsDataResponse,
   HistoricalChartPeriod,
-  HistoricalChartResponse
+  HistoricalChartResponse,
+  TopLiquidationsPeriod,
+  TopLiquidationsResponse
 } from './types';
 
 /**
@@ -47,9 +49,10 @@ export const fetchRecentLiquidations = async (
 
 /**
  * Every liquidation recorded against one wallet (as `liquidated_user`), newest
- * first, from the local DB's unified `/liquidations` endpoint. The upstream
- * emits two rows per event (priced + liquidators), so callers fold them with
- * `mergeLiquidationRows` before counting.
+ * first, from the backend `/liquidations` endpoint (HypeDexer's full history,
+ * kept 5 min by the backend). The upstream emits two rows per event (priced +
+ * liquidators), so callers fold them with `mergeLiquidationRows` before
+ * counting.
  * @param address Wallet address
  * @param limit Max rows (1-1000, default 100)
  */
@@ -61,6 +64,27 @@ export const fetchUserLiquidations = async (
     const queryString = buildQueryParams({ user: address, limit, order: 'DESC' });
     return await get<LiquidationResponse>(`${ENDPOINTS.LIQUIDATIONS}${queryString}`);
   }, 'fetching user liquidations');
+};
+
+/**
+ * Largest liquidations of a window, from the local DB (0 HypeDexer credit),
+ * deduplicated like the stats of `/liquidations/data`.
+ * @param period Window (1h, 24h, 7d)
+ * @param minAmountDollars Smallest notional kept, USD
+ * @param limit Max rows (1-20)
+ */
+export const fetchTopLiquidations = async (
+  period: TopLiquidationsPeriod,
+  minAmountDollars: number,
+  limit: number
+): Promise<TopLiquidationsResponse> => {
+  return withErrorHandling(async () => {
+    return await get<TopLiquidationsResponse>(ENDPOINTS.LIQUIDATIONS_HISTORICAL_TOP, {
+      period,
+      min_amount_dollars: minAmountDollars,
+      limit,
+    });
+  }, 'fetching top liquidations');
 };
 
 /**

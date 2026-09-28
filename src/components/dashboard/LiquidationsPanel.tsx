@@ -4,9 +4,9 @@ import { memo, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import {
   useLiquidationsData,
-  useRecentLiquidations,
+  useTopLiquidations,
 } from "@/services/explorer/liquidation";
-import type { Liquidation } from "@/services/explorer/liquidation";
+import type { ChartDataBucket, Liquidation } from "@/services/explorer/liquidation";
 import { compactUsd, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 import { CardHead, chartPalette, KpiRibbon, TokenAvatar } from "@/components/common";
@@ -21,16 +21,15 @@ import { CardHead, chartPalette, KpiRibbon, TokenAvatar } from "@/components/com
  *     change. Pure SVG, hover crosshair + floating tooltip.
  *  3. Footer — top 3 individual liquidations ≥ $100K (the day's standouts).
  *
- * Real data only; the cumulative arrays + the standouts are derived client-side
- * from `/liquidations/recent`. Note `time_ms` corruption — we always parse the
- * ISO `time` field (see `getLiqTimeMs`).
+ * Real data only, all from the local liquidations DB: the hero strip and the
+ * cumulative chart from `/liquidations/data` (24h stats + 30 min buckets), the
+ * standouts from `/liquidations/historical/top`. The chart used to be rebuilt
+ * from a 1 000-row HypeDexer page, which covered only the last 4-8 h on busy
+ * days and cost ~100 credits every 30 s.
  */
 
-/** Histogram config: 48 buckets × 30 min covering 24h. */
+/** Chart buckets: 30 min, as served for the 24h period. */
 const HIST_BUCKET_MS = 30 * 60 * 1000;
-const HIST_BUCKET_COUNT = 48;
-const HIST_WINDOW_HOURS = 24;
-const HIST_FETCH_LIMIT = 1000;
 
 /** USD threshold below which individual liquidations are filtered out of the standouts list. */
 const STANDOUT_THRESHOLD_USD = 100_000;
@@ -46,37 +45,23 @@ interface CumulativeBucket {
 }
 
 /**
- * Build 48 cumulative buckets aligned on `now`: the last bucket ends at `now`,
- * the first starts at `now - 24h`. Each bucket carries the cumulative long /
- * short $ liquidated up to and including its window.
+ * Running long / short totals over the 24h buckets (oldest first, zero-filled
+ * by the backend). Each bucket carries the cumulative $ liquidated up to and
+ * including its window.
  */
-function buildCumulative(liquidations: Liquidation[]): CumulativeBucket[] {
-  const now = Date.now();
-  const startMs = now - HIST_BUCKET_COUNT * HIST_BUCKET_MS;
-
-  const longInc = new Array<number>(HIST_BUCKET_COUNT).fill(0);
-  const shortInc = new Array<number>(HIST_BUCKET_COUNT).fill(0);
-
-  for (const liq of liquidations) {
-    const ms = getLiqTimeMs(liq);
-    const idx = Math.floor((ms - startMs) / HIST_BUCKET_MS);
-    if (idx < 0 || idx >= HIST_BUCKET_COUNT) continue;
-    if (liq.liq_dir === "Long") longInc[idx] += liq.notional_total;
-    else shortInc[idx] += liq.notional_total;
-  }
-
+function buildCumulative(buckets: ChartDataBucket[]): CumulativeBucket[] {
   const out: CumulativeBucket[] = [];
   let lc = 0;
   let sc = 0;
-  for (let i = 0; i < HIST_BUCKET_COUNT; i++) {
-    lc += longInc[i];
-    sc += shortInc[i];
+  for (const b of [...buckets].sort((a, b) => a.timestampMs - b.timestampMs)) {
+    lc += b.longVolume;
+    sc += b.shortVolume;
     out.push({
-      timestampMs: startMs + i * HIST_BUCKET_MS,
+      timestampMs: b.timestampMs,
       longCum: lc,
       shortCum: sc,
-      longInc: longInc[i],
-      shortInc: shortInc[i],
+      longInc: b.longVolume,
+      shortInc: b.shortVolume,
     });
   }
   return out;
@@ -84,8 +69,8 @@ function buildCumulative(liquidations: Liquidation[]): CumulativeBucket[] {
 
 /** Return a reliable ms timestamp for a liquidation row.
  *
- *  The `/liquidations/recent` endpoint returns corrupted `time_ms` for ~20% of
- *  rows (values ~3.5e12 → year 2082) while the ISO `time` field stays correct.
+ *  HypeDexer rows used to carry a corrupted `time_ms` for ~20% of rows
+ *  (values ~3.5e12 → year 2082) while the ISO `time` field stayed correct.
  *  Always parse the ISO field; fall back to `time_ms` only if ISO is unparseable.
  */
 function getLiqTimeMs(liq: Liquidation): number {
@@ -259,31 +244,29 @@ function CumulativeChart({ buckets }: { buckets: CumulativeBucket[] }) {
 }
 
 export const LiquidationsPanel = memo(function LiquidationsPanel() {
-  // 24h aggregated stats (totals, long/short split, top coin).
-  const { stats } = useLiquidationsData("24h", 30000);
+  // 24h aggregated stats (totals, long/short split, top coin) and the 30 min
+  // buckets the cumulative chart is built from.
+  const { stats, buckets, isLoading: dataLoading } = useLiquidationsData("24h", 30000);
 
-  // Recent feed — used for both the cumulative chart and the standouts list.
-  const {
-    liquidations: feed,
-    isLoading: feedLoading,
-  } = useRecentLiquidations({
-    limit: HIST_FETCH_LIMIT,
-    hours: HIST_WINDOW_HOURS,
-    refreshInterval: 30000,
-  });
+  // The day's largest liquidations, for the standouts footer.
+  const { liquidations: standouts, isLoading: standoutsLoading } = useTopLiquidations(
+    "24h",
+    STANDOUT_THRESHOLD_USD,
+    STANDOUT_LIMIT,
+  );
 
   const longTotal = stats.longVolume ?? 0;
   const shortTotal = stats.shortVolume ?? 0;
   const longPct = stats.totalVolume > 0 ? (longTotal / stats.totalVolume) * 100 : 0;
   const shortPct = 100 - longPct;
 
-  /** Raw 48 × 30min cumulative buckets covering 24h. */
-  const rawCumulative = useMemo(() => buildCumulative(feed), [feed]);
+  /** Raw 30min cumulative buckets covering 24h. */
+  const rawCumulative = useMemo(() => buildCumulative(buckets), [buckets]);
 
   /**
-   * Trim leading empty buckets — with `/recent` capped at 1000 rows the real
-   * coverage is often only 4-8h. Leading empty buckets would render flat lines
-   * over wasted space; trimming fills the card width with actual data.
+   * Trim leading empty buckets — on a quiet start of window they would render
+   * flat lines over wasted space; trimming fills the card width with actual
+   * data.
    */
   const cumBuckets = useMemo(() => {
     let start = 0;
@@ -319,14 +302,6 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
   }, [cumBuckets]);
 
   const hasChart = cumBuckets.length > 0 && (cumBuckets[cumBuckets.length - 1].longCum > 0 || cumBuckets[cumBuckets.length - 1].shortCum > 0);
-
-  /** Top N standouts: liquidations ≥ $100K, sorted by notional desc. */
-  const standouts = useMemo(() => {
-    return [...feed]
-      .filter((l) => l.notional_total >= STANDOUT_THRESHOLD_USD)
-      .sort((a, b) => b.notional_total - a.notional_total)
-      .slice(0, STANDOUT_LIMIT);
-  }, [feed]);
 
   return (
     <Card className="overflow-hidden flex flex-col">
@@ -401,7 +376,7 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
 
         {!hasChart ? (
           <div className="flex-1 grid place-items-center py-5 text-[11px] text-text-tertiary">
-            {feedLoading ? "Loading…" : "No liquidations in the last 24h"}
+            {dataLoading ? "Loading…" : "No liquidations in the last 24h"}
           </div>
         ) : (
           <>
@@ -427,7 +402,7 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
         </div>
         {standouts.length === 0 ? (
           <div className="text-[11px] text-text-tertiary py-1">
-            {feedLoading
+            {standoutsLoading
               ? "Loading…"
               : "No liquidation ≥ $100K in the last 24h"}
           </div>

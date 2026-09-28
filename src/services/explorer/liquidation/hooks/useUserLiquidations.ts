@@ -16,8 +16,9 @@ interface UseUserLiquidationsResult {
 }
 
 /**
- * Liquidation history of a wallet from the local liquidations DB. Static-ish
- * data (a wallet is rarely liquidated twice a minute), so it polls slowly.
+ * Liquidation history of a wallet (HypeDexer, via the backend's 5 min cache).
+ * Static-ish data (a wallet is rarely liquidated twice a minute), so it polls
+ * slowly.
  */
 export const useUserLiquidations = (address: string, limit = 100): UseUserLiquidationsResult => {
   const { data, isLoading, error } = useDataFetching<LiquidationResponse>({
