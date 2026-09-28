@@ -31,7 +31,10 @@ export function useHip4ProbabilityHistory(coins: string[]) {
     Record<string, Hip4FillRow[]>
   >({
     fetchFn: () => fetchProbabilityHistory(coins),
-    refreshInterval: 30000,
+    // Fetch once: the detail page only feeds this the coins of markets that
+    // stopped trading (live ones chart from candles), so their fills no longer
+    // move — re-reading N × 1 000 fills every 30 s cost ~1 300 credits/min.
+    refreshInterval: 0,
     dependencies: [key],
     maxRetries: 2,
   });
