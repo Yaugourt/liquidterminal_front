@@ -22,6 +22,8 @@ interface VaultLedgerTableProps {
 type LedgerTypeFilter = "all" | "deposit" | "withdraw";
 
 const PAGE_SIZE = 2000;
+/** The backend rejects a vaultLedger `limit` above 10 000 (each row is billed upstream). */
+const MAX_LIMIT = 10_000;
 
 function classifyLedger(entry: VaultLedgerEntry, vaultAddress: string): "deposit" | "withdraw" {
   return entry.userTo.toLowerCase() === vaultAddress.toLowerCase() ? "deposit" : "withdraw";
@@ -147,9 +149,15 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
         variant="outline"
         size="sm"
         className="h-7 px-3 text-xs"
-        onClick={() => setLimit((l) => l + PAGE_SIZE)}
-        disabled={isLoading || entries.length < limit}
-        title={entries.length < limit ? "All available entries loaded" : "Load 2 000 more"}
+        onClick={() => setLimit((l) => Math.min(l + PAGE_SIZE, MAX_LIMIT))}
+        disabled={isLoading || entries.length < limit || limit >= MAX_LIMIT}
+        title={
+          entries.length < limit
+            ? "All available entries loaded"
+            : limit >= MAX_LIMIT
+              ? "Showing the latest 10 000 entries"
+              : "Load 2 000 more"
+        }
       >
         Load more
       </Button>
