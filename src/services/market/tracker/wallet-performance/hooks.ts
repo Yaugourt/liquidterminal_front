@@ -21,7 +21,8 @@ export const useWalletFundingSummary = (address: string) => {
   const { data, isLoading, error, refetch } = useDataFetching<WalletFundingSummary>({
     fetchFn: () => fetchWalletFundingSummary(address),
     dependencies: [address],
-    refreshInterval: 60000,
+    // Funding is paid hourly and the backend keeps the summary 30 min.
+    refreshInterval: 300000,
     maxRetries: 1,
   });
   return { funding: data, isLoading, error, refetch };
