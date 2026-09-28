@@ -3,6 +3,7 @@
 import { SearchTrigger } from "@/components/search/SearchTrigger"
 import { SettingsSelector } from "@/components/common"
 import { UserAccountCompact } from "@/components/common"
+import { NetworkPill } from "@/components/network/NetworkSwitch"
 
 interface HeaderProps {
     searchWidth?: string;
@@ -16,6 +17,7 @@ export function Header({
         <header className="sticky top-0 z-30 bg-base/80 backdrop-blur-xl">
             <div className="flex items-center justify-between w-full max-w-[1920px] mx-auto px-2 sm:px-4 lg:px-6 xl:px-8 py-2.5 gap-2">
                 <div className="flex items-center gap-3 flex-shrink-0 ml-8 lg:ml-0">
+                    <NetworkPill />
                     <SearchTrigger className={`hidden lg:flex ${searchWidth}`} />
                 </div>
 

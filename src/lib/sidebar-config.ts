@@ -252,3 +252,22 @@ export const applyPreferencesToNavigation = (
   }));
 };
 
+
+/**
+ * Rail shown while the Elysium network is active. It only links to /elysium
+ * pages: any other link would leave the section and flip the network back to
+ * Hyperliquid (the active network follows the URL). Hyperliquid pages are
+ * one switch away.
+ */
+export const elysiumNavigationGroups: NavigationGroup[] = [
+  {
+    groupName: null,
+    items: [
+      { name: 'Overview', href: '/elysium', icon: null, IconComponent: Home },
+      { name: 'Contracts', href: '/elysium/contracts', icon: null, IconComponent: Blocks },
+      { name: 'Users', href: '/elysium/users', icon: null, IconComponent: Wallet },
+      { name: 'Bridge', href: '/elysium/bridge', icon: null, IconComponent: Network },
+      { name: 'Economics', href: '/elysium/economics', icon: null, IconComponent: Fuel },
+    ],
+  },
+];

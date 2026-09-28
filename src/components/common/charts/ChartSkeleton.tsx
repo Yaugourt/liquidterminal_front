@@ -4,6 +4,8 @@
  * ChartSkeleton - Loading placeholder for lazy-loaded chart components
  * Provides visual feedback while chart components are being loaded
  */
+const SKELETON_BAR_HEIGHTS = [34, 52, 28, 46, 58, 38, 48];
+
 export function ChartSkeleton({
     className = "",
     minHeight = "min-h-[300px]",
@@ -18,7 +20,9 @@ export function ChartSkeleton({
                             key={i}
                             className="w-2 bg-brand/30 rounded-t animate-pulse"
                             style={{
-                                height: `${20 + Math.random() * 40}px`,
+                                // Fixed heights: Math.random() here differed between the
+                                // server render and hydration on every page using it.
+                                height: `${SKELETON_BAR_HEIGHTS[i]}px`,
                                 animationDelay: `${i * 100}ms`,
                             }}
                         />
