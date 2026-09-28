@@ -28,7 +28,12 @@ export const fetchBiggestTrades = async (
       sort_dir: sortDir,
       limit,
     };
-    if (sinceHours) params.start_time = new Date(Date.now() - sinceHours * 3_600_000).toISOString();
+    // Floored to the minute: a millisecond timestamp made every poll of every
+    // visitor a new backend cache key (and a new upstream call).
+    if (sinceHours) {
+      const since = Date.now() - sinceHours * 3_600_000;
+      params.start_time = new Date(Math.floor(since / 60_000) * 60_000).toISOString();
+    }
     const res = await get<IndexerEnvelope<MarketTrade[]>>(`/indexer/completed-trades/`, params);
     return res.data ?? [];
   }, "fetching biggest trades");

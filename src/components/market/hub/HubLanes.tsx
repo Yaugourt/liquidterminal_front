@@ -82,7 +82,8 @@ export function PerpDexsLane({
 
 /** HIP-4 predictions lane: the 3 biggest live questions with their probability. */
 export function Hip4Lane() {
-  const { questions, isLoading: questionsLoading, error: questionsError } = useHip4QuestionsWithOutcomes();
+  // Same params as the HIP-4 pages and the dashboard card: one backend entry.
+  const { questions, isLoading: questionsLoading, error: questionsError } = useHip4QuestionsWithOutcomes({ limit: 200 });
 
   const top = useMemo(() => {
     const rows = (questions ?? [])
