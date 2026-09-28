@@ -6,7 +6,7 @@ import { ExternalLink } from "lucide-react";
 
 /** Public Elysium testnet explorer; its /tx, /address and /block routes resolve. */
 export const EXPLORER = "https://test-explorer.elysium.kinetiq.xyz";
-export const EMPTY = "—";
+export const EMPTY = "–";
 
 export const short = (a: string) => (a ? `${a.slice(0, 6)}…${a.slice(-4)}` : EMPTY);
 
