@@ -4,7 +4,7 @@ import {
   TokenTradeResponse,
   TokenOrderBookResponse,
 } from './types';
-import { WebSocketClient } from '@/lib/websocket-client';
+import { WebSocketClient, PING_HEARTBEAT } from '@/lib/websocket-client';
 import { mergeTrades, newestTrade } from '@/lib/hl-trades';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
@@ -73,6 +73,9 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
         url: WS_URL,
         maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
         baseReconnectDelay: RECONNECT_DELAY,
+        // An illiquid coin's channels can stay quiet past Hyperliquid's 60 s
+        // idle cut-off.
+        heartbeat: PING_HEARTBEAT,
         onOpen: () => {
           set({ isConnected: true, error: null });
 

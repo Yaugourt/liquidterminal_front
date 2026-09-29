@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { env } from '@/lib/env';
-import { WebSocketClient } from '@/lib/websocket-client';
+import { WebSocketClient, PING_HEARTBEAT } from '@/lib/websocket-client';
 import type {
   L4BookLevel,
   L4BookMessage,
@@ -120,6 +120,7 @@ export const useL4BookStore = create<L4BookStore>((set, get) => {
         maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
         baseReconnectDelay: RECONNECT_DELAY,
         debug: process.env.NODE_ENV === 'development',
+        heartbeat: PING_HEARTBEAT,
 
         onOpen: () => {
           // A reconnect lands here too: the book we held is stale, so drop it

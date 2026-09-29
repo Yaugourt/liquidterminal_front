@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import { Block, Transaction, ExplorerStore } from './types';
 
-import { WebSocketClient, HIDDEN_TAB_PAUSE_MS } from '@/lib/websocket-client';
+import { WebSocketClient, HIDDEN_TAB_PAUSE_MS, PING_HEARTBEAT } from '@/lib/websocket-client';
 
 // Blocks and txs keep a 500-item rolling window that the chain refills within
 // seconds, so the firehose can pause in a background tab without a visible gap.
@@ -29,12 +29,18 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   transactionsClient: null as WebSocketClient | null,
 
   connectBlocks: () => {
-    // Avoid double connections
-    if (get().blocksClient?.isConnected()) return;
+    // Reuse the client: connect() is a no-op while OPEN/CONNECTING (the old
+    // isConnected() guard let a second call orphan a CONNECTING socket).
+    const existing = get().blocksClient;
+    if (existing) {
+      existing.connect();
+      return;
+    }
 
     const client = new WebSocketClient({
       url: WS_URL,
       pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
+      heartbeat: PING_HEARTBEAT,
       onOpen: () => {
         set({ isBlocksConnected: true, error: null });
         client.send({
@@ -64,12 +70,17 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   },
 
   connectTransactions: () => {
-    // Avoid double connections
-    if (get().transactionsClient?.isConnected()) return;
+    // Reuse the client (see connectBlocks).
+    const existing = get().transactionsClient;
+    if (existing) {
+      existing.connect();
+      return;
+    }
 
     const client = new WebSocketClient({
       url: WS_URL,
       pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
+      heartbeat: PING_HEARTBEAT,
       onOpen: () => {
         set({ isTransactionsConnected: true, error: null });
         client.send({

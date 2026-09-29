@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { WebSocketClient } from "@/lib/websocket-client";
+import { WebSocketClient, PING_HEARTBEAT } from "@/lib/websocket-client";
 
 const WS_URL = "wss://rpc.hyperliquid.xyz/ws";
 /** Rolling window the rates and the sparkline read. */
@@ -68,6 +68,7 @@ export function useChainPulse(): ChainPulse {
       url: WS_URL,
       maxReconnectAttempts: 10,
       baseReconnectDelay: 2000,
+      heartbeat: PING_HEARTBEAT,
       onOpen: () => {
         connectedRef.current = true;
         client.send({ method: "subscribe", subscription: { type: "explorerBlock" } });

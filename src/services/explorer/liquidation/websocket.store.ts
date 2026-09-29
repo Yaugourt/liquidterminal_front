@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { env } from '@/lib/env';
-import { WebSocketClient } from '@/lib/websocket-client';
+import { WebSocketClient, PING_HEARTBEAT } from '@/lib/websocket-client';
 import { 
   Liquidation, 
   LiquidationWSStore, 
@@ -51,6 +51,9 @@ export const useLiquidationWSStore = create<LiquidationWSStore>((set, get) => {
         debug: process.env.NODE_ENV === 'development',
         maxReconnectAttempts: 10,
         baseReconnectDelay: 1000,
+        // Liquidations can be minutes apart: the ping's reply proves the
+        // socket is still alive.
+        heartbeat: PING_HEARTBEAT,
 
         onOpen: () => {
           set({ isConnected: true, error: null });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { WebSocketClient } from "@/lib/websocket-client";
+import { WebSocketClient, PING_HEARTBEAT } from "@/lib/websocket-client";
 import { fetchRecentPrints } from "./api";
 
 const WS_URL = "wss://api.hyperliquid.xyz/ws";
@@ -111,6 +111,7 @@ export function useLiveMarketFeed(tapeCoins: string[], boardCoins: string[]): Li
       url: WS_URL,
       maxReconnectAttempts: 10,
       baseReconnectDelay: 2000,
+      heartbeat: PING_HEARTBEAT,
       onOpen: () => {
         connectedRef.current = true;
         dirtyRef.current = true;
