@@ -251,6 +251,8 @@ export interface Hip4MarketsEnrichedQuery {
   class?: string;
   underlying?: string;
   question_id?: number;
+  /** One market by coin id (`#60240` → 60240); the other params are ignored. */
+  outcome_id?: number;
   limit?: number;
   offset?: number;
 }
@@ -305,6 +307,23 @@ export interface UseHip4FillsResult {
   error: Error | null;
   /** Epoch ms of the last successful fetch — null until first success. */
   dataUpdatedAt: number | null;
+  refetch: () => void;
+}
+
+/** A coin's market found by id, with the question the detail page shows it in. */
+export interface Hip4MarketLookup {
+  coin: string;
+  market: Hip4MarketEnrichedRow | null;
+  question: Hip4QuestionWithOutcomesRow | null;
+}
+
+export interface UseHip4MarketLookupResult {
+  market: Hip4MarketEnrichedRow | null;
+  question: Hip4QuestionWithOutcomesRow | null;
+  /** The lookup for the current coin has answered (found or not). */
+  resolved: boolean;
+  isLoading: boolean;
+  error: Error | null;
   refetch: () => void;
 }
 

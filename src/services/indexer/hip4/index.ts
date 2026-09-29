@@ -7,6 +7,7 @@ export { useHip4Settlements } from "./hooks/useHip4Settlements";
 export { useHip4Analytics } from "./hooks/useHip4Analytics";
 export { useHip4ActiveMarkets } from "./hooks/useHip4ActiveMarkets";
 export { useHip4LiveMarkets } from "./hooks/useHip4LiveMarkets";
+export { useHip4MarketLookup } from "./hooks/useHip4MarketLookup";
 export { useHip4ProbabilityHistory } from "./hooks/useHip4ProbabilityHistory";
 export { useHip4OrderBook } from "./hooks/useHip4OrderBook";
 export { useHip4OutcomeCandles } from "./hooks/useHip4OutcomeCandles";

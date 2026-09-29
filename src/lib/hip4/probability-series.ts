@@ -15,11 +15,15 @@ export interface ProbSeriesDef {
   /** Encoded outcome coin, e.g. `#1030`. */
   coin: string;
   label: string;
+  /** The outcome's row in the outcomes list, so its line keeps the row's color
+   * when the chart shows a subset of the outcomes. */
+  colorIndex?: number;
 }
 
 interface ProbSeriesMeta {
   key: string;
   label: string;
+  colorIndex?: number;
 }
 
 export interface ProbChartData {
@@ -63,7 +67,7 @@ export function buildProbabilitySeries(
   fillsByCoin: Record<string, Hip4FillRow[]>,
   defs: ProbSeriesDef[]
 ): ProbChartData {
-  const series = defs.map((d) => ({ key: d.coin, label: d.label }));
+  const series = defs.map((d) => ({ key: d.coin, label: d.label, colorIndex: d.colorIndex }));
 
   // Parse each series' fills into ascending {t, px} points. Reject NaN and
   // out-of-window timestamps so one garbage row can't distort the time span.
@@ -130,7 +134,7 @@ export function buildProbabilitySeriesFromCandles(
   candlesByCoin: Record<string, Hip4Candle[]>,
   defs: ProbSeriesDef[]
 ): ProbChartData {
-  const series = defs.map((d) => ({ key: d.coin, label: d.label }));
+  const series = defs.map((d) => ({ key: d.coin, label: d.label, colorIndex: d.colorIndex }));
 
   const parsed = defs.map((d) => {
     const pts = (candlesByCoin[d.coin] ?? [])

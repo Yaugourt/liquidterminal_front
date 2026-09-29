@@ -128,3 +128,60 @@ export function findMergedQuestionByCoin(
   }
   return null;
 }
+
+/**
+ * A looked-up market with no question, as the detail page's question: its two
+ * sides, each on its own coin `#<10*outcome+side>` (the market row is one of
+ * them). Prices only exist while a market trades, so a side other than the
+ * row's own carries none.
+ */
+export function sideCoinsQuestion(market: Hip4MarketEnrichedRow): Hip4QuestionWithOutcomesRow {
+  const raw = market.side != null ? rawOutcomeId(market.outcome_id) : market.outcome_id;
+  const sides = market.parsed_sides?.length ? market.parsed_sides.slice(0, 2) : [{ name: "Yes" }, { name: "No" }];
+  const outcomes = sides.map((s, side) => ({
+    outcome_id: raw * 10 + side,
+    side_name: s.name,
+    display_name: s.name,
+    mid_price: side === market.side ? market.mid_price : null,
+    volume_24h: null,
+    total_volume: null,
+    open_interest: null,
+    is_settled: market.is_settled,
+    settled_at: market.settled_at,
+    coin: `#${raw * 10 + side}`,
+  }));
+  return {
+    question_id: null,
+    title: market.display_name,
+    description: market.question_description,
+    class: market.class,
+    underlying: market.underlying,
+    outcome_count: outcomes.length,
+    total_volume: market.total_volume ?? 0,
+    created_at: null,
+    resolved_at: market.settled_at,
+    status: market.is_settled ? "settled" : "live",
+    singleton_outcome_id: null,
+    expiry: market.expiry,
+    period: market.period,
+    target_price: market.target_price,
+    primary_coin: outcomes[0].coin,
+    outcomes,
+  };
+}
+
+/**
+ * A looked-up question (indexer rows: raw outcome ids) with each outcome on
+ * its tradeable Yes coin and the residual outcome dropped, like the merge.
+ */
+export function withYesCoins(question: Hip4QuestionWithOutcomesRow): Hip4QuestionWithOutcomesRow {
+  const outcomes = question.outcomes
+    .filter((o) => !isResidualOutcome(o.display_name))
+    .map((o) => ({ ...o, coin: yesCoinOf(o.outcome_id) }));
+  return {
+    ...question,
+    outcomes,
+    outcome_count: outcomes.length,
+    primary_coin: outcomes[0]?.coin ?? null,
+  };
+}

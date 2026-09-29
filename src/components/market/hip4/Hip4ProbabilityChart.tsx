@@ -122,7 +122,7 @@ export function Hip4ProbabilityChart({
     () =>
       series.map((s, i) => ({
         ...s,
-        color: chartPalette.multiSeries[i % chartPalette.multiSeries.length],
+        color: chartPalette.multiSeries[(s.colorIndex ?? i) % chartPalette.multiSeries.length],
       })),
     [series]
   );

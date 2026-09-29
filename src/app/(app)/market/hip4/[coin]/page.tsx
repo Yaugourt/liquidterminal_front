@@ -6,10 +6,10 @@ import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
 import { usePageTitle } from "@/store/use-page-title";
 import {
-  useHip4MarketsEnriched,
   useHip4QuestionsWithOutcomes,
   useHip4Fills,
   useHip4LiveMarkets,
+  useHip4MarketLookup,
   useHip4ProbabilityHistory,
   useHip4OutcomeCandles,
   type Hip4MarketEnrichedRow,
@@ -30,9 +30,14 @@ import { ChartSkeleton, combinedSourceStatus } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { LoadingState } from "@/components/ui/loading-state";
 import { Card } from "@/components/ui/card";
-import { effectiveStatus, isPlaceholderMarketName, isYesNoSides } from "@/lib/hip4/market-formatter";
+import {
+  effectiveStatus,
+  isPlaceholderMarketName,
+  isResidualOutcome,
+  isYesNoSides,
+} from "@/lib/hip4/market-formatter";
 import { rawOutcomeId } from "@/lib/hip4/outcome-meta";
-import { buildMergedQuestions, findMergedQuestionByCoin } from "@/lib/hip4/merge-questions";
+import { buildMergedQuestions, findMergedQuestionByCoin, yesCoinOf } from "@/lib/hip4/merge-questions";
 import { resolveHip4Layout, type Hip4ChartMode } from "@/lib/hip4/detail-layout";
 import { buildTradeFlow } from "@/lib/hip4/trade-flow";
 import type { ProbSeriesDef } from "@/lib/hip4/probability-series";
@@ -40,6 +45,8 @@ import type { Timeframe } from "@/lib/timeframe";
 import type { Hip4CandleInterval } from "@/services/indexer/hip4";
 
 const TF_OPTIONS: Timeframe[] = ["24h", "7d", "30d"];
+/** Lines on the odds chart: as many as `chartPalette.multiSeries` has colors. */
+const MAX_CHART_SERIES = 8;
 
 /** Map a timeframe pill to a candle interval + lookback window (ms from now). */
 function candleWindow(tf: Timeframe): { interval: Hip4CandleInterval; lookbackMs: number } {
@@ -72,11 +79,6 @@ const Hip4ProbabilityChart = dynamic(
   { ssr: false, loading: () => <ChartSkeleton /> }
 );
 
-function parseCoinOutcomeId(coin: string): number | null {
-  const m = coin.match(/^#(\d+)$/);
-  return m ? parseInt(m[1], 10) : null;
-}
-
 /** HIP-4 outcome coins (`#NNN`) aren't on the shared market WS that powers the
  * spot/perp OrderBook + TradingView candle feed, so those components can't
  * resolve them. P1 swaps the placeholder for a REST-polled `l2Book`. */
@@ -101,55 +103,47 @@ export default function Hip4MarketDetailPage() {
     setChartMode("underlying");
   }, [coin]);
 
-  const enriched = useHip4MarketsEnriched();
-  const { markets, isLoading } = enriched;
   const questions = useHip4QuestionsWithOutcomes({ limit: 200 });
-  // Live markets HypeDexer's enriched table omits (Fed/NBA/CPI/recurring BTC)
-  // resolve from Hyperliquid's outcomeMeta + allMids so deep links don't bounce.
+  // Live markets resolve from Hyperliquid's outcomeMeta + allMids (the indexer
+  // lists omit them).
   const live = useHip4LiveMarkets();
   // Higher limit so the same feed powers recent fills AND the derived trade-flow
   // / top-traders aggregates (one fetch, three views — no extra network).
   const fillsResult = useHip4Fills({ coin: activeCoin, limit: 400 });
 
-  const allMarkets = useMemo(
-    () => [...markets, ...Object.values(live.liveMarketsByCoin)],
-    [markets, live.liveMarketsByCoin]
-  );
+  // Live-only coins resolve only from the live hook, so wait for it to *settle*
+  // (succeed or hard-fail) before deciding the market is missing.
+  const liveSettled = live.dataUpdatedAt !== null || (!live.isLoading && !!live.error);
+  const liveMarket = live.liveMarketsByCoin[coin] ?? null;
+  // Any other coin (settled, expired, older than the indexer lists) is looked
+  // up by id rather than bouncing to the list.
+  const lookupEnabled = liveSettled && !liveMarket && isHip4OutcomeCoin(coin);
+  const lookup = useHip4MarketLookup(coin, lookupEnabled);
 
-  // Resolve the market for the URL coin. Prices + side come from the live
-  // (encoded) coin; richer metadata (underlying, class, target_price) for
-  // grouped questions lives only on HypeDexer's raw-outcome enriched row, so we
-  // join the two (see merge-questions / outcome-meta for the encoding rules).
+  // Resolve the market for the URL coin: the live (encoded) coin, else the
+  // looked-up one. HypeDexer mislabels NBA/Fed raw rows as BTC priceBucket —
+  // strip the price metadata unless the row's own sides are genuinely Yes/No.
   const market = useMemo<Hip4MarketEnrichedRow | null>(() => {
-    const liveMarket = live.liveMarketsByCoin[coin] ?? null;
-    if (!liveMarket) {
-      const fallback = markets.find((m) => m.coin === coin) ?? null;
-      // HypeDexer mislabels NBA/Fed raw rows as BTC priceBucket — strip the
-      // price metadata unless the row's own sides are genuinely Yes/No.
-      if (fallback && !isYesNoSides((fallback.parsed_sides ?? []).map((s) => s.name))) {
-        return { ...fallback, underlying: null, target_price: null };
-      }
-      return fallback;
+    if (liveMarket) return liveMarket;
+    const found = lookup.market;
+    if (found && !isYesNoSides((found.parsed_sides ?? []).map((s) => s.name))) {
+      return { ...found, underlying: null, target_price: null };
     }
-    const encId = parseCoinOutcomeId(coin);
-    const enrichedRaw =
-      encId != null ? markets.find((m) => m.coin === `#${rawOutcomeId(encId)}`) ?? null : null;
+    return found;
+  }, [liveMarket, lookup.market]);
 
-    const sidesYesNo = isYesNoSides((liveMarket.parsed_sides ?? []).map((s) => s.name));
-    const enriched = sidesYesNo ? enrichedRaw : null;
-
-    const cls = liveMarket.class ?? enriched?.class ?? null;
-    const isPriceBinary = cls === "priceBinary";
-    return {
-      ...liveMarket,
-      class: cls,
-      underlying: liveMarket.underlying ?? enriched?.underlying ?? null,
-      target_price: liveMarket.target_price ?? enriched?.target_price ?? null,
-      display_name: isPriceBinary
-        ? liveMarket.display_name
-        : enriched?.display_name || liveMarket.display_name,
-    };
-  }, [coin, markets, live.liveMarketsByCoin]);
+  // Fill labels: the live coins, plus both sides of a looked-up market.
+  const allMarkets = useMemo(() => {
+    const rows = Object.values(live.liveMarketsByCoin);
+    const found = lookup.market;
+    if (found && found.side != null) {
+      const raw = rawOutcomeId(found.outcome_id);
+      (found.parsed_sides ?? []).slice(0, 2).forEach((s, side) =>
+        rows.push({ ...found, outcome_id: raw * 10 + side, coin: `#${raw * 10 + side}`, side, side_name: s.name })
+      );
+    }
+    return rows;
+  }, [live.liveMarketsByCoin, lookup.market]);
 
   // Merge HypeDexer questions with the canonical live markets once, then reuse
   // the same list for the parent-question lookup AND the related-markets rail.
@@ -165,9 +159,10 @@ export default function Hip4MarketDetailPage() {
 
   // The parent question of the active coin (CPI/buckets group several outcomes;
   // NBA/Fed are a single two-sided outcome). Drives the outcomes list + chart.
+  // A looked-up market brings its own (indexer question, or its two sides).
   const parentQuestion = useMemo(
-    () => findMergedQuestionByCoin(mergedQuestions, coin),
-    [mergedQuestions, coin]
+    () => findMergedQuestionByCoin(mergedQuestions, coin) ?? lookup.question,
+    [mergedQuestions, coin, lookup.question]
   );
 
   // The single source for "how does this market type render".
@@ -176,13 +171,26 @@ export default function Hip4MarketDetailPage() {
     [parentQuestion, market]
   );
 
-  // One probability series per outcome (the YES side coin).
+  // One probability series per outcome (the YES side coin), colored like its
+  // row in the outcomes list. A question with many outcomes (a tournament
+  // winner) charts its most traded ones and the selected one: the odds of a
+  // market that stopped trading cost up to 1 000 fills per outcome.
   const seriesDefs = useMemo<ProbSeriesDef[]>(() => {
     if (!parentQuestion) return [];
-    return parentQuestion.outcomes
-      .map((o) => ({ coin: o.coin ?? `#${o.outcome_id}`, label: o.display_name }))
-      .filter((d) => /^#\d+$/.test(d.coin));
-  }, [parentQuestion]);
+    const all = parentQuestion.outcomes
+      .filter((o) => !isResidualOutcome(o.display_name))
+      .map((o, i) => ({
+        def: { coin: o.coin ?? `#${o.outcome_id}`, label: o.display_name, colorIndex: i },
+        volume: o.total_volume ?? 0,
+      }))
+      .filter((x) => /^#\d+$/.test(x.def.coin));
+    if (all.length <= MAX_CHART_SERIES) return all.map((x) => x.def);
+    const keep = new Set(
+      [...all].sort((a, b) => b.volume - a.volume).slice(0, MAX_CHART_SERIES).map((x) => x.def.coin)
+    );
+    keep.add(activeCoin);
+    return all.filter((x) => keep.has(x.def.coin)).map((x) => x.def);
+  }, [parentQuestion, activeCoin]);
 
   // Price-binary can show EITHER the underlying candle + strike OR the implied
   // odds (toggle); everything else only has the universal odds chart.
@@ -250,16 +258,28 @@ export default function Hip4MarketDetailPage() {
     if (market) setTitle(`${parentQuestion?.title || market.display_name} — HIP-4`);
   }, [setTitle, market, parentQuestion]);
 
-  // Live-only coins resolve only from the live hook, so wait for it to *settle*
-  // (succeed or hard-fail) before deciding the market is missing.
-  const liveSettled = live.dataUpdatedAt !== null || (!live.isLoading && !!live.error);
+  // Still answering: the live list, then the lookup of a coin it doesn't hold.
+  const resolving = !liveSettled || (lookupEnabled && !lookup.resolved && !lookup.error);
+  const unavailable = !resolving && !market && (!!live.error || !!lookup.error);
+  // An old `#<raw>` link resolves to the indexer's raw outcome row: open its Yes
+  // coin, which carries the fills. A coin nobody knows goes back to the list.
+  const redirectTo =
+    market && !liveMarket && market.side == null
+      ? `/market/hip4/${encodeURIComponent(yesCoinOf(market.outcome_id))}`
+      : !resolving && !market && !unavailable
+      ? "/market/hip4"
+      : null;
 
-  if ((isLoading || live.isLoading || !liveSettled) && !market) {
+  useEffect(() => {
+    if (redirectTo) router.replace(redirectTo);
+  }, [redirectTo, router]);
+
+  if (resolving && !market) {
     return <LoadingState message="Loading market…" withCard />;
   }
 
-  if (!isLoading && liveSettled && !market) {
-    if (live.error) {
+  if (!market || redirectTo) {
+    if (unavailable) {
       return (
         <Card className="flex h-[320px] flex-col items-center justify-center gap-3 p-6 text-center">
           <p className="text-[13px] font-semibold text-text-secondary">Couldn&apos;t load this market</p>
@@ -269,7 +289,10 @@ export default function Hip4MarketDetailPage() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => live.refetch()}
+              onClick={() => {
+                if (live.error) live.refetch();
+                if (lookup.error) lookup.refetch();
+              }}
               className="rounded-md border border-border-default bg-surface-2 px-3 py-1.5 text-[11px] font-semibold text-text-primary transition-colors hover:bg-surface-3"
             >
               Retry
@@ -284,8 +307,7 @@ export default function Hip4MarketDetailPage() {
         </Card>
       );
     }
-    router.replace("/market/hip4");
-    return null;
+    return null; // redirecting
   }
 
   return (
@@ -302,7 +324,7 @@ export default function Hip4MarketDetailPage() {
             }
             typeLabel={layout.typeLabel}
             status={detailStatus}
-            sourceStatus={combinedSourceStatus(enriched, questions, fillsResult)}
+            sourceStatus={combinedSourceStatus(questions, fillsResult, ...(lookupEnabled ? [lookup] : []))}
           />
           <Hip4DetailKpiRibbon
             question={parentQuestion}
