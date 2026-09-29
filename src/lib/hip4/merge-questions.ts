@@ -30,6 +30,15 @@ interface LiveMarketsLike {
   liveMarketsByCoin: Record<string, Hip4MarketEnrichedRow>;
 }
 
+/**
+ * The tradeable Yes-side coin of a raw outcome id, live or not: Hyperliquid
+ * (and the indexer's fills) always name it `#<10*raw>`. The indexer's raw
+ * `#<raw>` label is another market's coin (`#20` is outcome 2's Yes side).
+ */
+export function yesCoinOf(rawId: number): string {
+  return `#${rawId * 10}`;
+}
+
 export function buildMergedQuestions(
   hypeQuestions: Hip4QuestionWithOutcomesRow[],
   live: LiveMarketsLike
@@ -38,16 +47,6 @@ export function buildMergedQuestions(
   const liveRawIds = new Set<number>(
     live.liveQuestions.flatMap((q) => q.outcomes.map((o) => rawOutcomeId(o.outcome_id)))
   );
-
-  // The encoded, tradeable YES-side coin for a HypeDexer raw outcome id. Prefer
-  // whichever scheme is actually quoted in allMids so the detail page lands on a
-  // coin with real prices/fills; fall back to the raw coin (still enriched-
-  // backed) for old markets that aren't live-quoted.
-  const tradeableCoin = (rawId: number): string => {
-    const enc = `#${rawId * 10}`;
-    const self = `#${rawId}`;
-    return mids[enc] != null ? enc : mids[self] != null ? self : self;
-  };
 
   const enrichedHd: Hip4QuestionWithOutcomesRow[] = [];
   const wellGroupedRawIds = new Set<number>();
@@ -84,7 +83,7 @@ export function buildMergedQuestions(
           ...o,
           display_name: isDuplicated && metaName ? metaName : o.display_name,
           mid_price: o.mid_price ?? liveMidForOutcomeId(o.outcome_id, mids),
-          coin: tradeableCoin(o.outcome_id),
+          coin: yesCoinOf(o.outcome_id),
         };
       });
 
