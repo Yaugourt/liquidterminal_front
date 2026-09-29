@@ -17,6 +17,67 @@ const isBlock = (item: unknown): item is Block =>
 const isTransaction = (item: unknown): item is Transaction =>
   typeof item === 'object' && item !== null && 'time' in item && 'action' in item;
 
+/** Newest-first merge of a batch into the list; null when nothing is new. */
+function mergeBlocks(current: Block[], incoming: Block[]): Block[] | null {
+  const known = new Set(current.map((b) => b.height));
+  const fresh: Block[] = [];
+  for (const block of incoming) {
+    if (known.has(block.height)) continue;
+    known.add(block.height);
+    fresh.push(block);
+  }
+  if (fresh.length === 0) return null;
+  return [...fresh, ...current].sort((a, b) => b.height - a.height).slice(0, MAX_ITEMS);
+}
+
+/** Same for transactions; the sort is stable, so equal times keep frame order. */
+function mergeTransactions(current: Transaction[], incoming: Transaction[]): Transaction[] | null {
+  const known = new Set(current.map((t) => t.hash));
+  const fresh: Transaction[] = [];
+  for (const transaction of incoming) {
+    if (known.has(transaction.hash)) continue;
+    known.add(transaction.hash);
+    fresh.push(transaction);
+  }
+  if (fresh.length === 0) return null;
+  return [...fresh, ...current].sort((a, b) => b.time - a.time).slice(0, MAX_ITEMS);
+}
+
+/**
+ * Blocks and txs each land ~14 times a second. Frames are buffered and applied
+ * every FLUSH_MS in one store update: ~4 renders a second for both lists
+ * instead of ~28 (measured 2026-09-29: /explorer main thread 33 % → 14 % at
+ * 4x CPU), and the rows still move at a readable pace.
+ */
+const FLUSH_MS = 250;
+let pendingBlocks: Block[] = [];
+let pendingTransactions: Transaction[] = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+
+function queueFrame(blocks: Block[], transactions: Transaction[]): void {
+  pendingBlocks.push(...blocks);
+  pendingTransactions.push(...transactions);
+  if (!flushTimer) flushTimer = setTimeout(flushFrames, FLUSH_MS);
+}
+
+function flushFrames(): void {
+  flushTimer = null;
+  const incomingBlocks = pendingBlocks;
+  const incomingTransactions = pendingTransactions;
+  pendingBlocks = [];
+  pendingTransactions = [];
+  useExplorerStore.setState((state) => {
+    const blocks = incomingBlocks.length > 0 ? mergeBlocks(state.blocks, incomingBlocks) : null;
+    const transactions =
+      incomingTransactions.length > 0 ? mergeTransactions(state.transactions, incomingTransactions) : null;
+    if (!blocks && !transactions) return state;
+    return {
+      ...(blocks ? { blocks, currentBlockHeight: Math.max(state.currentBlockHeight, blocks[0].height) } : {}),
+      ...(transactions ? { transactions } : {}),
+    };
+  });
+}
+
 export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   blocks: [],
   transactions: [],
@@ -51,7 +112,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       onMessage: (data) => {
         if (!Array.isArray(data)) return;
         const blocks = data.filter(isBlock);
-        if (blocks.length > 0) get().addBlocks(blocks);
+        if (blocks.length > 0) queueFrame(blocks, []);
       },
       onClose: () => set({ isBlocksConnected: false }),
       onError: () => set({ error: 'Blocks WebSocket connection error' })
@@ -62,6 +123,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   },
 
   disconnectBlocks: () => {
+    pendingBlocks = [];
     const { blocksClient } = get();
     if (blocksClient) {
       blocksClient.disconnect();
@@ -91,7 +153,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
       onMessage: (data) => {
         if (!Array.isArray(data)) return;
         const transactions = data.filter(isTransaction);
-        if (transactions.length > 0) get().addTransactions(transactions);
+        if (transactions.length > 0) queueFrame([], transactions);
       },
       onClose: () => set({ isTransactionsConnected: false }),
       onError: () => set({ error: 'Transactions WebSocket connection error' })
@@ -102,6 +164,7 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   },
 
   disconnectTransactions: () => {
+    pendingTransactions = [];
     const { transactionsClient } = get();
     if (transactionsClient) {
       transactionsClient.disconnect();
@@ -122,19 +185,8 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
 
   addBlocks: (incoming: Block[]) => {
     set((state) => {
-      const known = new Set(state.blocks.map((b) => b.height));
-      const fresh: Block[] = [];
-      for (const block of incoming) {
-        if (known.has(block.height)) continue;
-        known.add(block.height);
-        fresh.push(block);
-      }
-      if (fresh.length === 0) return state;
-
-      // Newest first; one update for the list and the height.
-      const blocks = [...fresh, ...state.blocks]
-        .sort((a, b) => b.height - a.height)
-        .slice(0, MAX_ITEMS);
+      const blocks = mergeBlocks(state.blocks, incoming);
+      if (!blocks) return state;
       return {
         blocks,
         currentBlockHeight: Math.max(state.currentBlockHeight, blocks[0].height)
@@ -144,21 +196,8 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
 
   addTransactions: (incoming: Transaction[]) => {
     set((state) => {
-      const known = new Set(state.transactions.map((t) => t.hash));
-      const fresh: Transaction[] = [];
-      for (const transaction of incoming) {
-        if (known.has(transaction.hash)) continue;
-        known.add(transaction.hash);
-        fresh.push(transaction);
-      }
-      if (fresh.length === 0) return state;
-
-      // Newest first; the sort is stable, so equal times keep frame order.
-      return {
-        transactions: [...fresh, ...state.transactions]
-          .sort((a, b) => b.time - a.time)
-          .slice(0, MAX_ITEMS)
-      };
+      const transactions = mergeTransactions(state.transactions, incoming);
+      return transactions ? { transactions } : state;
     });
   },
 
