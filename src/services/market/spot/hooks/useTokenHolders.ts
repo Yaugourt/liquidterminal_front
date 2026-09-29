@@ -5,6 +5,14 @@ import { TokenHoldersResponse } from '../types';
 
 const NO_HOLDERS: TokenHoldersResponse['holders'] = {};
 
+/**
+ * Hypurrscan regenerates its holder snapshot every ~10 min (and serves it ~4
+ * min later), and HYPE's weighs ~17.7 MB with the staked list (measured
+ * 2026-09-29): polling every minute re-downloaded the same snapshot 9 times
+ * out of 10.
+ */
+const HOLDERS_REFRESH_MS = 10 * 60_000;
+
 export function useTokenHolders(tokenName: string) {
   const { 
     data: normalHolders, 
@@ -15,7 +23,7 @@ export function useTokenHolders(tokenName: string) {
     fetchFn: async () => {
       return await fetchTokenHolders(tokenName);
     },
-    refreshInterval: 60000,
+    refreshInterval: HOLDERS_REFRESH_MS,
     maxRetries: 3,
     dependencies: [tokenName]
   });
@@ -29,7 +37,7 @@ export function useTokenHolders(tokenName: string) {
     fetchFn: async () => {
       return await fetchStakedHolders(tokenName);
     },
-    refreshInterval: 60000,
+    refreshInterval: HOLDERS_REFRESH_MS,
     maxRetries: 3,
     dependencies: [tokenName]
   });
