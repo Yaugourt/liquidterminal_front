@@ -179,6 +179,7 @@ function BlocksCard({
             <ModuleTableRow
               key={b.height}
               href={`/explorer/block/${b.height}`}
+              prefetch={false}
               cells={[
                 <span key="block" className="mono font-semibold text-brand">
                   {b.height.toLocaleString()}
@@ -269,6 +270,7 @@ function TxCard({
             <ModuleTableRow
               key={t.hash}
               href={`/explorer/transaction/${t.hash}`}
+              prefetch={false}
               cells={[
                 <span key="age" className="mono text-text-tertiary">
                   {timeAgo(t.time)}

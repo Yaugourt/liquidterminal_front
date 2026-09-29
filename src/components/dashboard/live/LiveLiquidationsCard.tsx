@@ -50,7 +50,7 @@ export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
               {rows.map((l) => (
                 <tr key={l.tid} className="border-t border-border-subtle first:border-t-0">
                   <td className="py-1.5 pr-2 whitespace-nowrap">
-                    <Link href={`/explorer/transaction/${l.hash}`} className="text-text-tertiary hover:text-brand" title="Open the transaction">
+                    <Link href={`/explorer/transaction/${l.hash}`} prefetch={false} className="text-text-tertiary hover:text-brand" title="Open the transaction">
                       {age(l.time_ms, now)}
                     </Link>
                   </td>
@@ -63,7 +63,7 @@ export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
                   <td className={`py-1.5 pr-2 ${l.liq_dir === "Long" ? "text-success" : "text-danger"}`}>{l.liq_dir}</td>
                   <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactUsd(l.notional_total)}</td>
                   <td className="py-1.5 text-right whitespace-nowrap">
-                    <Link href={`/market/tracker/wallet/${l.liquidated_user}`} className="text-text-tertiary hover:text-brand" title="Liquidated wallet">
+                    <Link href={`/market/tracker/wallet/${l.liquidated_user}`} prefetch={false} className="text-text-tertiary hover:text-brand" title="Liquidated wallet">
                       {short(l.liquidated_user)}
                     </Link>
                   </td>

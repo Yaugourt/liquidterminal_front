@@ -74,6 +74,9 @@ export const ChainHeartbeat = memo(function ChainHeartbeat({ pulse }: { pulse: C
           {pulse.height != null && (
             <Link
               href={`/explorer/block/${pulse.height}`}
+              // The height changes every second: prefetching each block page would
+              // cost two requests a second.
+              prefetch={false}
               className="mt-1 flex items-center justify-between rounded-md bg-surface-2/60 px-2.5 py-1.5 text-[11px] hover:bg-surface-2 focus-ring"
             >
               <span className="text-text-tertiary">Latest block</span>

@@ -266,11 +266,17 @@ export function ModuleTable({
 export function ModuleTableRow({
   cells,
   href,
+  prefetch,
   className,
 }: {
   /** Cell content — alignment is owned by `columns[].align` on the parent table. */
   cells: ReactNode[];
   href?: string;
+  /**
+   * Next's link prefetch. Pass `false` for rows of a live stream: every new
+   * row in view would otherwise prefetch its page (two requests per row).
+   */
+  prefetch?: boolean;
   /** Extra row classes (e.g. `bg-brand/5` to highlight the current entity). */
   className?: string;
 }) {
@@ -279,7 +285,7 @@ export function ModuleTableRow({
       className={`border-b border-border-subtle last:border-b-0 hover:bg-surface-2/60 transition-colors ${className ?? ""}`}
     >
       {cells.map((cell, i) => (
-        <ModuleCell key={i} href={href} index={i}>
+        <ModuleCell key={i} href={href} prefetch={prefetch} index={i}>
           {cell}
         </ModuleCell>
       ))}
@@ -291,17 +297,19 @@ export function ModuleTableRow({
 function ModuleCell({
   children,
   href,
+  prefetch,
   index,
 }: {
   children: ReactNode;
   href?: string;
+  prefetch?: boolean;
   index: number;
 }) {
   const { density, alignments } = useContext(ModuleTableContext);
   // Fallback: first cell left, the rest right (legacy ModuleTable behaviour).
   const align = alignments[index] ?? (index === 0 ? "left" : "right");
   const content = href ? (
-    <Link href={href} className="block">
+    <Link href={href} prefetch={prefetch} className="block">
       {children}
     </Link>
   ) : (

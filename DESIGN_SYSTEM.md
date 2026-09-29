@@ -454,7 +454,7 @@ Generic composition patterns, **applicable everywhere** in the app (dashboard, m
 Building blocks:
 
 - `<OverviewModule title subtitle? tag? actions? href viewAllLabel>` — wrapper rendering `<CardHead>` (§4). For a custom body under a standard head, use `<Card>` + `<CardHead>` directly.
-- `<ModuleTable columns density?><ModuleTableRow cells href? /></ModuleTable>` — the table itself. **One single source of truth for column widths** (`columns[].width`), header and rows stay pixel-aligned through `<colgroup>`. Two densities: `comfortable` (default, leaderboards) and `compact` (feeds, recent activity).
+- `<ModuleTable columns density?><ModuleTableRow cells href? prefetch? /></ModuleTable>` — the table itself. **One single source of truth for column widths** (`columns[].width`), header and rows stay pixel-aligned through `<colgroup>`. Two densities: `comfortable` (default, leaderboards) and `compact` (feeds, recent activity). Rows of a live stream pass `prefetch={false}`: Next prefetches every link that enters the viewport, so a feed adding rows every second fires two requests per new row.
 - `<ModuleAsset assetName name sub />` — standard asset cell (see §5.c).
 - `<ModuleRow rank logo name sub stats={[{label,value}]} href? />` — alternative "leaderboard list" layout (no table, explicit ranks). Use when a header-less layout makes more sense.
 - `<ModuleSubhead>HIP-3 Perp DEXs</ModuleSubhead>` — body subtitle inside a module.

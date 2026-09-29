@@ -116,7 +116,7 @@ export const BigPrintsCard = memo(function BigPrintsCard({
                 <tr key={p.tid} className="border-t border-border-subtle first:border-t-0">
                   <td className="py-1.5 pr-2 whitespace-nowrap">
                     {p.hash ? (
-                      <Link href={`/explorer/transaction/${p.hash}`} className="text-text-tertiary hover:text-brand" title="Open the transaction">
+                      <Link href={`/explorer/transaction/${p.hash}`} prefetch={false} className="text-text-tertiary hover:text-brand" title="Open the transaction">
                         {clock(p.time)}
                       </Link>
                     ) : (
@@ -136,7 +136,7 @@ export const BigPrintsCard = memo(function BigPrintsCard({
                   <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap">{formatPrice(p.px, format, { showCurrency: false })}</td>
                   <td className="py-1.5 text-right whitespace-nowrap hidden sm:table-cell">
                     {p.taker ? (
-                      <Link href={`/market/tracker/wallet/${p.taker}`} className="text-text-secondary hover:text-brand" title="Taker wallet">
+                      <Link href={`/market/tracker/wallet/${p.taker}`} prefetch={false} className="text-text-secondary hover:text-brand" title="Taker wallet">
                         {short(p.taker)}
                       </Link>
                     ) : null}
