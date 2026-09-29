@@ -40,12 +40,14 @@ export function formatPriceBinaryTitle(
 
 /**
  * True for upstream template names that are not real market titles (recurring
- * markets ship the literal deployer placeholder "Recurring Named Outcome").
- * Callers must fall back to an id/ticker-derived label instead of rendering it.
+ * markets ship the literal deployer placeholder "Recurring Named Outcome";
+ * templated markets a `template:<id>` reference, rendered upstream of here
+ * when the registry is available). Callers must fall back to an
+ * id/ticker-derived label instead of rendering it.
  */
 export function isPlaceholderMarketName(name: string | null | undefined): boolean {
   const n = (name ?? "").trim().toLowerCase();
-  return n === "" || n === "recurring named outcome";
+  return n === "" || n === "recurring named outcome" || n.startsWith("template");
 }
 
 export function formatMarketTitle(market: Hip4MarketEnrichedRow): string {
@@ -106,7 +108,8 @@ export function isResidualOutcome(name: string | null | undefined): boolean {
     n === "other / disputed" ||
     n === "other" ||
     n === "fallback" ||
-    n === "recurring fallback"
+    n === "recurring fallback" ||
+    n === "template fallback"
   );
 }
 

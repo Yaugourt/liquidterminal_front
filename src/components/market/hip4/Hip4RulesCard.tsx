@@ -13,12 +13,18 @@ interface Hip4RulesCardProps {
   layout: Hip4DetailLayout;
 }
 
-/** Human-readable resolution prose. Structured price markets get a synthesized
- * sentence; prose markets (NBA/Fed/CPI) carry their own text in the description,
- * which we surface verbatim (minus the trailing `metadata=…` machine tag). */
+/** Human-readable resolution prose. Prose markets (NBA/Fed/CPI, and templated
+ * markets whose rules are rendered from Hyperliquid's registry) carry their own
+ * text in the description, which we surface verbatim (minus the trailing
+ * `metadata=…` machine tag); structured price markets get a synthesized sentence. */
 function buildRuleText(market: Hip4MarketEnrichedRow, isPriceBinary: boolean): string | null {
   const raw = (market.question_description ?? "").trim();
   const structured = /(^|\|)\s*class\s*:/.test(raw);
+
+  if (raw && !structured) {
+    // Strip the trailing `metadata=category:…|subCategory:…` machine tag.
+    return raw.replace(/\s*metadata=.*$/, "").trim() || null;
+  }
 
   if (isPriceBinary && market.underlying && market.target_price != null && market.expiry) {
     const price =
@@ -30,10 +36,7 @@ function buildRuleText(market: Hip4MarketEnrichedRow, isPriceBinary: boolean): s
     )}, and NO otherwise. It settles automatically from the ${market.underlying} oracle price.`;
   }
 
-  if (!raw) return null;
-  if (structured) return null; // machine string with no prose — metadata grid covers it
-  // Strip the trailing `metadata=category:…|subCategory:…` machine tag.
-  return raw.replace(/\s*metadata=.*$/, "").trim() || null;
+  return null; // machine string with no prose — the metadata grid covers it
 }
 
 /**

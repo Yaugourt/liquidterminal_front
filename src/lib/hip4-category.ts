@@ -3,8 +3,9 @@
  * to a user-facing category for filtering the market grid.
  *
  * Rules (in order):
- *   - priceBinary + underlying ∈ {BTC, ETH, HYPE, SOL, PURR, ARB, …}  → "crypto"
- *   - priceBinary + any other underlying                              → "macro"
+ *   - price market (priceBinary / priceTouch / priceBucket)
+ *     + underlying ∈ {BTC, ETH, HYPE, SOL, PURR, ARB, …}              → "crypto"
+ *   - price market + any other underlying                             → "macro"
  *   - class_normalized === "custom" && has named sides                → "custom"
  *   - anything else                                                    → "other"
  */
@@ -25,7 +26,7 @@ export function categorizeQuestion(
   const cls = (q.class ?? "").toLowerCase() || "custom";
   const underlying = (q.underlying ?? "").toUpperCase();
 
-  if (cls === "pricebinary") {
+  if (cls === "pricebinary" || cls === "pricetouch" || cls === "pricebucket") {
     if (underlying && CRYPTO_UNDERLYINGS.has(underlying)) return "crypto";
     return "macro";
   }

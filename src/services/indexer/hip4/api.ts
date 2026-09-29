@@ -12,8 +12,8 @@ import type {
   Hip4FillsQuery,
   Hip4SettlementsQuery,
   Hip4AnalyticsQuery,
-  Hip4OutcomeMetaEntry,
   Hip4OutcomeMetaResponse,
+  Hip4OutcomeTemplateEntry,
   Hip4L2Book,
   Hip4Candle,
   Hip4CandleInterval,
@@ -83,10 +83,10 @@ export async function fetchHip4Settlements(
   }, "fetching HIP-4 settlements");
 }
 
-/** Canonical list of currently-registered outcomes, straight from Hyperliquid
- * (`POST /info { type: "outcomeMeta" }`). This is the source of truth for the
- * live markets HypeDexer's aggregation tables omit. */
-export async function fetchHip4OutcomeMeta(): Promise<Hip4OutcomeMetaEntry[]> {
+/** Canonical list of currently-registered outcomes and the questions grouping
+ * them, straight from Hyperliquid (`POST /info { type: "outcomeMeta" }`). This
+ * is the source of truth for the live markets HypeDexer's lists omit. */
+export async function fetchHip4OutcomeMeta(): Promise<Required<Hip4OutcomeMetaResponse>> {
   return withErrorHandling(async () => {
     const res = await postExternal<Hip4OutcomeMetaResponse>(
       `${API_URLS.HYPERLIQUID_API}/info`,
@@ -95,8 +95,24 @@ export async function fetchHip4OutcomeMeta(): Promise<Hip4OutcomeMetaEntry[]> {
       // only recovery layer — don't stack the inner 4×10s axios retry chain.
       { timeoutMs: 5000, retryOnError: false }
     );
-    return Array.isArray(res?.outcomes) ? res.outcomes : [];
+    return {
+      outcomes: Array.isArray(res?.outcomes) ? res.outcomes : [],
+      questions: Array.isArray(res?.questions) ? res.questions : [],
+    };
   }, "fetching HIP-4 outcomeMeta");
+}
+
+/** Hyperliquid's template registry (`POST /info { type: "outcomeTemplates" }`):
+ * the title and rules formats of markets named `template:<id>`. */
+export async function fetchHip4OutcomeTemplates(): Promise<Hip4OutcomeTemplateEntry[]> {
+  return withErrorHandling(async () => {
+    const res = await postExternal<Hip4OutcomeTemplateEntry[]>(
+      `${API_URLS.HYPERLIQUID_API}/info`,
+      { type: "outcomeTemplates" },
+      { timeoutMs: 5000, retryOnError: false }
+    );
+    return Array.isArray(res) ? res : [];
+  }, "fetching HIP-4 outcomeTemplates");
 }
 
 /** Live mid prices for outcome spot coins (`POST /info { type: "allMids" }`),

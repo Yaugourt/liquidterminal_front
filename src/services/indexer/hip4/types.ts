@@ -145,8 +145,29 @@ export interface Hip4OutcomeMetaEntry {
   quoteToken?: string;
 }
 
+/** One question from outcomeMeta: named outcomes (raw ids) plus the residual
+ * `fallbackOutcome`, all listed among `outcomes`. */
+export interface Hip4OutcomeMetaQuestion {
+  question: number;
+  name: string;
+  description: string;
+  fallbackOutcome: number | null;
+  namedOutcomes: number[];
+  settledNamedOutcomes: number[];
+}
+
 export interface Hip4OutcomeMetaResponse {
   outcomes: Hip4OutcomeMetaEntry[];
+  questions?: Hip4OutcomeMetaQuestion[];
+}
+
+/** One template from POST /info { type: "outcomeTemplates" }: title and
+ * rules formats over `{keyword}` placeholders, with each keyword's type. */
+export interface Hip4OutcomeTemplateEntry {
+  id: string;
+  name: string;
+  description: string;
+  keywords: Array<[string, string]>;
 }
 
 // ─── Hyperliquid market-data for live outcome coins ──────────────────────────

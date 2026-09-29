@@ -21,6 +21,7 @@ function categoryBadge(cls: string | null, underlying: string | null): string {
   const c = (cls ?? "").toLowerCase();
   if (!c || c === "custom") return "Custom";
   if (c === "pricebinary") return underlying ? `${underlying} · Binary` : "Binary";
+  if (c === "pricetouch") return underlying ? `${underlying} · Touch` : "Touch";
   if (c === "pricebucket") return underlying ? `${underlying} · Bucket` : "Bucket";
   return cls ?? "Custom";
 }

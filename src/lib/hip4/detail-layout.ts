@@ -94,8 +94,10 @@ export function resolveHip4Layout({
   const defaultChartMode: Hip4ChartMode = hasUnderlyingChart ? "underlying" : "probability";
 
   let typeLabel: string;
-  if (kind === "price-binary") typeLabel = underlying ? `${underlying} · Binary` : "Binary";
-  else if (kind === "binary") typeLabel = "Yes / No";
+  if (kind === "price-binary") {
+    const variant = cls === "pricetouch" ? "Touch" : "Binary";
+    typeLabel = underlying ? `${underlying} · ${variant}` : variant;
+  } else if (kind === "binary") typeLabel = "Yes / No";
   else if (kind === "versus") typeLabel = "Versus";
   else typeLabel = `${outcomeCount} outcomes`;
 
