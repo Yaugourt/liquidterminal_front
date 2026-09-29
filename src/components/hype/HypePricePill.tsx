@@ -30,8 +30,8 @@ export const HypePricePill = memo(function HypePricePill() {
 
   return (
     <div className="flex items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3 py-1.5">
+      {/* Static dot (no endless ping: it keeps the page painting frames). */}
       <span className="relative flex h-1.5 w-1.5">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
       </span>
       <HypeMark size="xs" className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary" />

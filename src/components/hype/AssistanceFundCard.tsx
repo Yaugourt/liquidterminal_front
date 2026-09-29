@@ -90,8 +90,8 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
         tag={<span className="mono">0xfefe…fe</span>}
         actions={
           <span className="inline-flex items-center gap-1.5 text-[10px] text-text-tertiary">
+            {/* Static dot (no endless ping: it keeps the page painting frames). */}
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
             </span>
             live on-chain

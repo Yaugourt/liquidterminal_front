@@ -510,9 +510,8 @@ export function TradingViewChart({
             : "bg-surface-2 text-text-tertiary"
             }`}
         >
-          <Radio
-            className={`h-2.5 w-2.5 ${isConnected ? "animate-pulse" : ""}`}
-          />
+          {/* Static icon: an endless pulse keeps the page painting frames. */}
+          <Radio className="h-2.5 w-2.5" />
           {isConnected ? "Live" : "—"}
         </span>
 
@@ -698,10 +697,8 @@ export function TradingViewChart({
             style={{ top: laserY }}
           >
             <div className="flex items-center gap-1.5">
+              {/* Static dot (no endless ping: it keeps the page painting frames). */}
               <span className="relative flex h-2 w-2">
-                {isConnected && (
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand/70" />
-                )}
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-brand shadow-[0_0_8px_rgba(131,233,255,0.8)]" />
               </span>
             </div>
