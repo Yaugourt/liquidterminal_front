@@ -92,8 +92,9 @@ export function Hip4OrderBook({ coin, sideName, enabled = true, depth = 9 }: Hip
 
   const available = bids.length > 0 || asks.length > 0;
   // "Unavailable" from the L4 feed is a verdict; while it's still connecting we
-  // may yet get a book from either source.
-  const isLoading = !available && (l4.isLoading || rest.isLoading);
+  // may yet get a book from either source. A market that stopped trading never
+  // connects (the L4 feed stays idle): it has no book, not a pending one.
+  const isLoading = eligible && !available && (l4.isLoading || rest.isLoading);
 
   return (
     <Card className="flex h-full flex-col overflow-hidden">
