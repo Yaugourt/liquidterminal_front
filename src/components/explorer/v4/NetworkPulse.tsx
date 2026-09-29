@@ -67,12 +67,20 @@ function computeBridgeNet24h(
   return touched ? { net, latest } : null;
 }
 
+/**
+ * The live block height, subscribed on its own: blocks land ~14 times a
+ * second, and only this text needs to follow them, not the whole ribbon.
+ */
+function LiveBlockHeight() {
+  // Fed by the canonical L1 websocket that `LiveActivity` (mounted on the same
+  // page) connects; this only reads it.
+  const currentBlockHeight = useExplorerStore((s) => s.currentBlockHeight);
+  return <>{currentBlockHeight > 0 ? currentBlockHeight.toLocaleString() : PLACEHOLDER}</>;
+}
+
 export const NetworkPulse = memo(function NetworkPulse() {
   const { format } = useNumberFormat();
 
-  // currentBlockHeight comes from the canonical L1 websocket connected by
-  // `LiveActivity` (mounted on the same page); we just consume the value.
-  const currentBlockHeight = useExplorerStore((s) => s.currentBlockHeight);
   const fills24h = useTotalFills24h();
   const traders24h = useActiveTraders24h();
   const fills = fills24h.data;
@@ -108,7 +116,7 @@ export const NetworkPulse = memo(function NetworkPulse() {
   const coreCells: KpiCell[] = [
     {
       label: "Block height",
-      value: currentBlockHeight > 0 ? currentBlockHeight.toLocaleString() : PLACEHOLDER,
+      value: <LiveBlockHeight />,
       sub: (
         <span className="flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />

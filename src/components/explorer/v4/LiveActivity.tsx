@@ -108,7 +108,8 @@ function StreamToolbar({
   );
 }
 
-function BlocksCard({
+// Memoised: a block frame must not re-render the transactions card, and vice versa.
+const BlocksCard = memo(function BlocksCard({
   blocks,
   connected,
 }: {
@@ -200,9 +201,9 @@ function BlocksCard({
       )}
     </Card>
   );
-}
+});
 
-function TxCard({
+const TxCard = memo(function TxCard({
   transactions,
   connected,
 }: {
@@ -298,7 +299,7 @@ function TxCard({
       )}
     </Card>
   );
-}
+});
 
 export const LiveActivity = memo(function LiveActivity() {
   // Subscribe via selectors so renders only fire on the values we read.

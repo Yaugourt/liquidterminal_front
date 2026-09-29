@@ -27,6 +27,11 @@ const fmtUsdAxis = (v: number): string => {
   return `$${v >= 100 ? Math.round(v) : v.toFixed(1)}`;
 };
 
+// Built once and stable: `toLocaleDateString` with options builds a formatter
+// on every call, and the chart formats its axis again on each live HYPE price.
+const DAY_FORMAT = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+const fmtTime = (ts: number) => DAY_FORMAT.format(new Date(ts));
+
 /**
  * HypePriceChart — HYPE price history as an area chart with a timeframe
  * selector, plus the all-time high / low and distance-from-ATH derived live
@@ -82,9 +87,6 @@ export const HypePriceChart = memo(function HypePriceChart() {
     windowChange == null ? "text-text-tertiary" : windowChange >= 0 ? "text-success" : "text-danger";
   const lineColor =
     windowChange != null && windowChange < 0 ? chartPalette.danger : chartPalette.accent;
-
-  const fmtTime = (ts: number) =>
-    new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
   return (
     <Card className="overflow-hidden flex flex-col">

@@ -4,6 +4,21 @@ import { useTokenTrades } from "@/services/market/token";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 
+// Built once: `toLocaleString` with options builds a formatter on every call
+// (~40x slower), and the list formats four values for each of its 50 rows.
+const PRICE_FORMAT = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+const SIZE_FORMAT = new Intl.NumberFormat('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 6 });
+const VALUE_FORMAT = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const TIME_FORMAT = new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+
+const formatPrice = (price: string | number) =>
+    PRICE_FORMAT.format(typeof price === 'string' ? parseFloat(price) : price);
+
+const formatSize = (size: string | number) =>
+    SIZE_FORMAT.format(typeof size === 'string' ? parseFloat(size) : size);
+
+const formatTime = (timestamp: number) => TIME_FORMAT.format(new Date(timestamp));
+
 interface RecentTradesProps {
     coinId: string;
     tokenName?: string;
@@ -12,25 +27,6 @@ interface RecentTradesProps {
 
 export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps) {
     const { trades, isLoading } = useTokenTrades(coinId);
-
-    const formatPrice = (price: string | number) => {
-        const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-        return numPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
-    };
-
-    const formatSize = (size: string | number) => {
-        const numSize = typeof size === 'string' ? parseFloat(size) : size;
-        return numSize.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 6 });
-    };
-
-    const formatTime = (timestamp: number) => {
-        return new Date(timestamp).toLocaleTimeString('en-US', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false
-        });
-    };
 
     const displayTrades = trades || [];
     const displayName = tokenName || coinId;
@@ -65,7 +61,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
                         </div>
                     ) : (
                         <div className="space-y-0.5">
-                            {displayTrades.slice(0, 50).map((trade, index) => {
+                            {displayTrades.slice(0, 50).map((trade) => {
                                 const tradePrice = parseFloat(trade.px);
                                 const tradeSize = parseFloat(trade.sz);
                                 const tradeValue = tradePrice * tradeSize;
@@ -73,7 +69,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
 
                                 return (
                                     <div
-                                        key={`${trade.tid}-${index}`}
+                                        key={trade.tid}
                                         className="grid grid-cols-4 gap-4 text-xs hover:bg-surface-2 py-1.5 px-1 rounded transition-colors"
                                     >
                                         <span className={cn(
@@ -86,7 +82,7 @@ export function RecentTrades({ coinId, tokenName, className }: RecentTradesProps
                                             {formatSize(tradeSize)}
                                         </span>
                                         <span className="mono text-text-secondary text-right">
-                                            ${tradeValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            ${VALUE_FORMAT.format(tradeValue)}
                                         </span>
                                         <span className="mono text-text-secondary text-right">
                                             {formatTime(trade.time)}

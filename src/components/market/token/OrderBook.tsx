@@ -18,6 +18,11 @@ import { useNumberFormat } from "@/store/number-format.store";
 const DEPTH_OPTIONS = [10, 25, 100] as const;
 type Depth = (typeof DEPTH_OPTIONS)[number];
 
+// Built once: `toLocaleString` with options builds a formatter on every call
+// (~40x slower), and the ladder formats up to 200 prices per book update.
+const PRICE_FORMAT = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+const formatPrice = (price: number) => PRICE_FORMAT.format(price);
+
 interface OrderBookProps {
   symbol?: string;
   marketIndex?: number;
@@ -170,9 +175,6 @@ export function OrderBook({
     };
   }, [bids, asks]);
 
-  const formatPrice = (price: number) =>
-    price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
-
   // Adaptive precision: small sizes (e.g. 0.0004 BTC) must not collapse to 0.00.
   const formatSize = (size: number) => formatAssetTokenAmount(size, format);
 
@@ -317,7 +319,7 @@ export function OrderBook({
             {/* Trades - Scrollable */}
             <div className="h-[402px] overflow-y-auto pr-1 scrollbar-brand">
               <div className="space-y-1">
-                {displayTrades.slice(0, 50).map((trade, index) => {
+                {displayTrades.slice(0, 50).map((trade) => {
                   const tradeType = trade.side === "B" ? "Buy" : "Sell";
                   const tradePrice = parseFloat(trade.px);
                   const tradeSize = parseFloat(trade.sz);
@@ -325,7 +327,7 @@ export function OrderBook({
 
                   return (
                     <div
-                      key={index}
+                      key={trade.tid}
                       className="grid grid-cols-3 gap-2 text-xs hover:bg-surface-2 py-1 rounded px-1 transition-colors"
                     >
                       <span
