@@ -23,7 +23,7 @@ import {
 import { LogIn } from "lucide-react";
 import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
-import { usePrivy, useModalStatus } from "@/services/auth/privy";
+import { usePrivy, useModalStatus, useSignedOut } from "@/services/auth/privy";
 
 // Telegram brand icon
 const TelegramIcon = ({ className }: { className?: string }) => (
@@ -36,7 +36,8 @@ export default function MyWallets() {
   const router = useRouter();
   const { setTitle } = usePageTitle();
   const { login, user: currentUser } = useAuthContext();
-  const { ready: privyReady, authenticated } = usePrivy();
+  const { authenticated } = usePrivy();
+  const signedOut = useSignedOut();
   // Privy's own modal open-state — the gate hides while Privy's login modal is
   // up so Radix's focus trap doesn't fight it (see the Dialog below).
   const { isOpen: privyModalOpen } = useModalStatus();
@@ -56,10 +57,10 @@ export default function MyWallets() {
 
   // Only show auth popup after:
   // 1. Component is mounted (client-side)
-  // 2. Privy is fully ready
-  // 3. User is confirmed not authenticated
+  // 2. The visitor is known to be signed out: Privy says so, or the browser
+  //    holds no session for it to restore (see useSignedOut)
   // This prevents the popup from flashing during navigation for logged-in users
-  const showAuthPopup = isMounted && privyReady && !authenticated;
+  const showAuthPopup = isMounted && signedOut;
 
   return (
     <>

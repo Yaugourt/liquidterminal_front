@@ -20,7 +20,7 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { usePrivy } from "@/services/auth/privy";
+import { usePrivy, useSignedOut } from "@/services/auth/privy";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSearchParams } from "next/navigation";
 import { MySubmissionsList } from "@/components/wiki/MySubmissionsList";
@@ -34,7 +34,8 @@ function ProfileTabs() {
 }
 
 function ProfileContent({ initialTab }: { initialTab: string }) {
-    const { user: privyUser, ready, authenticated } = usePrivy();
+    const { user: privyUser } = usePrivy();
+    const signedOut = useSignedOut();
     const { user: currentUser, login } = useAuthContext();
     const { wallets } = useWallets();
     const { readLists } = useReadLists();
@@ -130,7 +131,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
 
     // Anonymous visitors get an explicit sign-in prompt instead of an
     // endless loading state (the backend user only exists after login).
-    if (ready && !authenticated) {
+    if (signedOut) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
                 <Card padding="lg" interactive={false} className="max-w-md w-full mx-4 text-center space-y-4">

@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { PrivyEvents, PrivyInterface } from "@privy-io/react-auth";
-import { getAccessToken, login, logout, subscribeLoginComplete, usePrivyStore } from "./store";
+import { getAccessToken, hasPrivySessionHint, login, logout, subscribeLoginComplete, usePrivyStore } from "./store";
 import type { AccessTokenOptions } from "./store";
 
 /**
@@ -23,6 +23,26 @@ export function usePrivy(): PrivyAuth {
     () => ({ ready, authenticated, user, login, logout, getAccessToken }),
     [ready, authenticated, user],
   );
+}
+
+/**
+ * Whether the visitor is known to be signed out, for sign-in prompts: Privy
+ * says so, or (before the SDK has loaded) this browser holds no Privy session
+ * at all, so there is nothing for Privy to restore. The prompt then shows at
+ * once instead of after the SDK download (up to 10-15 s on a slow network).
+ * Storage is read after mount, so the server render and the first client
+ * render agree. Anything that needs Privy's own answer keeps reading `ready`.
+ */
+export function useSignedOut(): boolean {
+  const ready = usePrivyStore((s) => s.ready);
+  const authenticated = usePrivyStore((s) => s.authenticated);
+  const [noStoredSession, setNoStoredSession] = useState(false);
+
+  useEffect(() => {
+    setNoStoredSession(!hasPrivySessionHint());
+  }, []);
+
+  return !authenticated && (ready || noStoredSession);
 }
 
 /** Drop-in for Privy's `useModalStatus()`. */

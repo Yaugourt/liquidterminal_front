@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LoadingState } from "@/components/ui/loading-state";
-import { usePrivy } from "@/services/auth/privy";
+import { useSignedOut } from "@/services/auth/privy";
 import { Plus, ArrowLeft, LogIn } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
@@ -36,7 +36,7 @@ export default function MySubmissionsPage() {
   const [projectToEdit, setProjectToEdit] = useState<PublicGood | null>(null);
   const [projectToDelete, setProjectToDelete] = useState<PublicGood | null>(null);
   const { user, login } = useAuthContext();
-  const { ready, authenticated } = usePrivy();
+  const signedOut = useSignedOut();
 
   // Fetch user's projects from API
   const { myPublicGoods, isLoading, isRefreshing, refetch, dataUpdatedAt } = useMyPublicGoods({ limit: 50 });
@@ -122,7 +122,7 @@ export default function MySubmissionsPage() {
 
   if (!user) {
     // Anonymous visitors: explicit sign-in prompt instead of a blank page.
-    if (ready && !authenticated) {
+    if (signedOut) {
       return (
         <div className="flex items-center justify-center min-h-[50vh]">
           <Card padding="lg" interactive={false} className="max-w-md w-full mx-4 text-center space-y-4">
