@@ -257,8 +257,8 @@ export interface ExplorerStore {
   connect: () => void;
   disconnect: () => void;
 
-  addBlock: (block: Block) => void;
-  addTransaction: (transaction: Transaction) => void;
+  addBlocks: (blocks: Block[]) => void;
+  addTransactions: (transactions: Transaction[]) => void;
   setError: (error: string | null) => void;
 }
 

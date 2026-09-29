@@ -8,8 +8,14 @@ import { WebSocketClient, HIDDEN_TAB_PAUSE_MS } from '@/lib/websocket-client';
 // seconds, so the firehose can pause in a background tab without a visible gap.
 
 const WS_URL = 'wss://rpc.hyperliquid.xyz/ws';
+const MAX_ITEMS = 500;
 
-
+// A frame is an array: the 25 latest blocks (or txs) right after subscribing,
+// newest first, then usually one per frame.
+const isBlock = (item: unknown): item is Block =>
+  typeof item === 'object' && item !== null && 'blockTime' in item;
+const isTransaction = (item: unknown): item is Transaction =>
+  typeof item === 'object' && item !== null && 'time' in item && 'action' in item;
 
 export const useExplorerStore = create<ExplorerStore>((set, get) => ({
   blocks: [],
@@ -37,15 +43,9 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
         });
       },
       onMessage: (data) => {
-        if (!Array.isArray(data) || data.length === 0) return;
-        const item = data[0];
-
-        if ('blockTime' in item) {
-          get().addBlock(item);
-          set((state) => ({
-            currentBlockHeight: Math.max(state.currentBlockHeight, item.height)
-          }));
-        }
+        if (!Array.isArray(data)) return;
+        const blocks = data.filter(isBlock);
+        if (blocks.length > 0) get().addBlocks(blocks);
       },
       onClose: () => set({ isBlocksConnected: false }),
       onError: () => set({ error: 'Blocks WebSocket connection error' })
@@ -78,12 +78,9 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
         });
       },
       onMessage: (data) => {
-        if (!Array.isArray(data) || data.length === 0) return;
-        const item = data[0];
-
-        if ('time' in item && 'action' in item) {
-          get().addTransaction(item);
-        }
+        if (!Array.isArray(data)) return;
+        const transactions = data.filter(isTransaction);
+        if (transactions.length > 0) get().addTransactions(transactions);
       },
       onClose: () => set({ isTransactionsConnected: false }),
       onError: () => set({ error: 'Transactions WebSocket connection error' })
@@ -112,26 +109,44 @@ export const useExplorerStore = create<ExplorerStore>((set, get) => ({
     get().disconnectTransactions();
   },
 
-  addBlock: (block: Block) => {
+  addBlocks: (incoming: Block[]) => {
     set((state) => {
-      // Check if block already exists
-      const exists = state.blocks.some(b => b.height === block.height);
-      if (exists) return state;
+      const known = new Set(state.blocks.map((b) => b.height));
+      const fresh: Block[] = [];
+      for (const block of incoming) {
+        if (known.has(block.height)) continue;
+        known.add(block.height);
+        fresh.push(block);
+      }
+      if (fresh.length === 0) return state;
 
+      // Newest first; one update for the list and the height.
+      const blocks = [...fresh, ...state.blocks]
+        .sort((a, b) => b.height - a.height)
+        .slice(0, MAX_ITEMS);
       return {
-        blocks: [block, ...state.blocks].slice(0, 500) // Keep last 500 blocks
+        blocks,
+        currentBlockHeight: Math.max(state.currentBlockHeight, blocks[0].height)
       };
     });
   },
 
-  addTransaction: (transaction: Transaction) => {
+  addTransactions: (incoming: Transaction[]) => {
     set((state) => {
-      // Check if transaction already exists
-      const exists = state.transactions.some(t => t.hash === transaction.hash);
-      if (exists) return state;
+      const known = new Set(state.transactions.map((t) => t.hash));
+      const fresh: Transaction[] = [];
+      for (const transaction of incoming) {
+        if (known.has(transaction.hash)) continue;
+        known.add(transaction.hash);
+        fresh.push(transaction);
+      }
+      if (fresh.length === 0) return state;
 
+      // Newest first; the sort is stable, so equal times keep frame order.
       return {
-        transactions: [transaction, ...state.transactions].slice(0, 500) // Keep last 500 transactions
+        transactions: [...fresh, ...state.transactions]
+          .sort((a, b) => b.time - a.time)
+          .slice(0, MAX_ITEMS)
       };
     });
   },

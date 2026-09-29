@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { HypePriceStore, HypeTradeResponse } from './types';
 import { WebSocketClient, HIDDEN_TAB_PAUSE_MS } from '@/lib/websocket-client';
+import { newestTrade } from '@/lib/hl-trades';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const HYPE_COIN_ID = '@107';
@@ -13,6 +14,8 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
   // never disconnects). This replaces the previous `window.hypePriceWs` global.
   let client: WebSocketClient | null = null;
   let resetTimeout: NodeJS.Timeout | null = null;
+  /** Trade the displayed price comes from. */
+  let lastTid: number | null = null;
 
   return {
     currentPrice: 0,
@@ -46,11 +49,14 @@ export const useHypePriceStore = create<HypePriceStore>((set) => {
             const response = data as HypeTradeResponse;
 
             // Check if it's a trade message and contains data
-            if (response.channel === 'trades' && response.data && response.data.length > 0) {
-              const trade = response.data[0];
+            if (response.channel === 'trades' && Array.isArray(response.data)) {
+              // The frame's latest trade: data[0] is its oldest.
+              const trade = newestTrade(response.data);
 
-              // Make sure it's for HYPE
-              if (trade.coin === HYPE_COIN_ID) {
+              // Make sure it's for HYPE, and skip the snapshot a reconnect
+              // replays when nothing traded in between.
+              if (trade && trade.coin === HYPE_COIN_ID && trade.tid !== lastTid) {
+                lastTid = trade.tid;
                 // Clear any existing timeout
                 if (resetTimeout) {
                   clearTimeout(resetTimeout);

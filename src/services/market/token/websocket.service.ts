@@ -5,10 +5,13 @@ import {
   TokenOrderBookResponse,
 } from './types';
 import { WebSocketClient } from '@/lib/websocket-client';
+import { mergeTrades, newestTrade } from '@/lib/hl-trades';
 
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const MAX_RECONNECT_ATTEMPTS = 3;
 const RECONNECT_DELAY = 2000;
+/** Trades kept for the Recent Trades lists, newest first. */
+const MAX_TRADES = 50;
 
 export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
   let client: WebSocketClient | null = null;
@@ -89,18 +92,25 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
           try {
             const message = data as TokenTradeResponse;
 
-            if (message.channel === 'trades') {
-              const latestTrade = message.data[0];
+            if (message.channel === 'trades' && Array.isArray(message.data)) {
+              // Every trade of the frame, not just the first (the oldest).
+              const batch = message.data;
+              const newest = newestTrade(batch);
+              let added = false;
 
-              if (latestTrade) {
-                const price = parseFloat(latestTrade.px);
+              set((state) => {
+                const trades = mergeTrades(state.trades, batch, MAX_TRADES);
+                // A replayed snapshot after a reconnect: nothing new.
+                if (trades === state.trades || !newest) return state;
+                added = true;
+                return {
+                  currentPrice: parseFloat(newest.px),
+                  lastSide: newest.side,
+                  trades,
+                };
+              });
 
-                set((state) => ({
-                  currentPrice: price,
-                  lastSide: latestTrade.side,
-                  trades: [latestTrade, ...state.trades.slice(0, 49)] // Keep last 50 trades
-                }));
-
+              if (added) {
                 // Reset price animation after 2 seconds
                 if (resetTimeout) {
                   clearTimeout(resetTimeout);
