@@ -22,7 +22,7 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
   const { format } = useNumberFormat();
 
   const topValidators = useMemo(
-    () => [...validators].sort((a, b) => b.stake - a.stake).slice(0, 5),
+    () => [...validators].sort((a, b) => b.stake - a.stake).slice(0, 6),
     [validators]
   );
 
@@ -48,8 +48,8 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
         columns={[
           { header: "Validator" },
           { header: "Stake", width: 86 },
-          { header: "APR", width: 62 },
-          { header: "Commission", width: 92 },
+          { header: "APR", width: 62, className: "hidden sm:table-cell lg:hidden xl:table-cell" },
+          { header: "Commission", width: 92, className: "hidden sm:table-cell lg:hidden xl:table-cell" },
           { header: "Uptime", width: 72 },
         ]}
       >

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { TrendingUp } from "lucide-react";
 import { useTopTraders, type TopTrader } from "@/services/market/toptraders";
-import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { TypedDataTable, type Column } from "@/components/common";
 
 export function TopTradersPreview() {
@@ -16,6 +16,7 @@ export function TopTradersPreview() {
     {
       key: "rank",
       header: "Rank",
+      className: "hidden sm:table-cell",
       accessor: (_t, _i, absoluteIndex) => (
         <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
       ),
@@ -39,6 +40,8 @@ export function TopTradersPreview() {
       align: "right",
       getSortValue: (t) => t.tradeCount,
       type: "numeric",
+      // Dropped in the half-width xl column, where it pushed the table 7px past its card.
+      className: "hidden sm:table-cell xl:hidden 2xl:table-cell",
       accessor: (t) => t.tradeCount,
     },
     {
@@ -48,7 +51,8 @@ export function TopTradersPreview() {
       align: "right",
       getSortValue: (t) => t.totalVolume,
       type: "numeric",
-      accessor: (t) => `$${formatLargeNumber(t.totalVolume)}`,
+      className: "whitespace-nowrap",
+      accessor: (t) => compactUsd(t.totalVolume),
     },
     {
       key: "winRate",
@@ -56,6 +60,7 @@ export function TopTradersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (t) => t.winRate,
+      className: "hidden sm:table-cell whitespace-nowrap",
       accessor: (t) => (
         <span className={`mono ${t.winRate >= 0.5 ? "text-success" : "text-text-secondary"}`}>
           {(t.winRate * 100).toFixed(1)}%
@@ -68,9 +73,10 @@ export function TopTradersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (t) => t.totalPnl,
+      className: "whitespace-nowrap",
       accessor: (t) => (
         <span className={`mono ${t.totalPnl >= 0 ? "text-success" : "text-danger"}`}>
-          {t.totalPnl >= 0 ? "+" : ""}${formatLargeNumber(Math.abs(t.totalPnl))}
+          {t.totalPnl >= 0 ? "+" : "-"}{compactUsd(Math.abs(t.totalPnl))}
         </span>
       ),
     },

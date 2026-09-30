@@ -185,7 +185,7 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
         className="border-b border-border-subtle"
         cells={[
           {
-            label: "Total supply",
+            label: "Supply",
             value: hasData ? fmtUsdCompact(totalSupply) : isLoading ? "…" : "—",
             tone: "gold",
           },

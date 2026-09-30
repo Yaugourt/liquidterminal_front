@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Users } from "lucide-react";
 import { useActiveUsers, type ActiveUser } from "@/services/market/activeusers";
-import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import {
   Select,
   SelectContent,
@@ -27,6 +27,7 @@ export function ActiveUsersPreview() {
     {
       key: "rank",
       header: "Rank",
+      className: "hidden sm:table-cell",
       accessor: (_u, _i, absoluteIndex) => (
         <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
       ),
@@ -50,7 +51,8 @@ export function ActiveUsersPreview() {
       align: "right",
       getSortValue: (u) => u.fill_count,
       type: "numeric",
-      accessor: (u) => formatLargeNumber(u.fill_count),
+      className: "whitespace-nowrap",
+      accessor: (u) => compactCount(u.fill_count),
     },
     {
       key: "total_volume",
@@ -59,7 +61,8 @@ export function ActiveUsersPreview() {
       align: "right",
       getSortValue: (u) => u.total_volume,
       type: "numeric",
-      accessor: (u) => `$${formatLargeNumber(u.total_volume)}`,
+      className: "whitespace-nowrap",
+      accessor: (u) => compactUsd(u.total_volume),
     },
     {
       key: "unique_coins",
@@ -68,6 +71,7 @@ export function ActiveUsersPreview() {
       align: "right",
       getSortValue: (u) => u.unique_coins,
       type: "numeric",
+      className: "hidden sm:table-cell",
       accessor: (u) => u.unique_coins,
     },
     {
@@ -76,6 +80,7 @@ export function ActiveUsersPreview() {
       sortable: true,
       align: "right",
       getSortValue: (u) => new Date(u.last_activity).getTime(),
+      className: "hidden sm:table-cell whitespace-nowrap",
       accessor: (u) => (
         <span className="mono text-text-tertiary">{timeAgo(u.last_activity)}</span>
       ),

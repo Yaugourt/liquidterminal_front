@@ -225,8 +225,8 @@ function colStyle(width: number | string | undefined): React.CSSProperties | und
 /**
  * ModuleTable — compact table card body (alias `.tbl` in the mockup).
  *
- * `<colgroup>` propagates width to header + rows so column edges stay aligned
- * pixel-perfect even when rows render in different React subtrees. Use the
+ * Widths sit on the header cells, which set the columns of the fixed table,
+ * so column edges stay aligned even when rows render in different subtrees. Use the
  * `density="compact"` variant for dense feeds (blocks/tx live streams).
  */
 export function ModuleTable({
@@ -254,23 +254,15 @@ export function ModuleTable({
       <table
         className={`w-full border-collapse ${hasWidths ? "table-fixed" : "table-auto"}`}
       >
-        {hasWidths && (
-          <colgroup>
-            {columns.map((c, i) => (
-              <col
-                key={i}
-                style={colStyle(c.width)}
-                // A <col> shows as table-column, not table-cell.
-                className={c.className?.replace(/table-cell/g, "table-column")}
-              />
-            ))}
-          </colgroup>
-        )}
         <thead>
           <tr>
             {columns.map((c, i) => (
               <th
                 key={i}
+                // Widths live on the header row (it sets a fixed table's
+                // columns), so a header hidden per breakpoint drops its whole
+                // column; a hidden <col> would keep reserving its width.
+                style={hasWidths ? colStyle(c.width) : undefined}
                 className={`bg-surface-2 ${
                   density === "compact" ? "px-3 py-1.5" : "px-4 py-2"
                 } text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle ${
