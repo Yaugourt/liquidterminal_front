@@ -24,7 +24,9 @@ export function RowFillList({
   className?: string;
 }) {
   return (
-    <div className={cn("relative flex-1 lg:h-auto", mobileHeight, minHeight)}>
+    // flex-1 only from lg: below it a zero flex-basis would override the
+    // fixed mobile height and collapse the list.
+    <div className={cn("relative shrink-0 lg:shrink lg:flex-1 lg:h-auto", mobileHeight, minHeight)}>
       <div className={cn("absolute inset-0 overflow-y-auto scrollbar-brand fade-bottom", className)}>{children}</div>
     </div>
   );

@@ -2,14 +2,13 @@
 
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
-import { KpiRibbon, OverviewModule, ModuleTable, ModuleTableRow, type KpiCell } from "@/components/common";
+import { KpiRibbon, OverviewModule, ModuleTable, ModuleTableRow, RowFillList, type KpiCell } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { ProjectLogo } from "@/components/ecosystem/project/ProjectLogo";
 import { useRankedProjects, useChainStats, type RankedProject } from "@/services/ecosystem/project";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 
 const TOP_N = 8;
-const CATEGORIES_SHOWN = 6;
 /** Below this a TVL headline compacts to "$0.00" — an anti-signal, render a dash. */
 const TVL_DISPLAY_FLOOR = 1_000;
 
@@ -47,7 +46,7 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
   const [ranking, setRanking] = useState<Ranking>("tvl");
 
   const cells: KpiCell[] = [
-    { label: "TVL on Hyperliquid", value: compactUsd(stats?.tvl), sub: "DefiLlama" },
+    { label: "TVL on HL", value: compactUsd(stats?.tvl), sub: "DefiLlama" },
     { label: "Fees 24h", value: compactUsd(stats?.fees24h), tone: "gold", sub: "all protocols" },
     { label: "DEX Volume 24h", value: compactUsd(stats?.volumeDex24h), sub: "onchain" },
     {
@@ -68,7 +67,7 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
     <div className="space-y-4">
       <KpiRibbon variant="plain" cells={cells} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_260px] gap-4 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_260px] gap-4">
         <OverviewModule
           title="Projects"
           tagVariant="plain"
@@ -92,11 +91,11 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
           <div className="overflow-x-auto">
             <ModuleTable
               columns={[
-                { header: "#", width: 40, align: "right" },
+                { header: "#", width: 40, align: "right", className: "hidden sm:table-cell" },
                 { header: "Project", align: "left" },
-                { header: "Category", width: 150, align: "left" },
+                { header: "Category", width: 150, align: "left", className: "hidden sm:table-cell" },
                 { header: "TVL on HL", width: 100 },
-                { header: "Fees 24h", width: 90 },
+                { header: "Fees 24h", width: 90, className: "hidden sm:table-cell" },
                 { header: "7d", width: 74 },
               ]}
             >
@@ -127,7 +126,7 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
                       // Flex, not a plain span: `truncate` on an inline element
                       // does not clip, and category names run long.
                       <span key="cat" className="flex items-baseline gap-1.5 min-w-0">
-                        <span className="text-[12px] text-text-secondary truncate">
+                        <span className="text-[12px] text-text-secondary truncate" title={metric.category ?? undefined}>
                           {metric.category ?? ""}
                         </span>
                         {metric.categoryRank != null && metric.category && (
@@ -160,19 +159,20 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
         </OverviewModule>
 
         {/* Category split — DefiLlama categories, summed over tracked projects */}
-        <div className="bg-surface border border-border-subtle rounded-lg flex flex-col">
+        <div className="bg-surface border border-border-subtle rounded-lg flex flex-col overflow-hidden">
           <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
             <h3 className="text-[13px] font-semibold text-text-primary truncate">Categories</h3>
             <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">by TVL</span>
           </div>
-          <div className="px-3.5 py-3 space-y-3">
+          {/* Every category, filling the height of the projects table beside it. */}
+          <RowFillList minHeight="lg:min-h-[300px]" className="px-3.5 py-3 space-y-3">
             {categoriesByTvl.length === 0 && (
               <p className="text-[12px] text-text-tertiary">…</p>
             )}
-            {categoriesByTvl.slice(0, CATEGORIES_SHOWN).map((row) => (
+            {categoriesByTvl.map((row) => (
               <div key={row.category} className="space-y-1.5">
                 <div className="flex items-center justify-between gap-2 text-[11.5px]">
-                  <span className="text-text-secondary truncate">{row.category}</span>
+                  <span className="text-text-secondary truncate" title={row.category}>{row.category}</span>
                   <span className="mono text-text-tertiary shrink-0">{compactUsd(row.tvl)}</span>
                 </div>
                 <div className="relative h-1 w-full overflow-hidden rounded-full bg-surface-2">
@@ -185,8 +185,8 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
                 </div>
               </div>
             ))}
-          </div>
-          <div className="px-3.5 py-2.5 border-t border-border-subtle mt-auto">
+          </RowFillList>
+          <div className="px-3.5 py-2.5 border-t border-border-subtle">
             <Link
               href="/ecosystem/project"
               className="text-[11px] text-text-tertiary hover:text-text-primary transition-colors"

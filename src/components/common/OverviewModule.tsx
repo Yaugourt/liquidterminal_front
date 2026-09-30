@@ -127,11 +127,14 @@ export function ModuleRow({
         {logo}
       </div>
       <div className="min-w-0">
-        <div className="text-[12.5px] font-semibold text-text-primary truncate">
+        <div
+          className="text-[12.5px] font-semibold text-text-primary truncate"
+          title={typeof name === "string" ? name : undefined}
+        >
           {name}
         </div>
         {sub != null && (
-          <div className="text-[10px] text-text-tertiary truncate">{sub}</div>
+          <div className="text-[10px] text-text-tertiary truncate" title={typeof sub === "string" ? sub : undefined}>{sub}</div>
         )}
       </div>
       <div className="ml-auto flex shrink-0 gap-5">
@@ -388,7 +391,7 @@ export function ModuleAsset({
           {name}
         </div>
         {sub != null && (
-          <div className="text-[10px] text-text-tertiary truncate">{sub}</div>
+          <div className="text-[10px] text-text-tertiary truncate" title={typeof sub === "string" ? sub : undefined}>{sub}</div>
         )}
       </div>
     </div>
