@@ -62,6 +62,8 @@ export interface TileFrameProps {
   warn?: string;
   /** Optional Hypurr mascot as a data URI (from `loadHypurr`), shown in the head. */
   mascot?: string | null;
+  /** Optional head badge after the pill (e.g. the network a tile is about). */
+  badge?: ReactNode;
   /** The tile-specific visual (bars, legend, chart). */
   children?: ReactNode;
 }
@@ -77,6 +79,7 @@ export function TileFrame({
   footNote,
   warn,
   mascot,
+  badge,
   children,
 }: TileFrameProps) {
   return (
@@ -142,6 +145,7 @@ export function TileFrame({
               {pill}
             </div>
           ) : null}
+          {badge ?? null}
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
             <div
               style={{
