@@ -147,3 +147,116 @@ export async function elysiumTileResponse(node: React.ReactElement, maxAge: numb
     headers: { "Cache-Control": `public, max-age=${maxAge}, s-maxage=${maxAge * 3}, stale-while-revalidate=3600` },
   });
 }
+
+// ── List and bar layouts for leaderboard and cohort tiles ────────────────────
+
+/** 0x1234…abcd, for addresses that have no label. */
+export function shortAddr(a: string | null | undefined): string {
+  return a ? `${a.slice(0, 6)}…${a.slice(-4)}` : "-";
+}
+
+/** Percent with fixed decimals; "-" when missing. */
+export function pctText(v: number | null | undefined, digits = 0): string {
+  return v == null || !Number.isFinite(v) ? "-" : `${(v * 100).toFixed(digits)}%`;
+}
+
+/** Truncates long symbols and names so a row never overflows its column. */
+export function clip(s: string | null | undefined, max: number): string {
+  if (!s) return "";
+  return s.length > max ? `${s.slice(0, max - 1)}…` : s;
+}
+
+export interface RankColumn {
+  label: string;
+  /** Flex weight of the column. */
+  width: number;
+  align?: "left" | "right";
+  mono?: boolean;
+}
+export interface RankRow {
+  key: string;
+  cells: { text: string; color?: string; sub?: string }[];
+}
+
+/**
+ * Ranked table: numbered rows under a muted header. Every cell is one line
+ * (callers clip text first), so the tile height is fixed by `rows.length`.
+ */
+export function RankList({ columns, rows, marginTop = 12 }: { columns: RankColumn[]; rows: RankRow[]; marginTop?: number }) {
+  const cell = (col: RankColumn, i: number): React.CSSProperties => ({
+    display: "flex",
+    flexGrow: col.width,
+    flexBasis: 0,
+    justifyContent: col.align === "right" ? "flex-end" : "flex-start",
+    marginLeft: i === 0 ? 0 : 16,
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+  });
+  return (
+    <div style={{ display: "flex", flexDirection: "column", width: "100%", marginTop }}>
+      <div style={{ display: "flex", width: "100%", fontSize: 12, letterSpacing: 1, color: C.textTertiary, paddingBottom: 6, borderBottom: `1px solid ${C.borderSubtle}` }}>
+        <div style={{ display: "flex", width: 34 }}>#</div>
+        {columns.map((c, i) => (
+          <div key={c.label} style={cell(c, i)}>
+            {c.label.toUpperCase()}
+          </div>
+        ))}
+      </div>
+      {rows.map((r, ri) => (
+        <div key={r.key} style={{ display: "flex", width: "100%", alignItems: "center", height: 33, borderBottom: ri === rows.length - 1 ? "none" : `1px solid ${C.borderSubtle}` }}>
+          <div style={{ display: "flex", width: 34, fontFamily: "JetBrains Mono", fontSize: 15, color: C.textTertiary }}>{ri + 1}</div>
+          {columns.map((c, i) => {
+            const v = r.cells[i];
+            return (
+              <div key={c.label} style={{ ...cell(c, i), alignItems: "baseline" }}>
+                <div style={{ display: "flex", fontFamily: c.mono ? "JetBrains Mono" : "Inter", fontSize: 17, fontWeight: c.mono ? 600 : 500, color: v?.color ?? C.textPrimary }}>
+                  {v?.text ?? "-"}
+                </div>
+                {v?.sub ? (
+                  <div style={{ display: "flex", marginLeft: 10, fontSize: 14, color: C.textTertiary, fontFamily: "JetBrains Mono" }}>{v.sub}</div>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Vertical bars with a label under each, one scale for all bars. */
+export function BarChart({
+  bars,
+  height = 150,
+  marginTop = 22,
+}: {
+  bars: { label: string; value: number; color: string; valueText?: string }[];
+  height?: number;
+  marginTop?: number;
+}) {
+  const max = Math.max(1e-9, ...bars.map((b) => b.value));
+  return (
+    <div style={{ display: "flex", width: "100%", alignItems: "flex-end", marginTop }}>
+      {bars.map((b) => (
+        <div key={b.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, flexBasis: 0, marginRight: 10 }}>
+          <div style={{ display: "flex", fontFamily: "JetBrains Mono", fontSize: 14, fontWeight: 600, color: C.textSecondary, marginBottom: 6 }}>
+            {b.valueText ?? ""}
+          </div>
+          <div style={{ display: "flex", width: "70%", height: Math.max(2, Math.round((b.value / max) * height)), background: b.color, borderRadius: 4 }} />
+          <div style={{ display: "flex", marginTop: 8, fontSize: 13, color: C.textTertiary, fontFamily: "JetBrains Mono" }}>{b.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** "3h ago" from an ISO time, at render time (UTC, no zone suffix assumed UTC). */
+export function agoText(iso: string | null | undefined): string {
+  if (!iso) return "-";
+  const t = Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(iso) ? iso : `${iso}Z`);
+  if (!Number.isFinite(t)) return "-";
+  const s = Math.max(0, (Date.now() - t) / 1000);
+  if (s < 3600) return `${Math.max(1, Math.round(s / 60))}m ago`;
+  if (s < 86400 * 2) return `${Math.round(s / 3600)}h ago`;
+  return `${Math.round(s / 86400)}d ago`;
+}

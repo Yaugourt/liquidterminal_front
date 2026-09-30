@@ -1,9 +1,9 @@
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { ELYSIUM_RPC_URL } from "./api";
+import { SNAPSHOT_BASE, SNAPSHOT_POINTER } from "./snapshot-config";
 
-/** Public bucket of daily Elysium testnet archive snapshots (CORS open, keyless). */
-export const SNAPSHOT_BASE = "https://elysium-testnet-snapshots.hypedexer.com";
-export const SNAPSHOT_POINTER = `${SNAPSHOT_BASE}/conduit-orbit-deployer/latest-archive.txt`;
+// Kept here so existing imports of the constants keep working.
+export { SNAPSHOT_BASE, SNAPSHOT_POINTER };
 
 export interface ElysiumSnapshotFile {
   name: string;
