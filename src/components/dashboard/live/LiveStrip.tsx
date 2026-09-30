@@ -81,5 +81,5 @@ export function LiveStrip({ pulse }: { pulse: ChainPulse }) {
     },
   ];
 
-  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" />;
+  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4 xl:grid-cols-8" />;
 }

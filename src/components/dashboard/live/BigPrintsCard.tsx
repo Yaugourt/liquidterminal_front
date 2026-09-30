@@ -133,7 +133,7 @@ export const BigPrintsCard = memo(function BigPrintsCard({
                     {p.side === "B" ? "BUY" : "SELL"}
                   </td>
                   <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactUsd(p.ntl)}</td>
-                  <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap">{formatPrice(p.px, format, { showCurrency: false })}</td>
+                  <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap hidden sm:table-cell">{formatPrice(p.px, format, { showCurrency: false })}</td>
                   <td className="py-1.5 text-right whitespace-nowrap hidden sm:table-cell">
                     {p.taker ? (
                       <Link href={`/market/tracker/wallet/${p.taker}`} className="text-text-secondary hover:text-brand" title="Taker wallet">

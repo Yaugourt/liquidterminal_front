@@ -16,6 +16,8 @@ import { useMetricHistory } from "@/services/market/metrics";
 import { useBiggestTrades } from "@/services/market/biggest-trades";
 import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
+import { useHypePriceStore } from "@/services/market/hype/websocket.service";
+import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
 
 const EMPTY = "—";
 
@@ -74,7 +76,7 @@ function Signal({
       </div>
       {bar}
       {spark}
-      {sub && <div className="text-[11px] text-text-secondary mt-auto truncate">{sub}</div>}
+      {sub && <div className="text-[11px] text-text-secondary mt-auto line-clamp-2">{sub}</div>}
     </Card>
   );
   if (!href) return tile;
@@ -101,6 +103,10 @@ export const SignalRow = memo(function SignalRow() {
   const { stats: builders } = useBuildersGlobalStats("24h");
   const { history: feesHistory } = useMetricHistory("total_fees_24h", 168);
   const { trades: bestTrades } = useBiggestTrades("DESC", 1, 24);
+  // One row is enough: the pagination carries the vault count, the row the largest vault.
+  const { vaults: topVaults, totalCount: vaultCount } = useVaults({ limit: 1 });
+  // Rounded to the dime so a tick of the HYPE stream does not re-render the row.
+  const hypePx = useHypePriceStore((s) => Math.round(s.currentPrice * 10) / 10);
 
   const count = (v: number | null | undefined): string =>
     v == null || !Number.isFinite(v) ? EMPTY : formatNumber(v, format, { maximumFractionDigits: 0 });
@@ -115,9 +121,11 @@ export const SignalRow = memo(function SignalRow() {
   const feesLatest = feesHistory.length ? feesHistory[feesHistory.length - 1].value : undefined;
   const best = bestTrades[0];
   const flowTotal = totalBuyValue + totalSellValue;
+  const topVaultTvl = Number(topVaults[0]?.summary.tvl);
+  const topVaultShare = stats?.vaultsTvl && Number.isFinite(topVaultTvl) ? (topVaultTvl / stats.vaultsTvl) * 100 : null;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:[&>*:nth-last-child(-n+2)]:col-span-2 xl:[&>*:nth-last-child(-n+2)]:col-span-1">
       <Signal
         icon={<TrendingUp size={12} />}
         label="Top mover · perp"
@@ -211,12 +219,20 @@ export const SignalRow = memo(function SignalRow() {
         label="Vaults TVL"
         href="/explorer/vaults"
         value={statsLoading && !stats ? "…" : compactUsd(stats?.vaultsTvl)}
+        sub={
+          vaultCount > 0 ? (
+            <span title={topVaults[0]?.summary.name}>
+              {count(vaultCount)} vaults{topVaultShare != null ? ` · largest holds ${topVaultShare.toFixed(0)}%` : ""}
+            </span>
+          ) : undefined
+        }
       />
       <Signal
         icon={<Coins size={12} />}
         label="HYPE staked"
         href="/explorer/validator"
         value={statsLoading && !stats ? "…" : count(stats?.totalHypeStake)}
+        sub={stats?.totalHypeStake && hypePx > 0 ? <span>≈ {compactUsd(stats.totalHypeStake * hypePx)} at ${hypePx.toFixed(2)}</span> : undefined}
       />
     </div>
   );
