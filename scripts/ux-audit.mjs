@@ -126,7 +126,10 @@ try {
       const page = await browser.newPage({ viewport: { width: w, height: h }, colorScheme: "dark" });
       // Skip the onboarding tour and the missions widget: app chrome, not page content.
       await page.addInitScript(() => {
-        try { localStorage.setItem("lt-onboarding-done", "1"); } catch {}
+        // Mark the onboarding tour as done (zustand persist key of src/store/use-onboarding.ts).
+        try {
+          localStorage.setItem("onboarding-storage", JSON.stringify({ state: { hasCompletedOnboarding: true, hasSeenWelcome: true }, version: 1 }));
+        } catch {}
       });
       await page.goto(base + route, { waitUntil: "domcontentloaded", timeout: 90000 });
       await page.waitForTimeout(wait);

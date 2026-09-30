@@ -38,7 +38,7 @@ export function ElysiumEconomics() {
   return (
     <div className="space-y-4">
       <IngestNotice />
-      <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-5" />
+      <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-2 xl:[&>*:last-child]:col-span-1" />
       <DailyChartCard
         title="Fees paid per day"
         icon={<Fuel size={13} className="text-brand" />}
