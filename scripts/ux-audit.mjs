@@ -78,6 +78,8 @@ function audit() {
   for (const el of main.querySelectorAll("*")) {
     if (el.childElementCount > 0) continue;
     const cs = getComputedStyle(el);
+    // Truncation that keeps the full text on hover (title) is intended.
+    if (el.closest("[title]")) continue;
     if (el.scrollWidth > el.clientWidth + 1 && (cs.overflow === "hidden" || cs.overflowX === "hidden" || cs.textOverflow === "ellipsis")) {
       clipped.push({ text: el.textContent.trim().slice(0, 60), shown: el.clientWidth, needs: el.scrollWidth, y: Math.round(r(el).top + sy) });
     }
