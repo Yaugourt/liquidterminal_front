@@ -91,6 +91,7 @@ function audit() {
     const cs = getComputedStyle(el);
     if (!["auto", "scroll", "hidden"].includes(cs.overflowX)) continue;
     if (cs.textOverflow === "ellipsis") continue; // intended truncation
+    if (el.tagName === "PRE" || el.closest("pre")) continue; // code blocks scroll by design
     if (el.scrollWidth > el.clientWidth + 2 && r(el).width > 120) {
       const card = el.closest("[class*=rounded]") || el;
       innerOverflow.push({ in: label(card), shown: el.clientWidth, needs: el.scrollWidth, y: Math.round(r(el).top + sy) });

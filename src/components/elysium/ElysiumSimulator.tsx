@@ -329,122 +329,124 @@ export function ElysiumSimulator() {
           </form>
         </Card>
 
-        <Card className="overflow-hidden flex flex-col">
-          <CardHeading
-            icon={result?.status === "reverted" ? <XCircle size={13} className="text-danger" /> : <CheckCircle2 size={13} className="text-brand" />}
-            title="Result"
-            meta={result ? `block ${result.block.toLocaleString("en-US")}` : undefined}
-            metaVariant="plain"
-          />
-          {!result ? (
-            <p className="px-3.5 py-6 text-center text-[12px] text-text-tertiary">{busy ? "Simulating…" : "Run a call to see its outcome."}</p>
-          ) : (
-            <div className="p-3.5 space-y-3 text-[12px]">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Status</div>
-                  <div className={`mono ${result.status === "success" ? "text-success" : "text-danger"}`}>{result.status}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Execution gas</div>
-                  <div className="mono text-text-primary">{result.gasUsed.toLocaleString("en-US")}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Gas to set</div>
-                  <div className="mono text-text-primary">{result.gasEstimate != null ? result.gasEstimate.toLocaleString("en-US") : EMPTY}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Fee</div>
-                  <div className="mono text-gold">{fee != null ? `${Number(formatUnits(fee, 18)).toLocaleString("en-US", { maximumSignificantDigits: 3 })} HYPE` : EMPTY}</div>
-                </div>
-              </div>
-              <p className="text-[11px] text-text-tertiary">
-                Gas to set = eth_estimateGas, which adds the cost of posting the tx to HyperEVM on top of execution.
-              </p>
-              {revert ? (
-                <div className="rounded-md border border-danger/40 bg-danger/10 px-2.5 py-2">
-                  <div className="text-[10px] uppercase tracking-[0.06em] text-danger">Revert reason</div>
-                  <div className="mono text-text-primary break-all">{revert}</div>
-                </div>
-              ) : null}
-              {returned ? (
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary mb-1">Returned</div>
-                  <div className="space-y-0.5">
-                    {returned.map((v, i) => (
-                      <div key={i} className="mono text-text-primary break-all">
-                        <span className="text-text-tertiary">{ranFn?.outputs[i]?.name || `[${i}]`} </span>
-                        {fmtArg(v)}
-                      </div>
-                    ))}
+        {/* Right column: the result and its events stack, level with the call form. */}
+        <div className="space-y-4 min-w-0">
+          <Card className="overflow-hidden flex flex-col">
+            <CardHeading
+              icon={result?.status === "reverted" ? <XCircle size={13} className="text-danger" /> : <CheckCircle2 size={13} className="text-brand" />}
+              title="Result"
+              meta={result ? `block ${result.block.toLocaleString("en-US")}` : undefined}
+              metaVariant="plain"
+            />
+            {!result ? (
+              <p className="px-3.5 py-6 text-center text-[12px] text-text-tertiary">{busy ? "Simulating…" : "Run a call to see its outcome."}</p>
+            ) : (
+              <div className="p-3.5 space-y-3 text-[12px]">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Status</div>
+                    <div className={`mono ${result.status === "success" ? "text-success" : "text-danger"}`}>{result.status}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Execution gas</div>
+                    <div className="mono text-text-primary">{result.gasUsed.toLocaleString("en-US")}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Gas to set</div>
+                    <div className="mono text-text-primary">{result.gasEstimate != null ? result.gasEstimate.toLocaleString("en-US") : EMPTY}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">Fee</div>
+                    <div className="mono text-gold">{fee != null ? `${Number(formatUnits(fee, 18)).toLocaleString("en-US", { maximumSignificantDigits: 3 })} HYPE` : EMPTY}</div>
                   </div>
                 </div>
-              ) : result.status === "success" && result.returnData !== "0x" ? (
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary mb-1">Returned (raw)</div>
-                  <div className="mono text-text-secondary break-all">{result.returnData}</div>
-                </div>
-              ) : null}
-              {shareUrl ? (
-                <div className="flex items-center gap-1.5 text-text-tertiary">
-                  <Link2 size={12} /> Share this simulation <CopyButton text={shareUrl} />
-                </div>
-              ) : null}
-            </div>
-          )}
-        </Card>
-      </div>
-
-      {result ? (
-        <Card className="overflow-hidden flex flex-col">
-          <CardHeading icon={<ListTree size={13} className="text-brand" />} title="Events and transfers" meta={`${logs.length} emitted`} metaVariant="plain" />
-          {logs.length === 0 ? (
-            <p className="px-3.5 py-4 text-[12px] text-text-tertiary">No event emitted.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-[12px]">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                    <th className="text-left font-semibold px-3.5 py-2">Event</th>
-                    <th className="text-left font-semibold px-2 py-2">Emitter</th>
-                    <th className="text-left font-semibold px-3.5 py-2">Arguments</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {logs.map((l, i) => {
-                    const native = l.log.address.toLowerCase() === NATIVE_TRANSFER_ADDRESS;
-                    return (
-                      <tr key={i} className="border-t border-border-subtle align-top">
-                        <td className="px-3.5 py-1.5 whitespace-nowrap text-text-primary">{native ? "HYPE transfer" : l.name}</td>
-                        <td className="px-2 py-1.5 whitespace-nowrap">
-                          {native ? <span className="text-text-tertiary">native</span> : <AddrLink address={l.log.address} className="text-text-secondary" />}
-                          {!native && meta[l.log.address.toLowerCase()] ? <span className="ml-1.5 text-text-tertiary">{meta[l.log.address.toLowerCase()].symbol}</span> : null}
-                        </td>
-                        <td className="px-3.5 py-1.5">
-                          <div className="flex flex-wrap gap-x-4 gap-y-0.5">
-                            {l.args.map(([k, v]) => (
-                              <span key={k} className="mono break-all">
-                                <span className="text-text-tertiary">{k} </span>
-                                {typeof v === "string" && isAddress(v) ? (
-                                  <AddrLink address={v} className="text-text-secondary" />
-                                ) : ["value", "wad", "amount"].includes(k) && (l.name === "Transfer" || l.name === "Approval" || l.name === "Deposit" || l.name === "Withdrawal") ? (
-                                  <span className="text-text-primary">{amount(l.log.address, v)}</span>
-                                ) : (
-                                  <span className="text-text-primary">{fmtArg(v)}</span>
-                                )}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
+                <p className="text-[11px] text-text-tertiary">
+                  Gas to set = eth_estimateGas, which adds the cost of posting the tx to HyperEVM on top of execution.
+                </p>
+                {revert ? (
+                  <div className="rounded-md border border-danger/40 bg-danger/10 px-2.5 py-2">
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-danger">Revert reason</div>
+                    <div className="mono text-text-primary break-all">{revert}</div>
+                  </div>
+                ) : null}
+                {returned ? (
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary mb-1">Returned</div>
+                    <div className="space-y-0.5">
+                      {returned.map((v, i) => (
+                        <div key={i} className="mono text-text-primary break-all">
+                          <span className="text-text-tertiary">{ranFn?.outputs[i]?.name || `[${i}]`} </span>
+                          {fmtArg(v)}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : result.status === "success" && result.returnData !== "0x" ? (
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary mb-1">Returned (raw)</div>
+                    <div className="mono text-text-secondary break-all">{result.returnData}</div>
+                  </div>
+                ) : null}
+                {shareUrl ? (
+                  <div className="flex items-center gap-1.5 text-text-tertiary">
+                    <Link2 size={12} /> Share this simulation <CopyButton text={shareUrl} />
+                  </div>
+                ) : null}
+              </div>
+            )}
+          </Card>
+          {result ? (
+            <Card className="overflow-hidden flex flex-col">
+              <CardHeading icon={<ListTree size={13} className="text-brand" />} title="Events and transfers" meta={`${logs.length} emitted`} metaVariant="plain" />
+              {logs.length === 0 ? (
+                <p className="px-3.5 py-4 text-[12px] text-text-tertiary">No event emitted.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[12px]">
+                    <thead>
+                      <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
+                        <th className="text-left font-semibold px-3.5 py-2">Event</th>
+                        <th className="text-left font-semibold px-2 py-2 hidden sm:table-cell">Emitter</th>
+                        <th className="text-left font-semibold px-3.5 py-2">Arguments</th>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Card>
-      ) : null}
+                    </thead>
+                    <tbody>
+                      {logs.map((l, i) => {
+                        const native = l.log.address.toLowerCase() === NATIVE_TRANSFER_ADDRESS;
+                        return (
+                          <tr key={i} className="border-t border-border-subtle align-top">
+                            <td className="px-3.5 py-1.5 whitespace-nowrap text-text-primary">{native ? "HYPE transfer" : l.name}</td>
+                            <td className="px-2 py-1.5 whitespace-nowrap hidden sm:table-cell">
+                              {native ? <span className="text-text-tertiary">native</span> : <AddrLink address={l.log.address} className="text-text-secondary" />}
+                              {!native && meta[l.log.address.toLowerCase()] ? <span className="ml-1.5 text-text-tertiary">{meta[l.log.address.toLowerCase()].symbol}</span> : null}
+                            </td>
+                            <td className="px-3.5 py-1.5">
+                              <div className="flex flex-wrap gap-x-4 gap-y-0.5">
+                                {l.args.map(([k, v]) => (
+                                  <span key={k} className="mono break-all">
+                                    <span className="text-text-tertiary">{k} </span>
+                                    {typeof v === "string" && isAddress(v) ? (
+                                      <AddrLink address={v} className="text-text-secondary" />
+                                    ) : ["value", "wad", "amount"].includes(k) && (l.name === "Transfer" || l.name === "Approval" || l.name === "Deposit" || l.name === "Withdrawal") ? (
+                                      <span className="text-text-primary">{amount(l.log.address, v)}</span>
+                                    ) : (
+                                      <span className="text-text-primary">{fmtArg(v)}</span>
+                                    )}
+                                  </span>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </Card>
+          ) : null}
+        </div>
+      </div>
       <p className="text-[11px] text-text-tertiary">
         Runs on the latest Elysium block through a public Elysium RPC (eth_simulateV1 with native transfer tracing, eth_estimateGas). The HYPE credit is a
         state override: it only exists inside this simulation. Internal call traces need debug_traceCall, which neither public RPC exposes today.

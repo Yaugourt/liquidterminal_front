@@ -101,7 +101,7 @@ export function ElysiumNode() {
         </Card>
       ) : null}
       <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-4" />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
         <Card className="overflow-hidden flex flex-col">
           <CardHeading icon={<Archive size={13} className="text-brand" />} title="Available archives" meta="last 2 kept" metaVariant="plain" />
           <div className="overflow-x-auto">
@@ -113,7 +113,7 @@ export function ElysiumNode() {
                   <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
                     <th className="text-left font-semibold px-3.5 py-2">Block</th>
                     <th className="text-right font-semibold px-2 py-2">Size</th>
-                    <th className="text-right font-semibold px-2 py-2">Published</th>
+                    <th className="text-right font-semibold px-2 py-2 hidden sm:table-cell">Published</th>
                     <th className="text-right font-semibold px-3.5 py-2">Files</th>
                   </tr>
                 </thead>
@@ -125,7 +125,7 @@ export function ElysiumNode() {
                         {f.name === latest?.name ? <span className="ml-2 text-[10px] text-success">latest</span> : null}
                       </td>
                       <td className="px-2 py-1.5 text-right text-text-secondary">{gb(f.sizeBytes)}</td>
-                      <td className="px-2 py-1.5 text-right text-text-tertiary whitespace-nowrap">{ago(f.publishedMs, now)} ago</td>
+                      <td className="px-2 py-1.5 text-right text-text-tertiary whitespace-nowrap hidden sm:table-cell">{ago(f.publishedMs, now)} ago</td>
                       <td className="px-3.5 py-1.5 text-right whitespace-nowrap">
                         <ExtLink href={`${SNAPSHOT_BASE}/${f.name}`} className="text-text-secondary">.tar</ExtLink>
                         <span className="text-text-tertiary"> · </span>
