@@ -2,7 +2,7 @@
 
 import { Bot, Repeat, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, KpiRibbon, chartPalette, type KpiCell } from "@/components/common";
+import { CardHeading, KpiRibbon, RowFillList, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumUsers } from "@/services/elysium";
@@ -55,7 +55,8 @@ export function ElysiumUsers() {
           { id: "new", name: "New", color: chartPalette.gold, axis: "left", pick: (r) => r.new, format: (v) => compactCount(v) },
         ]}
       />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+      {/* Stretch: the retention table (one row per day since genesis) sets the height, the senders list fills it. */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="overflow-hidden flex flex-col">
           <CardHeading
             icon={<Repeat size={13} className="text-brand" />}
@@ -91,14 +92,14 @@ export function ElysiumUsers() {
             )}
           </div>
         </Card>
-        <Card className="overflow-hidden flex flex-col">
+        <Card className="h-full overflow-hidden flex flex-col">
           <CardHeading
             icon={<Bot size={13} className="text-brand" />}
             title="Busiest senders"
             meta="last 24h, likely bots on top"
             metaVariant="plain"
           />
-          <div className="px-3.5 py-1">
+          <RowFillList className="px-3.5 py-1" mobileHeight="h-[360px]">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : (
@@ -112,14 +113,14 @@ export function ElysiumUsers() {
                       <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactCount(s.txs)} tx</td>
                       <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap">{pct(s.share, 1)}</td>
                       <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap" title="Distinct contracts or addresses it sent to">
-                        {compactCount(s.distinctTargets)} targets
+                        {compactCount(s.distinctTargets)} target{s.distinctTargets === 1 ? "" : "s"}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             )}
-          </div>
+          </RowFillList>
         </Card>
       </div>
       <p className="text-[11px] text-text-tertiary">
