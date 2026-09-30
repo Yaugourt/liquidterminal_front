@@ -2,7 +2,7 @@
 
 import { ArrowLeftRight, Clock, Coins, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHeading, KpiRibbon, chartPalette, type KpiCell } from "@/components/common";
+import { CardHeading, KpiRibbon, RowFillList, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumBridgeAnalytics } from "@/services/elysium";
@@ -51,7 +51,8 @@ export function ElysiumBridgeAnalyticsView() {
           { id: "out", name: "Out (withdrawals)", color: chartPalette.danger, axis: "left", pick: (r) => r.hypeOut, format: (v) => compactCount(v) },
         ]}
       />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+      {/* Stretch: the per-token table sets the height, the bridgers list fills it. */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="overflow-hidden flex flex-col">
           <CardHeading icon={<Coins size={13} className="text-brand" />} title="By token" meta="last 14 days" metaVariant="plain" />
           <div className="overflow-x-auto">
@@ -72,7 +73,7 @@ export function ElysiumBridgeAnalyticsView() {
                   {data.tokens.filter((t) => t.symbol).map((t) => (
                     <tr key={`${t.route}-${t.symbol}`} className="border-t border-border-subtle">
                       <td className="px-3.5 py-1.5 whitespace-nowrap">
-                        <span className="text-text-primary">{t.symbol || EMPTY}</span> <span className="text-[10px] text-text-tertiary">{t.route}</span>
+                        <span className="text-text-primary">{t.symbol || EMPTY}</span> <span className="text-[10px] text-text-tertiary hidden sm:inline">{t.route}</span>
                       </td>
                       <td className="px-2 py-1.5 text-right text-success">{compactCount(t.amountIn)}</td>
                       <td className="px-2 py-1.5 text-right text-danger">{compactCount(t.amountOut)}</td>
@@ -84,9 +85,9 @@ export function ElysiumBridgeAnalyticsView() {
             )}
           </div>
         </Card>
-        <Card className="overflow-hidden flex flex-col">
+        <Card className="h-full overflow-hidden flex flex-col">
           <CardHeading icon={<Users size={13} className="text-brand" />} title="Most active bridgers" meta="last 14 days, by transfers, HYPE amounts" metaVariant="plain" />
-          <div className="px-3.5 py-1">
+          <RowFillList className="px-3.5 py-1" mobileHeight="h-[360px]">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : (
@@ -105,7 +106,7 @@ export function ElysiumBridgeAnalyticsView() {
                 </tbody>
               </table>
             )}
-          </div>
+          </RowFillList>
         </Card>
       </div>
       <p className="text-[11px] text-text-tertiary flex items-center gap-1.5">
