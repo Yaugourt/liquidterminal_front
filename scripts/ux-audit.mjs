@@ -1,6 +1,7 @@
 /* UX audit for one or more routes: full-page screenshots at three widths plus
    measured layout problems (dead space inside grid items, uneven rows,
-   clipped text, horizontal overflow, placeholders still shown after load).
+   clipped text, content wider than its box, horizontal page overflow,
+   placeholders still shown after load).
 
    Usage: node scripts/ux-audit.mjs <route> [route...] [--base=http://localhost:3000] [--out=.design-audit/ux] [--wait=12000]
    Needs `pnpm run dev` (and an API on NEXT_PUBLIC_API) running. */
@@ -81,6 +82,18 @@ function audit() {
       clipped.push({ text: el.textContent.trim().slice(0, 60), shown: el.clientWidth, needs: el.scrollWidth, y: Math.round(r(el).top + sy) });
     }
   }
+  // Containers whose content is wider than their box (a table cut at the card edge).
+  const innerOverflow = [];
+  for (const el of main.querySelectorAll("*")) {
+    if (el.childElementCount === 0) continue;
+    const cs = getComputedStyle(el);
+    if (!["auto", "scroll", "hidden"].includes(cs.overflowX)) continue;
+    if (cs.textOverflow === "ellipsis") continue; // intended truncation
+    if (el.scrollWidth > el.clientWidth + 2 && r(el).width > 120) {
+      const card = el.closest("[class*=rounded]") || el;
+      innerOverflow.push({ in: label(card), shown: el.clientWidth, needs: el.scrollWidth, y: Math.round(r(el).top + sy) });
+    }
+  }
   const placeholders = [];
   const re = /^(Loading…|Loading\.\.\.|…|Reading bytecode…)$|unavailable|unreachable|No .* yet|Could not/i;
   for (const el of main.querySelectorAll("p,span,div,td")) {
@@ -95,6 +108,7 @@ function audit() {
     deadSpace,
     unevenRows,
     clipped: clipped.slice(0, 30),
+    innerOverflow: innerOverflow.slice(0, 20),
     placeholders: placeholders.slice(0, 30),
   };
 }
@@ -133,7 +147,7 @@ writeFileSync(`${out}/report.json`, JSON.stringify(report, null, 1));
 for (const [route, byW] of Object.entries(report)) {
   console.log(`\n# ${route}`);
   for (const [w, d] of Object.entries(byW)) {
-    console.log(`  ${w}px  height ${d.pageHeight}  overflowX ${d.horizontalOverflow}  deadSpace ${d.deadSpace.length}  uneven ${d.unevenRows.length}  clipped ${d.clipped.length}  placeholders ${d.placeholders.length}`);
-    for (const k of ["deadSpace", "unevenRows", "clipped", "placeholders"]) for (const x of d[k].slice(0, 6)) console.log(`    ${k}: ${JSON.stringify(x)}`);
+    console.log(`  ${w}px  height ${d.pageHeight}  overflowX ${d.horizontalOverflow}  deadSpace ${d.deadSpace.length}  uneven ${d.unevenRows.length}  clipped ${d.clipped.length}  innerOverflow ${d.innerOverflow.length}  placeholders ${d.placeholders.length}`);
+    for (const k of ["deadSpace", "unevenRows", "clipped", "innerOverflow", "placeholders"]) for (const x of d[k].slice(0, 6)) console.log(`    ${k}: ${JSON.stringify(x)}`);
   }
 }

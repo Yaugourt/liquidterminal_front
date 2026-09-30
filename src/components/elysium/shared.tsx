@@ -114,6 +114,8 @@ export const pct = (v: number | null | undefined, digits = 0) =>
 export function delta(now: number, prev: number): { text: string; up: boolean } | null {
   if (!prev) return now ? { text: "new", up: true } : null;
   const d = (now - prev) / prev;
+  // From 10x up a percentage stops reading ("+12189%"): show the multiplier.
+  if (now / prev >= 10) return { text: `${Math.round(now / prev)}x`, up: true };
   return { text: `${d >= 0 ? "+" : ""}${Math.round(d * 100)}%`, up: d >= 0 };
 }
 

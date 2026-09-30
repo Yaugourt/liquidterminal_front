@@ -45,12 +45,12 @@ const TopContracts = memo(function TopContracts() {
             <thead>
               <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
                 <th className="text-left font-semibold px-3.5 py-2">Contract</th>
-                <th className="text-left font-semibold px-2 py-2">Kind</th>
+                <th className="text-left font-semibold px-2 py-2 hidden sm:table-cell">Kind</th>
                 <th className="text-right font-semibold px-2 py-2">Txs</th>
-                <th className="text-right font-semibold px-2 py-2">vs prev.</th>
+                <th className="text-right font-semibold px-2 py-2 whitespace-nowrap hidden sm:table-cell">vs prev.</th>
                 <th className="text-right font-semibold px-2 py-2">Callers</th>
                 <th className="text-left font-semibold px-2 py-2 hidden md:table-cell">Top methods</th>
-                <th className="text-left font-semibold px-3.5 py-2 hidden lg:table-cell">Deployed by</th>
+                <th className="text-left font-semibold px-3.5 py-2 hidden xl:table-cell">Deployed by</th>
               </tr>
             </thead>
             <tbody>
@@ -62,13 +62,13 @@ const TopContracts = memo(function TopContracts() {
                       <AddrLink address={r.address} className="text-text-primary">
                         {r.label || r.symbol || short(r.address)}
                       </AddrLink>
-                      {(r.label || r.symbol) && <span className="text-text-tertiary"> {short(r.address)}</span>}
+                      {(r.label || r.symbol) && <span className="text-text-tertiary hidden sm:inline"> {short(r.address)}</span>}
                     </td>
-                    <td className="px-2 py-1.5">
+                    <td className="px-2 py-1.5 hidden sm:table-cell">
                       <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${KIND_TONE[r.kind]}`}>{r.kind}</span>
                     </td>
                     <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(r.txs)}</td>
-                    <td className={`px-2 py-1.5 text-right ${d ? (d.up ? "text-success" : "text-danger") : "text-text-tertiary"}`}>{d?.text ?? EMPTY}</td>
+                    <td className={`px-2 py-1.5 text-right hidden sm:table-cell ${d ? (d.up ? "text-success" : "text-danger") : "text-text-tertiary"}`}>{d?.text ?? EMPTY}</td>
                     <td className="px-2 py-1.5 text-right text-text-secondary">{compactCount(r.callers)}</td>
                     <td className="px-2 py-1.5 hidden md:table-cell max-w-[220px]">
                       <div className="truncate text-text-secondary">
@@ -82,7 +82,7 @@ const TopContracts = memo(function TopContracts() {
                             ))}
                       </div>
                     </td>
-                    <td className="px-3.5 py-1.5 whitespace-nowrap hidden lg:table-cell">
+                    <td className="px-3.5 py-1.5 whitespace-nowrap hidden xl:table-cell">
                       {r.deployer ? (
                         <AddrLink address={r.deployer} className="text-text-tertiary" />
                       ) : (
@@ -131,7 +131,7 @@ const TopMethods = memo(function TopMethods() {
                   <th className="text-left font-semibold px-3.5 py-2">Method</th>
                   <th className="text-right font-semibold px-2 py-2">Calls</th>
                   <th className="text-right font-semibold px-2 py-2">Share</th>
-                  <th className="text-right font-semibold px-2 py-2">Senders</th>
+                  <th className="text-right font-semibold px-2 py-2 hidden sm:table-cell">Senders</th>
                   <th className="text-right font-semibold px-3.5 py-2 hidden sm:table-cell">Contracts</th>
                 </tr>
               </thead>
@@ -141,12 +141,12 @@ const TopMethods = memo(function TopMethods() {
                     <td className="px-3.5 py-1.5 max-w-[320px]">
                       <div className="truncate" title={m.signature ?? undefined}>
                         {m.name ? <span className="text-text-primary">{m.name}</span> : <span className="text-text-tertiary">unknown</span>}
-                        <span className="text-text-tertiary"> {m.methodId}</span>
+                        <span className="text-text-tertiary hidden sm:inline"> {m.methodId}</span>
                       </div>
                     </td>
                     <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(m.txs)}</td>
                     <td className="px-2 py-1.5 text-right text-text-secondary">{pct(m.share, 1)}</td>
-                    <td className="px-2 py-1.5 text-right text-text-secondary">{compactCount(m.senders)}</td>
+                    <td className="px-2 py-1.5 text-right text-text-secondary hidden sm:table-cell">{compactCount(m.senders)}</td>
                     <td className="px-3.5 py-1.5 text-right text-text-tertiary hidden sm:table-cell">{compactCount(m.contracts)}</td>
                   </tr>
                 ))}
