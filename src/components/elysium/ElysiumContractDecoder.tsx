@@ -10,7 +10,8 @@ import { OWNER_RENOUNCED, useContractContext, useDecodedContract, type ContractC
 import { AddrLink, EMPTY, EXPLORER, Empty, ExtLink, elysiumTimeLabel, short } from "./shared";
 
 const simulateHref = (to: string, sig: string) => `/elysium/simulate?${new URLSearchParams({ to, sig, value: "0" }).toString()}`;
-const day = (iso: string | null) => (iso ? elysiumTimeLabel(iso).slice(0, 10) : EMPTY);
+const day = (iso: string | null) =>
+  iso ? new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }) : EMPTY;
 
 function Chip({ children, tone = "default" }: { children: React.ReactNode; tone?: "default" | "brand" | "warn" }) {
   const cls = {

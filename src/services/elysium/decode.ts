@@ -80,7 +80,7 @@ const KNOWN_SIGS = [
   "asset()", "convertToShares(uint256)", "aggregate3((address,bool,bytes)[])",
   // Arbitrum token bridge (tokens bridged from the parent chain and their gateways)
   "bridgeMint(address,uint256)", "bridgeBurn(address,uint256)", "l1Address()", "l2Gateway()",
-  "l1Router()", "counterpartGateway()", "finalizeInboundTransfer(address,address,address,uint256,bytes)",
+  "l1Router()", "l1Gateway()", "counterpartGateway()", "finalizeInboundTransfer(address,address,address,uint256,bytes)",
   "outboundTransfer(address,address,uint256,bytes)",
 ] as const;
 
@@ -202,7 +202,8 @@ function classify(sels: Set<string>): ContractKind[] {
   if (has(sels, "bridgeMint(address,uint256)") && has(sels, "bridgeBurn(address,uint256)") && has(sels, "l1Address()")) {
     k.unshift("Bridged token (from HyperEVM)");
   }
-  if (has(sels, "finalizeInboundTransfer(address,address,address,uint256,bytes)") || (has(sels, "l1Router()") && has(sels, "counterpartGateway()"))) {
+  // Gateways and routers of the token bridge point back to their parent chain side.
+  if (has(sels, "finalizeInboundTransfer(address,address,address,uint256,bytes)") || has(sels, "l1Router()") || has(sels, "l1Gateway()")) {
     k.push("Token bridge gateway");
   }
   return k;
