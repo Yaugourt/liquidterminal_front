@@ -113,7 +113,7 @@ export function SpotVenueCard({
       stats={[
         { label: "Volume 24h", value: stats ? compactUsd(stats.totalVolume24h) : "…" },
         { label: "Spot USDC", value: stats ? compactUsd(stats.totalSpotUSDC) : "…" },
-        { label: "HIP-2 liquidity", value: stats ? compactUsd(stats.totalHIP2) : "…" },
+        { label: "HIP-2 liq.", value: stats ? compactUsd(stats.totalHIP2) : "…" },
       ]}
       footer={
         <>
@@ -132,7 +132,7 @@ export function SpotVenueCard({
           { header: "Token", align: "left" },
           { header: "Price", width: 90 },
           { header: "24h", width: 76 },
-          { header: "Volume", width: 90 },
+          { header: "Volume", width: 90, className: "hidden sm:table-cell" },
         ]}
       >
         {top3.map((t) => (
@@ -170,12 +170,12 @@ export function PerpVenueCard({
   return (
     <VenueShell
       title="Perpetuals"
-      subtitle={stats ? `${stats.totalPairs} markets · core DEX` : "core DEX"}
+      subtitle={stats ? `${stats.totalPairs} core markets` : "core DEX"}
       openLabel="Open Perpetual"
       openHref="/market/perp"
       stats={[
         { label: "Volume 24h", value: stats ? compactUsd(stats.totalVolume24h) : "…" },
-        { label: "Open interest", value: stats ? compactUsd(stats.totalOpenInterest) : "…" },
+        { label: "OI", value: stats ? compactUsd(stats.totalOpenInterest) : "…" },
         { label: "HLP TVL", value: stats ? compactUsd(stats.hlpTvl) : "…" },
       ]}
       footer={
@@ -195,7 +195,7 @@ export function PerpVenueCard({
           { header: "Market", align: "left" },
           { header: "24h", width: 76 },
           { header: "Volume", width: 90 },
-          { header: "OI", width: 84 },
+          { header: "OI", width: 84, className: "hidden sm:table-cell" },
         ]}
       >
         {top3.map((m) => (
