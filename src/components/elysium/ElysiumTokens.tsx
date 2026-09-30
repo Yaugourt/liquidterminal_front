@@ -8,7 +8,7 @@ import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { elysiumTimeMs, useElysiumTokenLaunches, type ElysiumTokenLaunch } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
-import { AddrLink, EMPTY, Empty, ago, completeDays, useNow } from "./shared";
+import { AddrLink, EMPTY, Empty, ago, completeDays, short, useNow } from "./shared";
 
 const TH = "text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold py-2";
 
@@ -28,13 +28,17 @@ function TokenTable({ rows, now, empty }: { rows: ElysiumTokenLaunch[]; now: num
         {rows.map((t) => (
           <tr key={t.address} className="border-t border-border-subtle">
             <td className="px-3.5 py-1.5 min-w-0">
-              <div className="flex items-baseline gap-1.5 min-w-0">
+              <div className="flex items-baseline gap-1.5 min-w-0" title={t.symbol}>
                 <AddrLink address={t.address} className="text-text-primary">{t.symbol}</AddrLink>
                 {t.origin === "canonical" && (
                   <span className="text-[9px] font-semibold px-1 rounded bg-brand/10 text-brand shrink-0">bridged</span>
                 )}
               </div>
-              {t.name && t.name !== t.symbol && <div className="text-[10px] text-text-tertiary truncate">{t.name}</div>}
+              {/* Many test tokens share a symbol: the short address tells the contracts apart, and every row keeps the same height. */}
+              <div className="text-[10px] text-text-tertiary truncate" title={t.name && t.name !== t.symbol ? `${t.name} · ${t.address}` : t.address}>
+                {short(t.address)}
+                {t.name && t.name !== t.symbol ? ` · ${t.name}` : ""}
+              </div>
             </td>
             <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(t.transfers)}</td>
             <td className="px-2 py-1.5 text-right text-text-secondary">{t.holders == null ? EMPTY : compactCount(t.holders)}</td>
