@@ -177,6 +177,30 @@ export function ElysiumContractDecoder({ address, hideWhenEoa = false }: { addre
 
   const named = d.functions.filter((f) => f.signature);
   const unknown = d.functions.length - named.length;
+  const adminUnderIdentity = !!ctx?.deployment;
+  const adminCard = (
+    <Card className="overflow-hidden flex flex-col">
+      <CardHeading icon={<ShieldAlert size={13} className="text-brand" />} title="Admin powers" meta={`${d.powers.length} found`} metaVariant="plain" />
+      <div className="px-3.5 py-2 text-[12px]">
+        {d.powers.length === 0 ? (
+          <p className="text-text-tertiary py-1">No privileged function found among the decoded names.</p>
+        ) : (
+          <ul className="space-y-1.5">
+            {d.powers.map((p) => (
+              <li key={p.id} className="flex flex-wrap items-baseline gap-x-2">
+                <span className="text-text-primary">{p.label}</span>
+                <span className="mono text-text-tertiary">{p.evidence.join(", ")}</span>
+                {p.id === "owner" && d.identity.owner === OWNER_RENOUNCED ? <span className="text-success">ownership renounced</span> : null}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p className="text-[11px] text-text-tertiary mt-2">
+          Found by function name in the bytecode. A function existing does not prove who can call it: check the code or simulate a call.
+        </p>
+      </div>
+    </Card>
+  );
 
   return (
     <div className="space-y-4">
@@ -190,39 +214,26 @@ export function ElysiumContractDecoder({ address, hideWhenEoa = false }: { addre
           <p className="text-[13px] text-text-primary leading-relaxed">{summary(d, ctx ?? null)}</p>
         </div>
       </Card>
+      {/* Two columns. Admin powers go under whichever side is shorter: a known deployer makes
+          "who is behind it" tall (sibling contracts), otherwise the identity table is the taller one. */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-        <Card className="overflow-hidden flex flex-col">
-          <CardHeading icon={<Boxes size={13} className="text-brand" />} title="Identity" meta="read from its own view functions" metaVariant="plain" />
-          <div className="px-3.5 py-1.5">
-            <Identity d={d} />
-          </div>
-        </Card>
-        <Card className="overflow-hidden flex flex-col">
-          <CardHeading icon={<UserSearch size={13} className="text-brand" />} title="Who is behind it" meta="from our index" metaVariant="plain" />
-          <Behind ctx={ctx ?? null} loading={ctxLoading} />
-        </Card>
-      </div>
-      <Card className="overflow-hidden flex flex-col">
-        <CardHeading icon={<ShieldAlert size={13} className="text-brand" />} title="Admin powers" meta={`${d.powers.length} found`} metaVariant="plain" />
-        <div className="px-3.5 py-2 text-[12px]">
-          {d.powers.length === 0 ? (
-            <p className="text-text-tertiary py-1">No privileged function found among the decoded names.</p>
-          ) : (
-            <ul className="space-y-1.5">
-              {d.powers.map((p) => (
-                <li key={p.id} className="flex flex-wrap items-baseline gap-x-2">
-                  <span className="text-text-primary">{p.label}</span>
-                  <span className="mono text-text-tertiary">{p.evidence.join(", ")}</span>
-                  {p.id === "owner" && d.identity.owner === OWNER_RENOUNCED ? <span className="text-success">ownership renounced</span> : null}
-                </li>
-              ))}
-            </ul>
-          )}
-          <p className="text-[11px] text-text-tertiary mt-2">
-            Found by function name in the bytecode. A function existing does not prove who can call it: check the code or simulate a call.
-          </p>
+        <div className="space-y-4 min-w-0">
+          <Card className="overflow-hidden flex flex-col">
+            <CardHeading icon={<Boxes size={13} className="text-brand" />} title="Identity" meta="read from its own view functions" metaVariant="plain" />
+            <div className="px-3.5 py-1.5">
+              <Identity d={d} />
+            </div>
+          </Card>
+          {adminUnderIdentity ? adminCard : null}
         </div>
-      </Card>
+        <div className="space-y-4 min-w-0">
+          <Card className="overflow-hidden flex flex-col">
+            <CardHeading icon={<UserSearch size={13} className="text-brand" />} title="Who is behind it" meta="from our index" metaVariant="plain" />
+            <Behind ctx={ctx ?? null} loading={ctxLoading} />
+          </Card>
+          {adminUnderIdentity ? null : adminCard}
+        </div>
+      </div>
       <Card className="overflow-hidden flex flex-col">
         <CardHeading
           icon={<FlaskConical size={13} className="text-brand" />}
@@ -239,7 +250,7 @@ export function ElysiumContractDecoder({ address, hideWhenEoa = false }: { addre
                 <Link
                   key={f.selector}
                   href={simulateHref(address, f.signature)}
-                  className="mono rounded bg-surface-2 px-2 py-0.5 text-text-secondary hover:text-brand"
+                  className="mono rounded bg-surface-2 px-2 py-0.5 text-text-secondary hover:text-brand break-all"
                   title="Open in the simulator"
                 >
                   {f.signature}

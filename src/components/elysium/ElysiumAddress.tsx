@@ -161,9 +161,9 @@ const Activity = memo(function Activity({ address }: { address: string }) {
                       <ExtLink href={`${EXPLORER}/tx/${a.tx_hash}`} className="text-text-tertiary">{ago(elysiumTimeMs(a.time), now)}</ExtLink>
                     </td>
                     <td className="px-2 py-1.5 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-0.5 ${inbound ? "text-success" : "text-text-secondary"}`}>
+                      <span className={`inline-flex items-center gap-0.5 ${inbound ? "text-success" : "text-text-secondary"}`} title={a.kind.replace(/_/g, " ")}>
                         {inbound ? <ArrowDownLeft size={11} /> : <ArrowUpRight size={11} />}
-                        {a.kind.replace(/_/g, " ")}
+                        <span className="hidden sm:inline">{a.kind.replace(/_/g, " ")}</span>
                       </span>
                     </td>
                     <td className="px-2 py-1.5 whitespace-nowrap">
@@ -272,12 +272,15 @@ export function ElysiumAddress({ address }: { address: string }) {
       </Card>
       <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-4" />
       <ElysiumContractDecoder address={address} hideWhenEoa />
+      {/* Profile on the left; balances and bridge history stack on the right, so neither side leaves a hole. */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         <Profile address={address} />
-        <Balances address={address} />
+        <div className="space-y-4 min-w-0">
+          <Balances address={address} />
+          <Bridge address={address} />
+        </div>
       </div>
       <Activity address={address} />
-      <Bridge address={address} />
       <p className="text-[11px] text-text-tertiary flex items-start gap-1.5">
         <Code2 size={12} className="mt-px shrink-0" />
         Testnet balances, no market value. Balances, activity and bridge history come from the Elysium indexer; tags and counts are computed by

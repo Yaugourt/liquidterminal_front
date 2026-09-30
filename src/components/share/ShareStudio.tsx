@@ -218,10 +218,10 @@ export function ShareStudio({ groups, allowCustom = false, heading, subheading, 
         {icon}
       </span>
       <span className="min-w-0">
-        <span className={`block text-[12px] font-medium leading-tight truncate ${active ? "text-brand" : "text-text-primary"}`}>
+        <span className={`block text-[12px] font-medium leading-tight truncate ${active ? "text-brand" : "text-text-primary"}`} title={label}>
           {label}
         </span>
-        <span className="block text-[10px] text-text-tertiary leading-tight truncate">{desc}</span>
+        <span className="block text-[10px] text-text-tertiary leading-tight line-clamp-2">{desc}</span>
       </span>
     </button>
   );

@@ -78,6 +78,7 @@ function audit() {
   for (const el of main.querySelectorAll("*")) {
     if (el.childElementCount > 0) continue;
     const cs = getComputedStyle(el);
+    if (el.clientWidth <= 1 || el.closest(".sr-only")) continue; // screen-reader-only text
     // Truncation that keeps the full text on hover (title) is intended.
     if (el.closest("[title]")) continue;
     if (el.scrollWidth > el.clientWidth + 1 && (cs.overflow === "hidden" || cs.overflowX === "hidden" || cs.textOverflow === "ellipsis")) {
