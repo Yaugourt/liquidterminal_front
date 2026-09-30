@@ -70,7 +70,7 @@ export function MarketVolumeCard() {
   const cells: KpiCell[] = [
     {
       key: "total",
-      label: "Cumulative volume",
+      label: "Cumulative",
       value: compactUsd(model.total),
       sub: `last ${model.spanDays}d`,
     },

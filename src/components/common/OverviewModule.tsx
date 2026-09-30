@@ -193,6 +193,11 @@ export interface ModuleColumn {
    * remaining space.
    */
   width?: number | string;
+  /**
+   * Responsive visibility for the whole column (`<col>`, header and cells),
+   * e.g. `"hidden sm:table-cell"` to drop a secondary column on phones.
+   */
+  className?: string;
 }
 
 export type ModuleTableDensity = "comfortable" | "compact";
@@ -201,11 +206,14 @@ interface ModuleTableCtx {
   density: ModuleTableDensity;
   /** Per-column alignment, looked up by cell index. */
   alignments: Array<"left" | "right">;
+  /** Per-column visibility classes, looked up by cell index. */
+  colClasses: Array<string | undefined>;
 }
 
 const ModuleTableContext = createContext<ModuleTableCtx>({
   density: "comfortable",
   alignments: [],
+  colClasses: [],
 });
 
 /** Resolve `width` into the inline style for a `<col>` element. */
@@ -239,8 +247,9 @@ export function ModuleTable({
   const alignments = columns.map(
     (c, i) => c.align ?? (i === 0 ? "left" : "right"),
   );
+  const colClasses = columns.map((c) => c.className);
   return (
-    <ModuleTableContext.Provider value={{ density, alignments }}>
+    <ModuleTableContext.Provider value={{ density, alignments, colClasses }}>
       <div className="overflow-x-auto scrollbar-brand">
       <table
         className={`w-full border-collapse ${hasWidths ? "table-fixed" : "table-auto"}`}
@@ -248,7 +257,12 @@ export function ModuleTable({
         {hasWidths && (
           <colgroup>
             {columns.map((c, i) => (
-              <col key={i} style={colStyle(c.width)} />
+              <col
+                key={i}
+                style={colStyle(c.width)}
+                // A <col> shows as table-column, not table-cell.
+                className={c.className?.replace(/table-cell/g, "table-column")}
+              />
             ))}
           </colgroup>
         )}
@@ -261,7 +275,7 @@ export function ModuleTable({
                   density === "compact" ? "px-3 py-1.5" : "px-4 py-2"
                 } text-[10px] uppercase tracking-[0.05em] font-semibold text-text-tertiary border-b border-border-subtle ${
                   alignments[i] === "left" ? "text-left" : "text-right"
-                }`}
+                } ${c.className ?? ""}`}
               >
                 {c.header}
               </th>
@@ -310,7 +324,7 @@ function ModuleCell({
   href?: string;
   index: number;
 }) {
-  const { density, alignments } = useContext(ModuleTableContext);
+  const { density, alignments, colClasses } = useContext(ModuleTableContext);
   // Fallback: first cell left, the rest right (legacy ModuleTable behaviour).
   const align = alignments[index] ?? (index === 0 ? "left" : "right");
   const content = href ? (
@@ -326,7 +340,7 @@ function ModuleCell({
         density === "compact" ? "px-3 py-1.5" : "px-4 py-2.5"
       } text-[12.5px] overflow-hidden ${
         align === "left" ? "text-left" : "text-right"
-      }`}
+      } ${colClasses[index] ?? ""}`}
     >
       {content}
     </td>
@@ -375,7 +389,10 @@ export function ModuleAsset({
         )}
       </div>
       <div className="min-w-0">
-        <div className={`text-[12.5px] ${neutral ? "font-medium" : "font-semibold"} text-text-primary truncate`}>
+        <div
+          className={`text-[12.5px] ${neutral ? "font-medium" : "font-semibold"} text-text-primary truncate`}
+          title={typeof name === "string" ? name : undefined}
+        >
           {name}
         </div>
         {sub != null && (

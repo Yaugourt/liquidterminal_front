@@ -96,9 +96,9 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
       <ModuleTable
         columns={[
           { header: isSpot ? "Token" : "Asset" },
-          { header: "Price", width: 90 },
-          { header: "24h", width: 70 },
-          { header: "Volume", width: 84 },
+          { header: "Price", width: 84 },
+          { header: "24h", width: 64 },
+          { header: "Volume", width: 84, className: "hidden sm:table-cell" },
         ]}
       >
         {isLoading && rows.length === 0 && (

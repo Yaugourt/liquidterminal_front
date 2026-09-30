@@ -105,7 +105,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
           24h
         </span>
-        <div className="ml-auto flex items-center gap-2.5 text-[10px] mono">
+        <div className="ml-auto hidden sm:flex items-center gap-2.5 text-[10px] mono">
           <span className="text-text-tertiary">
             Vol{" "}
             <span className="text-text-primary font-semibold">
@@ -126,7 +126,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
         </div>
         <Link
           href="/market/builders"
-          className="shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
+          className="ml-auto sm:ml-0 shrink-0 flex items-center gap-1 text-[11px] font-medium text-brand hover:text-brand-hover transition-colors"
         >
           View all
           <ArrowRight size={12} />
@@ -140,7 +140,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
       ) : (
         <>
           {/* Body — donut hero (left) + legend (right) */}
-          <div className="flex-1 flex items-stretch gap-3 px-4 py-4">
+          <div className="flex-1 flex flex-col sm:flex-row items-stretch gap-3 px-4 py-4">
             <div className="self-center shrink-0">
               <DonutTopN
                 data={segments}
@@ -191,6 +191,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
                       style={{ background: s.color }}
                     />
                     <span
+                      title={s.name}
                       className={`text-[12px] flex-1 truncate ${
                         s.isRest
                           ? "text-text-tertiary italic"

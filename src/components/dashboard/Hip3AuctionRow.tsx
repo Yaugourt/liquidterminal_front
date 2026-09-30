@@ -120,7 +120,7 @@ export const Hip3TopDeployersCard = memo(function Hip3TopDeployersCard() {
         // truncate instead of widening the card past its column.
         columns={[
           { header: "Deployer" },
-          { header: "Markets", width: 74 },
+          { header: "Markets", width: 74, className: "hidden sm:table-cell" },
           { header: "Vol", width: 84 },
           { header: "OI", width: 84 },
         ]}

@@ -362,7 +362,7 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
         className="border-b border-border-subtle"
         cells={[
           {
-            label: "Total liquidated 24h",
+            label: "Liquidated",
             value: compactUsd(stats.totalVolume),
             sub: (
               <>
@@ -458,10 +458,10 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
                     {isLong ? "LONG" : "SHORT"}
                   </span>
                   <TokenAvatar assetName={l.coin} size="sm" />
-                  <span className="font-semibold text-text-primary truncate">
+                  <span className="font-semibold text-text-primary shrink-0">
                     {l.coin}
                   </span>
-                  <span className="mono text-text-tertiary text-[10px] truncate">
+                  <span className="mono text-text-tertiary text-[10px] truncate hidden sm:inline" title={l.liquidated_user}>
                     {truncateAddress(l.liquidated_user)}
                   </span>
                   <span className="mono font-semibold text-gold ml-auto whitespace-nowrap">

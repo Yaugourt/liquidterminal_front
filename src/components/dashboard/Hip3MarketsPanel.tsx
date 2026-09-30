@@ -125,7 +125,7 @@ export const Hip3MarketsPanel = memo(function Hip3MarketsPanel() {
         columns={[
           { header: "Ticker" },
           { header: "Price", width: 82 },
-          { header: "24h Vol", width: 88 },
+          { header: "24h Vol", width: 88, className: "hidden sm:table-cell lg:hidden xl:table-cell" },
           { header: "Open Interest", width: 104 },
         ]}
       >
