@@ -16,6 +16,7 @@ import {
   type ElysiumAddressTag,
 } from "@/services/elysium";
 import { AddrLink, EMPTY, EXPLORER, Empty, ExtLink, ago, elysiumTimeLabel, methodLabel, pct, short, useNow } from "./shared";
+import { ElysiumContractDecoder } from "./ElysiumContractDecoder";
 
 const TAG_TONE: Record<ElysiumAddressTag["id"], string> = {
   deployer: "bg-brand/10 text-brand",
@@ -270,6 +271,7 @@ export function ElysiumAddress({ address }: { address: string }) {
         </div>
       </Card>
       <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-4" />
+      <ElysiumContractDecoder address={address} hideWhenEoa />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
         <Profile address={address} />
         <Balances address={address} />
