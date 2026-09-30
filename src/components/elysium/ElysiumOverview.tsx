@@ -10,6 +10,7 @@ import {
   ElysiumMark,
   HypeMark,
   KpiRibbon,
+  RowFillList,
   chartPalette,
   type KpiCell,
 } from "@/components/common";
@@ -98,7 +99,7 @@ const ElysiumKpis = memo(function ElysiumKpis() {
     },
   ];
 
-  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4 lg:grid-cols-8" />;
+  return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4 xl:grid-cols-8" />;
 });
 
 // ── Daily activity ───────────────────────────────────────────────────────────
@@ -155,7 +156,7 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
         metaVariant="plain"
         status={<DataStatus variant="live" connected={!error} />}
       />
-      <div className="h-[360px] overflow-y-auto scrollbar-brand pl-3.5 pr-2 py-1">
+      <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom pl-3.5 pr-2 py-1">
         {!txs ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading transactions…"}</Empty>
         ) : (
@@ -209,7 +210,7 @@ const ElysiumBlocks = memo(function ElysiumBlocks() {
         title="Blocks"
         status={<DataStatus variant="live" connected={!error} />}
       />
-      <div className="h-[360px] overflow-y-auto scrollbar-brand pl-3.5 pr-2 py-1">
+      <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom pl-3.5 pr-2 py-1">
         {!blocks ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading blocks…"}</Empty>
         ) : (
@@ -242,12 +243,12 @@ const ElysiumBlocks = memo(function ElysiumBlocks() {
 // ── Bridge ───────────────────────────────────────────────────────────────────
 const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
   const { format } = useNumberFormat();
-  const { data: transfers, error } = useElysiumBridgeTransfers(15);
+  const { data: transfers, error } = useElysiumBridgeTransfers(30);
   const { data: failed } = useElysiumRetryables();
   const now = useNow(5_000);
   const failedCount = failed?.length ?? 0;
   return (
-    <Card className="overflow-hidden flex flex-col">
+    <Card className="h-full overflow-hidden flex flex-col">
       <CardHeading
         icon={<ArrowDownLeft size={13} className="text-brand" />}
         title="Bridge"
@@ -261,7 +262,7 @@ const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
           ) : undefined
         }
       />
-      <div className="h-[300px] overflow-y-auto scrollbar-brand pl-3.5 pr-2 py-1">
+      <RowFillList className="pl-3.5 pr-2 py-1">
         {!transfers ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading bridge transfers…"}</Empty>
         ) : (
@@ -302,7 +303,7 @@ const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
             </tbody>
           </table>
         )}
-      </div>
+      </RowFillList>
     </Card>
   );
 });
@@ -365,11 +366,11 @@ const ElysiumReserves = memo(function ElysiumReserves() {
 // ── Settlement + tokens ──────────────────────────────────────────────────────
 const ElysiumSettlement = memo(function ElysiumSettlement() {
   const { format } = useNumberFormat();
-  const { data: batches } = useElysiumBatches(6);
+  const { data: batches } = useElysiumBatches(16);
   const { data: stats } = useElysiumStats();
   const unsettled = stats ? stats.last_block - stats.last_batched_block : null;
   return (
-    <Card className="overflow-hidden flex flex-col">
+    <Card className="h-full overflow-hidden flex flex-col">
       <CardHeading
         icon={<Layers size={13} className="text-brand" />}
         title="Settlement"
@@ -385,7 +386,7 @@ const ElysiumSettlement = memo(function ElysiumSettlement() {
           "…"
         )}
       </div>
-      <div className="px-3.5 pb-2 pt-1">
+      <RowFillList className="px-3.5 pb-2 pt-1" minHeight="lg:min-h-[200px]">
         {!batches ? (
           <Empty>Loading batches…</Empty>
         ) : (
@@ -406,7 +407,7 @@ const ElysiumSettlement = memo(function ElysiumSettlement() {
             </tbody>
           </table>
         )}
-      </div>
+      </RowFillList>
     </Card>
   );
 });
@@ -477,13 +478,15 @@ export function ElysiumOverview() {
         </div>
         <ElysiumBlocks />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-        <div className="lg:col-span-2 min-w-0">
+      {/* Stretch: the bridge feed fills the height of the reserves card. */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 min-w-0 flex flex-col">
           <ElysiumBridgeFeed />
         </div>
         <ElysiumReserves />
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+      {/* Stretch: settlement lists as many batches as the tokens card is tall. */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ElysiumSettlement />
         <ElysiumTokens />
       </div>

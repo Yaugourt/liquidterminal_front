@@ -303,6 +303,14 @@
     scrollbar-color: rgb(var(--border-strong)) transparent;
 }
 
+/*
+ * Fade the last rows of a clipped list so a half-cut row never shows.
+ * Pair with a fixed-height or row-filling scroll container (RowFillList).
+ */
+.fade-bottom {
+    mask-image: linear-gradient(to bottom, black calc(100% - 28px), transparent);
+}
+
 /* Smooth scroll for storytelling landing */
 html {
   scroll-behavior: smooth;

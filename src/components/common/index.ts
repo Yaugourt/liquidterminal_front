@@ -66,6 +66,7 @@ export { LiquidSurface, useLiquidSurface } from './LiquidSurface';
 export type { LiquidSurfaceProps } from './LiquidSurface';
 
 export { KpiRibbon } from './KpiRibbon';
+export { RowFillList } from './RowFillList';
 export type { KpiCell, KpiTone, KpiRibbonProps } from './KpiRibbon';
 
 // Dialogs
