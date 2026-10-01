@@ -3,7 +3,7 @@
 import { memo, useMemo } from "react";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { LineChart, ChevronRight } from "lucide-react";
-import { formatLargeNumber } from "@/lib/formatters/numberFormatting";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
@@ -91,7 +91,7 @@ const COLUMNS: Column<AggregatedHip3MarketRow>[] = [
     type: "fees",
     accessor: (row) =>
       row.totalVolume24h > 0
-        ? formatLargeNumber(row.totalVolume24h, { prefix: "$", decimals: 1, forceDecimals: false })
+        ? compactUsd(row.totalVolume24h)
         : "-",
   },
   {
@@ -100,7 +100,7 @@ const COLUMNS: Column<AggregatedHip3MarketRow>[] = [
     type: "numeric",
     accessor: (row) =>
       row.totalOpenInterest > 0
-        ? formatLargeNumber(row.totalOpenInterest, { prefix: "$", decimals: 1, forceDecimals: false })
+        ? compactUsd(row.totalOpenInterest)
         : "-",
   },
 ];

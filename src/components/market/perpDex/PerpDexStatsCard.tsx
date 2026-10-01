@@ -2,20 +2,11 @@
 
 import { memo } from "react";
 import { KpiRibbon, ShareTile, type KpiCell, type KpiTone } from "@/components/common";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
-import { useNumberFormat } from "@/store/number-format.store";
-
-const usdFormat = {
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0,
-  currency: "$",
-  showCurrency: true,
-} as const;
 
 export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
   const { globalStats, isLoading } = usePerpDexMarketData();
-  const { format } = useNumberFormat();
 
   const avgFunding = globalStats?.avgFunding ?? 0;
   const loadingPlaceholder = isLoading && !globalStats ? "…" : null;
@@ -40,7 +31,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
       label: "24h Volume",
       value: val(
         globalStats?.totalVolume24h
-          ? formatNumber(globalStats.totalVolume24h, format, usdFormat)
+          ? compactUsd(globalStats.totalVolume24h)
           : "—"
       ),
     },
@@ -48,7 +39,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
       label: "Open Interest",
       value: val(
         globalStats?.totalOpenInterest
-          ? formatNumber(globalStats.totalOpenInterest, format, usdFormat)
+          ? compactUsd(globalStats.totalOpenInterest)
           : "—"
       ),
     },
@@ -56,7 +47,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
       label: "Total OI Cap",
       value: val(
         globalStats?.totalOiCap
-          ? formatNumber(globalStats.totalOiCap, format, usdFormat)
+          ? compactUsd(globalStats.totalOiCap)
           : "—"
       ),
     },
@@ -75,7 +66,7 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
 
   return (
     // This card is a bare KpiRibbon with no card-head, so the copy-as-image
-    // tile is pinned to the ribbon's top-right corner (outside the ribbon's
+    // tile is pinned to the ribbon's corner over the last cell (outside the ribbon's
     // own overflow-hidden container so it is never clipped).
     <div className="relative">
       <KpiRibbon cells={cells} columns="grid-cols-2 xl:grid-cols-6" />
@@ -83,7 +74,9 @@ export const PerpDexStatsCard = memo(function PerpDexStatsCard() {
         src="/api/tile/hip3"
         filename="hip3-ecosystem"
         label="Copy HIP-3 ecosystem as image"
-        className="absolute top-1.5 right-1.5"
+        // Bottom-right below xl: the last cell sits there, the top-right one
+        // (active markets) would be covered.
+        className="absolute bottom-1.5 right-1.5 xl:bottom-auto xl:top-1.5"
       />
     </div>
   );

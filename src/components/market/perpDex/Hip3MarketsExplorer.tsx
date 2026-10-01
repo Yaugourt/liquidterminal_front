@@ -111,6 +111,7 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
     },
     {
       key: "volume24h",
+      className: "hidden sm:table-cell",
       header: "Volume",
       align: "right",
       sortable: true,
@@ -119,6 +120,7 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
     },
     {
       key: "openInterestUsd",
+      className: "hidden md:table-cell",
       header: "OI",
       align: "right",
       sortable: true,
@@ -127,6 +129,7 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
     },
     {
       key: "basisBps",
+      className: "hidden sm:table-cell",
       header: "Basis",
       align: "right",
       sortable: true,

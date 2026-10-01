@@ -106,10 +106,11 @@ interface DensityStyles {
     textSize: string;
 }
 
-// V4 table densities (spec §5.3) — dense rows, the V4 signature.
+// V4 table densities (spec §5.3) — dense rows, the V4 signature. Phones get
+// tighter side padding: on a 343px card it is what pushed tables past the edge.
 const DENSITY_STYLES: Record<Density, DensityStyles> = {
-    comfortable: { cellPaddingY: "py-2", cellPaddingX: "px-3.5", textSize: "text-sm" },
-    compact:     { cellPaddingY: "py-1.5", cellPaddingX: "px-3", textSize: "text-xs" },
+    comfortable: { cellPaddingY: "py-2", cellPaddingX: "px-2.5 sm:px-3.5", textSize: "text-sm" },
+    compact:     { cellPaddingY: "py-1.5", cellPaddingX: "px-2 sm:px-3", textSize: "text-xs" },
 };
 
 // ─── TypedDataTable (the canonical primitive) ─────────────────────────

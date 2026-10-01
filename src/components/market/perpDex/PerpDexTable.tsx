@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
-import { formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatNumber, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useRouter } from "next/navigation";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks";
 import { useNumberFormat, type NumberFormatType } from "@/store/number-format.store";
@@ -29,6 +29,7 @@ function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[]
     },
     {
       key: "activeAssets",
+      className: "whitespace-nowrap",
       header: "Markets",
       type: "numeric",
       sortable: true,
@@ -52,32 +53,24 @@ function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[]
       getSortValue: (row) => row.totalVolume24h,
       accessor: (row) =>
         row.totalVolume24h > 0
-          ? formatNumber(row.totalVolume24h, format, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-              currency: '$',
-              showCurrency: true,
-            })
+          ? compactUsd(row.totalVolume24h)
           : '-',
     },
     {
       key: "totalOpenInterest",
+      className: "hidden md:table-cell",
       header: "Open Interest",
       type: "numeric",
       sortable: true,
       getSortValue: (row) => row.totalOpenInterest,
       accessor: (row) =>
         row.totalOpenInterest > 0
-          ? formatNumber(row.totalOpenInterest, format, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-              currency: '$',
-              showCurrency: true,
-            })
+          ? compactUsd(row.totalOpenInterest)
           : '-',
     },
     {
       key: "avgFunding",
+      className: "hidden md:table-cell",
       header: "Avg Funding",
       sortable: true,
       getSortValue: (row) => row.avgFunding,
@@ -89,6 +82,7 @@ function buildColumns(format: NumberFormatType): Column<PerpDexWithMarketData>[]
     },
     {
       key: "totalOiCap",
+      className: "hidden xl:table-cell",
       header: "OI Cap",
       accessor: (row) => (
         <div className="flex flex-col items-start">
