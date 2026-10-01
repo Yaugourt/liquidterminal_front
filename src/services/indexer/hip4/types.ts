@@ -143,10 +143,23 @@ export interface Hip4OutcomeMetaEntry {
   description: string;
   sideSpecs: Hip4OutcomeMetaSide[];
   quoteToken?: string;
+  /** Grouping question (name + pipe description), attached client-side from
+   * `questions[]`. Template outcomes only make sense with it, e.g.
+   * `participant:Arsenal` under `competition:English Premier League`. */
+  question?: { name: string; description: string };
+}
+
+export interface Hip4OutcomeMetaQuestion {
+  question: number;
+  name: string;
+  description: string;
+  fallbackOutcome?: number;
+  namedOutcomes?: number[];
 }
 
 export interface Hip4OutcomeMetaResponse {
   outcomes: Hip4OutcomeMetaEntry[];
+  questions?: Hip4OutcomeMetaQuestion[];
 }
 
 // ─── Hyperliquid market-data for live outcome coins ──────────────────────────

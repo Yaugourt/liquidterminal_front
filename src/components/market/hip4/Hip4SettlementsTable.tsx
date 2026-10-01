@@ -51,6 +51,7 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
     },
     {
       key: "settledPrice",
+      className: "hidden sm:table-cell",
       header: "Settled Price",
       type: "numeric",
       accessor: (row) => (
@@ -82,6 +83,7 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
     },
     {
       key: "yesFraction",
+      className: "hidden sm:table-cell",
       header: "YES %",
       type: "numeric",
       accessor: (row) => (
@@ -102,6 +104,7 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
     },
     {
       key: "tx",
+      className: "hidden sm:table-cell",
       header: "Tx",
       accessor: (row) =>
         row.tx_hash ? (

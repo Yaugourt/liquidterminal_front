@@ -45,7 +45,7 @@ export function formatPriceBinaryTitle(
  */
 export function isPlaceholderMarketName(name: string | null | undefined): boolean {
   const n = (name ?? "").trim().toLowerCase();
-  return n === "" || n === "recurring named outcome";
+  return n === "" || n === "recurring named outcome" || n === "recurring";
 }
 
 export function formatMarketTitle(market: Hip4MarketEnrichedRow): string {
@@ -131,4 +131,112 @@ export function formatExpiryCountdown(expiry: string | null): string | null {
   if (diffH < 24) return `Expires in ${diffH}h`;
   const diffD = Math.floor(diffH / 24);
   return `Expires in ${diffD}d`;
+}
+
+/** `key:value|key:value` description fields (HIP-4 questions and outcomes). */
+export function descriptionFields(desc: string | null | undefined): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const part of (desc ?? "").split("|")) {
+    const i = part.indexOf(":");
+    if (i === -1) continue;
+    out[part.slice(0, i).trim()] = part.slice(i + 1).trim();
+  }
+  return out;
+}
+
+/**
+ * Title for a recurring price-bucket question, built only from its own
+ * description (`class:priceBucket|underlying:BTC|expiry:…|priceThresholds:a,b`).
+ * Null when a field is missing, so callers keep their own fallback.
+ */
+export function formatPriceBucketTitle(desc: string | null | undefined): string | null {
+  const f = descriptionFields(desc);
+  if (f.class !== "priceBucket" || !f.underlying || !f.expiry) return null;
+  const bounds = (f.priceThresholds ?? "")
+    .split(",")
+    .map((x) => Number(x))
+    .filter((x) => Number.isFinite(x) && x > 0)
+    .map((x) => x.toLocaleString("en-US", { maximumFractionDigits: 0 }));
+  const range = bounds.length ? ` · ${bounds.join(" / ")}` : "";
+  return `${f.underlying} price range on ${formatExpiryDate(f.expiry)}${range}`;
+}
+
+/** "4,926" style number for titles; non-numeric input passes through. */
+function titleNum(v: string): string {
+  const n = Number(v);
+  return Number.isFinite(n) ? n.toLocaleString("en-US", { maximumFractionDigits: 2 }) : v;
+}
+
+/**
+ * Title for an outcome deployed from a HIP-4 template (`template:…` names),
+ * built only from fields of its own description and of its grouping question
+ * (Hyperliquid outcomeMeta), e.g. a tournament participant becomes
+ * "Arsenal · English Premier League 2026/2027". Null when the template or its
+ * fields are not recognised, so callers keep their own fallback.
+ */
+export function formatTemplateOutcomeTitle(
+  name: string | null | undefined,
+  desc: string | null | undefined,
+  question?: { name: string; description: string }
+): string | null {
+  const n = (name ?? "").trim();
+  if (!n.startsWith("template")) return null;
+  const f = descriptionFields(desc);
+  const q = descriptionFields(question?.description);
+  const league = [q.competition, q.season].filter(Boolean).join(" ");
+  const matchA = f.participantA ?? q.participantA;
+  const matchB = f.participantB ?? q.participantB;
+  const match = matchA && matchB ? `${matchA} vs ${matchB}` : null;
+  const date = (v?: string) => (v ? formatExpiryDate(v) : null);
+
+  switch (n) {
+    case "template:sportsTournamentParticipant":
+      return f.participant ? (league ? `${f.participant} · ${league}` : f.participant) : null;
+    case "template:sportsContestParticipant2":
+      return f.participant && match ? `${f.participant} wins · ${match}` : f.participant ?? null;
+    case "template:sportsContestDraw2":
+      return match ? `Draw · ${match}` : null;
+    case "template:sportsContestWinner":
+      return match ? (f.competition ? `${match} · ${f.competition}` : match) : null;
+    case "template:sportsSpread": {
+      const side = f.shortNameA ?? matchA;
+      return side && f.spread && match ? `${side} ${f.spread} · ${match}` : null;
+    }
+    case "template:sportsTotal":
+      return f.line && match ? `${match} · total ${f.measure ?? ""} ${f.line}`.replace(/\s+/g, " ") : null;
+    case "template:binaryPrice": {
+      const asset = f.perp ?? f.spot;
+      return asset && f.threshold ? `${asset} vs ${titleNum(f.threshold)}${f.time ? ` · ${date(f.time)}` : ""}` : null;
+    }
+    case "template:priceTouch": {
+      const asset = f.perp ?? f.spot;
+      return asset && f.target ? `${asset} touches ${titleNum(f.target)}${f.time ? ` by ${date(f.time)}` : ""}` : null;
+    }
+    case "template:companyIpoConfirmed":
+      return f.company ? `${f.company} IPO confirmed${f.dateTime ? ` by ${date(f.dateTime)}` : ""}` : null;
+    case "template:policyRateNoChange":
+    case "template:policyRateDecrease":
+    case "template:policyRateIncrease": {
+      const move = n.endsWith("NoChange") ? "No change" : n.endsWith("Decrease") ? "Rate decrease" : "Rate increase";
+      return q.decisionLabel ? `${move} · ${q.decisionLabel} decision` : move;
+    }
+    case "template fallback":
+      // The question's catch-all outcome: none of the named ones.
+      return league ? `Other · ${league}` : match ? `Other · ${match}` : null;
+    default:
+      return null;
+  }
+}
+
+/**
+ * Side label of a template outcome: drops the `template:` prefix and fills
+ * `{shortNameA}` style placeholders from the outcome description.
+ */
+export function formatTemplateSide(side: string | null | undefined, desc: string | null | undefined): string | null {
+  if (!side) return null;
+  if (!side.startsWith("template:")) return side;
+  const f = descriptionFields(desc);
+  const bare = side.slice("template:".length);
+  const ph = bare.match(/^\{(\w+)\}$/);
+  return ph ? f[ph[1]] ?? bare : bare;
 }

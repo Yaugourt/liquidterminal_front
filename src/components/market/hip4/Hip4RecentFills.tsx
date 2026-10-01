@@ -36,7 +36,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
         const outcomeName = meta?.isBinary ? meta.sideName ?? null : null;
         return (
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-[12px] font-semibold text-text-primary truncate">
+            <span className="text-[12px] font-semibold text-text-primary truncate" title={meta?.name || row.coin}>
               {meta?.name || row.coin}
             </span>
             {outcomeName && (
@@ -70,6 +70,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "px",
+      className: "hidden sm:table-cell",
       header: "Price",
       type: "numeric",
       sortable: true,
@@ -82,6 +83,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "sz",
+      className: "hidden md:table-cell xl:hidden 2xl:table-cell",
       header: "Size",
       type: "numeric",
       sortable: true,
@@ -106,6 +108,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "fee",
+      className: "hidden md:table-cell xl:hidden 2xl:table-cell",
       header: "Fee",
       type: "numeric",
       sortable: true,
@@ -118,6 +121,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "user",
+      className: "hidden sm:table-cell xl:hidden 2xl:table-cell",
       header: "User",
       accessor: (row) => (
         <span className="mono text-[11px] text-text-tertiary">{truncateAddress(row.user)}</span>
@@ -125,6 +129,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "time",
+      className: "hidden sm:table-cell",
       header: "Time",
       type: "numeric",
       sortable: true,

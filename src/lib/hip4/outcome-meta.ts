@@ -17,7 +17,7 @@ import type {
   Hip4MarketEnrichedRow,
   Hip4LiveMarketData,
 } from "@/services/indexer/hip4";
-import { formatPriceBinaryTitle, isPlaceholderMarketName } from "./market-formatter";
+import { formatPriceBinaryTitle, formatTemplateOutcomeTitle, formatTemplateSide, isPlaceholderMarketName } from "./market-formatter";
 
 interface ParsedOutcomeDesc {
   cls: string | null;
@@ -101,7 +101,10 @@ export function buildLiveMarkets(
       Array.isArray(o.sideSpecs) && o.sideSpecs.length >= 1
         ? o.sideSpecs
         : [{ name: "Yes" }, { name: "No" }];
-    const sides = sidesRaw.slice(0, 2);
+    // Template sides read "template:Yes" or "template:{shortNameA}".
+    const sides = sidesRaw
+      .slice(0, 2)
+      .map((x) => ({ ...x, name: formatTemplateSide(x.name, o.description) ?? x.name }));
     const parsed = parseOutcomeDescription(o.description ?? "");
 
     const isYesNo =
@@ -117,6 +120,7 @@ export function buildLiveMarkets(
       (parsed.cls === "priceBinary"
         ? formatPriceBinaryTitle(parsed.underlying, parsed.targetPrice, parsed.expiry)
         : null) ||
+      formatTemplateOutcomeTitle(o.name, o.description, o.question) ||
       (isPlaceholderMarketName(o.name) ? null : o.name) ||
       `Outcome #${o.outcome}`;
 

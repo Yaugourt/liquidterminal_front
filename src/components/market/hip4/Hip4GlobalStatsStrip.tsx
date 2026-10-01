@@ -38,7 +38,7 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading, volume
         value: hasQuestions ? String(liveCount) : placeholder,
       },
       {
-        label: "Pending Resolution",
+        label: "Pending",
         value: hasQuestions ? String(pendingCount) : placeholder,
       },
       {

@@ -76,7 +76,7 @@ export function Hip4OutcomeList({
             : chartPalette.multiSeries[i % chartPalette.multiSeries.length];
           return (
             <OutcomeRow
-              key={o.outcome_id}
+              key={`${o.outcome_id}-${i}`}
               label={o.display_name || `Outcome ${i + 1}`}
               pct={pctOf(o)}
               variant={variant}

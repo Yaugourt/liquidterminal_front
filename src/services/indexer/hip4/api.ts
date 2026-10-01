@@ -94,7 +94,18 @@ export async function fetchHip4OutcomeMeta(): Promise<Hip4OutcomeMetaEntry[]> {
       // only recovery layer — don't stack the inner 4×10s axios retry chain.
       { timeoutMs: 5000, retryOnError: false }
     );
-    return Array.isArray(res?.outcomes) ? res.outcomes : [];
+    if (!Array.isArray(res?.outcomes)) return [];
+    // Attach each outcome's grouping question (named outcomes + fallback).
+    const byOutcome = new Map<number, { name: string; description: string }>();
+    for (const q of res.questions ?? []) {
+      const ctx = { name: q.name, description: q.description };
+      for (const id of q.namedOutcomes ?? []) byOutcome.set(id, ctx);
+      if (q.fallbackOutcome != null) byOutcome.set(q.fallbackOutcome, ctx);
+    }
+    return res.outcomes.map((o) => {
+      const question = byOutcome.get(o.outcome);
+      return question ? { ...o, question } : o;
+    });
   }, "fetching HIP-4 outcomeMeta");
 }
 

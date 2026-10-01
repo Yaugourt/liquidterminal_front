@@ -21,7 +21,7 @@ import type {
   Hip4QuestionWithOutcomesRow,
   Hip4MarketEnrichedRow,
 } from "@/services/indexer/hip4";
-import { isResidualOutcome } from "./market-formatter";
+import { descriptionFields, formatPriceBucketTitle, isPlaceholderMarketName, isResidualOutcome } from "./market-formatter";
 import { liveMidForOutcomeId, rawOutcomeId } from "./outcome-meta";
 
 interface LiveMarketsLike {
@@ -90,8 +90,30 @@ export function buildMergedQuestions(
 
     if (outcomes.length === 0) continue;
 
+    // The indexer keeps old recurring price buckets "live" with a placeholder
+    // title ("Recurring") and an empty or stale expiry. Their own description
+    // carries the real expiry and thresholds: use them, so a bucket that
+    // expired months ago reads as awaiting resolution, not live.
+    const descExpiry = descriptionFields(q.description).expiry;
+    const title = isPlaceholderMarketName(q.title)
+      ? formatPriceBucketTitle(q.description) ?? q.title
+      : q.title;
+
+    // Hyperliquid's outcomeMeta lists every registered outcome. A question the
+    // indexer still calls live, with none of its outcomes registered there and
+    // no price on any of them, has closed: show it as awaiting resolution.
+    // Only when outcomeMeta actually loaded (an empty set proves nothing).
+    const delisted =
+      q.status === "live" &&
+      liveRawIds.size > 0 &&
+      [...distinct].every((id) => !liveRawIds.has(id)) &&
+      outcomes.every((o) => o.mid_price == null);
+
     enrichedHd.push({
       ...q,
+      status: delisted ? "expired_unresolved" : q.status,
+      title,
+      expiry: descExpiry || q.expiry,
       outcomes,
       outcome_count: outcomes.length,
       primary_coin: outcomes[0].coin,
