@@ -183,7 +183,7 @@ function BlocksCard({
           density="compact"
           columns={[
             { header: "Block",    align: "left" },
-            { header: "Age",      align: "left" },
+            { header: "Age",      align: "left", className: "hidden sm:table-cell" },
             { header: "Txs",      align: "right" },
             { header: "Proposer", align: "right" },
           ]}
@@ -276,7 +276,7 @@ function TxCard({
             { header: "Age",    align: "left" },
             { header: "User",   align: "left" },
             { header: "Action", align: "right" },
-            { header: "Status", align: "right" },
+            { header: "Status", align: "right", className: "hidden sm:table-cell" },
           ]}
         >
           {rows.map((t) => (

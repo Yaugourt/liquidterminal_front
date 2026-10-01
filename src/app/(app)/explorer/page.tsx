@@ -61,7 +61,9 @@ export default function Explorer() {
           title="Token Deploys & Bridge Transfers"
           subtitle="Latest deployments · USDC bridge in/out (Arbitrum ↔ L1)"
         />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Side by side from xl: at 1024 half a column crushed the deploy
+            actions to three letters. */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           <TokenDeploys />
           <BridgeTransfers />
         </div>

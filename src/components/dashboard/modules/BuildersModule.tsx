@@ -28,7 +28,8 @@ export const BuildersModule = memo(function BuildersModule() {
   const { data, isLoading, isRefreshing, refetch, dataUpdatedAt } = useBuildersTop({
     timeframe: "24h",
     sort: "builder_fees",
-    limit: 5,
+    // Six rows: the vaults card beside it has two-line rows.
+    limit: 6,
   });
   const { format } = useNumberFormat();
 
@@ -38,7 +39,7 @@ export const BuildersModule = memo(function BuildersModule() {
     () =>
       [...(data?.builders ?? [])]
         .sort((a, b) => (b.totalBuilderFees ?? 0) - (a.totalBuilderFees ?? 0))
-        .slice(0, 5),
+        .slice(0, 6),
     [data?.builders]
   );
 
@@ -68,8 +69,8 @@ export const BuildersModule = memo(function BuildersModule() {
         columns={[
           { header: "Builder" },
           { header: "Fees 24h" },
-          { header: "Volume" },
-          { header: "Users" },
+          { header: "Volume", className: "hidden sm:table-cell" },
+          { header: "Users", className: "hidden sm:table-cell lg:hidden xl:table-cell" },
         ]}
       >
         {isLoading && topBuilders.length === 0 && (

@@ -49,8 +49,8 @@ export const TokenDeploys = memo(function TokenDeploys() {
           columns={[
             { header: "Age", align: "left", width: 70 },
             { header: "Action", align: "left" },
-            { header: "Deployer", align: "left", width: 140 },
-            { header: "Hash", align: "left" },
+            { header: "Deployer", align: "left", width: 140, className: "hidden sm:table-cell" },
+            { header: "Hash", align: "left", className: "hidden sm:table-cell" },
             { header: "Status", align: "right", width: 70 },
           ]}
         >
