@@ -13,11 +13,13 @@ export default function LiquidationsPage() {
         description="Liquidation events on Hyperliquid — aggregate stats, charts, and a real-time feed of forced position closures."
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:items-stretch">
+      {/* Stats beside the chart from xl only: a third of 1024 cut the share
+          button and hid half the stats. */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:items-stretch">
         <Card>
           <LiquidationsStatsCard />
         </Card>
-        <Card className="md:col-span-2">
+        <Card className="xl:col-span-2">
           <LiquidationsChartSection />
         </Card>
       </div>

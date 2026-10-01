@@ -93,7 +93,20 @@ function audit() {
     if (!["auto", "scroll", "hidden"].includes(cs.overflowX)) continue;
     if (cs.textOverflow === "ellipsis") continue; // intended truncation
     if (el.tagName === "PRE" || el.closest("pre")) continue; // code blocks scroll by design
-    if (el.scrollWidth > el.clientWidth + 2 && r(el).width > 120) {
+    // Decorative glows (absolute + pointer-events none) widen scrollWidth but are clipped on purpose.
+    const decorative = (n) => {
+      for (let p = n; p && p !== el; p = p.parentElement) {
+        const ps = getComputedStyle(p);
+        if (ps.position === "absolute" && ps.pointerEvents === "none") return true;
+      }
+      return false;
+    };
+    const realOverflow = () => {
+      const right = r(el).right;
+      for (const k of el.querySelectorAll("*")) if (r(k).right > right + 2 && !decorative(k)) return true;
+      return false;
+    };
+    if (el.scrollWidth > el.clientWidth + 2 && r(el).width > 120 && realOverflow()) {
       const card = el.closest("[class*=rounded]") || el;
       innerOverflow.push({ in: label(card), shown: el.clientWidth, needs: el.scrollWidth, y: Math.round(r(el).top + sy) });
     }

@@ -28,6 +28,8 @@ export function LiquidationsSection() {
   const columns: Column<Liquidation>[] = [
     {
       key: "time",
+      // Rows are newest first; phones keep coin, side and notional.
+      className: "max-sm:hidden whitespace-nowrap",
       header: "Time",
       accessor: (liq) => (
         <span className="text-text-secondary text-sm">
@@ -41,18 +43,21 @@ export function LiquidationsSection() {
       accessor: (liq) => (
         <span className="inline-flex items-center gap-2">
           <TokenAvatar assetName={liq.coin} size="md" />
-          <span className="text-brand font-medium">{liq.coin}</span>
+          <span className="text-brand font-medium truncate max-w-[90px] sm:max-w-none" title={liq.coin}>{liq.coin}</span>
         </span>
       ),
     },
     {
       key: "side",
       header: "Side",
-      accessor: (liq) => (
-        <StatusBadge variant={liq.liq_dir === "Long" ? "success" : "error"}>
-          {liq.liq_dir}
-        </StatusBadge>
-      ),
+      accessor: (liq) =>
+        liq.liq_dir ? (
+          <StatusBadge variant={liq.liq_dir === "Long" ? "success" : "error"}>
+            {liq.liq_dir}
+          </StatusBadge>
+        ) : (
+          <span className="text-text-tertiary">—</span>
+        ),
     },
     {
       key: "notional",
@@ -68,7 +73,7 @@ export function LiquidationsSection() {
       key: "size",
       header: "Size",
       type: "numeric",
-      className: "max-lg:hidden",
+      className: "max-xl:hidden",
       accessor: (liq) => (
         <span className="font-medium">
           {formatNumber(liq.size_total, format, { maximumFractionDigits: 4 })}
@@ -79,7 +84,7 @@ export function LiquidationsSection() {
       key: "fee",
       header: "Fee",
       type: "numeric",
-      className: "max-md:hidden",
+      className: "max-xl:hidden",
       accessor: (liq) => (
         <span className="text-text-tertiary">
           ${formatNumber(liq.fee_total_liquidated, format, { maximumFractionDigits: 4 })}
@@ -89,7 +94,7 @@ export function LiquidationsSection() {
     {
       key: "method",
       header: "Method",
-      className: "max-lg:hidden",
+      className: "max-2xl:hidden",
       accessor: (liq) => (
         <span className="text-text-secondary">{liq.method}</span>
       ),
@@ -123,7 +128,7 @@ export function LiquidationsSection() {
       // table only ever showed the liquidated user, never the liquidators.
       key: "liquidators",
       header: "Liquidators",
-      className: "max-lg:hidden",
+      className: "max-xl:hidden",
       accessor: (liq) =>
         liq.liquidators && liq.liquidators.length > 0 ? (
           <span className="inline-flex items-center gap-1.5">
@@ -140,11 +145,13 @@ export function LiquidationsSection() {
     },
     {
       key: "user",
+      className: "max-sm:hidden",
       header: "User",
       accessor: (liq) => <AddressDisplay address={liq.liquidated_user} />,
     },
     {
       key: "hash",
+      className: "max-2xl:hidden",
       header: "Hash",
       accessor: (liq) => (
         <AddressDisplay address={liq.hash} showExternalLink showCopy />
@@ -154,7 +161,7 @@ export function LiquidationsSection() {
 
   const toolbar = (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <h3 className="text-xs text-text-secondary font-semibold uppercase tracking-wider">
           Recent Liquidations
         </h3>
@@ -194,7 +201,7 @@ export function LiquidationsSection() {
   );
 
   return (
-    <div className="w-full h-full flex flex-col p-4">
+    <div className="w-full h-full flex flex-col p-1.5 sm:p-4">
       <TypedDataTable<Liquidation>
         data={allLiquidations}
         columns={columns}
