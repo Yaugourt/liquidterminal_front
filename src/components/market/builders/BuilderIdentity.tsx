@@ -109,6 +109,7 @@ export function BuilderIdentity({
     <div className="flex items-center gap-2 min-w-0">
       <BuilderAvatar address={address} label={isAnonymous ? "—" : label} size={size} />
       <span
+        title={label}
         className={`text-xs truncate ${
           isAnonymous ? "mono text-text-secondary" : "text-text-primary font-medium"
         }`}
