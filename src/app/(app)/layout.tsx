@@ -41,8 +41,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return (
         <Providers>
         <div className="min-h-screen bg-base text-text-primary font-inter">
-            {/* Mobile menu button */}
-            <div className="fixed top-4 left-4 z-50 lg:hidden">
+            {/* Mobile menu button: centred on the header row (py-2.5, 36px
+                controls) and clear of the network pill, which it used to touch. */}
+            <div className="fixed top-2.5 left-2 z-50 lg:hidden">
                 <SidebarToggle onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             </div>
 
