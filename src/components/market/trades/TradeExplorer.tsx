@@ -96,6 +96,8 @@ export function TradeExplorer() {
   const columns: Column<WalletRoundTrip>[] = [
     {
       key: "user",
+      // Phones keep coin, side and PnL, the columns that fit a 343px card.
+      className: "max-sm:hidden whitespace-nowrap",
       header: "Trader",
       accessor: (t) => (
         <Link
@@ -130,7 +132,9 @@ export function TradeExplorer() {
       key: "entryexit",
       header: "Entry → Exit",
       align: "right",
-      className: "max-lg:hidden",
+      // Two prices on one line need the width: from xl only, rows stayed
+      // three lines tall at 1024.
+      className: "max-xl:hidden whitespace-nowrap",
       accessor: (t) => (
         <span className="mono text-text-secondary">
           {formatPrice(t.entry_price, format)} → {formatPrice(t.exit_price, format)}
@@ -139,6 +143,7 @@ export function TradeExplorer() {
     },
     {
       key: "volume",
+      className: "max-sm:hidden",
       header: "Volume",
       align: "right",
       sortable: true,
@@ -149,6 +154,7 @@ export function TradeExplorer() {
     },
     {
       key: "pnl",
+      className: "whitespace-nowrap",
       header: "Realized PnL",
       align: "right",
       sortable: true,
@@ -163,14 +169,14 @@ export function TradeExplorer() {
       key: "duration",
       header: "Held",
       align: "right",
-      className: "max-md:hidden",
+      className: "max-xl:hidden",
       accessor: (t) => <span className="mono text-text-tertiary">{fmtDuration(t.duration_s)}</span>,
     },
     {
       key: "closed",
       header: "Closed",
       align: "right",
-      className: "max-md:hidden",
+      className: "max-md:hidden whitespace-nowrap",
       accessor: (t) => (
         <span className="text-text-tertiary text-xs">{formatDateTime(t.end_time, dateFormat)}</span>
       ),
