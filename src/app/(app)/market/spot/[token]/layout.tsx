@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { generateMetadata as buildMetadata, decodeEntityParam } from "@/lib/seo";
 import { JsonLd, breadcrumbSchema } from "@/components/JsonLd";
+import { spotFacts } from "@/lib/seo-entity-facts";
 
 export async function generateMetadata({
   params,
@@ -26,6 +27,7 @@ export default async function SpotTokenLayout({
 }) {
   const { token } = await params;
   const name = decodeEntityParam(token);
+  const facts = await spotFacts(name);
   return (
     <>
       <JsonLd
@@ -41,6 +43,7 @@ export default async function SpotTokenLayout({
           comes from the route itself: server-rendered, and the only heading a
           screen reader (or a crawler that runs no JS) can anchor on. */}
       <h1 className="sr-only">{name} spot market on Hyperliquid</h1>
+      {facts ? <p className="sr-only">{facts}</p> : null}
       {children}
     </>
   );
