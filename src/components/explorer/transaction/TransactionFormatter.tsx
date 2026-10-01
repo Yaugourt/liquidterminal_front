@@ -1,5 +1,20 @@
 import { ExtendedTransactionDetails, FormattedTransactionData, FormattedTransactionSection, TransactionAction } from '@/services/explorer/types';
 
+/**
+ * Pretty JSON where arrays of plain values stay on one line. A full
+ * `JSON.stringify(v, null, 2)` put every oracle price of a SetGlobalAction
+ * on its own line: one transaction page ran 26,000px tall.
+ */
+function compactJson(value: unknown): string {
+  const pretty = JSON.stringify(value, null, 2);
+  // Collapse innermost arrays (no nested brackets or braces inside).
+  // Only line breaks are folded: JSON strings never hold a raw newline, so
+  // values themselves are left untouched.
+  return pretty.replace(/\[\s*([^\[\]{}]*?)\s*\]/g, (_m, inner: string) =>
+    `[${inner.replace(/\s*\n\s*/g, " ")}]`
+  );
+}
+
 export class TransactionFormatter {
   static formatTransaction(transaction: ExtendedTransactionDetails): FormattedTransactionData {
     const sections: FormattedTransactionSection[] = [];
@@ -354,7 +369,7 @@ export class TransactionFormatter {
         if (value !== null && value !== undefined) {
           section.fields.push({
             label: key.charAt(0).toUpperCase() + key.slice(1),
-            value: typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value),
+            value: typeof value === 'object' ? compactJson(value) : String(value),
             type: typeof value === 'object' ? 'json' : 'text'
           });
         }

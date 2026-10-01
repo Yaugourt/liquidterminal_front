@@ -58,8 +58,9 @@ export function TransactionHeader({ transaction }: TransactionHeaderProps) {
                 href={`/explorer/address/${transaction.user}`}
                 className="text-brand text-base hover:text-brand/80 transition-colors"
               >
-                <span className="md:hidden">{truncateAddress(transaction.user)}</span>
-                <span className="hidden md:inline">{transaction.user}</span>
+                {/* Full address only from xl: in the half-width column at 1024 it ran past the card. */}
+                <span className="xl:hidden" title={transaction.user}>{truncateAddress(transaction.user)}</span>
+                <span className="hidden xl:inline">{transaction.user}</span>
               </Link>
               <button
                 onClick={() => copyToClipboard(transaction.user)}
