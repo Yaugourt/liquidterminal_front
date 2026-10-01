@@ -3,53 +3,32 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
-  decodeErrorResult,
-  decodeEventLog,
   decodeFunctionResult,
   encodeFunctionData,
   formatUnits,
   isAddress,
   isHex,
-  parseAbi,
-  parseAbiItem,
   parseEther,
-  type AbiFunction,
-  type AbiParameter,
   type Address,
   type Hex,
 } from "viem";
-import { CheckCircle2, FlaskConical, Link2, ListTree, Play, XCircle } from "lucide-react";
+import { CheckCircle2, FlaskConical, Link2, Play, XCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copy-button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CardHeading } from "@/components/common";
+import { CardHeading, ShareTile } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import {
   NATIVE_TRANSFER_ADDRESS,
   PRECOMPILE,
   fetchTokenMeta,
   simulateElysiumCall,
-  type SimLog,
   type SimResult,
 } from "@/services/elysium/rpc";
-import { AddrLink, EMPTY } from "./shared";
-
-// Events a builder meets most on Elysium: tokens, wrapped HYPE, Uniswap V2/V3 pools.
-const EVENTS = parseAbi([
-  "event Transfer(address indexed from, address indexed to, uint256 value)",
-  "event Approval(address indexed owner, address indexed spender, uint256 value)",
-  "event Deposit(address indexed dst, uint256 wad)",
-  "event Withdrawal(address indexed src, uint256 wad)",
-  "event Swap(address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address indexed to)",
-  "event Sync(uint112 reserve0, uint112 reserve1)",
-  "event PairCreated(address indexed token0, address indexed token1, address pair, uint256)",
-  "event Swap(address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick)",
-  "event PoolCreated(address indexed token0, address indexed token1, uint24 indexed fee, int24 tickSpacing, address pool)",
-  "event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)",
-]);
-// ERC-721 Transfer carries the id as a third indexed topic.
-const NFT_TRANSFER = parseAbi(["event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)"]);
+import { EMPTY } from "./shared";
+import { EventsCard, Field, decodeLog, fmtArg, inputCls, parseArg, parseSig, revertText } from "./simulator-shared";
+import { ElysiumDeploySimulator } from "./ElysiumDeploySimulator";
 
 const WHYPE = "0xcd57f65c2b0e5881cfc2e609f7cd53b746e1f234";
 const SAMPLE_FROM = "0x1111111111111111111111111111111111111111";
@@ -72,44 +51,6 @@ const PRESETS: { label: string; form: Form }[] = [
   { label: "Gas prices (precompile)", form: { from: SAMPLE_FROM, to: PRECOMPILE.ArbGasInfo, value: "0", mode: "fn", sig: "getPricesInWei() view returns (uint256,uint256,uint256,uint256,uint256,uint256)", args: [], data: "", fund: false } },
   { label: "A failing transfer", form: { from: SAMPLE_FROM, to: WHYPE, value: "0", mode: "fn", sig: "transfer(address to, uint256 amount)", args: ["0x2222222222222222222222222222222222222222", "1e18"], data: "", fund: false } },
 ];
-
-function parseSig(sig: string): AbiFunction | null {
-  const s = sig.trim();
-  if (!s) return null;
-  try {
-    const item = parseAbiItem(s.startsWith("function ") ? s : `function ${s}`);
-    return item.type === "function" ? item : null;
-  } catch {
-    return null;
-  }
-}
-
-/** "1e18" and "1.5e6" are accepted for integers, so amounts need no zero counting. */
-function toBigInt(raw: string): bigint {
-  const v = raw.trim().replace(/_/g, "");
-  const m = /^(-?\d+)(?:\.(\d+))?e(\d+)$/i.exec(v);
-  if (m) {
-    const frac = m[2] ?? "";
-    const exp = Number(m[3]);
-    if (frac.length > exp) throw new Error(`${raw} is not an integer`);
-    return BigInt(m[1] + frac + "0".repeat(exp - frac.length));
-  }
-  return BigInt(v);
-}
-
-function parseArg(p: AbiParameter, raw: string): unknown {
-  const t = p.type;
-  if (t.endsWith("]")) {
-    const arr = JSON.parse(raw) as unknown[];
-    const inner = { ...p, type: t.slice(0, t.lastIndexOf("[")) } as AbiParameter;
-    return arr.map((x) => parseArg(inner, typeof x === "string" ? x : JSON.stringify(x)));
-  }
-  if (t.startsWith("uint") || t.startsWith("int")) return toBigInt(raw);
-  if (t === "bool") return raw.trim() === "true";
-  if (t === "address" && !isAddress(raw.trim())) throw new Error(`${p.name || "address"}: not an address`);
-  if (t.startsWith("tuple")) throw new Error("Tuples are not supported in this form: use raw calldata");
-  return raw.trim();
-}
 
 function formFromParams(sp: URLSearchParams): Form | null {
   if (!sp.get("to")) return null;
@@ -136,42 +77,32 @@ function formToParams(f: Form): string {
   return sp.toString();
 }
 
-const fmtArg = (v: unknown): string =>
-  typeof v === "bigint" ? v.toString() : Array.isArray(v) ? `[${v.map(fmtArg).join(", ")}]` : typeof v === "object" && v ? JSON.stringify(v, (_, x) => (typeof x === "bigint" ? x.toString() : x)) : String(v);
-
-interface DecodedLog { name: string; args: [string, unknown][]; log: SimLog }
-
-function decodeLog(log: SimLog): DecodedLog {
-  for (const abi of [EVENTS, NFT_TRANSFER]) {
-    try {
-      const d = decodeEventLog({ abi, topics: log.topics as [Hex, ...Hex[]], data: log.data });
-      return { name: d.eventName, args: Object.entries((d.args ?? {}) as Record<string, unknown>), log };
-    } catch {
-      // Try the next ABI.
-    }
-  }
-  return { name: log.topics[0] ? `${log.topics[0].slice(0, 10)}…` : "anonymous", args: [["data", log.data]], log };
-}
-
-function Field({ id, label, children, hint }: { id: string; label: string; children: React.ReactNode; hint?: string }) {
+/**
+ * Elysium · Simulator: dry-run a call or a contract deployment against live
+ * Elysium state before signing it. `?kind=deploy` opens the deploy mode.
+ */
+export function ElysiumSimulator() {
+  const sp = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const kind = sp.get("kind") === "deploy" ? "deploy" : "call";
   return (
-    <label htmlFor={id} className="block">
-      <span className="block text-[10px] uppercase tracking-[0.06em] text-text-tertiary mb-1">{label}</span>
-      {children}
-      {hint ? <span className="block text-[11px] text-text-tertiary mt-1">{hint}</span> : null}
-    </label>
+    <div className="space-y-4">
+      <PillTabs
+        activeTab={kind}
+        onTabChange={(v) => router.replace(v === "deploy" ? `${pathname}?kind=deploy` : pathname, { scroll: false })}
+        tabs={[{ value: "call", label: "Call a contract" }, { value: "deploy", label: "Deploy a contract" }]}
+      />
+      {kind === "deploy" ? <ElysiumDeploySimulator key="deploy" /> : <CallSimulator key="call" />}
+    </div>
   );
 }
 
-const inputCls =
-  "w-full rounded-md border border-border-default bg-surface-2 px-2.5 py-1.5 mono text-[12px] text-text-primary placeholder:text-text-tertiary focus-ring";
-
 /**
- * Elysium · Simulator: dry-run any call against live Elysium state before
- * signing it. eth_simulateV1 gives status, execution gas, logs and native
+ * Call mode: eth_simulateV1 gives status, execution gas, logs and native
  * transfers; eth_estimateGas prices it with the HyperEVM posting cost.
  */
-export function ElysiumSimulator() {
+function CallSimulator() {
   const sp = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -241,21 +172,9 @@ export function ElysiumSimulator() {
     }
   }, [result, ranFn]);
 
-  const revert = useMemo(() => {
-    if (!result?.revertData || result.revertData === "0x") return result?.revertMessage ?? null;
-    try {
-      const d = decodeErrorResult({ data: result.revertData });
-      return `${d.errorName}(${(d.args ?? []).map(fmtArg).join(", ")})`;
-    } catch {
-      return result.revertMessage ?? `custom error ${result.revertData.slice(0, 10)}`;
-    }
-  }, [result]);
+  const revert = useMemo(() => (result ? revertText(result.revertData, result.revertMessage) : null), [result]);
 
-  const logs = useMemo(() => (result?.logs ?? []).map(decodeLog), [result]);
-  const amount = (token: string, v: unknown) => {
-    const m = token === NATIVE_TRANSFER_ADDRESS ? { symbol: "HYPE", decimals: 18 } : meta[token.toLowerCase()];
-    return typeof v === "bigint" && m ? `${Number(formatUnits(v, m.decimals)).toLocaleString("en-US", { maximumFractionDigits: 6 })} ${m.symbol}` : fmtArg(v);
-  };
+  const logs = useMemo(() => (result?.logs ?? []).map((l) => decodeLog(l)), [result]);
   const fee = result?.gasEstimate != null ? result.gasEstimate * result.gasPriceWei : null;
   const shareUrl = ran && typeof window !== "undefined" ? `${window.location.origin}${pathname}?${formToParams(ran)}` : "";
 
@@ -387,64 +306,16 @@ export function ElysiumSimulator() {
                     <div className="mono text-text-secondary break-all">{result.returnData}</div>
                   </div>
                 ) : null}
-                {shareUrl ? (
-                  <div className="flex items-center gap-1.5 text-text-tertiary">
-                    <Link2 size={12} /> Share this simulation <CopyButton text={shareUrl} />
+                {shareUrl && ran ? (
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-text-tertiary">
+                    <span className="flex items-center gap-1.5"><Link2 size={12} /> Share this simulation <CopyButton text={shareUrl} /></span>
+                    <ShareTile src={`/api/tile/elysium-simulation?${formToParams(ran)}`} filename="liquid-terminal-elysium-simulation" />
                   </div>
                 ) : null}
               </div>
             )}
           </Card>
-          {result ? (
-            <Card className="overflow-hidden flex flex-col">
-              <CardHeading icon={<ListTree size={13} className="text-brand" />} title="Events and transfers" meta={`${logs.length} emitted`} metaVariant="plain" />
-              {logs.length === 0 ? (
-                <p className="px-3.5 py-4 text-[12px] text-text-tertiary">No event emitted.</p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-[12px]">
-                    <thead>
-                      <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                        <th className="text-left font-semibold px-3.5 py-2">Event</th>
-                        <th className="text-left font-semibold px-2 py-2 hidden sm:table-cell">Emitter</th>
-                        <th className="text-left font-semibold px-3.5 py-2">Arguments</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {logs.map((l, i) => {
-                        const native = l.log.address.toLowerCase() === NATIVE_TRANSFER_ADDRESS;
-                        return (
-                          <tr key={i} className="border-t border-border-subtle align-top">
-                            <td className="px-3.5 py-1.5 whitespace-nowrap text-text-primary">{native ? "HYPE transfer" : l.name}</td>
-                            <td className="px-2 py-1.5 whitespace-nowrap hidden sm:table-cell">
-                              {native ? <span className="text-text-tertiary">native</span> : <AddrLink address={l.log.address} className="text-text-secondary" />}
-                              {!native && meta[l.log.address.toLowerCase()] ? <span className="ml-1.5 text-text-tertiary">{meta[l.log.address.toLowerCase()].symbol}</span> : null}
-                            </td>
-                            <td className="px-3.5 py-1.5">
-                              <div className="flex flex-wrap gap-x-4 gap-y-0.5">
-                                {l.args.map(([k, v]) => (
-                                  <span key={k} className="mono break-all">
-                                    <span className="text-text-tertiary">{k} </span>
-                                    {typeof v === "string" && isAddress(v) ? (
-                                      <AddrLink address={v} className="text-text-secondary" />
-                                    ) : ["value", "wad", "amount"].includes(k) && (l.name === "Transfer" || l.name === "Approval" || l.name === "Deposit" || l.name === "Withdrawal") ? (
-                                      <span className="text-text-primary">{amount(l.log.address, v)}</span>
-                                    ) : (
-                                      <span className="text-text-primary">{fmtArg(v)}</span>
-                                    )}
-                                  </span>
-                                ))}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </Card>
-          ) : null}
+          {result ? <EventsCard logs={logs} meta={meta} /> : null}
         </div>
       </div>
       <p className="text-[11px] text-text-tertiary">

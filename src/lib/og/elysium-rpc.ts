@@ -1,5 +1,5 @@
-import { createPublicClient, formatUnits, http, parseAbi } from "viem";
-import { ELYSIUM_CHAIN } from "@/lib/elysium-chain";
+import { createPublicClient, encodeFunctionData, fallback, formatUnits, http, maxUint256, parseAbi } from "viem";
+import { ELYSIUM_ALT_RPC_URL, ELYSIUM_CHAIN } from "@/lib/elysium-chain";
 
 /**
  * Server-side Elysium chain reads for share tiles. The client-side reader
@@ -16,6 +16,11 @@ const client = createPublicClient({
   },
   batch: { multicall: true },
   transport: http(ELYSIUM_CHAIN.rpc, { retryCount: 2, retryDelay: 800 }),
+});
+
+/** Simulations go to the RPC without a rate limit first (eth_simulateV1 is heavier than a read). */
+export const elysiumSimClient = createPublicClient({
+  transport: fallback([http(ELYSIUM_ALT_RPC_URL, { retryCount: 1 }), http(ELYSIUM_CHAIN.rpc, { retryCount: 2, retryDelay: 800 })]),
 });
 
 const SYS = parseAbi(["function arbOSVersion() view returns (uint256)"]);
@@ -69,5 +74,53 @@ export async function readElysiumSpecs(sample = 500): Promise<ElysiumSpecs> {
     txGasLimit: Number(acct[2]),
     transferHype: Number(formatUnits(transferGas * gasPrice, 18)),
     retryableDays: Math.round(Number(lifetime) / 86400),
+  };
+}
+
+export interface ElysiumActionCost {
+  label: string;
+  detail: string;
+  /** eth_estimateGas, parent-chain posting cost included. */
+  gas: number;
+  feeHype: number;
+}
+
+const COST_FROM = "0x1111111111111111111111111111111111111111";
+const WHYPE = "0xcd57f65c2b0e5881cfc2e609f7cd53b746e1f234";
+
+/**
+ * What everyday actions cost on Elysium right now: eth_estimateGas of real
+ * transactions (the sender is credited by a state override, so nothing needs
+ * funding) times the current gas price.
+ */
+export async function readElysiumActionCosts(deployData: `0x${string}`): Promise<{ gasPriceGwei: number; head: number; actions: ElysiumActionCost[] }> {
+  const override = { [COST_FROM]: { balance: "0x56bc75e2d63100000" } };
+  const est = (tx: Record<string, string>) =>
+    elysiumSimClient
+      .request({ method: "eth_estimateGas" as never, params: [{ from: COST_FROM, ...tx }, "latest", override] as never })
+      .then((g) => BigInt(g as string));
+  const approve = encodeFunctionData({
+    abi: parseAbi(["function approve(address spender, uint256 amount) returns (bool)"]),
+    functionName: "approve",
+    args: ["0x2222222222222222222222222222222222222222", maxUint256],
+  });
+  const [gasPrice, head, transfer, wrap, approveGas, deploy] = await Promise.all([
+    elysiumSimClient.getGasPrice(),
+    elysiumSimClient.getBlockNumber(),
+    est({ to: "0x2222222222222222222222222222222222222222", value: "0xde0b6b3a7640000" }),
+    est({ to: WHYPE, value: "0xde0b6b3a7640000", data: "0xd0e30db0" }),
+    est({ to: WHYPE, data: approve }),
+    est({ data: deployData }),
+  ]);
+  const row = (label: string, detail: string, gas: bigint): ElysiumActionCost => ({ label, detail, gas: Number(gas), feeHype: Number(formatUnits(gas * gasPrice, 18)) });
+  return {
+    gasPriceGwei: Number(formatUnits(gasPrice, 9)),
+    head: Number(head),
+    actions: [
+      row("Send HYPE", "native transfer to a wallet", transfer),
+      row("Wrap HYPE", "WHYPE deposit()", wrap),
+      row("Approve a token", "WHYPE approve()", approveGas),
+      row("Deploy a contract", "Greeter, 1.6 KB of creation code", deploy),
+    ],
   };
 }

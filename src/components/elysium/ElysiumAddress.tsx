@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { ArrowDownLeft, ArrowUpRight, Code2, ExternalLink, History, Tags, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { AddressIdenticon, CardHeading, KpiRibbon, type KpiCell } from "@/components/common";
+import { AddressIdenticon, CardHeading, KpiRibbon, ShareTile, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import {
@@ -70,7 +70,15 @@ const Profile = memo(function Profile({ address }: { address: string }) {
   const { data, error } = useElysiumAddressProfile(address);
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading icon={<Tags size={13} className="text-brand" />} title="What this address does" meta="from our indexed tables" metaVariant="plain" />
+      <CardHeading
+        icon={<Tags size={13} className="text-brand" />}
+        title="What this address does"
+        meta="from our indexed tables"
+        metaVariant="plain"
+        actions={data && (data.activity.userTxs > 0 || data.deployer.contracts > 0) ? (
+          <ShareTile src={`/api/tile/elysium-address?address=${address.toLowerCase()}`} filename={`liquid-terminal-elysium-${address.slice(0, 8).toLowerCase()}`} label="Image" />
+        ) : undefined}
+      />
       {!data ? (
         <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
       ) : (

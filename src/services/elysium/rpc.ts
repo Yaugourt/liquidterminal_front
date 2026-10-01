@@ -1,6 +1,8 @@
-import { createPublicClient, defineChain, fallback, http, parseAbi, type Address, type Hex } from "viem";
+import { createPublicClient, defineChain, fallback, http, parseAbi, type Address } from "viem";
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { ELYSIUM_RPC_URL } from "./api";
+import { ELYSIUM_ALT_RPC_URL } from "@/lib/elysium-chain";
+import { simulateCall, simulateDeploy, type DeployCall, type SimCall } from "@/lib/elysium/simulate";
 
 /** Elysium testnet as a viem chain (chain id and currency read from the RPC). */
 export const elysiumTestnet = defineChain({
@@ -13,8 +15,7 @@ export const elysiumTestnet = defineChain({
   testnet: true,
 });
 
-/** Second public Elysium RPC: CORS open and no rate limit hit in testing, unlike the default one. */
-export const ELYSIUM_ALT_RPC_URL = "https://elysium-testnet-rpc.hypedexer.com";
+export { ELYSIUM_ALT_RPC_URL } from "@/lib/elysium-chain";
 
 // Contract reads are folded into one Multicall3 eth_call; either RPC can serve.
 export const elysiumClient = createPublicClient({
@@ -127,72 +128,23 @@ export const useElysiumNetwork = () =>
 
 // ── Simulation ───────────────────────────────────────────────────────────────
 
-export interface SimCall {
-  from: Address;
-  to: Address;
-  value: bigint;
-  data: Hex;
-  /** Credit `from` with this balance for the simulation only (state override). */
-  fundWei?: bigint;
-}
+export {
+  MAX_INITCODE_BYTES,
+  MAX_RUNTIME_BYTES,
+  NATIVE_TRANSFER_ADDRESS,
+  type DeployCall,
+  type DeploySimResult,
+  type SimCall,
+  type SimFollowUp,
+  type SimLog,
+  type SimResult,
+} from "@/lib/elysium/simulate";
 
-export interface SimLog { address: Address; topics: Hex[]; data: Hex }
+/** Dry-runs one call against the latest Elysium state. Nothing is signed or sent. */
+export const simulateElysiumCall = (call: SimCall) => simulateCall(elysiumClient, call);
 
-export interface SimResult {
-  status: "success" | "reverted";
-  /** Execution gas from eth_simulateV1 (L2 only). */
-  gasUsed: bigint;
-  /** eth_estimateGas, L1 posting cost included; null when the call reverts. */
-  gasEstimate: bigint | null;
-  gasPriceWei: bigint;
-  returnData: Hex;
-  logs: SimLog[];
-  revertData: Hex | null;
-  revertMessage: string | null;
-  block: number;
-}
-
-/** The ERC-7528 pseudo-address traceTransfers uses for native HYPE movements. */
-export const NATIVE_TRANSFER_ADDRESS = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
-
-const hex = (n: bigint) => `0x${n.toString(16)}` as Hex;
-
-interface RawSimCall { status: Hex; gasUsed: Hex; returnData: Hex; logs: SimLog[]; error?: { message?: string; data?: Hex } }
-
-/**
- * Dry-runs one call against the latest Elysium state with eth_simulateV1
- * (native transfers traced as logs) and prices it with eth_estimateGas.
- * Nothing is signed or sent.
- */
-export async function simulateElysiumCall(call: SimCall): Promise<SimResult> {
-  const c = elysiumClient;
-  const overrides = call.fundWei ? { [call.from]: { balance: hex(call.fundWei) } } : undefined;
-  const tx = { from: call.from, to: call.to, value: hex(call.value), data: call.data };
-  const [blocks, gasPriceWei, gasEstimate] = await Promise.all([
-    c.request({
-      method: "eth_simulateV1" as never,
-      params: [{ blockStateCalls: [{ stateOverrides: overrides, calls: [tx] }], traceTransfers: true, validation: false }, "latest"] as never,
-    }) as Promise<{ number: Hex; calls: RawSimCall[] }[]>,
-    c.getGasPrice(),
-    c
-      .request({ method: "eth_estimateGas" as never, params: (overrides ? [tx, "latest", overrides] : [tx, "latest"]) as never })
-      .then((g) => BigInt(g as Hex))
-      .catch(() => null),
-  ]);
-  const r = blocks[0].calls[0];
-  const ok = r.status === "0x1";
-  return {
-    status: ok ? "success" : "reverted",
-    gasUsed: BigInt(r.gasUsed),
-    gasEstimate: ok ? gasEstimate : null,
-    gasPriceWei,
-    returnData: r.returnData,
-    logs: r.logs.map((l) => ({ address: l.address, topics: l.topics, data: l.data })),
-    revertData: r.error?.data ?? null,
-    revertMessage: r.error?.message ?? null,
-    block: Number(BigInt(blocks[0].number)),
-  };
-}
+/** Dry-runs a contract creation, plus an optional call on the new contract. */
+export const simulateElysiumDeploy = (call: DeployCall) => simulateDeploy(elysiumClient, call);
 
 /** ERC-20 symbol and decimals for the tokens touched by a simulation. */
 export async function fetchTokenMeta(addresses: Address[]): Promise<Record<string, { symbol: string; decimals: number }>> {

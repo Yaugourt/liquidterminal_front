@@ -19,6 +19,9 @@ export const ELYSIUM_CHAIN = {
   dasRestAggregator: "https://das-elysium-testnet.t.conduit.xyz",
 } as const;
 
+/** Second public Elysium RPC: CORS open and no rate limit hit in testing, unlike the default one. */
+export const ELYSIUM_ALT_RPC_URL = "https://elysium-testnet-rpc.hypedexer.com";
+
 /** Rollup contracts on HyperEVM testnet (the parent chain). */
 export const ELYSIUM_ROLLUP_CONTRACTS: { name: string; address: string; role: string }[] = [
   { name: "Rollup", address: "0xEbf08e34941fd93a0Fc1cD89dbBF7447267039Df", role: "Assertions and validation" },

@@ -53,7 +53,7 @@ export function ShareTile({ src, filename, label = "Copy as image", className }:
         // ClipboardItem must be constructed synchronously with the blob for
         // Safari, which is also the browser most likely to reject the write.
         await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        toast.success("Image copied — paste it in your post");
+        toast.success("Image copied, paste it in your post");
       } catch {
         download(blob);
         toast.success("Image downloaded");

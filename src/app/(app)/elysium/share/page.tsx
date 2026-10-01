@@ -8,12 +8,16 @@ import {
   Cpu,
   Droplets,
   Flame,
+  Fingerprint,
+  FlaskConical,
   Fuel,
   HardDrive,
   Landmark,
   Layers,
   ListOrdered,
   Network,
+  PieChart,
+  Receipt,
   Repeat,
   Rocket,
   Send,
@@ -38,6 +42,15 @@ const WINDOW: TileParam = {
   ],
 };
 
+const SIM_EXAMPLE: TileParam = {
+  key: "example",
+  label: "Run",
+  options: [
+    { value: "wrap", label: "Wrap 1 HYPE" },
+    { value: "deploy", label: "Deploy a contract" },
+  ],
+};
+
 /** Elysium tiles: every entry maps to an `/api/tile/elysium-*` route. */
 const GROUPS: TileGroup[] = [
   {
@@ -57,6 +70,8 @@ const GROUPS: TileGroup[] = [
       { id: "elysium-top-senders", label: "Busiest senders", desc: "Top senders and activity concentration", route: "elysium-top-senders", icon: Send },
       { id: "elysium-fees", label: "Fees paid", desc: "Daily fees in HYPE, failure rate", route: "elysium-fees", icon: Fuel },
       { id: "elysium-health", label: "Spam and failures", desc: "Daily spam and failed shares", route: "elysium-health", icon: ShieldAlert },
+      { id: "elysium-tx-mix", label: "Transaction mix", desc: "Calls, transfers, deploys: 24h vs 7d", route: "elysium-tx-mix", icon: PieChart },
+      { id: "elysium-address", label: "Busiest address", desc: "Profile of the top sender, 24h", route: "elysium-address", icon: Fingerprint },
     ],
   },
   {
@@ -67,6 +82,13 @@ const GROUPS: TileGroup[] = [
       { id: "elysium-trending", label: "New contracts gaining users", desc: "Recent deploys with the most callers", route: "elysium-trending", icon: Rocket },
       { id: "elysium-top-contracts", label: "Most used contracts", desc: "Calls, callers and change", route: "elysium-top-contracts", icon: ListOrdered, params: [WINDOW] },
       { id: "elysium-top-methods", label: "Most called functions", desc: "Function calls by name", route: "elysium-top-methods", icon: Flame, params: [WINDOW] },
+    ],
+  },
+  {
+    title: "Build and simulate",
+    tiles: [
+      { id: "elysium-costs", label: "What it costs", desc: "Live fees: send, wrap, approve, deploy", route: "elysium-costs", icon: Receipt },
+      { id: "elysium-simulation", label: "A simulation", desc: "A Simulator run, re-simulated live", route: "elysium-simulation", icon: FlaskConical, params: [SIM_EXAMPLE] },
     ],
   },
   {
@@ -97,7 +119,7 @@ export default function ElysiumSharePage() {
     <ShareStudio
       groups={GROUPS}
       heading="Share studio"
-      subheading="Turn Elysium testnet data into a branded, post-ready image."
+      subheading="Turn Elysium testnet data into a branded, post-ready image. Simulator runs and address pages have their own image button."
       filenamePrefix="liquid-terminal-elysium"
     />
   );
