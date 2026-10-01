@@ -81,6 +81,13 @@ export function ElysiumDeploySimulator() {
   const router = useRouter();
   const pathname = usePathname();
   const [form, setForm] = useState<DeployForm>(() => deployFormFromParams(new URLSearchParams(sp.toString())) ?? PRESETS[0].form);
+  // Bytecode that arrived through a link (not our bundled example): the wallet
+  // card asks for an explicit acknowledgement before deploying someone else's code.
+  const [linkCode] = useState<Hex | null>(() => {
+    const f = deployFormFromParams(new URLSearchParams(sp.toString()));
+    const b = f ? parseCode(f.code)?.bytecode ?? null : null;
+    return b && b !== GREETER_BYTECODE ? b : null;
+  });
   const [result, setResult] = useState<DeploySimResult | null>(null);
   const [ran, setRan] = useState<{ form: DeployForm; thenFn: AbiFunction | null; abi: Abi | null } | null>(null);
   const [meta, setMeta] = useState<TokenMeta>({});
@@ -314,7 +321,7 @@ export function ElysiumDeploySimulator() {
             )}
           </Card>
           {result ? <EventsCard logs={logs} meta={meta} labels={labels} /> : null}
-          <WalletDeployCard form={form} />
+          <WalletDeployCard form={form} fromLink={linkCode != null && parsed?.bytecode === linkCode} />
         </div>
       </div>
       <p className="text-[11px] text-text-tertiary">
@@ -341,7 +348,9 @@ interface Preflight {
  * a check run from that wallet's own address, with no balance override, on
  * exactly the bytecode, arguments and value now in the form.
  */
-function WalletDeployCard({ form }: { form: DeployForm }) {
+function WalletDeployCard({ form, fromLink }: { form: DeployForm; fromLink: boolean }) {
+  const [ackCode, setAckCode] = useState(false);
+  const [ackValue, setAckValue] = useState(false);
   const [provider, setProvider] = useState<EIP1193Provider | null>(null);
   const [account, setAccount] = useState<Address | null>(null);
   const [chainId, setChainId] = useState<number | null>(null);
@@ -405,6 +414,8 @@ function WalletDeployCard({ form }: { form: DeployForm }) {
       const r = await simulateElysiumDeploy({ from: account, value: current.value, data: current.data, followUpData: current.followUp });
       const gas = r.gasEstimate != null ? (r.gasEstimate * GAS_MARGIN_PCT) / 100n : 0n;
       setPre({ key: fingerprint(account, current.data, current.value), account, result: r, gas, data: current.data, value: current.value });
+      setAckCode(false);
+      setAckValue(false);
     } catch (e) {
       setPre(null);
       setErr(e instanceof Error ? e.message.split("\n")[0] : String(e));
@@ -422,6 +433,8 @@ function WalletDeployCard({ form }: { form: DeployForm }) {
     { label: "Balance covers value and fee", ok: r && cost != null ? r.senderBalanceWei >= cost && r.gasEstimate != null : null, detail: r && cost != null ? `${hypeText(r.senderBalanceWei)} available, ${hypeText(cost, 8)} needed` : undefined },
     { label: "Code within size limits", ok: r ? r.runtimeSize <= MAX_RUNTIME_BYTES && r.initcodeSize <= MAX_INITCODE_BYTES : null, detail: r ? `${r.runtimeSize.toLocaleString("en-US")} B runtime` : undefined },
     { label: "Form unchanged since the check", ok: pre ? pre.key === currentKey : null, detail: pre && pre.key !== currentKey ? "run the check again" : undefined },
+    ...(fromLink ? [{ label: "You confirmed you trust this bytecode", ok: pre ? ackCode : null }] : []),
+    ...(pre && pre.value > 0n ? [{ label: `You confirmed sending ${hypeText(pre.value)} into the contract`, ok: ackValue }] : []),
   ];
   const ready = checks.every((c) => c.ok === true) && step === "idle";
 
@@ -485,6 +498,23 @@ function WalletDeployCard({ form }: { form: DeployForm }) {
                 </li>
               ))}
             </ul>
+            {fromLink ? (
+              <div className="rounded-md border border-warning/40 bg-warning/10 px-2.5 py-2 space-y-1.5">
+                <p className="text-text-primary">
+                  This bytecode came from a shared link. A contract does whatever its author wrote: deploy only code you compiled or verified yourself.
+                </p>
+                <label className="flex items-center gap-2 text-text-secondary">
+                  <Checkbox id="dep-ack-code" checked={ackCode} disabled={!pre} onCheckedChange={(v) => setAckCode(v === true)} />
+                  I know what this bytecode does
+                </label>
+              </div>
+            ) : null}
+            {pre && pre.value > 0n ? (
+              <label className="flex items-center gap-2 text-text-secondary">
+                <Checkbox id="dep-ack-value" checked={ackValue} onCheckedChange={(v) => setAckValue(v === true)} />
+                Send {hypeText(pre.value)} from my wallet into the new contract
+              </label>
+            ) : null}
             <div className="flex flex-wrap items-center gap-2">
               <Button size="sm" variant="outline" onClick={check} disabled={!onElysium || !current || step !== "idle"}>
                 <Play size={13} className="mr-1.5" />

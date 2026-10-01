@@ -2,7 +2,7 @@ import { isAddress } from "viem";
 import { compactCount } from "@/lib/formatters/numberFormatting";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { tileColors } from "@/lib/og/tileTheme";
-import { ELYSIUM_FOOTNOTE, ElysiumBadge, RankList, StatRow, agoText, clip, elysiumTileResponse, loadElysium, pctText, shortAddr } from "@/lib/og/elysium";
+import { ELYSIUM_FOOTNOTE, ElysiumBadge, RankList, StatRow, agoText, elysiumTileResponse, loadElysium, pctText, shortAddr, untrusted } from "@/lib/og/elysium";
 
 /**
  * One Elysium address: transactions, active days, contracts deployed, swaps,
@@ -73,7 +73,7 @@ export async function GET(req: Request) {
           rows={methods.map((m) => ({
             key: m.methodId || m.name || "x",
             cells: [
-              { text: clip(m.name ?? m.methodId, 30), color: m.name ? C.textPrimary : C.textSecondary },
+              { text: untrusted(m.name ?? m.methodId, 30), color: m.name ? C.textPrimary : C.textSecondary },
               { text: compactCount(m.txs, { fallback: "-" }) },
               { text: m.txs / total < 0.005 ? "<1%" : m.txs < total && m.txs / total > 0.995 ? ">99%" : pctText(m.txs / total, 0) },
             ],

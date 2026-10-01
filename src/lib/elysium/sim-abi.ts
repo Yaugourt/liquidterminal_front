@@ -35,12 +35,19 @@ export function parseSig(sig: string): AbiFunction | null {
 }
 
 /** "1e18" and "1.5e6" are accepted for integers, so amounts need no zero counting. */
+/** 2^256 has 78 digits: anything longer cannot be an EVM integer. */
+const MAX_INT_DIGITS = 78;
+
 export function toBigInt(raw: string): bigint {
   const v = raw.trim().replace(/_/g, "");
+  // Bounded before any string is built: "1e300000000" would otherwise allocate
+  // a 300M-character string (this runs in a public server route).
+  if (v.length > MAX_INT_DIGITS + 4) throw new Error(`${raw.slice(0, 20)}…: too long for a 256-bit integer`);
   const m = /^(-?\d+)(?:\.(\d+))?e(\d+)$/i.exec(v);
   if (m) {
     const frac = m[2] ?? "";
     const exp = Number(m[3]);
+    if (exp > MAX_INT_DIGITS) throw new Error(`${raw}: exponent too large for a 256-bit integer`);
     if (frac.length > exp) throw new Error(`${raw} is not an integer`);
     return BigInt(m[1] + frac + "0".repeat(exp - frac.length));
   }

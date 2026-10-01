@@ -1,7 +1,7 @@
 import { decodeFunctionResult, encodeFunctionData, formatUnits, isAddress, isHex, parseAbi, parseEther, type Address, type Hex } from "viem";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { tileColors } from "@/lib/og/tileTheme";
-import { ElysiumBadge, RankList, StatRow, clip, elysiumTileResponse, shortAddr, utcStamp } from "@/lib/og/elysium";
+import { ElysiumBadge, RankList, StatRow, clip, elysiumTileResponse, shortAddr, untrusted, utcStamp } from "@/lib/og/elysium";
 import { elysiumSimClient } from "@/lib/og/elysium-rpc";
 import { NATIVE_TRANSFER_ADDRESS, simulateCall, simulateDeploy, type SimLog, type SimResult } from "@/lib/elysium/simulate";
 import { decodeLog, fmtArg, parseArg, parseSig, revertText } from "@/lib/elysium/sim-abi";
@@ -31,6 +31,9 @@ const EXAMPLES: Record<string, string> = {
   })(),
 };
 
+const MAX_CODE_CHARS = 16_000;
+const MAX_ARGS = 16;
+
 const ERC20 = parseAbi(["function symbol() view returns (string)", "function decimals() view returns (uint8)"]);
 
 async function tokenMeta(addresses: string[]): Promise<Record<string, { symbol: string; decimals: number }>> {
@@ -42,7 +45,7 @@ async function tokenMeta(addresses: string[]): Promise<Record<string, { symbol: 
           elysiumSimClient.readContract({ address: a as Address, abi: ERC20, functionName: "symbol" }),
           elysiumSimClient.readContract({ address: a as Address, abi: ERC20, functionName: "decimals" }),
         ]);
-        out[a] = { symbol, decimals: Number(decimals) };
+        out[a] = { symbol: untrusted(symbol, 12) || "token", decimals: Number(decimals) };
       } catch {
         // Not an ERC-20: amounts stay raw.
       }
@@ -68,13 +71,13 @@ async function eventRows(logs: SimLog[], labels: Record<string, string>) {
         if (typeof v === "bigint" && m && ["value", "wad", "amount"].includes(k)) {
           return `${Number(formatUnits(v, m.decimals)).toLocaleString("en-US", { maximumFractionDigits: 4 })} ${m.symbol}`;
         }
-        return `${k} ${fmtArg(v)}`;
+        return `${k} ${untrusted(fmtArg(v), 40)}`;
       })
       .join(" · ");
     return {
       key: `${i}`,
       cells: [
-        { text: clip(native ? "HYPE transfer" : d.name, 22) },
+        { text: clip(native ? "HYPE transfer" : untrusted(d.name, 22), 22) },
         { text: native ? "native" : labels[emitter] ?? (meta[emitter] ? `${meta[emitter].symbol} ${shortAddr(emitter)}` : shortAddr(emitter)), color: C.textSecondary },
         { text: clip(args, 48), color: C.textSecondary },
       ],
@@ -92,7 +95,7 @@ function RevertBox({ text }: { text: string }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100%", marginTop: 28, border: `1px solid ${C.danger}`, borderRadius: 10, padding: "14px 18px" }}>
       <div style={{ display: "flex", fontSize: 13, letterSpacing: 1, color: C.danger }}>REVERT REASON</div>
-      <div style={{ display: "flex", marginTop: 8, fontFamily: "JetBrains Mono", fontSize: 22, color: C.textPrimary }}>{clip(text, 70)}</div>
+      <div style={{ display: "flex", marginTop: 8, fontFamily: "JetBrains Mono", fontSize: 22, color: C.textPrimary }}>{untrusted(text, 70)}</div>
     </div>
   );
 }
@@ -102,7 +105,14 @@ const FOOT = () => `Source: Elysium testnet RPC, ${utcStamp()} UTC`;
 export async function GET(req: Request) {
   const url = new URL(req.url);
   let sp = url.searchParams;
-  if (!sp.get("to") && !sp.get("code")) sp = new URLSearchParams(EXAMPLES[sp.get("example") ?? "wrap"] ?? EXAMPLES.wrap);
+  if (!sp.get("to") && !sp.get("code")) {
+    const ex = sp.get("example") ?? "wrap";
+    sp = new URLSearchParams(Object.hasOwn(EXAMPLES, ex) ? EXAMPLES[ex] : EXAMPLES.wrap);
+  }
+  // Public route: bound the work one request can ask for (the share link
+  // itself is capped at 7.5K characters by the Simulator).
+  if ((sp.get("code")?.length ?? 0) > MAX_CODE_CHARS || (sp.get("data")?.length ?? 0) > MAX_CODE_CHARS) return new Response("code too long", { status: 414 });
+  if (sp.getAll("arg").length + sp.getAll("targ").length > MAX_ARGS) return new Response("too many arguments", { status: 400 });
   const from = sp.get("from") ?? SAMPLE_FROM;
   if (!isAddress(from)) return new Response("from is not an address", { status: 400 });
   const fundWei = sp.get("fund") === "1" ? parseEther("100") : undefined;
@@ -120,7 +130,7 @@ export async function GET(req: Request) {
         else {
           try {
             const v = decodeFunctionResult({ abi: [b.thenFn], functionName: b.thenFn.name, data: r.followUp.returnData });
-            then = `${b.thenFn.name}() → ${clip((Array.isArray(v) ? v : [v]).map(fmtArg).join(", "), 40)}`;
+            then = `${b.thenFn.name}() → ${untrusted((Array.isArray(v) ? v : [v]).map(fmtArg).join(", "), 40)}`;
           } catch {
             then = `${b.thenFn.name}() ok`;
           }
@@ -182,7 +192,7 @@ export async function GET(req: Request) {
     const ok = r.status === "success";
     const [toMeta] = Object.values(await tokenMeta([to.toLowerCase()]));
     const target = toMeta ? `${toMeta.symbol} ${shortAddr(to)}` : shortAddr(to);
-    const callText = fn ? `${fn.name}(${sp.getAll("arg").map((a) => (isAddress(a) ? shortAddr(a.toLowerCase()) : clip(a, 14))).join(", ")})` : data === "0x" ? "plain transfer" : `${data.slice(0, 10)}…`;
+    const callText = fn ? `${fn.name}(${sp.getAll("arg").map((a) => (isAddress(a) ? shortAddr(a.toLowerCase()) : untrusted(a, 14))).join(", ")})` : data === "0x" ? "plain transfer" : `${data.slice(0, 10)}…`;
     const rows = await eventRows(r.logs, {});
     return elysiumTileResponse(
       <TileFrame
@@ -221,6 +231,10 @@ export async function GET(req: Request) {
       revalidate
     );
   } catch (e) {
-    return new Response(`simulation failed: ${e instanceof Error ? e.message.split("\n")[0] : String(e)}`, { status: 502 });
+    // Input errors (bad signature, out-of-range integer) are the caller's to fix;
+    // anything else stays generic so RPC details are not echoed.
+    const msg = e instanceof Error ? e.message.split("\n")[0] : "";
+    const input = /not an address|not an integer|too long|too large|not understood|range|invalid|Tuples/i.test(msg) && !/RPC|URL|fetch/i.test(msg);
+    return new Response(input ? `bad input: ${untrusted(msg, 120)}` : "simulation failed", { status: input ? 400 : 502 });
   }
 }

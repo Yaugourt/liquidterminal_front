@@ -160,6 +160,22 @@ export function pctText(v: number | null | undefined, digits = 0): string {
   return v == null || !Number.isFinite(v) ? "-" : `${(v * 100).toFixed(digits)}%`;
 }
 
+/**
+ * Text a third party controls (token symbols, revert reasons, returned
+ * strings): printable characters only, and anything that reads as a link or
+ * a domain is replaced, so a branded tile cannot carry "claim at scam.xyz".
+ */
+export function untrusted(s: string | null | undefined, max = 60): string {
+  if (!s) return "";
+  const clean = s
+    .replace(/[^\x20-\x7E]/g, " ")
+    .replace(/(https?:\/\/|www\.)\S*/gi, "[link]")
+    .replace(/\b[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}\b/gi, "[link]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return clip(clean, max);
+}
+
 /** Truncates long symbols and names so a row never overflows its column. */
 export function clip(s: string | null | undefined, max: number): string {
   if (!s) return "";
