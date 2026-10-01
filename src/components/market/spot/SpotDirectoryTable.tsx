@@ -7,7 +7,7 @@ import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { Input } from "@/components/ui/input";
 import {
-  formatNumber,
+  compactUsd,
   formatMetricValue,
   formatPrice,
 } from "@/lib/formatters/numberFormatting";
@@ -39,6 +39,7 @@ function buildColumns(
       header: "#",
       align: "right",
       headerAlign: "right",
+      className: "hidden sm:table-cell",
       accessor: (_t, _i, absoluteIndex) => (
         <span className="mono text-text-tertiary text-xs">{absoluteIndex + 1}</span>
       ),
@@ -49,13 +50,16 @@ function buildColumns(
       sortable: true,
       getSortValue: (t) => t.name.toLowerCase(),
       accessor: (t) => (
-        <div className="flex items-center gap-2.5 min-w-0">
+        <div
+          className="flex items-center gap-2.5 min-w-0"
+          title={`${t.name}/${pairMeta?.[t.marketIndex]?.quote ?? "USDC"}${isBridged(t.name) ? " · bridged" : ""}`}
+        >
           <TokenAvatar assetName={t.name} kind="spot" size="md" />
           <div className="min-w-0">
-            <div className="text-sm font-medium text-text-primary truncate max-w-[200px]">
+            <div className="text-sm font-medium text-text-primary truncate max-w-[88px] sm:max-w-[200px]">
               {t.name}
             </div>
-            <div className="mono text-[10px] text-text-tertiary truncate">
+            <div className="mono text-[10px] text-text-tertiary truncate max-w-[88px] sm:max-w-[200px]">
               {/* Real quote asset (USDC / USDT0 / USDH ...) from HL spot meta */}
               {t.name}/{pairMeta?.[t.marketIndex]?.quote ?? "USDC"}
               {isBridged(t.name) ? " · bridged" : ""}
@@ -86,7 +90,9 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (t) => t.volume,
-      accessor: (t) => `$${formatNumber(t.volume, format, { maximumFractionDigits: 0 })}`,
+      // Phones keep token, price and 24h; the movers boards carry volume there.
+      className: "hidden sm:table-cell whitespace-nowrap",
+      accessor: (t) => compactUsd(t.volume),
     },
     {
       key: "marketCap",
@@ -94,10 +100,8 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (t) => (isBridged(t.name) ? -1 : marketCapOf(t)),
-      accessor: (t) =>
-        isBridged(t.name)
-          ? "—"
-          : `$${formatNumber(marketCapOf(t), format, { maximumFractionDigits: 0 })}`,
+      className: "hidden sm:table-cell whitespace-nowrap",
+      accessor: (t) => (isBridged(t.name) ? "—" : compactUsd(marketCapOf(t))),
     },
     {
       key: "supply",
@@ -105,6 +109,7 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (t) => t.supply,
+      className: "hidden md:table-cell whitespace-nowrap",
       accessor: (t) =>
         formatMetricValue(t.supply, {
           format: "US",

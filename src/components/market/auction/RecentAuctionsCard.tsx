@@ -35,11 +35,13 @@ export function RecentAuctionsCard() {
       key: "deployer",
       header: "Deployer",
       type: "address",
+      className: "hidden sm:table-cell",
       accessor: "deployer",
     },
     {
       key: "time",
       header: "Date",
+      className: "whitespace-nowrap",
       accessor: (a) => (
         <span className="text-text-secondary">
           {formatDateTime(a.time, dateFormat)}
@@ -50,6 +52,7 @@ export function RecentAuctionsCard() {
       key: "gas",
       header: "Deploy Gas",
       type: "numeric",
+      className: "hidden sm:table-cell whitespace-nowrap",
       accessor: (a) =>
         `${formatNumber(parseFloat(a.deployGas), format, {
           maximumFractionDigits: 2,

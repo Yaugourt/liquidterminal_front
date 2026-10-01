@@ -80,7 +80,7 @@ export function SpotKpiStrip({
         ) : undefined,
     },
     {
-      label: "Stablecoins on spot",
+      label: "Stables on spot",
       value: totalStables ? compactUsd(totalStables) : ph,
       sub: usdc
         ? `USDC ${usdcShare.toFixed(1)}% · ${stables.stablecoins.length} stables`

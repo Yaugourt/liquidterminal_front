@@ -65,6 +65,7 @@ export function PerpFundingCarry() {
       header: "Binance APR",
       align: "right",
       width: 120,
+      className: "hidden md:table-cell",
       sortable: true,
       getSortValue: (r) => sortNum(r.binanceApr),
       accessor: (r) => <AprCell apr={r.binanceApr} />,
@@ -74,6 +75,7 @@ export function PerpFundingCarry() {
       header: "Bybit APR",
       align: "right",
       width: 120,
+      className: "hidden md:table-cell",
       sortable: true,
       getSortValue: (r) => sortNum(r.bybitApr),
       accessor: (r) => <AprCell apr={r.bybitApr} />,
@@ -82,7 +84,7 @@ export function PerpFundingCarry() {
       key: "spread",
       header: "Carry (spread)",
       align: "right",
-      width: 150,
+      width: 190,
       sortable: true,
       getSortValue: (r) => sortNum(r.spread),
       accessor: (r) =>
@@ -92,7 +94,7 @@ export function PerpFundingCarry() {
           <div className="flex flex-col items-end">
             <span className="mono font-medium text-text-primary">{r.spread.toFixed(1)}%</span>
             {r.shortVenue && r.longVenue && (
-              <span className="text-text-tertiary text-xs">
+              <span className="text-text-tertiary text-xs whitespace-nowrap">
                 short {r.shortVenue} / long {r.longVenue}
               </span>
             )}

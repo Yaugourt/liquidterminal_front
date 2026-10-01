@@ -283,20 +283,24 @@ export function UniversalTokenTable({
                 { ...nameCol, width: '20%' },
                 { ...priceCol, width: '12%' },
                 { ...change24hCol, width: '12%' },
-                { ...volumeCol, width: '15%' },
+                // Compact money here: full-precision volume and OI pushed the
+                // seven columns past the card at 1024.
+                { ...volumeCol, width: '15%', className: "hidden sm:table-cell", accessor: (t) => compactUsd(t.volume) },
                 {
                     key: "openInterest",
                     header: "Open Interest",
                     type: "numeric",
                     sortable: true,
                     width: '15%',
-                    accessor: (t) => `$${formatNumber(t.openInterest, format)}`,
+                    className: "hidden md:table-cell",
+                    accessor: (t) => compactUsd(t.openInterest),
                 },
                 {
                     key: "funding",
                     header: "Funding /1h",
                     align: "right",
                     width: '13%',
+                    className: "hidden xl:table-cell",
                     accessor: (t) => (
                         <StatusBadge variant={t.funding >= 0 ? 'success' : 'error'}>
                             {t.funding > 0 ? '+' : ''}{formatNumber(t.funding, format, { minimumFractionDigits: 6, maximumFractionDigits: 6 })}%
@@ -310,6 +314,7 @@ export function UniversalTokenTable({
                     header: "Funding APR",
                     align: "right",
                     width: '13%',
+                    className: "hidden sm:table-cell",
                     accessor: (t) => {
                         const apr = t.funding * 8760;
                         return (

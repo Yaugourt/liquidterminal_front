@@ -16,10 +16,13 @@ const tokenHref = (name: string) => `/market/spot/${encodeURIComponent(name)}`;
 function MoverRows({ tokens }: { tokens: SpotToken[] }) {
   return (
     <>
-      {tokens.map((t) => (
+      {tokens.map((t, i) => (
         <ModuleTableRow
           key={t.marketIndex}
           href={tokenHref(t.name)}
+          // Rows past five only show in the xl rail, where they fill the
+          // height of the directory table beside it.
+          className={i >= 5 ? "hidden xl:table-row" : undefined}
           cells={[
             <ModuleAsset key="t" tone="neutral" assetName={t.name} kind="spot" name={t.name} />,
             <span key="v" className="mono text-text-secondary">
@@ -57,9 +60,10 @@ export function SpotLeaderboards({ directory, stables }: SpotLeaderboardsProps) 
   ];
 
   return (
-    // Full-width 3-col row below xl; stacked vertical rail at xl, next to the
-    // directory table (same responsive shape as the vaults leaderboards).
-    <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-1 gap-4">
+    // Below xl: gainers and losers side by side, stablecoins on their own row
+    // (four rows beside eight left a hole). At xl: a stacked rail next to the
+    // directory table.
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4">
       <OverviewModule title="Top gainers · 24h" tag="min $10K vol" tagVariant="plain">
         <ModuleTable columns={moverCols}>
           <MoverRows tokens={gainers} />
@@ -82,7 +86,7 @@ export function SpotLeaderboards({ directory, stables }: SpotLeaderboardsProps) 
         )}
       </OverviewModule>
 
-      <OverviewModule title="Stablecoins" tag="on-spot supply" tagVariant="plain">
+      <OverviewModule title="Stablecoins" tag="on-spot supply" tagVariant="plain" className="md:col-span-2 xl:col-span-1">
         <ModuleTable
           columns={[
             { header: "Coin" },
