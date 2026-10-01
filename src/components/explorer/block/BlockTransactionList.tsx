@@ -28,7 +28,8 @@ export function BlockTransactionList({
             className="text-brand text-sm cursor-pointer hover:text-brand/80 transition-colors"
             onClick={() => onTransactionClick(tx.hash)}
           >
-            {tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}
+            <span className="sm:hidden">{tx.hash.slice(0, 6)}…{tx.hash.slice(-4)}</span>
+            <span className="hidden sm:inline">{tx.hash.slice(0, 8)}...{tx.hash.slice(-6)}</span>
           </span>
           <CopyButton text={tx.hash} />
         </div>
@@ -45,6 +46,7 @@ export function BlockTransactionList({
     },
     {
       key: "block",
+      className: "hidden lg:table-cell",
       header: "Block",
       type: "numeric",
       accessor: (tx) => (
@@ -55,6 +57,7 @@ export function BlockTransactionList({
     },
     {
       key: "time",
+      className: "hidden sm:table-cell",
       header: "Time",
       accessor: (tx) => (
         <span className="text-text-primary text-sm">
@@ -71,7 +74,8 @@ export function BlockTransactionList({
             className="text-brand text-sm cursor-pointer hover:text-brand/80 transition-colors"
             onClick={() => onAddressClick(tx.user)}
           >
-            {tx.user.slice(0, 12)}...{tx.user.slice(-8)}
+            <span className="sm:hidden">{tx.user.slice(0, 6)}…{tx.user.slice(-4)}</span>
+            <span className="hidden sm:inline">{tx.user.slice(0, 12)}...{tx.user.slice(-8)}</span>
           </span>
           <CopyButton text={tx.user} />
         </div>
@@ -80,7 +84,7 @@ export function BlockTransactionList({
   ];
 
   return (
-    <Card className="p-4 flex flex-col">
+    <Card className="p-1.5 sm:p-4 flex flex-col">
       <TypedDataTable<BlockTransaction>
         data={transactions}
         columns={columns}
