@@ -4,57 +4,35 @@
 #   https://liquidterminal.xyz/llms.txt       (site map for LLMs)
 #   https://liquidterminal.xyz/llms-full.txt  (full wiki corpus, markdown)
 
+# One group for every crawler, AI crawlers included: a separate group naming a
+# bot would replace the `*` rules for that bot and drop the exclusions below.
+# Share-tile images (/api/tile/) stay crawlable for link previews.
+
 User-agent: *
-Allow: /
-Disallow: /api/
-Disallow: /user/
-Disallow: /dashboard
-Disallow: /profile
-Disallow: /labs/
-
-# --- AI search & assistant crawlers (indexing) ---
+# AI search & assistant crawlers (indexing): explicitly welcome
 User-agent: GPTBot
-Allow: /
-
 User-agent: OAI-SearchBot
-Allow: /
-
 User-agent: ClaudeBot
-Allow: /
-
 User-agent: Claude-SearchBot
-Allow: /
-
 User-agent: PerplexityBot
-Allow: /
-
 User-agent: Google-Extended
-Allow: /
-
 User-agent: Applebot-Extended
-Allow: /
-
 User-agent: meta-externalagent
-Allow: /
-
 User-agent: Amazonbot
-Allow: /
-
 User-agent: CCBot
-Allow: /
-
-# --- AI on-demand fetchers (a user asked about this site) ---
+# AI on-demand fetchers (a user asked about this site)
 User-agent: ChatGPT-User
-Allow: /
-
 User-agent: Claude-User
-Allow: /
-
 User-agent: Perplexity-User
 Allow: /
-
-Sitemap: https://liquidterminal.xyz/sitemap.xml
+Allow: /api/tile/
+Disallow: /api/
+Disallow: /user/
+Disallow: /profile
+Disallow: /labs/
 
 # ByteDance: documented as ignoring robots.txt, no citation surface for us
 User-agent: Bytespider
 Disallow: /
+
+Sitemap: https://liquidterminal.xyz/sitemap.xml

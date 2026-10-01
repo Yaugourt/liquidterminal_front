@@ -19,7 +19,7 @@ export default function DashboardLayout({
     <div className="space-y-5">
       <PageHeader
         title="Dashboard"
-        titleQualifier="the Hyperliquid ecosystem at a glance"
+        titleQualifier="· the Hyperliquid ecosystem at a glance"
         description="Market, capital and ecosystem, each in its own scope."
       />
       <DashboardScopeBar />

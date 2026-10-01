@@ -1,12 +1,10 @@
 import { Metadata } from "next";
+import { generateMetadata, seoConfig } from "@/lib/seo";
 import { PageHeader } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 
-export const metadata: Metadata = {
-  title: "Elysium Testnet Dashboard | Liquid Terminal",
-  description:
-    "Live Elysium testnet data: blocks, transactions, active addresses, bridge transfers and reserves, and batches settled on HyperEVM.",
-};
+// Each Elysium page sets its own title and canonical in its layout (seoConfig.elysium*).
+export const metadata: Metadata = generateMetadata(seoConfig.elysium);
 
 /** Elysium section shell: header with an explicit testnet status. */
 export default function ElysiumLayout({ children }: { children: React.ReactNode }) {

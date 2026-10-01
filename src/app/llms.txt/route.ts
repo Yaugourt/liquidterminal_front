@@ -33,7 +33,8 @@ ${chapters}
 
 These pages are client-rendered dashboards; the numbers below them come from public APIs.
 
-- [Market overview](${base}/market): every venue on one page — volume, fees, open interest, stablecoins
+- [Dashboard](${base}/dashboard): the whole ecosystem at a glance, with market, capital and ecosystem scopes
+- [Market overview](${base}/market): every venue on one page: volume, fees, open interest, stablecoins
 - [Spot market](${base}/market/spot): HIP-1 tokens, prices, 24h volume, marketcaps. Per-token pages at /market/spot/{TICKER}
 - [Perpetuals](${base}/market/perp): funding rates, open interest, volume. Per-market pages at /market/perp/{COIN}
 - [Perp DEXs (HIP-3)](${base}/market/perpdex): builder-deployed perp venues, their markets and open interest
@@ -42,14 +43,27 @@ These pages are client-rendered dashboards; the numbers below them come from pub
 - [Wallet tracker](${base}/market/tracker): wallets, PnL, public lists, top traders
 - [Ticker auctions (HIP-1)](${base}/market/spot/auction): live spot ticker auction and full history
 - [Deploy auctions (HIP-3)](${base}/market/perp/auction): perp DEX deploy auction and past deployments
-- [HYPE](${base}/hype): supply, staking, buybacks, burn and protocol revenue
+- [HYPE](${base}/hype): supply, staking, buybacks, burn and protocol revenue. Chapters: /hype/financials (revenue, income statement), /hype/valuation (multiples), /hype/capital (supply, Assistance Fund, burn, staking), /hype/operations (fee run rate, TVL)
+- [Trade explorer](${base}/market/trades): closed round-trip trades with realized PnL
+- [HyperEVM](${base}/evm): blocks, transactions and gas on the EVM layer
+- [Share studio](${base}/share): post-ready image cards of live Hyperliquid data
 - [Vaults](${base}/explorer/vaults): vault TVL, APR and performance. Per-vault pages at /explorer/vaults/{address}
 - [Validators](${base}/explorer/validator): staking, stake distribution and validator stats
 - [Liquidations](${base}/explorer/liquidations): live liquidation feed and history
 - [Priority fees](${base}/explorer/priority-fees): priority gas on fills and leaderboards
 - [Explorer](${base}/explorer): HyperCore transactions, blocks, addresses
 - [Ecosystem projects](${base}/ecosystem/project): directory of projects building on Hyperliquid, with TVL and fees
-- [HIP-4 docs](${base}/hip4): reverse-engineered prediction-markets documentation
+- [HIP-4 docs](${base}/hip4/home): reverse-engineered prediction-markets documentation
+
+## Elysium (Kinetiq L2 testnet on HyperEVM, chain 99801)
+
+- [Overview](${base}/elysium): blocks, transactions, active addresses, bridge and batches
+- [Network](${base}/elysium/network): chain ID, RPC endpoints, gas, ArbOS and rollup contracts, read live
+- [Simulator](${base}/elysium/simulate): dry-run a call or a contract deployment on live state; /elysium/simulate?kind=deploy for deployments
+- [Decoder](${base}/elysium/decode): what a contract is, its functions, proxy and admin powers. Per-address pages at /elysium/address/{address}
+- [Contracts](${base}/elysium/contracts), [Tokens](${base}/elysium/tokens), [DEX](${base}/elysium/dex), [Bridge](${base}/elysium/bridge), [Users](${base}/elysium/users), [Economics](${base}/elysium/economics): computed analytics
+- [Run a node](${base}/elysium/node): archive snapshots and restore commands
+- [Share studio](${base}/elysium/share): Elysium data cards
 
 ## Optional
 

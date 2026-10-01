@@ -175,9 +175,9 @@ export const seoConfig = {
   },
 
   hip4: {
-    title: "HIP-4 Contest — Exploratory documentation",
+    title: "HIP-4 Research - Exploratory Prediction Markets Documentation",
     description:
-      "Reverse-engineered HIP-4 prediction markets documentation on HyperEVM testnet (chain 998). ABI, events, mechanics, bridge, and code examples — not official Hyperliquid documentation.",
+      "Reverse-engineered HIP-4 prediction markets documentation: ABI, events, mechanics, bridge and code examples. Not official Hyperliquid documentation.",
     keywords: [
       "HIP-4",
       "Hyperliquid",
@@ -363,6 +363,157 @@ export const seoConfig = {
     keywords: ["liquidations", "Hyperliquid liquidations", "trading liquidations", "perp liquidations", "market data"],
     path: "/explorer/liquidations",
     image: "/og/explorer.png",
+  },
+
+  // ── Elysium (Kinetiq L2 testnet): one preset per page so no two pages
+  // share a title, description or canonical.
+  elysium: {
+    title: "Elysium Testnet Explorer - Blocks, Transactions & Bridge",
+    description: "Live Elysium testnet data: blocks, transactions, active addresses, HYPE bridge flows and reserves, and the batches settled on HyperEVM.",
+    keywords: ["Elysium", "Elysium testnet", "Kinetiq L2", "HyperEVM L2", "Elysium explorer"],
+    path: "/elysium",
+  },
+  elysiumNetwork: {
+    title: "Elysium Network Specs - Chain ID, RPC, Gas & ArbOS",
+    description: "Elysium testnet network parameters read live: chain ID 99801, RPC endpoints, block time, gas price, ArbOS and Stylus versions, rollup contracts. Add it to your wallet in one click.",
+    keywords: ["Elysium RPC", "Elysium chain id", "Elysium testnet network", "add Elysium to wallet", "Elysium gas"],
+    path: "/elysium/network",
+  },
+  elysiumSimulate: {
+    title: "Elysium Transaction Simulator - Dry-Run Calls & Deployments",
+    description: "Simulate any Elysium call or contract deployment on live testnet state before signing: status, gas, fee, events, revert reason and the address a contract gets. Deploy from your own wallet once the checks pass.",
+    keywords: ["Elysium simulator", "simulate transaction", "eth_simulateV1", "deploy contract Elysium", "Elysium gas estimate"],
+    path: "/elysium/simulate",
+  },
+  elysiumDecode: {
+    title: "Elysium Contract Decoder - Bytecode, Proxies & Admin Powers",
+    description: "Decode any Elysium contract from its bytecode: what it is, its functions, the proxy implementation behind it, who deployed it and the admin powers its owner holds.",
+    keywords: ["Elysium contract decoder", "decode bytecode", "proxy implementation", "contract admin", "Elysium contracts"],
+    path: "/elysium/decode",
+  },
+  elysiumContracts: {
+    title: "Elysium Contracts - Deployments, Top Deployers & Most Used",
+    description: "Contracts on Elysium testnet: daily deployments, the busiest deployers, the most called contracts and functions, and new contracts gaining users.",
+    keywords: ["Elysium contracts", "Elysium deployments", "most used contracts", "Elysium deployers"],
+    path: "/elysium/contracts",
+  },
+  elysiumTokens: {
+    title: "Elysium Tokens - New Token Launches & Transfers",
+    description: "ERC-20 tokens on Elysium testnet: daily launches, the newest tokens, and the most transferred tokens with their holders.",
+    keywords: ["Elysium tokens", "Elysium token launches", "ERC-20 Elysium", "new tokens"],
+    path: "/elysium/tokens",
+  },
+  elysiumDex: {
+    title: "Elysium DEX - Pools, Swaps & Factories",
+    description: "Decentralized exchanges on Elysium testnet: pools created, swaps per day, the most traded pools and the newest ones, by factory.",
+    keywords: ["Elysium DEX", "Elysium swaps", "Elysium pools", "Uniswap Elysium"],
+    path: "/elysium/dex",
+  },
+  elysiumBridge: {
+    title: "Elysium Bridge - HYPE Flows, Finality & Reserves",
+    description: "The Elysium to HyperEVM bridge: daily HYPE in and out, bridged assets, deposit and withdrawal times, the most active bridgers and escrow reserves against supply.",
+    keywords: ["Elysium bridge", "bridge HYPE Elysium", "Elysium withdrawal time", "Elysium reserves"],
+    path: "/elysium/bridge",
+  },
+  elysiumUsers: {
+    title: "Elysium Users - Active Addresses & Retention",
+    description: "Who uses Elysium testnet: daily active and new addresses, D+1 and D+7 retention by cohort, and how concentrated activity is among the busiest senders.",
+    keywords: ["Elysium users", "Elysium active addresses", "Elysium retention", "Elysium activity"],
+    path: "/elysium/users",
+  },
+  elysiumEconomics: {
+    title: "Elysium Economics - Fees, Spam & Failed Transactions",
+    description: "Elysium testnet economics: fees paid in HYPE per day, average fee, and the share of spam and failed transactions.",
+    keywords: ["Elysium fees", "Elysium gas fees", "Elysium spam", "failed transactions"],
+    path: "/elysium/economics",
+  },
+  elysiumNode: {
+    title: "Run an Elysium Node - Archive Snapshots & Sync",
+    description: "Run an Elysium testnet node: the latest archive snapshot and its checksum, the Nitro and Docker commands to restore it, and how many blocks are left to sync.",
+    keywords: ["Elysium node", "run Elysium node", "Elysium snapshot", "Arbitrum Nitro node"],
+    path: "/elysium/node",
+  },
+  elysiumShare: {
+    title: "Elysium Share Studio - Post-Ready Data Cards",
+    description: "Turn Elysium testnet data into branded images ready to post: network, activity, builders, tokens, DEX, bridge and simulation cards, copied in one click.",
+    keywords: ["Elysium stats", "Elysium charts", "share Elysium data"],
+    path: "/elysium/share",
+  },
+
+  // ── HYPE chapters
+  hypeFinancials: {
+    title: "Hyperliquid Revenue & Income Statement - HYPE Financials",
+    description: "Hyperliquid protocol financials: fees and revenue history, revenue by segment, quarterly revenue and an income statement, with how it ranks among crypto protocols.",
+    keywords: ["Hyperliquid revenue", "Hyperliquid fees", "Hyperliquid income statement", "HYPE financials"],
+    path: "/hype/financials",
+  },
+  hypeValuation: {
+    title: "HYPE Valuation - Price to Fees & Revenue Multiples",
+    description: "HYPE valuation multiples from trailing twelve-month fees and revenue: price to fees, price to earnings and earnings yield, on circulating and diluted supply, with their history.",
+    keywords: ["HYPE valuation", "HYPE price to earnings", "HYPE multiples", "HYPE FDV"],
+    path: "/hype/valuation",
+  },
+  hypeCapital: {
+    title: "HYPE Supply, Buybacks & Burn - Assistance Fund Tracker",
+    description: "Where HYPE goes: supply and scarcity, Assistance Fund buybacks, burn, staking, genesis distribution and whale versus retail holdings.",
+    keywords: ["HYPE buyback", "Assistance Fund", "HYPE burn", "HYPE supply", "HYPE staking", "HYPE holders"],
+    path: "/hype/capital",
+  },
+  hypeOperations: {
+    title: "Hyperliquid Operating Metrics - Fee Run Rate & TVL",
+    description: "Hyperliquid operating metrics: fee run rate, total value locked history and the core activity figures behind them.",
+    keywords: ["Hyperliquid TVL", "Hyperliquid metrics", "fee run rate", "Hyperliquid operations"],
+    path: "/hype/operations",
+  },
+
+  // ── Pages that inherited a parent's (or the home page's) title
+  marketTrades: {
+    title: "Hyperliquid Trade Explorer - Closed Trades & Realized PnL",
+    description: "Every closed round-trip trade on Hyperliquid, entry to exit: filter by coin, sort by realized PnL, volume or hold time.",
+    keywords: ["Hyperliquid trades", "Hyperliquid PnL", "biggest trades Hyperliquid", "trade explorer"],
+    path: "/market/trades",
+    image: "/og/market.png",
+  },
+  builderIntelligence: {
+    title: "Hyperliquid Builder Analytics - Users, Revenue & Coins",
+    description: "Analytics on users trading through Hyperliquid builder codes: builder revenue, user behavior and coin exposure.",
+    keywords: ["Hyperliquid builder analytics", "builder codes users", "builder revenue"],
+    path: "/market/builders/intelligence",
+    image: "/og/market.png",
+  },
+  evm: {
+    title: "HyperEVM Explorer - Blocks, Transactions & Gas",
+    description: "Blocks, transactions and gas on HyperEVM, the general-purpose execution layer secured by the same HyperBFT consensus as HyperCore.",
+    keywords: ["HyperEVM", "HyperEVM explorer", "HyperEVM gas", "HyperEVM blocks"],
+    path: "/evm",
+    image: "/og/explorer.png",
+  },
+  sharePage: {
+    title: "Hyperliquid Share Studio - Post-Ready Data Cards",
+    description: "Turn live Hyperliquid data into branded images ready to post: markets, revenue, liquidations, HYPE, validators and stablecoins, or build your own card.",
+    keywords: ["Hyperliquid charts", "Hyperliquid stats image", "share Hyperliquid data"],
+    path: "/share",
+  },
+  usdh: {
+    title: "USDH Swap",
+    description: "Swap USDC into USDH between HyperCore and HyperEVM.",
+    path: "/usdh",
+    // USDH is being wound down in favour of USDC: do not promote the swap in search.
+    noIndex: true,
+  },
+  wikiTopics: {
+    title: "Hyperliquid Topics - Wiki Resources by Subject",
+    description: "Hyperliquid resources grouped by topic: trading, HYPE, HIP-3, HIP-4, vaults, DeFi, stablecoins and more, ranked by community saves.",
+    keywords: ["Hyperliquid guides", "Hyperliquid topics", "learn Hyperliquid"],
+    path: "/wiki/topics",
+    image: "/og/wiki.png",
+  },
+  wikiReadlists: {
+    title: "Hyperliquid Read Lists - Curated Reading Paths",
+    description: "Curated reading lists on Hyperliquid built by the community: ordered articles, docs and threads to learn a subject end to end.",
+    keywords: ["Hyperliquid reading list", "learn Hyperliquid", "Hyperliquid resources"],
+    path: "/wiki/readlists",
+    image: "/og/wiki.png",
   },
 };
 

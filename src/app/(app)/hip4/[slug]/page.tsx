@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { generateMetadata as seoMetadata, seoConfig } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { Hip4ChapterRouter } from "@/components/hip4/hip4-chapter-registry";
 import { getHip4Chapter, HIP4_SLUGS, type Hip4Slug } from "@/lib/hip4-chapters";
@@ -17,11 +18,13 @@ export async function generateMetadata({
   if (!ch) {
     return { title: "HIP-4" };
   }
-  return {
-    title: `${ch.title} — HIP-4`,
-    description:
-      "Exploratory HIP-4 prediction markets documentation on HyperEVM mainnet. Reverse-engineered; not official Hyperliquid documentation.",
-  };
+  if (slug === "home") return seoMetadata({ ...seoConfig.hip4, path: "/hip4/home" });
+  return seoMetadata({
+    title: `${ch.title} - HIP-4 Research`,
+    description: `${ch.title}: exploratory HIP-4 prediction markets documentation, reverse-engineered from the contracts. Not official Hyperliquid documentation.`,
+    path: `/hip4/${slug}`,
+    keywords: ["HIP-4", "Hyperliquid prediction markets", "HIP-4 documentation"],
+  });
 }
 
 export default async function Hip4SlugPage({

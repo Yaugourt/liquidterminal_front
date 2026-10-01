@@ -3,6 +3,7 @@ import { SITE_CONFIG } from '@/lib/site-config'
 import { CHAPTER_CATEGORY_MAP, slugify } from '@/components/wiki/hub/topics'
 import { env } from '@/lib/env'
 import { API_URLS } from '@/services/api/constants'
+import { HIP4_SLUGS } from '@/lib/hip4-chapters'
 
 export const revalidate = 3600
 
@@ -38,8 +39,23 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   { path: '/market/builders', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/perpdex', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/hip4', changeFrequency: 'hourly', priority: 0.7 },
-  // HIP-4 docs
-  { path: '/hip4', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/market/trades', changeFrequency: 'hourly', priority: 0.6 },
+  { path: '/market/builders/intelligence', changeFrequency: 'daily', priority: 0.5 },
+  // HYPE token chapters
+  { path: '/hype', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/hype/financials', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/hype/valuation', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/hype/capital', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/hype/operations', changeFrequency: 'daily', priority: 0.6 },
+  // HyperEVM and the share studio
+  { path: '/evm', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/share', changeFrequency: 'weekly', priority: 0.5 },
+  // Elysium testnet (address pages are noindex: not listed)
+  ...['', '/network', '/simulate', '/decode', '/contracts', '/tokens', '/dex', '/bridge', '/users', '/economics', '/node', '/share'].map(
+    (p) => ({ path: `/elysium${p}`, changeFrequency: 'daily' as const, priority: p === '' ? 0.7 : 0.6 })
+  ),
+  // HIP-4 docs: /hip4 itself only redirects to /hip4/home, so list the chapters
+  ...HIP4_SLUGS.map((slug) => ({ path: `/hip4/${slug}`, changeFrequency: 'monthly' as const, priority: slug === 'home' ? 0.6 : 0.4 })),
   // Ecosystem (the bare /ecosystem route does not exist — never list it)
   { path: '/ecosystem/publicgoods', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/ecosystem/project', changeFrequency: 'weekly', priority: 0.7 },
