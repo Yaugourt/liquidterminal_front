@@ -69,6 +69,7 @@ export function SmartMoneyBoard() {
   const columns: Column<TopTrader>[] = [
     {
       key: "rank",
+      className: "hidden sm:table-cell",
       header: "#",
       accessor: (_t, _i, absoluteIndex) => (
         <span className="text-gold font-semibold">#{absoluteIndex + 1}</span>
@@ -100,6 +101,7 @@ export function SmartMoneyBoard() {
     },
     {
       key: "totalVolume",
+      className: "hidden sm:table-cell",
       header: "Volume",
       sortable: true,
       align: "right",
@@ -109,6 +111,7 @@ export function SmartMoneyBoard() {
     },
     {
       key: "avgSize",
+      className: "hidden md:table-cell",
       header: "Avg size",
       sortable: true,
       align: "right",
@@ -133,6 +136,7 @@ export function SmartMoneyBoard() {
     },
     {
       key: "tradeCount",
+      className: "hidden sm:table-cell",
       header: "Trades",
       sortable: true,
       align: "right",

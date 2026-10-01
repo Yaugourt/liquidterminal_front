@@ -95,6 +95,7 @@ export function SmartMoneyPositioning() {
     },
     {
       key: "bias",
+      className: "hidden sm:table-cell",
       header: "Long / Short",
       width: "160px",
       accessor: (c) => {
