@@ -80,12 +80,14 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
   const pnlSum = useMemo(() => dailyPnl.reduce((acc, p) => acc + p.value, 0), [dailyPnl]);
   const flowSum = useMemo(() => netFlows.reduce((acc, p) => acc + p.value, 0), [netFlows]);
 
+  const hasLedger = ledgerLoading || ledger.length > 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2, duration: 0.35 }}
-      className="grid grid-cols-1 lg:grid-cols-2 gap-3"
+      className={`grid grid-cols-1 gap-3 ${hasLedger ? "lg:grid-cols-2" : ""}`}
     >
       <SecondaryChartCard
         title="Daily PnL"
@@ -96,6 +98,8 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
         data={dailyPnl}
         isLoading={snapsLoading}
       />
+      {/* No ledger for this vault (e.g. HLP): no net flows card, daily PnL takes the row. */}
+      {hasLedger && (
       <SecondaryChartCard
         title="Net flows"
         icon={<Activity size={13} className="text-brand" />}
@@ -112,6 +116,7 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
             : "No flows in this window."
         }
       />
+      )}
     </motion.div>
   );
 }
@@ -174,6 +179,8 @@ function SecondaryChartCard({
             data={data}
             defaultColor={chartPalette.accent}
             formatValue={(v) => compactUsd(v)}
+            // 48px cut the minus sign off "-$9.00M", which then read positive.
+            yAxisWidth={60}
           />
         )}
       </div>

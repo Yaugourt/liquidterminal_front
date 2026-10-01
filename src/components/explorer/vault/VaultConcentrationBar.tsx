@@ -70,6 +70,9 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
   const concentrationLabel =
     hhi >= 2500 ? "High" : hhi >= 1500 ? "Moderate" : "Low";
 
+  // No ledger for this vault (e.g. HLP): the card would only say so.
+  if (!isLoading && entries.length === 0) return null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
