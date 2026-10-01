@@ -144,15 +144,18 @@ export function ArticleFeed({
       ) : view === "table" ? (
         <AtlasArticleTable resources={shown} isLoading={isLoading} showCategory={showCategory} />
       ) : (
-        <div className="grid grid-cols-1 gap-3 p-3.5 sm:grid-cols-2 2xl:grid-cols-3">
+        // Masonry columns: cards keep their own height. In a grid, a text card
+        // next to one with a 16/9 preview stretched over ~200px of blank.
+        <div className="columns-1 gap-3 p-3.5 sm:columns-2 2xl:columns-3">
           {shown.map((r) => (
-            <ArticleCard
-              key={r.id}
-              resource={r}
-              // Only real tweets (author handle in the URL) get the tweet card:
-              // x.com/i/spaces/… are recorded episodes, not posts.
-              variant={xHandleOf(r.url) ? "tweet" : "grid"}
-            />
+            <div key={r.id} className="mb-3 break-inside-avoid">
+              <ArticleCard
+                resource={r}
+                // Only real tweets (author handle in the URL) get the tweet card:
+                // x.com/i/spaces/… are recorded episodes, not posts.
+                variant={xHandleOf(r.url) ? "tweet" : "grid"}
+              />
+            </div>
           ))}
         </div>
       )}
