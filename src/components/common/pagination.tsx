@@ -55,7 +55,7 @@ export function Pagination({
     "transition-colors disabled:opacity-30 disabled:pointer-events-none";
 
   return (
-    <div className={`flex items-center justify-between text-[11px] text-text-tertiary ${className}`}>
+    <div className={`flex flex-wrap items-center justify-between gap-2 text-[11px] text-text-tertiary ${className}`}>
       {/* Items per page */}
       <div className="flex items-center gap-2">
         <span className="hidden sm:inline">Items per page:</span>
@@ -91,7 +91,7 @@ export function Pagination({
         <div className="flex items-center gap-0.5">
           <button
             type="button"
-            className={navBtn}
+            className={`${navBtn} max-sm:hidden`}
             onClick={() => onPageChange(0)}
             disabled={page === 0 || disabled}
             aria-label="First page"
@@ -136,7 +136,7 @@ export function Pagination({
           </button>
           <button
             type="button"
-            className={navBtn}
+            className={`${navBtn} max-sm:hidden`}
             onClick={() => onPageChange(pageCount - 1)}
             disabled={page >= pageCount - 1 || disabled}
             aria-label="Last page"

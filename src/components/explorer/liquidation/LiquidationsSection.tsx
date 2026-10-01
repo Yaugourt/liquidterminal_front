@@ -6,7 +6,7 @@ import { useDateFormat } from "@/store/date-format.store";
 import { TypedDataTable, TokenAvatar, type Column } from "@/components/common";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { useLiquidationsContext, MIN_AMOUNT_PRESETS } from "./LiquidationsContext";
 import { Filter, RefreshCw } from "lucide-react";
@@ -64,8 +64,12 @@ export function LiquidationsSection() {
       header: "Notional",
       type: "numeric",
       accessor: (liq) => (
-        <span className="font-medium">
-          ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
+        <span className="font-medium whitespace-nowrap">
+          {/* Compact on phones, where the full figure pushed the row past the card. */}
+          <span className="sm:hidden">{compactUsd(liq.notional_total)}</span>
+          <span className="hidden sm:inline">
+            ${formatNumber(liq.notional_total, format, { maximumFractionDigits: 2 })}
+          </span>
         </span>
       ),
     },
