@@ -112,7 +112,9 @@ export function VaultsEcosystemShape({ directory }: VaultsEcosystemShapeProps) {
   }, [rows]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+    // Three cards from xl; below it two per row and the third spans, since a
+    // third of 1024 cut the capital map names to one letter.
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-stretch md:[&>*:last-child]:col-span-2 xl:[&>*:last-child]:col-span-1">
       {/* Vault growth */}
       <OverviewModule title="Vault growth" tag="cumulative" tagVariant="plain">
         <div className="px-4 py-3.5 flex flex-col gap-3 flex-1">
@@ -151,7 +153,7 @@ export function VaultsEcosystemShape({ directory }: VaultsEcosystemShapeProps) {
                   width: "1fr",
                   align: "left",
                   render: (x) => (
-                    <span className="block truncate text-[11px] text-text-secondary">
+                    <span className="block truncate text-[11px] text-text-secondary" title={x.r.summary.name}>
                       {x.r.summary.name}
                     </span>
                   ),
@@ -222,6 +224,7 @@ export function VaultsEcosystemShape({ directory }: VaultsEcosystemShapeProps) {
                 <span
                   key={b.label}
                   className="flex-1 min-w-0 truncate text-center mono text-[9px] text-text-tertiary"
+                  title={b.label}
                 >
                   {b.label}
                 </span>

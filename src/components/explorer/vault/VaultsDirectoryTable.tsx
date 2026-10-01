@@ -9,7 +9,7 @@ import { TypedDataTable, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { Input } from "@/components/ui/input";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 import type {
   UseVaultsDirectoryResult,
@@ -28,6 +28,7 @@ function buildColumns(
   return [
     {
       key: "rank",
+      className: "hidden sm:table-cell",
       header: "#",
       align: "right",
       headerAlign: "right",
@@ -46,10 +47,10 @@ function buildColumns(
             {initials(v.summary.name)}
           </span>
           <div className="min-w-0">
-            <div className="text-sm font-medium text-text-primary truncate max-w-[240px]">
+            <div className="text-sm font-medium text-text-primary truncate max-w-[100px] sm:max-w-[240px]" title={v.summary.name}>
               {v.summary.name}
             </div>
-            <div className="mono text-[11px] text-text-tertiary">
+            <div className="mono text-[11px] text-text-tertiary truncate max-w-[100px] sm:max-w-none">
               {v.summary.vaultAddress.slice(0, 8)}…{v.summary.vaultAddress.slice(-4)}
             </div>
           </div>
@@ -58,6 +59,7 @@ function buildColumns(
     },
     {
       key: "leader",
+      className: "hidden md:table-cell lg:hidden 2xl:table-cell",
       header: "Leader",
       accessor: (v) => <AddressDisplay address={v.summary.leader} />,
     },
@@ -67,8 +69,7 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (v) => parseFloat(v.summary.tvl),
-      accessor: (v) =>
-        `$${formatNumber(parseFloat(v.summary.tvl), format, { maximumFractionDigits: 0 })}`,
+      accessor: (v) => compactUsd(parseFloat(v.summary.tvl)),
     },
     {
       key: "apr",
@@ -80,15 +81,17 @@ function buildColumns(
     },
     {
       key: "followers",
+      className: "hidden sm:table-cell",
       header: "Followers",
       type: "numeric",
       sortable: true,
       getSortValue: (v) => v.followerCount ?? -1,
       accessor: (v) =>
-        v.followerCount !== null ? formatNumber(v.followerCount, format) : "—",
+        v.followerCount !== null ? formatNumber(v.followerCount, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "—",
     },
     {
       key: "commission",
+      className: "hidden 2xl:table-cell",
       header: "Comm.",
       type: "numeric",
       sortable: true,
@@ -98,6 +101,7 @@ function buildColumns(
     },
     {
       key: "created",
+      className: "hidden 2xl:table-cell",
       header: "Age",
       sortable: true,
       getSortValue: (v) => v.summary.createTimeMillis,

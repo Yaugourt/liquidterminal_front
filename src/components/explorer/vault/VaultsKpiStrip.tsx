@@ -38,7 +38,7 @@ export function VaultsKpiStrip({ directory }: VaultsKpiStripProps) {
       sub: "active · excl HLP",
     },
     {
-      label: "Followers · tracked",
+      label: "Followers",
       value: isLoading && !totalFollowers ? ph : compactCount(totalFollowers),
       sub: "Σ followerCount",
     },
