@@ -42,7 +42,7 @@ export function HypeScopeBar() {
       aria-label="HYPE sections"
       className="flex items-center gap-1 mb-5 -mt-1 overflow-x-auto scrollbar-brand"
     >
-      <span className="text-[10px] uppercase tracking-[0.1em] text-text-tertiary mr-2 shrink-0">
+      <span className="hidden sm:inline text-[10px] uppercase tracking-[0.1em] text-text-tertiary mr-2 shrink-0">
         HYPE
       </span>
       {SCOPES.map((item) => {
