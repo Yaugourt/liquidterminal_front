@@ -108,6 +108,8 @@ export const PriorityBurnChart = memo(function PriorityBurnChart({
               data={points}
               defaultColor={chartPalette.gold}
               formatValue={formatValue}
+              // The unit sits in the tooltip and the tab; three-line ticks overlapped.
+              formatAxisValue={(v) => (metric === "fills" ? compactCount(v) : compactHype(v))}
               formatTime={formatTime}
               yAxisWidth={56}
             />

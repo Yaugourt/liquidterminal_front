@@ -23,6 +23,9 @@ interface AuroraHistogramChartProps {
   data: HistogramDataPoint[];
   defaultColor?: string;
   formatValue?: (value: number) => string;
+  /** Y-axis tick label; defaults to `formatValue`. Keep it short: the tooltip
+   * carries the long form, the axis has `yAxisWidth` px. */
+  formatAxisValue?: (value: number) => string;
   formatTime?: (time: number) => string;
   onCrosshairMove?: (value: number | null, time: number | null) => void;
   /**
@@ -102,6 +105,7 @@ const AuroraHistogramChartComponent = ({
   data,
   defaultColor = chartColors.rose,
   formatValue,
+  formatAxisValue,
   formatTime,
   onCrosshairMove,
   barRadius = 2,
@@ -185,7 +189,7 @@ const AuroraHistogramChartComponent = ({
           />
           <YAxis
             tickFormatter={(v) =>
-              formatValue ? formatValue(Number(v)) : Number(v).toLocaleString()
+              (formatAxisValue ?? formatValue)?.(Number(v)) ?? Number(v).toLocaleString()
             }
             tick={{ fill: chartColors.textMuted, fontSize: 10 }}
             axisLine={false}

@@ -20,12 +20,12 @@ const TOP_N = 12;
 const CONCENTRATION_HEAD = 10;
 
 const COLUMNS: ModuleColumn[] = [
-  { header: "#", width: 34, align: "left" },
+  { header: "#", width: 34, align: "left", className: "hidden sm:table-cell" },
   { header: "Payer", align: "left" },
   { header: "Gas", width: 108 },
   { header: "Share", width: 66 },
-  { header: "Fills", width: 76 },
-  { header: "Avg/fill", width: 92 },
+  { header: "Fills", width: 76, className: "hidden sm:table-cell" },
+  { header: "Avg/fill", width: 92, className: "hidden md:table-cell" },
 ];
 
 function entryAddress(row: PriorityFeesLeaderboardEntry): string {
