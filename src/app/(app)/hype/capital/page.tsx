@@ -57,28 +57,24 @@ export default function HypeCapitalPage() {
 
       <section className="space-y-2.5">
         <SectionHead
-          title="Buyback &amp; Burn"
-          subtitle="Assistance Fund holdings and cost basis · HYPE removed from supply"
+          title="Buyback, Burn &amp; Holders"
+          subtitle="Assistance Fund holdings and cost basis · HYPE removed from supply · whale &amp; retail cohorts"
         />
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        {/* Burn and holder concentration stack beside the fund: alone, the burn
+            card stretched to the fund's height over a 250px blank, and the
+            holder card sat by itself on half a row. */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:items-start">
           <AssistanceFundCard />
-          <BurnCard />
+          <div className="min-w-0 space-y-4">
+            <BurnCard />
+            <WhalesVsRetailCard />
+          </div>
         </div>
       </section>
 
       <section className="space-y-2.5">
         <SectionHead title="Staking" subtitle="HYPE locked in proof-of-stake" />
         <HypeStakingCard />
-      </section>
-
-      <section className="space-y-2.5">
-        <SectionHead
-          title="Holder concentration"
-          subtitle="How supply splits across whale &amp; retail cohorts"
-        />
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <WhalesVsRetailCard />
-        </div>
       </section>
     </div>
   );
