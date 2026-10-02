@@ -52,9 +52,9 @@ export function UserAccountCompact() {
                 onClick={() => router.push('/profile')}
                 className={cn(
                     "h-8 w-8 inline-flex items-center justify-center rounded-md border border-border-subtle bg-surface-2 hover:bg-surface-3 hover:text-text-primary transition-colors cursor-pointer",
-                    user?.telegramUsername ? "text-success" : "text-text-secondary"
+                    user?.telegramLinked || user?.telegramUsername ? "text-success" : "text-text-secondary"
                 )}
-                title={user?.telegramUsername ? `Telegram: @${user.telegramUsername}` : 'Connect Telegram'}
+                title={user?.telegramUsername ? `Telegram: @${user.telegramUsername}` : user?.telegramLinked ? 'Telegram connected' : 'Connect Telegram'}
             >
                 <TelegramIcon className="h-3.5 w-3.5 shrink-0" />
             </button>

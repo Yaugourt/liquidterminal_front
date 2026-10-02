@@ -235,6 +235,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                     />
                     <TelegramLinkCard
                         initialTelegramUsername={currentUser?.telegramUsername}
+                        initialLinked={currentUser?.telegramLinked}
                     />
                 </div>
             </div>
