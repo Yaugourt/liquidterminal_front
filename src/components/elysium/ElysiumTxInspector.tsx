@@ -125,7 +125,7 @@ export function ElysiumTxInspector({ hash }: { hash: string }) {
 }
 
 function Inspection({ tx, now }: { tx: TxInspection; now: number }) {
-  const postingShare = tx.fee > 0n ? Number((tx.feePosting * 10_000n) / tx.fee) / 100 : 0;
+  const postingShare = tx.fee > 0n ? Number((tx.feePosting * 1_000_000n) / tx.fee) / 10_000 : 0;
   const gasPct = tx.gasLimit > 0n ? Number((tx.gasUsed * 10_000n) / tx.gasLimit) / 100 : 0;
   // Token decimals seen in this tx, to print event amounts in token units.
   const tokens = useMemo(() => {
@@ -144,7 +144,9 @@ function Inspection({ tx, now }: { tx: TxInspection; now: number }) {
       key: "fee",
       label: "Fee",
       value: tx.system ? "None" : hype(tx.fee),
-      sub: tx.system ? "system transaction" : `${postingShare.toFixed(postingShare < 1 ? 2 : 1)}% to post on HyperEVM`,
+      sub: tx.system
+        ? "system transaction"
+        : `${postingShare > 0 && postingShare < 0.01 ? "<0.01" : postingShare.toFixed(postingShare < 1 ? 2 : 1)}% to post on HyperEVM`,
     },
     { key: "gas", label: "Gas used", value: tx.gasUsed.toLocaleString("en-US"), sub: `${gasPct.toFixed(1)}% of the ${tx.gasLimit.toLocaleString("en-US")} limit` },
     {
@@ -307,7 +309,7 @@ function StatusPill({ status }: { status: TxInspection["status"] }) {
 }
 
 function FeeBar({ tx }: { tx: TxInspection }) {
-  const posting = tx.fee > 0n ? Number((tx.feePosting * 10_000n) / tx.fee) / 100 : 0;
+  const posting = tx.fee > 0n ? Number((tx.feePosting * 1_000_000n) / tx.fee) / 10_000 : 0;
   return (
     <div className="space-y-1.5 border-t border-border-subtle px-4 py-3 text-[11px]">
       <div className="flex h-1.5 overflow-hidden rounded-full bg-surface-2">

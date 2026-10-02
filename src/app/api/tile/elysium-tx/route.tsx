@@ -25,10 +25,10 @@ export async function GET(req: Request) {
   const fn = tx.call?.name
     ? untrusted(tx.call.name.split("(")[0], 28)
     : tx.to
-      ? tx.input === "0x" ? "HYPE transfer" : tx.call?.selector ?? "call"
+      ? tx.input === "0x" ? "HYPE transfer" : "Contract call"
       : "Contract creation";
   const inner = tx.call?.inner.length ? ` → ${tx.call.inner.map((c) => untrusted(c.name?.split("(")[0] ?? c.selector, 18)).join(", ")}` : "";
-  const posting = tx.fee > 0n ? Number((tx.feePosting * 10_000n) / tx.fee) / 100 : 0;
+  const posting = tx.fee > 0n ? Number((tx.feePosting * 1_000_000n) / tx.fee) / 10_000 : 0;
   const status = tx.status === "success" ? "Success" : tx.status === "reverted" ? "Reverted" : "Pending";
   const changes = [...tx.balanceChanges]
     .sort((a, b) => (b.delta < 0n ? -b.delta : b.delta) > (a.delta < 0n ? -a.delta : a.delta) ? 1 : -1)
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
       badge={<ElysiumBadge />}
       eyebrow={`Elysium testnet · ${tx.typeLabel} · ${status}`}
       hero={clip(fn, 22)}
-      heroSub={clip(`${shortAddr(tx.from)} → ${tx.to ? shortAddr(tx.to) : "new contract"}${inner}`, 90)}
+      heroSub={clip(`${shortAddr(tx.from)} → ${tx.to ? shortAddr(tx.to) : "new contract"}${inner}${!tx.call?.name && tx.call ? ` · selector ${tx.call.selector}` : ""}`, 90)}
       footLeft="Decoded from public Elysium RPC data · signatures from the public signature database"
       footNote={`liquidterminal.xyz/elysium/tx · block ${tx.block?.toLocaleString("en-US") ?? "pending"}`}
     >
@@ -49,8 +49,13 @@ export async function GET(req: Request) {
         marginTop={18}
         cells={[
           { label: "Status", value: status, color: tx.status === "success" ? C.success : tx.status === "reverted" ? C.danger : C.warn },
-          { label: "Fee", value: tx.system ? "none" : `${fmtAmount(tx.fee, 18, 9)} HYPE` },
-          { label: "Posting to HyperEVM", value: tx.system ? "-" : `${posting.toFixed(posting < 1 ? 2 : 1)}%`, color: C.warn },
+          // Unit in the label keeps the value on one line (tiny fees have many digits).
+          { label: "Fee (HYPE)", value: tx.system ? "none" : fmtAmount(tx.fee, 18, 9) },
+          {
+            label: "Posting to HyperEVM",
+            value: tx.system ? "-" : posting > 0 && posting < 0.01 ? "<0.01%" : `${posting.toFixed(posting < 1 ? 2 : 1)}%`,
+            color: C.warn,
+          },
           { label: "Events", value: String(tx.logs.length) },
         ]}
       />
