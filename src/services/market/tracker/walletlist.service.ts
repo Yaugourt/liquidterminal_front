@@ -1,4 +1,4 @@
-import { get, post, put, del } from '../../api/axios-config';
+import { get, post, put, del, patch as patch_ } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { 
   WalletList,
@@ -167,7 +167,7 @@ export const removeWalletFromList = async (itemId: number): Promise<void> => {
 
 // ========== TELEGRAM ALERTS ON A LIST ==========
 
-export type ListAlertDirection = 'OPEN' | 'CLOSE' | null;
+export type ListAlertDirection = 'OPEN' | 'CLOSE' | 'FLIP' | null;
 export type ListAlertSource = 'PERP' | 'SPOT' | null;
 
 export interface ListAlertSettings {
@@ -214,4 +214,61 @@ export const deleteListAlert = async (listId: number): Promise<void> => {
   return withErrorHandling(async () => {
     await del(`${BASE_URL}/${listId}/alert`);
   }, 'removing list alert');
+};
+
+// ========== GENERIC ALERT RULES (price, market, liquidation cascades) ==========
+
+export type AlertRuleType =
+  | 'price_cross'
+  | 'price_move'
+  | 'funding'
+  | 'oi_surge'
+  | 'listing'
+  | 'leverage'
+  | 'liq_cascade';
+
+export interface AlertRule {
+  id: string;
+  type: AlertRuleType;
+  name: string;
+  params: Record<string, unknown>;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface AlertRulesState {
+  telegram: { linked: boolean; username: string | null };
+  limit: number;
+  rules: AlertRule[];
+}
+
+/** The user's alert rules and their Telegram link state. */
+export const getAlertRules = async (): Promise<AlertRulesState> => {
+  return withErrorHandling(async () => {
+    const response = await get<{ success: boolean; data: AlertRulesState }>('/alerts/rules', undefined, { useCache: false });
+    return response.data;
+  }, 'fetching alert rules');
+};
+
+/** Create an alert rule; params are validated per type by the API. */
+export const createAlertRule = async (type: AlertRuleType, params: Record<string, unknown>, name?: string): Promise<AlertRule> => {
+  return withErrorHandling(async () => {
+    const response = await post<{ success: boolean; data: AlertRule }>('/alerts/rules', { type, params, ...(name ? { name } : {}) });
+    return response.data;
+  }, 'creating alert rule');
+};
+
+/** Pause, resume, rename or retune an alert rule. */
+export const updateAlertRule = async (id: string, patch: { isActive?: boolean; name?: string; params?: Record<string, unknown> }): Promise<AlertRule> => {
+  return withErrorHandling(async () => {
+    const response = await patch_<{ success: boolean; data: AlertRule }>(`/alerts/rules/${id}`, patch);
+    return response.data;
+  }, 'updating alert rule');
+};
+
+/** Delete an alert rule. */
+export const deleteAlertRule = async (id: string): Promise<void> => {
+  return withErrorHandling(async () => {
+    await del(`/alerts/rules/${id}`);
+  }, 'deleting alert rule');
 };

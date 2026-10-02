@@ -29,6 +29,7 @@ export const PAGE_RESULTS: SearchResult[] = [
   { id: "page-builders", kind: "page", label: "Builders", sublabel: "/market/builders", href: "/market/builders" },
   { id: "page-hip4", kind: "page", label: "HIP-4 prediction markets", sublabel: "/market/hip4", href: "/market/hip4" },
   { id: "page-tracker", kind: "page", label: "Wallet tracker", sublabel: "/market/tracker", href: "/market/tracker" },
+  { id: "page-alerts", kind: "page", label: "Telegram alerts", sublabel: "/alerts", href: "/alerts" },
   { id: "page-explorer", kind: "page", label: "Explorer", sublabel: "/explorer", href: "/explorer" },
   { id: "page-vaults", kind: "page", label: "Vaults", sublabel: "/explorer/vaults", href: "/explorer/vaults" },
   { id: "page-validators", kind: "page", label: "Validators", sublabel: "/explorer/validator", href: "/explorer/validator" },

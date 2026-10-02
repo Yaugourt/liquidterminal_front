@@ -31,6 +31,7 @@ const EVENTS = [
   { value: "ALL", label: "Every fill" },
   { value: "OPEN", label: "Opens only" },
   { value: "CLOSE", label: "Closes only" },
+  { value: "FLIP", label: "Flips only" },
 ];
 const MARKETS = [
   { value: "ALL", label: "Perp + spot" },
@@ -227,7 +228,7 @@ function ListAlertRow({
             value={a.direction ?? "ALL"}
             options={EVENTS}
             disabled={busy}
-            onChange={(v) => onSave({ direction: v === "ALL" ? null : (v as "OPEN" | "CLOSE") })}
+            onChange={(v) => onSave({ direction: v === "ALL" ? null : (v as "OPEN" | "CLOSE" | "FLIP") })}
           />
           <SettingSelect
             label="Markets"

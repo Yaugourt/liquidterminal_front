@@ -22,6 +22,7 @@ import {
   Cpu,
   Download,
   Share2,
+  BellRing,
   ArrowLeftRight,
   Coins,
   Server,
@@ -105,6 +106,8 @@ export const defaultNavigationGroups: NavigationGroup[] = [
       // Same page-agnostic tool slot as Export: the share studio turns any
       // metric into a post-ready image, for every family.
       { name: 'Share', href: '/share', icon: null, IconComponent: Share2 },
+      // Page-agnostic too: alerts span markets, liquidations and wallets.
+      { name: 'Alerts', href: '/alerts', icon: null, IconComponent: BellRing },
     ],
   },
   {

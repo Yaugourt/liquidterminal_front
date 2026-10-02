@@ -302,6 +302,13 @@ export const seoConfig = {
     image: "/og/ecosystem.png",
   },
 
+  alertsPage: {
+    title: "Hyperliquid Alerts on Telegram",
+    description: "Free Telegram alerts for Hyperliquid: price levels and moves, extreme funding, open interest surges, liquidation cascades, new listings, and every fill of the wallets you track.",
+    keywords: ["Hyperliquid alerts", "Telegram alerts", "price alert", "funding alert", "liquidation alert", "wallet tracker alerts"],
+    path: "/alerts",
+  },
+
   exportPage: {
     title: "Export Hyperliquid Data as CSV",
     description: "Download Hyperliquid market, chain and capital data as CSV: fills, liquidations, HIP-3 and HIP-4 markets, vaults, validators and more, over the date range you choose.",

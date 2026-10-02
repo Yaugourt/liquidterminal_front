@@ -41,6 +41,7 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   { path: '/market/spot/auction', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/perp/auction', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/tracker', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/alerts', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/market/tracker/public-lists', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/builders', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/perpdex', changeFrequency: 'daily', priority: 0.7 },
