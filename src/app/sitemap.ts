@@ -7,8 +7,14 @@ import { HIP4_SLUGS } from '@/lib/hip4-chapters'
 
 export const revalidate = 3600
 
-/** Learn chapter slugs, derived from the same map the wiki routes use. */
-const WIKI_CHAPTERS = Object.keys(CHAPTER_CATEGORY_MAP).map(slugify)
+/**
+ * Learn chapter slugs, derived from the same map the wiki routes use.
+ * "introduction" redirects to /wiki (next.config): a redirecting URL in a
+ * sitemap is reported as an error, so it is left out.
+ */
+const WIKI_CHAPTERS = Object.keys(CHAPTER_CATEGORY_MAP)
+  .map(slugify)
+  .filter((slug) => slug !== 'introduction')
 
 /**
  * Static sections. No lastModified on purpose: a build-time `new Date()`
