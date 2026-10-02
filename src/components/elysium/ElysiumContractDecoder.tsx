@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { CardHeading } from "@/components/common";
 import { compactCount } from "@/lib/formatters/numberFormatting";
 import { OWNER_RENOUNCED, useContractContext, useDecodedContract, type ContractContext, type Decoded } from "@/services/elysium/decode";
-import { AddrLink, EMPTY, EXPLORER, Empty, ExtLink, elysiumTimeLabel, short } from "./shared";
+import { AddrLink, EMPTY, Empty, elysiumTimeLabel, short } from "./shared";
 
 const simulateHref = (to: string, sig: string) => `/elysium/simulate?${new URLSearchParams({ to, sig, value: "0" }).toString()}`;
 const day = (iso: string | null) =>
@@ -89,7 +89,7 @@ function Behind({ ctx, loading }: { ctx: ContractContext | null; loading: boolea
           </div>
           <div className="text-text-tertiary">
             Deployed {day(ctx.deployment.at)} at block {ctx.deployment.block.toLocaleString("en-US")},{" "}
-            <ExtLink href={`${EXPLORER}/tx/${ctx.deployment.tx}`} className="mono text-text-secondary">tx {short(ctx.deployment.tx)}</ExtLink>
+            <Link href={`/elysium/tx/${ctx.deployment.tx}`} className="mono text-text-secondary hover:text-brand">tx {short(ctx.deployment.tx)}</Link>
           </div>
         </div>
       ) : (

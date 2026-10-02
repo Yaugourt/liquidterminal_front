@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { memo } from "react";
 import { ArrowDownLeft, ArrowUpRight, Code2, ExternalLink, History, Tags, Wallet } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -166,7 +167,7 @@ const Activity = memo(function Activity({ address }: { address: string }) {
                 return (
                   <tr key={`${a.tx_hash}-${a.kind}-${i}`} className="border-t border-border-subtle">
                     <td className="px-3.5 py-1.5 whitespace-nowrap">
-                      <ExtLink href={`${EXPLORER}/tx/${a.tx_hash}`} className="text-text-tertiary">{ago(elysiumTimeMs(a.time), now)}</ExtLink>
+                      <Link href={`/elysium/tx/${a.tx_hash}`} className="text-text-tertiary hover:text-brand">{ago(elysiumTimeMs(a.time), now)}</Link>
                     </td>
                     <td className="px-2 py-1.5 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-0.5 ${inbound ? "text-success" : "text-text-secondary"}`} title={a.kind.replace(/_/g, " ")}>

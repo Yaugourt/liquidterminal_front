@@ -33,7 +33,7 @@ import {
   type DeploySimResult,
 } from "@/services/elysium/rpc";
 import { connectWallet, injectedWallet, sendDeployment, switchToElysium, walletChainId, walletError } from "@/lib/elysium/wallet";
-import { AddrLink, EMPTY, ExtLink, addressHref } from "./shared";
+import { AddrLink, EMPTY, addressHref } from "./shared";
 import { EventsCard, Field, Stat, decodeLog, fmtArg, inputCls, parseSig, revertText, type TokenMeta } from "./simulator-shared";
 import { DEPLOY_SAMPLE_FROM, buildDeploy, ctorSignature, deployFormFromParams, deployFormToParams, parseCode, parseCtor, type DeployForm } from "@/lib/elysium/deploy-form";
 import { GREETER_BYTECODE, GREETER_CONSTRUCTOR, GREETER_SOURCE } from "./sim-samples";
@@ -539,7 +539,7 @@ function WalletDeployCard({ form, fromLink }: { form: DeployForm; fromLink: bool
               {sent.status === "pending" ? "Sent, waiting for the block" : sent.status === "success" ? "Deployed" : "Transaction reverted"}
             </div>
             <div className="mono break-all">
-              <ExtLink href={`${ELYSIUM_CHAIN.explorer}/tx/${sent.hash}`} className="text-text-secondary">{sent.hash}</ExtLink>
+              <Link href={`/elysium/tx/${sent.hash}`} className="text-text-secondary hover:text-brand">{sent.hash}</Link>
             </div>
             {sent.address ? (
               <div className="flex flex-wrap items-center gap-1.5">

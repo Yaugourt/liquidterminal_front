@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { memo, useMemo } from "react";
 import { Activity, ArrowDownLeft, ArrowUpRight, Boxes, Coins, Layers, Shield, Waypoints } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -165,9 +166,9 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
               {txs.map((t) => (
                 <tr key={t.tx_hash} className="border-t border-border-subtle first:border-t-0">
                   <td className="py-1.5 pr-2 whitespace-nowrap">
-                    <ExtLink href={`${EXPLORER}/tx/${t.tx_hash}`} className="text-text-tertiary">
+                    <Link href={`/elysium/tx/${t.tx_hash}`} className="text-text-tertiary hover:text-brand">
                       {ago(elysiumTimeMs(t.block_time), now)}
-                    </ExtLink>
+                    </Link>
                   </td>
                   <td className="py-1.5 pr-2 whitespace-nowrap">
                     <AddrLink address={t.from_addr} className="text-text-secondary" explorer={false} />
@@ -292,7 +293,7 @@ const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
                     </td>
                     <td className={`py-1.5 text-right whitespace-nowrap ${done ? "text-success" : "text-warning"}`}>
                       {hash && t.l2_tx_hash ? (
-                        <ExtLink href={`${EXPLORER}/tx/${t.l2_tx_hash}`}>{t.status}</ExtLink>
+                        <Link href={`/elysium/tx/${t.l2_tx_hash}`} className="hover:text-brand">{t.status}</Link>
                       ) : (
                         t.status
                       )}

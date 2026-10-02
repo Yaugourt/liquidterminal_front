@@ -392,6 +392,12 @@ export const seoConfig = {
     keywords: ["Elysium simulator", "simulate transaction", "eth_simulateV1", "deploy contract Elysium", "Elysium gas estimate"],
     path: "/elysium/simulate",
   },
+  elysiumTx: {
+    title: "Elysium Transaction Inspector - Decode Any Tx",
+    description: "Paste any Elysium transaction hash: status, Arbitrum type, fee split between execution and posting to HyperEVM, decoded call with multicalls unfolded, balance changes, token movements and named events. Replay it in the simulator.",
+    keywords: ["Elysium transaction", "Elysium tx decoder", "Elysium explorer", "decode transaction", "Arbitrum gasUsedForL1"],
+    path: "/elysium/tx",
+  },
   elysiumDecode: {
     title: "Elysium Contract Decoder - Bytecode, Proxies & Admin Powers",
     description: "Decode any Elysium contract from its bytecode: what it is, its functions, the proxy implementation behind it, who deployed it and the admin powers its owner holds.",

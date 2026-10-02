@@ -18,6 +18,18 @@ const client = createPublicClient({
   transport: http(ELYSIUM_CHAIN.rpc, { retryCount: 2, retryDelay: 800 }),
 });
 
+/** Transaction inspection for tiles: chain-aware (Multicall3 for token metadata), both RPCs. */
+export const elysiumTxClient = createPublicClient({
+  chain: {
+    id: ELYSIUM_CHAIN.chainId,
+    name: "Elysium Testnet",
+    nativeCurrency: { name: "HYPE", symbol: "HYPE", decimals: 18 },
+    rpcUrls: { default: { http: [ELYSIUM_ALT_RPC_URL] } },
+    contracts: { multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" } },
+  },
+  transport: fallback([http(ELYSIUM_ALT_RPC_URL, { retryCount: 1 }), http(ELYSIUM_CHAIN.rpc, { retryCount: 2, retryDelay: 800 })]),
+});
+
 /** Simulations go to the RPC without a rate limit first (eth_simulateV1 is heavier than a read). */
 export const elysiumSimClient = createPublicClient({
   transport: fallback([http(ELYSIUM_ALT_RPC_URL, { retryCount: 1 }), http(ELYSIUM_CHAIN.rpc, { retryCount: 2, retryDelay: 800 })]),

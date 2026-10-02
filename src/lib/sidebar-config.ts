@@ -23,6 +23,7 @@ import {
   Download,
   Share2,
   BellRing,
+  Receipt,
   ArrowLeftRight,
   Coins,
   Server,
@@ -286,6 +287,7 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Network', href: '/elysium/network', icon: null, IconComponent: Cpu },
       { name: 'Simulator', href: '/elysium/simulate', icon: null, IconComponent: FlaskConical },
+      { name: 'Tx inspector', href: '/elysium/tx', icon: null, IconComponent: Receipt },
       { name: 'Decoder', href: '/elysium/decode', icon: null, IconComponent: FileSearch },
       { name: 'Run a node', href: '/elysium/node', icon: null, IconComponent: Server },
     ],
