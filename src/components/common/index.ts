@@ -12,6 +12,7 @@ export { ElysiumMark } from './ElysiumMark';
 export { ShareTile } from './ShareTile';
 export { LiquidMark } from './LiquidMark';
 export { AddressIdenticon } from './AddressIdenticon';
+export { HlAddressText } from './HlAddressText';
 export { PriceChange, getPriceChangeColor, formatPriceChange } from './PriceChange';
 export { Pagination } from './pagination';
 export type { PaginationProps } from './pagination';

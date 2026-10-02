@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Activity, Bell, BellOff, Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { CardHeading, TokenAvatar } from "@/components/common";
+import { CardHeading, TokenAvatar, HlAddressText } from "@/components/common";
 import { useWallets } from "@/store/use-wallets";
 import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { getTokenName } from "@/services/explorer/address/formatters";
@@ -248,7 +248,7 @@ function FillRow({ fill, label, coin, spot }: { fill: TrackedFill; label?: strin
           href={`/market/tracker/wallet/${fill.wallet}`}
           className="truncate text-text-tertiary hover:text-text-primary"
         >
-          {label || shortAddr(fill.wallet)}
+          {label || <HlAddressText address={fill.wallet} />}
         </Link>
       </div>
       <div className="text-right tabular-nums">

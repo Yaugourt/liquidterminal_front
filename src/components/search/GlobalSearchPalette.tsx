@@ -31,6 +31,7 @@ import {
 import { useGlobalSearch } from "@/store/use-global-search";
 import { trackSearch } from "@/lib/analytics";
 import { safeHref } from "@/lib/safeUrl";
+import { useResolveHlName } from "@/services/names";
 import { Hypurr, HYPURR_MOODS, type HypurrMood } from "@/components/hypurr/Hypurr";
 
 /** Typing one of these summons a random Hypurr instead of results. */
@@ -141,7 +142,21 @@ export function GlobalSearchPalette() {
     if (!open) setQuery("");
   }, [open]);
 
-  const pattern = useMemo(() => detectPattern(query), [query]);
+  const directPattern = useMemo(() => detectPattern(query), [query]);
+  // "name.hl" resolves through Hyperliquid Names to the wallet's page.
+  const hlLookup = useResolveHlName(query);
+  const pattern: SearchResult | null = useMemo(() => {
+    if (directPattern) return directPattern;
+    if (!hlLookup.address) return null;
+    const name = query.trim().toLowerCase();
+    return {
+      id: `hl-${name}`,
+      kind: "address",
+      label: name,
+      sublabel: `${hlLookup.address.slice(0, 8)}…${hlLookup.address.slice(-6)} · Hyperliquid Names`,
+      href: `/explorer/address/${hlLookup.address}`,
+    };
+  }, [directPattern, hlLookup.address, query]);
   const eggMood: HypurrMood | null = useMemo(() => {
     if (!EGG_QUERIES.has(query.trim().toLowerCase())) return null;
     return HYPURR_MOODS[Math.floor(Math.random() * HYPURR_MOODS.length)];
@@ -151,7 +166,7 @@ export function GlobalSearchPalette() {
     [index, query]
   );
   const hasQuery = query.trim().length > 0;
-  const isEmpty = hasQuery && !pattern && !eggMood && groups.length === 0;
+  const isEmpty = hasQuery && !pattern && !hlLookup.loading && !eggMood && groups.length === 0;
 
   const handleSelect = useCallback(
     (result: SearchResult) => {

@@ -6,6 +6,7 @@ import { Copy, Check, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { truncateAddress } from "@/lib/formatters/numberFormatting";
+import { useHlName } from "@/services/names";
 
 interface AddressDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
     address: string;
@@ -44,7 +45,9 @@ export function AddressDisplay({
     };
 
     const safeAddress = address || "";
-    const displayAddress = truncate ? truncateAddress(safeAddress) : safeAddress;
+    // A .hl name (Hyperliquid Names) reads better than a truncated hex address.
+    const hlName = useHlName(label ? null : safeAddress);
+    const displayAddress = hlName ?? (truncate ? truncateAddress(safeAddress) : safeAddress);
     const linkHref = href || `/explorer/address/${safeAddress}`;
 
     return (
@@ -53,6 +56,7 @@ export function AddressDisplay({
                 href={linkHref}
                 className="text-brand hover:text-white transition-colors"
                 onClick={(e) => e.stopPropagation()}
+                title={hlName ? safeAddress : undefined}
             >
                 {label || displayAddress}
             </Link>

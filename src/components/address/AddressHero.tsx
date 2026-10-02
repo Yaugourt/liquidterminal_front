@@ -15,6 +15,7 @@ import { AddToTrackListButton } from "@/components/market/tracker/AddToTrackList
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/common";
 import { truncateAddress } from "@/lib/formatters/numberFormatting";
+import { useHlProfile } from "@/services/names";
 
 interface AddressHeroProps {
   address: string;
@@ -39,6 +40,9 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
   const { wallets } = useWallets();
 
   const alias = getAlias(address);
+  // Hyperliquid Names: name, avatar and public links set by the owner.
+  const { data: hl } = useHlProfile(address);
+  const hlLinks = hl ? Object.entries(hl.records).filter(([k]) => k !== "Bio") : [];
   const gradient = useAddressGradient(address);
 
   const isTracked = useMemo(() => {
@@ -76,14 +80,24 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
       <Card className="relative p-4 md:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4">
-            <div
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-brand/20 shadow-inner shadow-black/30"
-              style={{ background: gradient }}
-            >
-              <span className="text-[11px] font-bold uppercase tracking-wider text-text-secondary">
-                {address.slice(2, 4)}
-              </span>
-            </div>
+            {hl?.avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element -- user-set avatar on any https host
+              <img
+                src={hl.avatar}
+                alt=""
+                referrerPolicy="no-referrer"
+                className="h-12 w-12 shrink-0 rounded-lg border border-brand/20 object-cover"
+              />
+            ) : (
+              <div
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-brand/20 shadow-inner shadow-black/30"
+                style={{ background: gradient }}
+              >
+                <span className="text-[11px] font-bold uppercase tracking-wider text-text-secondary">
+                  {address.slice(2, 4)}
+                </span>
+              </div>
+            )}
 
             <div className="min-w-0 flex-1">
               <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
@@ -105,6 +119,20 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                 )}
               </div>
 
+              {hl?.name && (
+                <div className="mb-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                  <h2 className="truncate text-lg font-semibold text-text-primary">{hl.name}</h2>
+                  <a
+                    href="https://app.hlnames.xyz"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Name from Hyperliquid Names"
+                    className="text-[10px] font-medium uppercase tracking-wide text-text-tertiary hover:text-brand"
+                  >
+                    Hyperliquid Names
+                  </a>
+                </div>
+              )}
               <div className="flex items-center gap-2">
                 <code className="hidden truncate text-base font-medium tabular-nums text-brand sm:block">
                   {address}
@@ -154,6 +182,16 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                   />
                 </a>
               </div>
+              {(hl?.records.Bio || hlLinks.length > 0) && (
+                <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-tertiary">
+                  {hl?.records.Bio && <span className="max-w-prose truncate text-text-secondary">{hl.records.Bio}</span>}
+                  {hlLinks.map(([k, url]) => (
+                    <a key={k} href={url} target="_blank" rel="noopener noreferrer nofollow ugc" className="hover:text-brand">
+                      {k}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

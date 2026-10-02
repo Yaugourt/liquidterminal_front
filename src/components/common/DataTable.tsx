@@ -4,10 +4,10 @@ import { ReactNode, useCallback, useState } from "react";
 import { Database } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { truncateAddress } from "@/lib/formatters/numberFormatting";
 import { type PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
 import { AddressIdenticon } from "./AddressIdenticon";
+import { HlAddressText } from "./HlAddressText";
 import {
     Table,
     TableBody,
@@ -662,7 +662,7 @@ function renderCellContent<T>(
         return (
             <span className="inline-flex items-center gap-2 align-middle">
                 <AddressIdenticon address={raw} size={18} />
-                {truncateAddress(raw)}
+                <HlAddressText address={raw} />
             </span>
         );
     }
