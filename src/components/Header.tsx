@@ -2,7 +2,7 @@
 
 import { SearchTrigger } from "@/components/search/SearchTrigger"
 import { SettingsSelector } from "@/components/common"
-import { UserAccountCompact } from "@/components/common"
+import { UserAccountCompact, DonateButton } from "@/components/common"
 import { NetworkPill } from "@/components/network/NetworkSwitch"
 
 interface HeaderProps {
@@ -22,6 +22,7 @@ export function Header({
                 </div>
 
                 <div className="flex items-center gap-2">
+                    <DonateButton />
                     <UserAccountCompact />
                     <SettingsSelector />
                 </div>

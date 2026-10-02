@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
-import { SidebarToggle, LegalFooter } from "@/components/common";
+import { SidebarToggle, LegalFooter, DonatePrompt } from "@/components/common";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useSidebarUi } from "@/store/use-sidebar-ui";
 import { OnboardingGate } from "@/components/onboarding";
@@ -71,6 +71,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <OnboardingGate />
             <MissionsGate />
             <GlobalSearchPalette />
+            <DonatePrompt />
         </div>
         </Providers>
     );

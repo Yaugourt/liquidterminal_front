@@ -81,6 +81,7 @@ export type { DominanceSegment, DominanceBarProps } from './DominanceBar';
 // Layout / nav
 export { SidebarToggle } from './SidebarToggle';
 export { SponsorCard } from './SponsorCard';
+export { DonatePrompt, DonateButton } from './DonatePrompt';
 export { PageHeader } from './PageHeader';
 export { PageFaq } from './PageFaq';
 export type { FaqItem } from './PageFaq';
