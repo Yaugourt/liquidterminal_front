@@ -18,6 +18,7 @@ import {
 import { AddressTransactionList } from "@/components/explorer/address";
 import { AssetsSection } from "@/components/market/tracker/assets";
 import { WalletScorecard } from "@/components/market/tracker/WalletScorecard";
+import { WalletRiskCard } from "@/components/market/tracker/WalletRiskCard";
 import { WalletConcentration } from "@/components/market/tracker/WalletConcentration";
 import { WalletFundingCard } from "@/components/market/tracker/WalletFundingCard";
 import { WalletRoundTrips } from "@/components/market/tracker/WalletRoundTrips";
@@ -131,6 +132,8 @@ export function AddressAnalyticsLayout({
       <AddressHero address={address} />
 
       <AddressSummary address={address} variant={summaryVariant} />
+
+      <WalletRiskCard address={address} />
 
       <WalletScorecard address={address} />
 

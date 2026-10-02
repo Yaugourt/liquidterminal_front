@@ -164,3 +164,54 @@ export const removeWalletFromList = async (itemId: number): Promise<void> => {
     await del(`${BASE_URL}/items/${itemId}`);
   }, 'removing wallet from list');
 };
+
+// ========== TELEGRAM ALERTS ON A LIST ==========
+
+export type ListAlertDirection = 'OPEN' | 'CLOSE' | null;
+export type ListAlertSource = 'PERP' | 'SPOT' | null;
+
+export interface ListAlertSettings {
+  minUsd: number;
+  direction: ListAlertDirection;
+  source: ListAlertSource;
+  isActive: boolean;
+}
+
+export interface ListAlert extends ListAlertSettings {
+  walletListId: number;
+  listName: string;
+  isOwner: boolean;
+  isPublic: boolean;
+  walletCount: number;
+  /** false when the alert was deleted from the bot; saving recreates it. */
+  inTelegram: boolean;
+  createdAt: string;
+}
+
+export interface ListAlertsState {
+  telegram: { linked: boolean; username: string | null };
+  alerts: ListAlert[];
+}
+
+/** Telegram alerts the user has on lists (own or public), and their link state. */
+export const getListAlerts = async (): Promise<ListAlertsState> => {
+  return withErrorHandling(async () => {
+    const response = await get<{ success: boolean; data: ListAlertsState }>(`${BASE_URL}/alerts`, undefined, { useCache: false });
+    return response.data;
+  }, 'fetching list alerts');
+};
+
+/** Turn Telegram alerts on for a list, or update their settings. */
+export const saveListAlert = async (listId: number, settings: ListAlertSettings): Promise<ListAlert> => {
+  return withErrorHandling(async () => {
+    const response = await put<{ success: boolean; data: ListAlert }>(`${BASE_URL}/${listId}/alert`, settings);
+    return response.data;
+  }, 'saving list alert');
+};
+
+/** Turn Telegram alerts off for a list. */
+export const deleteListAlert = async (listId: number): Promise<void> => {
+  return withErrorHandling(async () => {
+    await del(`${BASE_URL}/${listId}/alert`);
+  }, 'removing list alert');
+};

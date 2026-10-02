@@ -17,12 +17,13 @@ import {
   Calendar,
   Wallet,
   Download,
-  ClipboardCopy
+  ClipboardCopy,
+  BellRing
 } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { LoadingState } from "@/components/ui/loading-state";
 import { toast } from "sonner";
-import { getWalletListById } from "@/services/market/tracker/walletlist.service";
+import { getWalletListById, saveListAlert } from "@/services/market/tracker/walletlist.service";
 import { useWalletLists } from "@/store/use-wallet-lists";
 import { useAuthContext } from "@/contexts/auth.context";
 import { useRouter } from "next/navigation";
@@ -42,6 +43,7 @@ export function PublicWalletListPreviewDialog({
   const [fullList, setFullList] = useState<WalletList | null>(null);
   const [loading, setLoading] = useState(false);
   const [copying, setCopying] = useState(false);
+  const [following, setFollowing] = useState(false);
   const { copyList } = useWalletLists();
   const { isAuthenticated, login } = useAuthContext();
   const router = useRouter();
@@ -90,6 +92,37 @@ export function PublicWalletListPreviewDialog({
       toast.error('Failed to copy list');
     } finally {
       setCopying(false);
+    }
+  };
+
+  // Follow the list on Telegram: alerts track the list as its owner edits it,
+  // unlike a copy, which is a frozen snapshot.
+  const handleFollow = async () => {
+    if (!list?.id) return;
+    if (!isAuthenticated) {
+      toast.info("Sign in to get Telegram alerts on this list");
+      login();
+      return;
+    }
+    try {
+      setFollowing(true);
+      await saveListAlert(list.id, { minUsd: 0, direction: null, source: null, isActive: true });
+      toast.success(`Following "${list.name}" on Telegram`, {
+        description: "Tune size and events in My wallets.",
+        action: { label: "Open", onClick: () => router.push("/market/tracker/my-wallets") },
+      });
+    } catch (err) {
+      const data = (err as { response?: { data?: { error?: string; code?: string } } })?.response?.data;
+      if (data?.code === "TELEGRAM_NOT_LINKED") {
+        toast.info("Connect Telegram first", {
+          description: "It takes one tap, from My wallets.",
+          action: { label: "Connect", onClick: () => router.push("/market/tracker/my-wallets") },
+        });
+      } else {
+        toast.error(data?.error || "Could not turn alerts on");
+      }
+    } finally {
+      setFollowing(false);
     }
   };
 
@@ -255,6 +288,15 @@ export function PublicWalletListPreviewDialog({
               className="border-border-default text-text-primary hover:bg-surface-2"
             >
               Cancel
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleFollow}
+              disabled={following || !fullList?.items?.length}
+              className="border-border-default text-text-primary hover:bg-surface-2"
+            >
+              {following ? <InlineSpinner className="mr-2" /> : <BellRing className="mr-2 h-4 w-4" />}
+              Telegram alerts
             </Button>
             <Button
               onClick={handleCopyList}
