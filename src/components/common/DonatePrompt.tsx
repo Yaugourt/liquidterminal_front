@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Check, Copy, Github, Heart, X } from "lucide-react";
@@ -13,9 +13,8 @@ const KEY = "lt-donate-prompt";
 /** The nudge comes back at most every 21 days; "I already donated" quiets it for 180. */
 const SNOOZE_MS = 21 * 24 * 3600_000;
 const DONATED_MS = 180 * 24 * 3600_000;
-/** Shown only to someone who is actually using the site. */
-const MIN_PAGES = 3;
-const MIN_ENGAGED_MS = 60_000;
+/** Delay after the welcome tour closes (or after load when it was already done). */
+const DELAY_MS = 5_000;
 const REPO = "https://github.com/Yaugourt/liquidterminal_front";
 
 function quietUntil(): number {
@@ -34,31 +33,26 @@ function quietFor(ms: number) {
 }
 
 /**
- * Donation card, bottom-left, never modal. Opens from the header heart, or
- * once by itself for someone who has finished the welcome tour, seen a few
- * pages and spent a minute on the site; then it stays quiet for 21 days
- * (180 if they say they donated). Never on the funding page.
+ * Donation card, bottom-left, never modal. Opens from the header heart, and
+ * by itself on the first visit, a few seconds after the welcome tour closes
+ * (never on top of it); then it stays quiet for 21 days (180 if they say
+ * they donated). Never on the funding page.
  */
 export function DonatePrompt() {
   const { open, source, show, hide } = useDonateUi();
   const onboarded = useOnboardingStore((s) => s.hasCompletedOnboarding);
   const pathname = usePathname();
-  const pages = useRef(new Set<string>());
-  const startedAt = useRef(Date.now());
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!pathname) return;
-    pages.current.add(pathname);
-    if (open || !onboarded || !donation.address || pathname.startsWith(FUNDING_HREF)) return;
-    if (pages.current.size < MIN_PAGES || Date.now() < quietUntil()) return;
-    const wait = Math.max(0, MIN_ENGAGED_MS - (Date.now() - startedAt.current));
+    if (!pathname || open || !onboarded || !donation.address || pathname.startsWith(FUNDING_HREF)) return;
+    if (Date.now() < quietUntil()) return;
     const t = setTimeout(() => {
       if (Date.now() >= quietUntil()) {
         quietFor(SNOOZE_MS);
         show("prompt");
       }
-    }, wait);
+    }, DELAY_MS);
     return () => clearTimeout(t);
   }, [pathname, onboarded, open, show]);
 
