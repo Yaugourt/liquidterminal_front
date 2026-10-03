@@ -11,6 +11,9 @@ import { LiveLiquidationsCard } from "@/components/dashboard/live/LiveLiquidatio
 import { PriceBoard } from "@/components/dashboard/live/PriceBoard";
 import { ChainHeartbeat } from "@/components/dashboard/live/ChainHeartbeat";
 import { SignalRow } from "@/components/dashboard/live/SignalRow";
+import { TwapFlowCard } from "@/components/dashboard/live/TwapFlowCard";
+import { HypeTwapCard } from "@/components/dashboard/live/HypeTwapCard";
+import { useTwapBoard } from "@/services/dashboard/live/useTwapBoard";
 
 /** Perps on the price board, by 24h volume. */
 const BOARD_SIZE = 16;
@@ -20,7 +23,8 @@ const TAPE_SIZE = 12;
 /**
  * Dashboard · Overview: what is happening on Hyperliquid right now.
  *
- * REST first, then streams: the tape opens on the last five minutes of
+ * TWAPs first (what is still being bought and sold, HYPE in focus), then
+ * REST and streams: the tape opens on the last five minutes of
  * indexed fills and the liquidations on the recent list, then the public
  * Hyperliquid websockets (trades, allMids, explorer blocks and transactions)
  * and the backend liquidation push take over. Each stream is
@@ -35,6 +39,7 @@ export default function DashboardOverview() {
 
   const feed = useLiveMarketFeed(tapeCoins, boardCoins);
   const pulse = useChainPulse();
+  const twaps = useTwapBoard();
 
   return (
     <div className="space-y-6">
@@ -42,6 +47,15 @@ export default function DashboardOverview() {
         <SectionHead title="Live" subtitle="Streaming from Hyperliquid, refreshed every second" />
         <LiveStrip pulse={pulse} />
       </section>
+
+      {/* TWAPs lead: the sliced orders still running say where flow is headed,
+          the big prints below say where it just went. */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+        <div className="lg:col-span-2 min-w-0">
+          <TwapFlowCard board={twaps} isLoading={twaps.isLoading} />
+        </div>
+        <HypeTwapCard board={twaps} isLoading={twaps.isLoading} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
         <div className="lg:col-span-2 min-w-0">
