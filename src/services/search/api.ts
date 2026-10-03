@@ -36,6 +36,7 @@ export const PAGE_RESULTS: SearchResult[] = [
   { id: "page-liquidations", kind: "page", label: "Liquidations", sublabel: "/explorer/liquidations", href: "/explorer/liquidations" },
   { id: "page-priority-fees", kind: "page", label: "Priority fees", sublabel: "/explorer/priority-fees", href: "/explorer/priority-fees" },
   { id: "page-hype", kind: "page", label: "HYPE", sublabel: "/hype", href: "/hype" },
+  { id: "page-hype-reserve-yield", kind: "page", label: "Reserve Yield (USDC, AQAv2)", sublabel: "/hype/reserve-yield", href: "/hype/reserve-yield" },
   { id: "page-ecosystem", kind: "page", label: "Ecosystem projects", sublabel: "/ecosystem/project", href: "/ecosystem/project" },
   { id: "page-publicgoods", kind: "page", label: "Public goods", sublabel: "/ecosystem/publicgoods", href: "/ecosystem/publicgoods" },
   { id: "page-wiki", kind: "page", label: "Wiki", sublabel: "/wiki", href: "/wiki" },

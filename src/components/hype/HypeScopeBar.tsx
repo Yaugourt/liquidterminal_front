@@ -15,6 +15,7 @@ const SCOPES: ScopeItem[] = [
   { label: "Financials", href: "/hype/financials" },
   { label: "Valuation", href: "/hype/valuation" },
   { label: "Capital", href: "/hype/capital" },
+  { label: "Reserve Yield", href: "/hype/reserve-yield" },
   { label: "Operations", href: "/hype/operations" },
 ];
 

@@ -53,6 +53,7 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   { path: '/hype/financials', changeFrequency: 'daily', priority: 0.7 },
   { path: '/hype/valuation', changeFrequency: 'daily', priority: 0.6 },
   { path: '/hype/capital', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/hype/reserve-yield', changeFrequency: 'daily', priority: 0.7 },
   { path: '/hype/operations', changeFrequency: 'daily', priority: 0.6 },
   // HyperEVM and the share studio
   { path: '/evm', changeFrequency: 'daily', priority: 0.6 },

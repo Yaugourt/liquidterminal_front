@@ -472,6 +472,12 @@ export const seoConfig = {
     keywords: ["HYPE buyback", "Assistance Fund", "HYPE burn", "HYPE supply", "HYPE staking", "HYPE holders"],
     path: "/hype/capital",
   },
+  hypeReserveYield: {
+    title: "Hyperliquid USDC Reserve Yield (AQAv2) - Payments to the Assistance Fund",
+    description: "The USDC reserve yield paid to Hyperliquid under AQAv2: every payment, the rate it implies, the treasury balance it is charged on, the 30-day schedule and what reaches the Assistance Fund for HYPE buybacks.",
+    keywords: ["Hyperliquid reserve yield", "AQAv2", "USDC reserve yield", "aligned quote asset", "HYPE buyback", "Assistance Fund"],
+    path: "/hype/reserve-yield",
+  },
   hypeOperations: {
     title: "Hyperliquid Operating Metrics - Fee Run Rate & TVL",
     description: "Hyperliquid operating metrics: fee run rate, total value locked history and the core activity figures behind them.",
