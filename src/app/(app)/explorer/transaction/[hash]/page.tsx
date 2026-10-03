@@ -13,7 +13,8 @@ import { useState } from 'react';
 import {
   TransactionHeader,
   TransactionDetails,
-  TransactionFormatter
+  TransactionFormatter,
+  TransactionSummary
 } from '@/components/explorer/transaction';
 import { ExtendedTransactionDetails } from '@/services/explorer/types';
 
@@ -105,6 +106,7 @@ export default function TransactionPage() {
 
       {/* Transaction Header */}
       <TransactionHeader transaction={transactionDetails as ExtendedTransactionDetails} />
+      <TransactionSummary transaction={transactionDetails as ExtendedTransactionDetails} />
 
       {/* Transaction Details */}
       <TransactionDetails data={formattedData} />

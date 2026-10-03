@@ -21,6 +21,8 @@ export type {
 // Hooks exports
 export {
   useTransactions,
+  useAddressActivity,
+  useAssetResolver,
   useOpenOrders,
   useUserTwapOrders,
   
@@ -47,4 +49,7 @@ export {
   
   
   
-} from './utils'; 
+} from './utils'; export type { Activity, ActivityKind, ActivityTone, Counterparty } from './decode';
+export { decodeAction } from './decode';
+export { loadAssetResolver } from './assets';
+export type { AssetResolver, ResolvedAsset } from './assets';

@@ -15,7 +15,7 @@ import {
   type AddressTabId,
 } from "./address-tabs.config";
 
-import { AddressTransactionList } from "@/components/explorer/address";
+import { AddressActivityTable } from "@/components/explorer/address";
 import { AssetsSection } from "@/components/market/tracker/assets";
 import { WalletScorecard } from "@/components/market/tracker/WalletScorecard";
 import { WalletRiskCard } from "@/components/market/tracker/WalletRiskCard";
@@ -29,7 +29,7 @@ import {
 import { WalletRecentFillsSection } from "@/components/market/tracker/fills";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
 import { StakingTable } from "@/components/explorer/address/StakingTable";
-import { useTransactions } from "@/services/explorer/address";
+import { useAddressActivity } from "@/services/explorer/address";
 
 const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
@@ -204,13 +204,6 @@ function AddressTabPanel({ tabId, address }: AddressTabPanelProps) {
 }
 
 function TransactionsTabPanel({ address }: { address: string }) {
-  const { transactions, isLoading, error } = useTransactions(address);
-  return (
-    <AddressTransactionList
-      transactions={transactions || []}
-      isLoading={isLoading}
-      error={error}
-      currentAddress={address}
-    />
-  );
+  const { activity, isLoading, error } = useAddressActivity(address);
+  return <AddressActivityTable activity={activity} isLoading={isLoading} error={error} currentAddress={address} />;
 }
