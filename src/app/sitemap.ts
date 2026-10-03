@@ -59,7 +59,7 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   { path: '/evm', changeFrequency: 'daily', priority: 0.6 },
   { path: '/share', changeFrequency: 'weekly', priority: 0.5 },
   // Elysium testnet (address pages are noindex: not listed)
-  ...['', '/network', '/simulate', '/tx', '/decode', '/contracts', '/tokens', '/dex', '/bridge', '/users', '/economics', '/node', '/share'].map(
+  ...['', '/network', '/simulate', '/tx', '/decode', '/contracts', '/tokens', '/dex', '/bridge', '/users', '/economics', '/fees', '/node', '/share'].map(
     (p) => ({ path: `/elysium${p}`, changeFrequency: 'daily' as const, priority: p === '' ? 0.7 : 0.6 })
   ),
   // HIP-4 docs: /hip4 itself only redirects to /hip4/home, so list the chapters

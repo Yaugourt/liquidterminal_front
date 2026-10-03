@@ -30,6 +30,7 @@ import {
   Users,
   Wallet,
   Waypoints,
+  HandCoins,
 } from "lucide-react";
 import { ShareStudio, type TileGroup, type TileParam } from "@/components/share/ShareStudio";
 
@@ -39,6 +40,16 @@ const WINDOW: TileParam = {
   options: [
     { value: "24h", label: "24h" },
     { value: "7d", label: "7d" },
+  ],
+};
+
+const WINDOW_30: TileParam = {
+  key: "window",
+  label: "Window",
+  options: [
+    { value: "7d", label: "7d" },
+    { value: "24h", label: "24h" },
+    { value: "30d", label: "30d" },
   ],
 };
 
@@ -81,6 +92,7 @@ const GROUPS: TileGroup[] = [
       { id: "elysium-top-deployers", label: "Top deployers", desc: "Addresses deploying the most contracts", route: "elysium-top-deployers", icon: Trophy },
       { id: "elysium-trending", label: "New contracts gaining users", desc: "Recent deploys with the most callers", route: "elysium-trending", icon: Rocket },
       { id: "elysium-top-contracts", label: "Most used contracts", desc: "Calls, callers and change", route: "elysium-top-contracts", icon: ListOrdered, params: [WINDOW] },
+      { id: "elysium-app-fees", label: "Fees by app", desc: "Gas fees by contract and share", route: "elysium-app-fees", icon: HandCoins, params: [WINDOW_30] },
       { id: "elysium-top-methods", label: "Most called functions", desc: "Function calls by name", route: "elysium-top-methods", icon: Flame, params: [WINDOW] },
     ],
   },

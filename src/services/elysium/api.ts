@@ -2,6 +2,8 @@ import { get, postExternal } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
 import type {
   ElysiumAddressProfile,
+  ElysiumFeesAnalytics,
+  ElysiumFeesWindow,
   ElysiumDexAnalytics,
   ElysiumMethodsAnalytics,
   ElysiumTokensAnalytics,
@@ -118,6 +120,7 @@ export const fetchElysiumBridgeAnalytics = (days = 14) => getAnalytics<ElysiumBr
 export const fetchElysiumEconomics = (days = 14) => getAnalytics<ElysiumEconomicsAnalytics>("/economics", { days });
 export const fetchElysiumDex = (days = 14) => getAnalytics<ElysiumDexAnalytics>("/dex", { days });
 export const fetchElysiumTokenLaunches = (days = 14) => getAnalytics<ElysiumTokensAnalytics>("/tokens", { days });
+export const fetchElysiumFees = (window: ElysiumFeesWindow = "7d") => getAnalytics<ElysiumFeesAnalytics>("/fees", { window });
 export const fetchElysiumMethods = (window: "24h" | "7d" = "24h") => getAnalytics<ElysiumMethodsAnalytics>("/methods", { window });
 /** Tags and counts computed from our tables for one address. */
 export const fetchElysiumAddressProfile = (address: string) =>

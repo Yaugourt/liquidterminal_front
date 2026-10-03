@@ -22,6 +22,7 @@ import {
   fetchElysiumAddressProfile,
   fetchElysiumDex,
   fetchElysiumMethods,
+  fetchElysiumFees,
   fetchElysiumTokenLaunches,
   fetchElysiumUserActivity,
   fetchElysiumUserBalances,
@@ -29,6 +30,8 @@ import {
 } from "./api";
 import type {
   ElysiumAddressProfile,
+  ElysiumFeesAnalytics,
+  ElysiumFeesWindow,
   ElysiumDexAnalytics,
   ElysiumMethodsAnalytics,
   ElysiumTokensAnalytics,
@@ -95,6 +98,9 @@ export const useElysiumTokenLaunches = (days = 14) =>
   usePoll<ElysiumTokensAnalytics>(() => fetchElysiumTokenLaunches(days), 60_000, [days]);
 export const useElysiumMethods = (window: "24h" | "7d" = "24h") =>
   usePoll<ElysiumMethodsAnalytics>(() => fetchElysiumMethods(window), 60_000, [window]);
+
+export const useElysiumFees = (window: ElysiumFeesWindow = "7d") =>
+  usePoll<ElysiumFeesAnalytics>(() => fetchElysiumFees(window), 120_000, [window]);
 
 // Per-address reads.
 export const useElysiumAddressProfile = (address: string) =>

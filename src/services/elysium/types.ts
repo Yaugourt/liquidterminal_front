@@ -285,3 +285,40 @@ export interface ElysiumUserActivity {
   amount: number;
   detail: string;
 }
+
+export type ElysiumFeesWindow = "24h" | "7d" | "30d";
+
+/** Gas fees per called contract and per deployer (non-spam txs, full receipt fee). */
+export interface ElysiumFeesAnalytics {
+  window: ElysiumFeesWindow;
+  from: string;
+  to: string;
+  totals: {
+    feesHype: number;
+    txs: number;
+    gasUsed: number;
+    /** Deployed contracts and registry tokens. */
+    appFeesHype: number;
+    appTxs: number;
+    appShare: number;
+    apps: number;
+    /** Precompiles (bridge retryables, system calls). */
+    systemFeesHype: number;
+    systemShare: number;
+  };
+  contracts: {
+    address: string;
+    kind: ElysiumContractKind;
+    label: string | null;
+    symbol: string | null;
+    deployer: string | null;
+    feesHype: number;
+    feesHypePrev: number;
+    share: number;
+    txs: number;
+    callers: number;
+    gasUsed: number;
+    avgFeeHype: number;
+  }[];
+  deployers: { deployer: string; contracts: number; feesHype: number; share: number; txs: number; gasUsed: number }[];
+}

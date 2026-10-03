@@ -404,6 +404,12 @@ export const seoConfig = {
     keywords: ["Elysium contract decoder", "decode bytecode", "proxy implementation", "contract admin", "Elysium contracts"],
     path: "/elysium/decode",
   },
+  elysiumFees: {
+    title: "Elysium Fees by App - Who Pays for the Blockspace",
+    description: "Gas fees paid on Elysium testnet, ranked by contract and by deployer over 24h, 7d and 30d: share of all fees, change, callers, average fee and an estimate of the 25% app share of sequencer revenue.",
+    keywords: ["Elysium fees", "Elysium sequencer revenue", "Elysium apps", "fees by contract", "Elysium builders"],
+    path: "/elysium/fees",
+  },
   elysiumContracts: {
     title: "Elysium Contracts - Deployments, Top Deployers & Most Used",
     description: "Contracts on Elysium testnet: daily deployments, the busiest deployers, the most called contracts and functions, and new contracts gaining users.",
