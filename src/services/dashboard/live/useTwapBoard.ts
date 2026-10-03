@@ -5,12 +5,12 @@ import { useTwapOrders } from "@/services/market/order/hooks/useTwapOrders";
 import type { EnrichedTwapOrder, TwapMarketType } from "@/services/market/order/types";
 
 /**
- * Live TWAP picture for the dashboard, from the public list of TWAP orders
- * placed in the last 24 hours (every order, any status).
+ * Live TWAP picture for the dashboard, from the indexed TWAP list (every
+ * TWAP started in the last 24 hours, plus those still running from before).
  *
  * A TWAP slices its size into one order every 30 seconds over its duration,
- * so what is left to execute is estimated from the time elapsed: the list
- * carries no executed amount. Values use the current price of the market.
+ * so what is left to execute is estimated from the time elapsed: running
+ * TWAPs carry no executed amount yet. Values use the current market price.
  */
 
 export interface LiveTwap {
@@ -50,6 +50,8 @@ export interface TwapBoard {
   totals: TwapSide;
   /** Started in the last 24h (any status) and their full notional. */
   started24h: { count: number; usd: number; buys: number; sells: number };
+  /** Real executed notional of the TWAPs that ended in the window (indexer source only). */
+  executed24hUsd: number;
   byCoin: CoinTwapFlow[];
   hype: {
     active: LiveTwap[];
@@ -120,6 +122,9 @@ export function useTwapBoard(): TwapBoard & { isLoading: boolean; error: Error |
       coins.set(t.coin, c);
     }
 
+    const executed24hUsd = orders
+      .filter((o) => o.time >= dayAgo && o.ended)
+      .reduce((s, o) => s + (o.executedNtl ?? 0), 0);
     const hypeActive = active.filter(isHype);
     const hypeRecent = recent.filter(isHype);
     return {
@@ -131,6 +136,7 @@ export function useTwapBoard(): TwapBoard & { isLoading: boolean; error: Error |
         buys: recent.filter((t) => t.isBuy).reduce((s, t) => s + t.totalUsd, 0),
         sells: recent.filter((t) => !t.isBuy).reduce((s, t) => s + t.totalUsd, 0),
       },
+      executed24hUsd,
       byCoin: [...coins.values()].sort(
         (a, b) => b.buyLeftUsd + b.sellLeftUsd - (a.buyLeftUsd + a.sellLeftUsd)
       ),

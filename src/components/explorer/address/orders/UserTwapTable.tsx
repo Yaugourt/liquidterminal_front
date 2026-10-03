@@ -70,6 +70,11 @@ const HashCellComponent = ({
 }) => {
   const formatHash = (hash: string) => `${hash.slice(0, 6)}...${hash.slice(-4)}`;
 
+  // Indexed TWAPs carry their Hyperliquid TWAP id instead of a transaction hash.
+  if (!twap.hash.startsWith('0x')) {
+    return <span className="mono text-text-secondary">TWAP #{twap.hash.replace(/^twap-/, '')}</span>;
+  }
+
   return (
     <div className="flex items-center gap-1.5">
       <Link

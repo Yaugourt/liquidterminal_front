@@ -7,6 +7,7 @@ import { SpotToken } from '../spot/types';
 import { fetchPerpMarkets } from '../perp/api';
 import { PerpMarketData } from '../perp/types';
 import { AllPerpMetasResponse } from '../perpDex/types';
+import { fetchIndexedTwaps } from './twap-source';
 
 /**
  * Récupère tous les ordres TWAP depuis l'API
@@ -141,14 +142,18 @@ const enrichTwapOrders = async (twapOrders: TwapOrder[]): Promise<EnrichedTwapOr
  */
 export const fetchTwapOrders = async (params: TwapOrderParams = {}): Promise<TwapOrderPaginatedResponse> => {
   return withErrorHandling(async () => {
-    // Récupérer toutes les données d'abord
-    const allOrders = await fetchAllTwapOrders();
-    
-    // Enrichir avec les données de marché
-    const enrichedOrders = await enrichTwapOrders(allOrders);
+    // Indexer first (wider and more accurate, see twap-source.ts); the public
+    // Hypurrscan list stays as the fallback when the indexer is down.
+    let enrichedOrders: EnrichedTwapOrder[];
+    try {
+      enrichedOrders = await fetchIndexedTwaps();
+    } catch {
+      enrichedOrders = await enrichTwapOrders(await fetchAllTwapOrders());
+    }
     
     // Filtrer selon les paramètres
-    let filteredOrders = enrichedOrders;
+    // Copy: the indexed list is a shared cache, sorting must not reorder it.
+    let filteredOrders = [...enrichedOrders];
     
     // Filtrer par utilisateur
     if (params.user) {

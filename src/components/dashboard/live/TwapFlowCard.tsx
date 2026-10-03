@@ -65,9 +65,10 @@ export function TwapRow({ t }: { t: LiveTwap }) {
  * most TWAP flow, and the biggest TWAPs in progress.
  */
 export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { board: TwapBoard; isLoading: boolean }) {
-  const { totals, started24h, byCoin, active } = board;
+  const { totals, started24h, byCoin, active, executed24hUsd } = board;
   const cells: KpiCell[] = [
     { key: "active", label: "Running now", value: isLoading && !active.length ? "…" : String(totals.count), sub: `${started24h.count} started in 24h` },
+    { key: "done", label: "Executed, 24h", value: executed24hUsd > 0 ? compactUsd(executed24hUsd) : "—", sub: "TWAPs that ended" },
     { key: "buy", label: "Left to buy", value: compactUsd(totals.buyLeftUsd), tone: "success", sub: "estimated" },
     { key: "sell", label: "Left to sell", value: compactUsd(totals.sellLeftUsd), tone: "danger", sub: "estimated" },
     {
@@ -91,7 +92,7 @@ export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { b
         viewAllLabel="All TWAPs"
       />
       <div className="p-3.5 pb-2">
-        <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4" />
+        <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5" />
         <div className="mt-2.5">
           <FlowBar buy={totals.buyLeftUsd} sell={totals.sellLeftUsd} />
         </div>
@@ -130,7 +131,7 @@ export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { b
         </div>
       </div>
       <div className="px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
-        Left to execute is estimated from the time elapsed (one slice every 30s), valued at the current price. Source: Hypurrscan TWAP list, last 24h.
+        Executed amounts are real for TWAPs that ended. Left to execute is estimated from the time elapsed (one slice every 30s), at the current price. Source: our indexer, every TWAP of the last 24h plus those still running.
       </div>
     </Card>
   );
