@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Check, Copy, ExternalLink } from "lucide-react";
 import { usePrivy } from "@privy-io/react-auth";
@@ -182,6 +183,16 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
                   />
                 </a>
               </div>
+              {hl && !hl.name && (
+                <Link
+                  href="/names"
+                  className="mt-1.5 inline-flex items-center gap-1.5 rounded-md border border-brand/25 bg-brand/10 px-2.5 py-1 text-xs font-medium text-brand transition-colors hover:bg-brand/15 focus-ring"
+                >
+                  No .hl name yet
+                  <span className="text-text-tertiary">·</span>
+                  Get yours with Hyperliquid Names
+                </Link>
+              )}
               {(hl?.records.Bio || hlLinks.length > 0) && (
                 <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-tertiary">
                   {hl?.records.Bio && <span className="max-w-prose truncate text-text-secondary">{hl.records.Bio}</span>}

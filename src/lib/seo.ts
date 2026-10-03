@@ -484,6 +484,12 @@ export const seoConfig = {
     keywords: ["Hyperliquid reserve yield", "AQAv2", "USDC reserve yield", "aligned quote asset", "HYPE buyback", "Assistance Fund"],
     path: "/hype/reserve-yield",
   },
+  namesPage: {
+    title: "Get a .hl name - Hyperliquid Names on Liquid Terminal",
+    description: "Search and mint a .hl name for your Hyperliquid wallet in HYPE or USDC, from your own wallet. Your name replaces your 0x address on Liquid Terminal, in Telegram alerts and across Hyperliquid apps.",
+    keywords: ["Hyperliquid Names", ".hl name", "hl names", "Hyperliquid domain", "HyperEVM name", "mint .hl"],
+    path: "/names",
+  },
   hypeOperations: {
     title: "Hyperliquid Operating Metrics - Fee Run Rate & TVL",
     description: "Hyperliquid operating metrics: fee run rate, total value locked history and the core activity figures behind them.",
