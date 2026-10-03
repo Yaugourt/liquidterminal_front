@@ -225,7 +225,8 @@ export type AlertRuleType =
   | 'oi_surge'
   | 'listing'
   | 'leverage'
-  | 'liq_cascade';
+  | 'liq_cascade'
+  | 'reserve_yield';
 
 export interface AlertRule {
   id: string;

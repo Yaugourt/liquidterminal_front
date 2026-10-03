@@ -9,7 +9,7 @@ export default function AlertsPage() {
       <PageHeader
         title="Alerts"
         titleQualifier="Hyperliquid, straight to Telegram"
-        description="Price levels and moves, extreme funding, open interest surges, liquidation cascades and new listings. Free, delivered within seconds."
+        description="Price levels and moves, extreme funding, open interest surges, liquidation cascades, new listings and USDC reserve yield payments. Free, delivered within seconds."
       />
       <AlertsWorkbench />
     </div>

@@ -2,7 +2,7 @@
 
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, Banknote, CalendarClock, Check, Coins, ListOrdered, Calculator } from "lucide-react";
+import { ArrowRight, Banknote, BellRing, CalendarClock, Check, Coins, ListOrdered, Calculator } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CardHeading, KpiRibbon, ShareTile } from "@/components/common";
 import type { KpiCell } from "@/components/common";
@@ -101,9 +101,18 @@ export function ReserveYieldOverviewCard({ data }: { data: ReserveYieldSnapshot 
         meta="AQAv2"
         description="The yield on the USDC reserves held for Hyperliquid, paid to the protocol and sent to the Assistance Fund"
         actions={
-          data.totalPaidUsdc > 0 ? (
-            <ShareTile src="/api/tile/reserve-yield" filename="liquidterminal-reserve-yield" />
-          ) : undefined
+          <span className="inline-flex items-center gap-2">
+            <Link
+              href="/alerts?type=reserve_yield"
+              className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11px] font-semibold shrink-0 transition-colors bg-surface-2 text-text-secondary hover:text-text-primary border border-border-subtle focus-ring"
+            >
+              <BellRing size={13} />
+              Telegram alert
+            </Link>
+            {data.totalPaidUsdc > 0 && (
+              <ShareTile src="/api/tile/reserve-yield" filename="liquidterminal-reserve-yield" />
+            )}
+          </span>
         }
       />
 

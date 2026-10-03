@@ -6,6 +6,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { toast } from "sonner";
 import {
   Activity,
+  Banknote,
   BellRing,
   Flame,
   Gauge,
@@ -50,6 +51,13 @@ const TYPES: TypeDef[] = [
   { type: "oi_surge", label: "Open interest surge", hint: "Fresh leverage piling in over the last hour.", icon: Layers, coin: "optional" },
   { type: "listing", label: "New listings", hint: "A new perp market goes live.", icon: Rocket, coin: "none" },
   { type: "leverage", label: "Leverage changes", hint: "A market's max leverage is raised or cut.", icon: Activity, coin: "optional" },
+  {
+    type: "reserve_yield",
+    label: "Reserve yield",
+    hint: "The USDC reserve yield reaches the protocol, then the Assistance Fund.",
+    icon: Banknote,
+    coin: "none",
+  },
 ];
 const TYPE_BY_ID = Object.fromEntries(TYPES.map((t) => [t.type, t])) as Record<AlertRuleType, TypeDef>;
 
@@ -82,6 +90,8 @@ function describe(rule: AlertRule): string {
       return `${where} max leverage changes`;
     case "liq_cascade":
       return `${(p.coin as string | null) ?? "All markets"}: ${usd(p.minUsd as number)}+ liquidated within 60s`;
+    case "reserve_yield":
+      return "Each USDC reserve yield payment, and its transfer to the Assistance Fund";
   }
 }
 
@@ -207,6 +217,11 @@ export function NewAlertCard({
   onCreated: (rule: AlertRule) => void;
 }) {
   const [type, setType] = useState<AlertRuleType>("price_cross");
+  // `/alerts?type=reserve_yield` opens the builder on that type (links from other pages).
+  useEffect(() => {
+    const wanted = new URLSearchParams(globalThis.location.search).get("type");
+    if (wanted && wanted in TYPE_BY_ID) setType(wanted as AlertRuleType);
+  }, []);
   const [coin, setCoin] = useState("BTC");
   const [level, setLevel] = useState("");
   const [direction, setDirection] = useState<"above" | "below">("above");
@@ -238,6 +253,8 @@ export function NewAlertCard({
         return { coin: c };
       case "liq_cascade":
         return { coin: c, minUsd };
+      case "reserve_yield":
+        return {};
     }
   };
 
