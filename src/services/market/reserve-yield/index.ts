@@ -18,7 +18,7 @@ export async function fetchReserveYield(signal?: AbortSignal): Promise<ReserveYi
 export function useReserveYield() {
   return useDataFetching<ReserveYieldSnapshot>({
     fetchFn: fetchReserveYield,
-    refreshInterval: 5 * 60_000,
+    refreshInterval: 60_000,
     maxRetries: 2,
   });
 }

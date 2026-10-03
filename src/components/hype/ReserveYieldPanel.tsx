@@ -294,10 +294,12 @@ function IntervalRow({ iv, today }: { iv: ReserveYieldInterval; today: number })
         ))}
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] text-text-tertiary">
-        <span>
-          {iv.sampledDates} of {INTERVAL_DATES} readings · average{" "}
-          <span className="mono text-text-secondary">{fmtUsd(iv.avgBalance)}</span>
-        </span>
+        {iv.sampledDates > 0 && (
+          <span>
+            {iv.sampledDates} of {INTERVAL_DATES} readings · average{" "}
+            <span className="mono text-text-secondary">{fmtUsd(iv.avgBalance)}</span>
+          </span>
+        )}
         {iv.impliedRatePct != null && (
           <span>
             implied rate <span className="mono text-text-secondary">{iv.impliedRatePct.toFixed(3)}%</span> a year
@@ -526,7 +528,8 @@ export function ReserveYieldMethodCard() {
         </p>
         <p>
           <span className="text-text-primary font-medium">What is read, not assumed.</span> Treasury and linked
-          contract balances come from HyperEVM, at the first block of each UTC date for past readings. The linked
+          contract balances come from HyperEVM; past readings are taken at the first block of each UTC date on
+          archive nodes, checked against a second node. The linked
           contract address comes from Hyperliquid&apos;s spot metadata. The interest address balance and ledger,
           and the fund&apos;s receipts, come from HyperCore.
         </p>

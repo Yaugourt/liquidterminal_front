@@ -9,7 +9,8 @@
  * after the interval ends, and the protocol forwards it to the Assistance Fund.
  *
  * Everything here is read from public endpoints: HyperEVM RPC for the treasury
- * and linked contract balances (current and at past blocks), the info API for
+ * and linked contract balances (current state from the public RPC, past
+ * blocks from archive nodes), the info API for
  * the interest address and its ledger. The settled AQA rate has no public read
  * path, so the only rate shown is the one implied by a payment that actually
  * landed: amount / sum of the sampled daily balances x 365.
@@ -19,6 +20,13 @@
  */
 
 const EVM_RPC = "https://rpc.hyperliquid.xyz/evm";
+/**
+ * The public RPC above ignores the block tag on eth_call and always answers
+ * with the latest state, so every past balance is read from archive nodes.
+ * Three public ones agreed to the unit on 3 Oct 2026; the first two are used,
+ * the second as fallback and as the cross-check.
+ */
+const ARCHIVE_RPCS = ["https://rpc.hyperlend.finance/archive", "https://hyperliquid.drpc.org"];
 const INFO_URL = "https://api.hyperliquid.xyz/info";
 const DAY_MS = 86_400_000;
 
@@ -45,6 +53,8 @@ export const RESERVE_YIELD_ADDRESSES = {
 const FIRST_INTERVAL_START = Date.UTC(2026, 7, 27);
 const INTERVAL_DATES = 30;
 const PAYOUT_LAG_DAYS = 8;
+/** Intervals whose daily balances are read (the accruing one and the two before it). */
+const SAMPLED_INTERVALS = 3;
 /** Inflows below this are activation or test transfers, not interval payments. */
 const MIN_PAYMENT_USDC = 1_000;
 
@@ -95,15 +105,14 @@ export interface ReserveYieldSnapshot {
   intervals: ReserveYieldInterval[];
   current: { index: number; dateNumber: number; of: number; nextPayoutDate: number };
   hypeUsd: number | null;
-  dailyBalances: { date: number; usdc: number }[];
 }
 
 // ── transport ─────────────────────────────────────────────────────────────
 
-async function rpc<T>(method: string, params: unknown[]): Promise<T> {
+async function rpc<T>(method: string, params: unknown[], url: string = EVM_RPC): Promise<T> {
   for (let attempt = 0; ; attempt++) {
     try {
-      const res = await fetch(EVM_RPC, {
+      const res = await fetch(url, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
@@ -138,13 +147,46 @@ async function blockTimestamp(n: number): Promise<number> {
   return parseInt(b.timestamp, 16);
 }
 
-async function usdcBalance(holder: string, block: number | "latest"): Promise<number> {
+async function usdcBalance(holder: string, block: number | "latest", url: string = EVM_RPC): Promise<number> {
   const data = `0x70a08231${holder.slice(2).toLowerCase().padStart(64, "0")}`;
-  const raw = await rpc<string>("eth_call", [
-    { to: RESERVE_YIELD_ADDRESSES.usdcEvm, data },
-    block === "latest" ? "latest" : hex(block),
-  ]);
+  const raw = await rpc<string>(
+    "eth_call",
+    [{ to: RESERVE_YIELD_ADDRESSES.usdcEvm, data }, block === "latest" ? "latest" : hex(block)],
+    url,
+  );
   return Number(BigInt(raw)) / 1e6;
+}
+
+/** Balance at a past block from the archive nodes, first one that answers. */
+async function archiveBalance(holder: string, block: number): Promise<number> {
+  let lastErr: unknown = null;
+  for (const url of ARCHIVE_RPCS) {
+    try {
+      return await usdcBalance(holder, block, url);
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("archive RPCs unavailable");
+}
+
+let archiveChecked = 0;
+
+/**
+ * Before trusting the archive, read one past block on both archive nodes:
+ * they must agree. A node that silently serves the latest state (as the
+ * public RPC does) would otherwise pass every past reading off as history.
+ */
+async function assertArchiveConsistent(block: number): Promise<void> {
+  if (Date.now() - archiveChecked < 3_600_000) return;
+  const [a, b] = await Promise.all(
+    ARCHIVE_RPCS.map((u) => usdcBalance(RESERVE_YIELD_ADDRESSES.treasury, block, u).catch(() => null)),
+  );
+  if (a != null && b != null && Math.abs(a - b) > 0.01) {
+    throw new Error("archive nodes disagree on a past balance");
+  }
+  if (a == null && b == null) throw new Error("archive RPCs unavailable");
+  archiveChecked = Date.now();
 }
 
 // ── historical sampling ───────────────────────────────────────────────────
@@ -152,23 +194,53 @@ async function usdcBalance(holder: string, block: number | "latest"): Promise<nu
 const blockAtCache = new Map<number, number>();
 const balanceAtDateCache = new Map<number, number>();
 
-/** First block with timestamp >= `tSec`, found by secant search from the head. */
+let chainRate: { rate: number; at: number } | null = null;
+
+/** HyperEVM blocks per second, measured over the last ~1M blocks (refreshed hourly). */
+async function blocksPerSecond(head: { n: number; ts: number }): Promise<number> {
+  if (chainRate && Date.now() - chainRate.at < 3_600_000) return chainRate.rate;
+  const ref = Math.max(1, head.n - 1_000_000);
+  const tRef = await blockTimestamp(ref);
+  const rate = (head.n - ref) / Math.max(1, head.ts - tRef);
+  chainRate = { rate, at: Date.now() };
+  return rate;
+}
+
+/**
+ * First block with timestamp >= `tSec`. Blocks come at a near-constant rate,
+ * so the guess from the measured rate lands within a few hundred blocks; a
+ * small bracket around it is then narrowed by interpolation, with a bisection
+ * every other step so a lopsided bracket cannot stall the search.
+ */
 async function firstBlockAtOrAfter(tSec: number, head: { n: number; ts: number }): Promise<number> {
   const cached = blockAtCache.get(tSec);
   if (cached !== undefined) return cached;
-  // lo has ts < t, hi has ts >= t.
-  let hi = head.n;
-  let tHi = head.ts;
-  let lo = Math.max(1, hi - Math.ceil((tHi - tSec) * 1.2) - 10_000);
+  if (tSec > head.ts) throw new Error("date is after the chain head");
+  const rate = await blocksPerSecond(head);
+  const guess = Math.round(head.n - (head.ts - tSec) * rate);
+
+  let step = 2_000;
+  let lo = Math.max(1, guess - step);
   let tLo = await blockTimestamp(lo);
-  while (tLo >= tSec) {
-    hi = lo;
-    tHi = tLo;
-    lo = Math.max(1, lo - 200_000);
+  while (tLo >= tSec && lo > 1) {
+    step *= 4;
+    lo = Math.max(1, lo - step);
     tLo = await blockTimestamp(lo);
   }
-  while (hi - lo > 1) {
-    let mid = Math.round(lo + ((tSec - tLo) * (hi - lo)) / Math.max(1, tHi - tLo));
+  step = 2_000;
+  let hi = Math.min(head.n, guess + step);
+  let tHi = hi === head.n ? head.ts : await blockTimestamp(hi);
+  while (tHi < tSec && hi < head.n) {
+    step *= 4;
+    hi = Math.min(head.n, hi + step);
+    tHi = hi === head.n ? head.ts : await blockTimestamp(hi);
+  }
+
+  for (let i = 0; hi - lo > 1; i++) {
+    let mid =
+      i % 2 === 0
+        ? Math.round(lo + ((tSec - tLo) * (hi - lo)) / Math.max(1, tHi - tLo))
+        : Math.floor((lo + hi) / 2);
     mid = Math.min(hi - 1, Math.max(lo + 1, mid));
     const tMid = await blockTimestamp(mid);
     if (tMid < tSec) {
@@ -187,7 +259,7 @@ async function treasuryBalanceOnDate(dateMs: number, head: { n: number; ts: numb
   const cached = balanceAtDateCache.get(dateMs);
   if (cached !== undefined) return cached;
   const block = await firstBlockAtOrAfter(dateMs / 1000, head);
-  const v = await usdcBalance(RESERVE_YIELD_ADDRESSES.treasury, block);
+  const v = await archiveBalance(RESERVE_YIELD_ADDRESSES.treasury, block);
   balanceAtDateCache.set(dateMs, v);
   return v;
 }
@@ -259,14 +331,20 @@ export async function getReserveYieldSnapshot(): Promise<ReserveYieldSnapshot> {
 
   // Intervals from the first one through the one accruing today.
   const currentIndex = Math.max(0, Math.floor((today - FIRST_INTERVAL_START) / (INTERVAL_DATES * DAY_MS)));
+  // Only the last few intervals are read: older ones are settled and their
+  // payment stays in the ledger, while reading every date since activation
+  // would grow by 30 balance reads a month on every cold start.
+  const firstSampled = Math.max(0, currentIndex - (SAMPLED_INTERVALS - 1));
   const dates: number[] = [];
-  for (let d = FIRST_INTERVAL_START; d <= today; d += DAY_MS) dates.push(d);
+  for (let d = intervalStart(firstSampled); d <= today; d += DAY_MS) dates.push(d);
+  await assertArchiveConsistent(await firstBlockAtOrAfter(dates[0] / 1000, head));
   const balances = await mapLimit(dates, 6, (d) => treasuryBalanceOnDate(d, head));
   const balanceByDate = new Map(dates.map((d, i) => [d, balances[i]]));
 
   const intervals: ReserveYieldInterval[] = [];
   for (let i = 0; i <= currentIndex; i++) {
     const start = intervalStart(i);
+    const sampled = i >= firstSampled;
     const end = start + (INTERVAL_DATES - 1) * DAY_MS;
     const payoutDate = end + PAYOUT_LAG_DAYS * DAY_MS;
     let balanceSum = 0;
@@ -278,8 +356,8 @@ export async function getReserveYieldSnapshot(): Promise<ReserveYieldSnapshot> {
         sampledDates++;
       }
     }
-    // A payment belongs to the interval whose payout date it lands on (or just after).
-    const paid = payments.find((p) => p.time >= payoutDate && p.time < payoutDate + 7 * DAY_MS) ?? null;
+    // A payment belongs to the interval whose payout date it lands near (intervals are 30 days apart).
+    const paid = payments.find((p) => p.time >= payoutDate - 3 * DAY_MS && p.time < payoutDate + 10 * DAY_MS) ?? null;
     const complete = today > end;
     const status: IntervalStatus = paid ? "paid" : complete ? "due" : "accruing";
     intervals.push({
@@ -294,7 +372,7 @@ export async function getReserveYieldSnapshot(): Promise<ReserveYieldSnapshot> {
       paidUsdc: paid?.amount ?? null,
       paidAt: paid?.time ?? null,
       paidHash: paid?.hash ?? null,
-      impliedRatePct: paid && sampledDates === INTERVAL_DATES ? (paid.amount / balanceSum) * 365 * 100 : null,
+      impliedRatePct: paid && sampled && sampledDates === INTERVAL_DATES ? (paid.amount / balanceSum) * 365 * 100 : null,
       projectedUsdc: null,
     });
   }
@@ -330,6 +408,5 @@ export async function getReserveYieldSnapshot(): Promise<ReserveYieldSnapshot> {
       nextPayoutDate: cur.payoutDate,
     },
     hypeUsd: Number.isFinite(hype) && hype > 0 ? hype : null,
-    dailyBalances: dates.map((d, i) => ({ date: d, usdc: balances[i] })),
   };
 }
