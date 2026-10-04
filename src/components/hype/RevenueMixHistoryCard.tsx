@@ -32,6 +32,7 @@ const SOURCES = [
   // Order priority only. Gossip priority is the other HyperCore burn and is not
   // in this series; see RevenueSegmentsCard for the full note.
   { key: "priority", label: "Order priority", color: chartPalette.multiSeries[7] },
+  { key: "reserve", label: "Reserve yield", color: chartPalette.multiSeries[5] },
 ] as const;
 
 type SourceKey = (typeof SOURCES)[number]["key"];

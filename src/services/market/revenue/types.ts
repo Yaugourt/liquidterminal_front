@@ -12,6 +12,8 @@ export interface RevenueDay {
   hip1: number;
   hip3: number;
   hip4: number;
+  /** USDC reserve yield (AQAv2), booked on the day it landed. Absent from older backends. */
+  reserve?: number;
   priority: number;
   total: number;
 }
@@ -23,6 +25,7 @@ export interface RevenueLifetime {
   hip3: number;
   hip4: number;
   priority: number;
+  reserve?: number;
   total: number;
 }
 
@@ -52,6 +55,7 @@ export interface RevenueMeta {
     hip3: RevenueSourceStatus;
     hip4: RevenueSourceStatus;
     priority: RevenueSourceStatus;
+    reserve?: RevenueSourceStatus;
   };
 }
 

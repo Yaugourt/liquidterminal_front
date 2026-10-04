@@ -44,6 +44,7 @@ const REVENUE_SERIES = [
   { key: "auction", label: "Auctions", color: chartPalette.multiSeries[3] },
   { key: "priority", label: "Priority", color: chartPalette.multiSeries[4] },
   { key: "hip4", label: "HIP-4", color: chartPalette.multiSeries[6] },
+  { key: "reserve", label: "Reserve yield", color: chartPalette.multiSeries[5] },
 ] as const;
 
 type SeriesKey = (typeof REVENUE_SERIES)[number]["key"];
@@ -133,7 +134,7 @@ const RevenueChartComponent = ({ days, height = 220 }: RevenueChartProps) => {
     for (const d of days) {
       const e = enrichDay(d);
       for (const s of REVENUE_SERIES) {
-        sums[s.key] += e[s.key];
+        sums[s.key] += e[s.key] ?? 0;
       }
       total += e.total;
     }
@@ -214,6 +215,7 @@ interface StackedRow {
   auction: number;
   priority: number;
   hip4: number;
+  reserve: number;
   total: number;
 }
 
@@ -249,6 +251,7 @@ function bucketRevenueRows(rows: StackedRow[], g: BarGranularity): StackedRow[] 
       prev.auction += r.auction;
       prev.priority += r.priority;
       prev.hip4 += r.hip4;
+      prev.reserve += r.reserve;
       prev.total += r.total;
     } else {
       buckets.set(k, { ...r, time: k });
@@ -288,6 +291,7 @@ const RevenueStackedBars = memo(function RevenueStackedBars({
         auction: e.auction,
         priority: e.priority,
         hip4: e.hip4,
+        reserve: e.reserve ?? 0,
         total: e.total,
       };
     });

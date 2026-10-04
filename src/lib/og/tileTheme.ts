@@ -44,4 +44,5 @@ export const tileSeries = {
   violet: "#A78BFA",
   pink: "#F472B6",
   orange: "#FB923C",
+  emerald: "#34D399",
 } as const;

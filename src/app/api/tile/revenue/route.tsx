@@ -46,6 +46,7 @@ const SOURCES = [
   { key: "auction", label: "Auctions", color: tileSeries.violet },
   { key: "priority", label: "Priority", color: tileSeries.pink },
   { key: "hip4", label: "HIP-4", color: tileSeries.orange },
+  { key: "reserve", label: "Reserve yield", color: tileSeries.emerald },
 ] as const;
 
 interface Slice {
@@ -90,8 +91,9 @@ export async function GET(request: NextRequest) {
       auction: acc.auction + (d.hip1 ?? 0) + (d.hip3 ?? 0),
       priority: acc.priority + (d.priority ?? 0),
       hip4: acc.hip4 + (d.hip4 ?? 0),
+      reserve: acc.reserve + (d.reserve ?? 0),
     }),
-    { perp: 0, spot: 0, auction: 0, priority: 0, hip4: 0 }
+    { perp: 0, spot: 0, auction: 0, priority: 0, hip4: 0, reserve: 0 }
   );
   const windowTotal = Object.values(totals).reduce((a, b) => a + b, 0);
 
@@ -120,6 +122,7 @@ export async function GET(request: NextRequest) {
     hip3: "HIP-3 auctions",
     hip4: "HIP-4",
     priority: "priority fees",
+    reserve: "reserve yield",
   };
   const status = breakdown.meta?.sourceStatus ?? {};
   const missing = Object.entries(status)
