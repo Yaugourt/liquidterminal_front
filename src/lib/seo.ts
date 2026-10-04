@@ -448,8 +448,8 @@ export const seoConfig = {
   },
   elysiumStart: {
     title: "Start Building on Elysium Testnet - Network, Faucet, Deploy",
-    description: "Build on Elysium testnet in five steps: add the network to your wallet, claim test HYPE from the faucet, deploy a contract, read its transaction, and set up Foundry, Hardhat or viem.",
-    keywords: ["Elysium testnet", "Elysium faucet", "deploy on Elysium", "Elysium chain id", "Elysium RPC"],
+    description: "Build on Elysium testnet in six steps: add the network, claim test HYPE from the faucet or bridge it, deploy a contract, read its transaction, verify its source, and set up Foundry, Hardhat or viem.",
+    keywords: ["Elysium testnet", "Elysium faucet", "deploy on Elysium", "Elysium chain id", "Elysium RPC", "verify contract Elysium"],
     path: "/elysium/start",
   },
   elysiumNode: {
