@@ -270,7 +270,7 @@ function humanize(type: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-interface WireOrder {
+export interface WireOrder {
   a: number;
   b: boolean;
   p: string;
@@ -280,7 +280,7 @@ interface WireOrder {
 }
 
 /** Old transactions wrote orders as compact arrays: [a, b, p, s, r, {limit:[tif]}, cloid]. */
-function normalizeAction(action: unknown): Record<string, unknown> & { type: string } {
+export function normalizeAction(action: unknown): Record<string, unknown> & { type: string } {
   if (Array.isArray(action)) {
     const [type, payload, grouping] = action as [string, unknown[], string];
     if (type === 'order' && Array.isArray(payload)) {
@@ -295,7 +295,7 @@ function normalizeAction(action: unknown): Record<string, unknown> & { type: str
   return (action ?? { type: 'unknown' }) as Record<string, unknown> & { type: string };
 }
 
-function orderSummary(o: WireOrder, assets: AssetResolver) {
+export function orderSummary(o: WireOrder, assets: AssetResolver) {
   const asset = assets.byId(o.a);
   const size = num(o.s);
   const price = num(o.p);
