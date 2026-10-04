@@ -21,7 +21,7 @@ import { SourceCoverageNote } from "./SourceCoverageNote";
  *
  * The aggregate everyone quotes is a single line. This is the same money split
  * by where it came from, which is the question an analyst asks next: how much
- * of the business is one product, and is that share moving. Six sources, from
+ * of the business is one product, and is that share moving. Seven sources, from
  * our own endpoint — the public aggregates do not carry this breakdown.
  *
  * HIP-1 and HIP-3 stay separate here, unlike the dashboard chart which merges

@@ -77,7 +77,7 @@ export default function HypeFinancialsPage() {
       <section className="space-y-2.5">
         <SectionHead
           title="Segments over time"
-          subtitle="Six revenue sources · whether this is still one book or several"
+          subtitle="Seven revenue sources · whether this is still one book or several"
         />
         <RevenueMixHistoryCard />
       </section>

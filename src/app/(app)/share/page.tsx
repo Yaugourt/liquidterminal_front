@@ -53,7 +53,7 @@ const GROUPS: TileGroup[] = [
       {
         id: "revenue",
         label: "Protocol revenue",
-        desc: "Fee revenue by source",
+        desc: "Revenue by source, fees and reserve yield",
         route: "revenue",
         icon: DollarSign,
         params: [

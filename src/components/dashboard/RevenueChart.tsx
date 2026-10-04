@@ -33,7 +33,7 @@ type ChartType = "area" | "bar";
  *
  *   1. KPI strip      — Last 24h / Window total + Δ / Avg / Day  (3-cell, gap-px)
  *   2. Chart          — AuroraAreaChart of total daily revenue (gold)
- *   3. Source         — FlowGrid + FlowBar, 5 sources sorted by share
+ *   3. Source         — FlowGrid + FlowBar, 6 bands (auctions merged) sorted by share
  *
  * No nested containers. Hairlines (`border-b border-border-subtle`) only.
  */

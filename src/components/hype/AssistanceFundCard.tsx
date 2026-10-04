@@ -208,7 +208,8 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
       <div className="px-3.5 py-3 flex-1">
         <p className="text-[11.5px] leading-relaxed text-text-secondary">
           The Assistance Fund is an L1 system address with no private key. The protocol routes the
-          large majority (~97–99%) of net perp and spot trading fees to it, and it continuously buys
+          large majority (~97–99%) of net perp and spot trading fees to it, plus the monthly USDC
+          reserve yield (AQAv2) since October 2026, and it continuously buys
           HYPE on the open market — every figure above is aggregated from its actual on-chain buy
           fills. HYPE that lands there cannot be withdrawn, so more volume means more buybacks and a
           tighter float.
