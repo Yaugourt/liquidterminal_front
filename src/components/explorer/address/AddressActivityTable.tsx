@@ -5,6 +5,7 @@ import Link from "next/link";
 import { TypedDataTable, type Column } from "@/components/common";
 import type { Activity, ActivityKind } from "@/services/explorer/address";
 import { cn } from "@/lib/utils";
+import { PillTabs } from "@/components/ui/pill-tabs";
 import { ActionLabel, ActivityDetails, ActivityValue, ago } from "./ActivityParts";
 
 type Filter = "all" | "trades" | "orders" | "transfers" | "staking" | "account";
@@ -17,6 +18,25 @@ const FILTERS: { id: Filter; label: string; kinds: ActivityKind[] | null }[] = [
   { id: "staking", label: "Staking & vaults", kinds: ["staking", "vault"] },
   { id: "account", label: "Account & other", kinds: ["account", "evm", "system"] },
 ];
+
+type Layer = "both" | "core" | "evm";
+
+const LAYERS: { value: Layer; label: string }[] = [
+  { value: "both", label: "Core + EVM" },
+  { value: "core", label: "HyperCore" },
+  { value: "evm", label: "HyperEVM" },
+];
+
+/**
+ * Which layer a row belongs to. HyperEVM transactions are EVM only; a move
+ * between HyperCore and HyperEVM touches both, so it shows on either side.
+ */
+function onLayer(a: Activity, layer: Layer): boolean {
+  if (layer === "both") return true;
+  const crossing = a.kind === "bridge" && /HyperEVM/.test(a.label);
+  if (layer === "evm") return a.kind === "evm" || crossing;
+  return a.kind !== "evm";
+}
 
 /**
  * Address activity, decoded: one row per thing that happened, read as a
@@ -36,22 +56,25 @@ export function AddressActivityTable({
   currentAddress: string;
 }) {
   const [filter, setFilter] = useState<Filter>("all");
+  const [layer, setLayer] = useState<Layer>("both");
   const [showFailed, setShowFailed] = useState(false);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
-  const failedCount = useMemo(() => activity.filter((a) => a.failed).length, [activity]);
+  // Everything below (counts, rejected, rows) is scoped to the chosen layer.
+  const onChosenLayer = useMemo(() => activity.filter((a) => onLayer(a, layer)), [activity, layer]);
+  const failedCount = useMemo(() => onChosenLayer.filter((a) => a.failed).length, [onChosenLayer]);
   const counts = useMemo(() => {
     const c = new Map<Filter, number>();
-    const base = activity.filter((a) => showFailed || !a.failed);
+    const base = onChosenLayer.filter((a) => showFailed || !a.failed);
     for (const f of FILTERS) c.set(f.id, f.kinds ? base.filter((a) => f.kinds!.includes(a.kind)).length : base.length);
     return c;
-  }, [activity, showFailed]);
+  }, [onChosenLayer, showFailed]);
 
   const rows = useMemo(() => {
     const kinds = FILTERS.find((f) => f.id === filter)?.kinds;
-    return activity.filter((a) => (showFailed || !a.failed) && (!kinds || kinds.includes(a.kind)));
-  }, [activity, filter, showFailed]);
+    return onChosenLayer.filter((a) => (showFailed || !a.failed) && (!kinds || kinds.includes(a.kind)));
+  }, [onChosenLayer, filter, showFailed]);
   const paged = useMemo(() => rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage), [rows, page, rowsPerPage]);
 
   const columns: Column<Activity>[] = useMemo(
@@ -114,6 +137,15 @@ export function AddressActivityTable({
   return (
     <div className="space-y-2.5">
       <div className="flex flex-wrap items-center gap-1.5">
+        <PillTabs
+          tabs={LAYERS}
+          activeTab={layer}
+          onTabChange={(v) => {
+            setLayer(v as Layer);
+            setPage(0);
+          }}
+          className="mr-1.5"
+        />
         {FILTERS.map((f) => (
           <button
             key={f.id}
