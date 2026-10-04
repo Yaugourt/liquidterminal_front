@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { formatEther, parseTransaction, recoverTransactionAddress, type Hex } from "viem";
 import Link from "next/link";
-import { AlertTriangle, Braces, ListOrdered, Receipt, Zap } from "lucide-react";
+import { AlertTriangle, Braces, Cpu, ListOrdered, Receipt, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
 import { CardHeading, HlAddressText, KpiRibbon, TypedDataTable, type Column, type KpiCell } from "@/components/common";
@@ -108,7 +109,14 @@ export function TransactionView({ tx, formatted }: { tx: ExtendedTransactionDeta
       ),
       sub: <CopyButton text={tx.user} />,
     },
-    { label: "Action", value: action.type, sub: orders.length ? `${orders.length} order${orders.length > 1 ? "s" : ""}` : "wire name" },
+    {
+      label: "Action",
+      value: (
+        <span className="block truncate text-[15px] sm:text-[17px]" title={action.type}>
+          {action.type}
+        </span>
+      ),
+      sub: orders.length ? `${orders.length} order${orders.length > 1 ? "s" : ""}` : "wire name" },
   ];
 
   return (
@@ -157,7 +165,9 @@ export function TransactionView({ tx, formatted }: { tx: ExtendedTransactionDeta
 
       {orders.length > 0 && !failed && <FillsCard fills={fills} assets={assets} />}
 
-      {orders.length === 0 && <ParamsCard formatted={formatted} />}
+      {action.type === "evmRawTx" && typeof action.data === "string" && <EvmTxCard raw={action.data as Hex} />}
+
+      {orders.length === 0 && <ParamsCard formatted={formatted} actionType={action.type} assets={assets} />}
 
       <RawCard action={tx.action} />
     </div>
@@ -270,35 +280,153 @@ function FillsCard({ fills, assets }: { fills: UserFill[] | null; assets: AssetR
   );
 }
 
-function ParamsCard({ formatted }: { formatted: FormattedTransactionData }) {
+const ADDRESS = /^0x[0-9a-fA-F]{40}$/;
+/** Fields that only describe the signature envelope. */
+const ENVELOPE = new Set(["Signature chain id", "Hyperliquid chain", "Nonce"]);
+
+/** A long list (oracle prices, vault lists) folds behind its size instead of filling the page. */
+function LongJson({ text }: { text: string }) {
+  let size = "";
+  try {
+    const v = JSON.parse(text);
+    if (Array.isArray(v)) size = `${v.length} entries`;
+    else if (v && typeof v === "object") size = `${Object.keys(v).length} fields`;
+  } catch {
+    // not JSON: show as is
+  }
+  if (text.split("\n").length <= 8) return <pre className="mono text-[11.5px] text-text-secondary whitespace-pre-wrap">{text}</pre>;
+  return (
+    <details>
+      <summary className="cursor-pointer text-brand hover:underline">{size || "Show"}</summary>
+      <pre className="mono mt-1.5 max-h-[320px] overflow-auto text-[11.5px] text-text-secondary whitespace-pre-wrap scrollbar-brand">{text}</pre>
+    </details>
+  );
+}
+
+function ParamsCard({
+  formatted,
+  actionType,
+  assets,
+}: {
+  formatted: FormattedTransactionData;
+  actionType: string;
+  assets: AssetResolver | null;
+}) {
   // The first section repeats type, user and time already shown above.
-  const fields = formatted.sections.flatMap((s) => s.fields).filter((f) => !["Type", "User", "Time", "Hash", "Block"].includes(f.label));
+  const all = formatted.sections
+    .flatMap((s) => s.fields)
+    .filter((f) => !["Type", "User", "Time", "Hash", "Block"].includes(f.label))
+    .map((f) => ({ ...f, label: humanize(f.label) }));
+  // Envelope fields last: they say how it was signed, not what it did.
+  const fields = [...all.filter((f) => !ENVELOPE.has(f.label)), ...all.filter((f) => ENVELOPE.has(f.label))];
   if (fields.length === 0) return null;
-  const show = (v: FormattedTransactionData["sections"][number]["fields"][number]) => {
-    if (v.value === null || v.value === undefined || v.value === "") return <span className="text-text-tertiary">–</span>;
-    if (v.type === "boolean") return v.value ? "Yes" : "No";
-    if (v.type === "address")
+
+  const show = (f: (typeof fields)[number]) => {
+    const v = f.value;
+    if (v === null || v === undefined || v === "") return <span className="text-text-tertiary">–</span>;
+    const text = String(v);
+    if (f.type === "boolean" || text === "true" || text === "false") return v === true || text === "true" ? "Yes" : "No";
+    // Asset ids read as the market they point to.
+    if (/^asset$/i.test(f.label) && /^\d+$/.test(text) && assets) {
+      const a = assets.byId(Number(text));
+      if (a)
+        return (
+          <span className="inline-flex items-center gap-2">
+            <AssetChip asset={a} />
+            <span className="mono text-[11px] text-text-tertiary">id {text}</span>
+          </span>
+        );
+    }
+    // vaultTransfer carries USDC in micro units.
+    if (actionType === "vaultTransfer" && f.label === "Usd" && /^\d+$/.test(text))
+      return <span className="mono">{(Number(text) / 1e6).toLocaleString("en-US", { maximumFractionDigits: 6 })} USDC</span>;
+    if (f.type === "address" || ADDRESS.test(text))
       return (
-        <Link href={`/explorer/address/${v.value}`} className="mono text-brand hover:underline">
-          <HlAddressText address={String(v.value)} />
+        <Link href={`/explorer/address/${text}`} className="mono text-brand hover:underline" title={text}>
+          <HlAddressText address={text} />
         </Link>
       );
-    if (v.type === "json")
+    if (f.type === "json") return <LongJson text={text} />;
+    // Calldata and signed payloads: the first bytes, the rest on demand.
+    if (/^0x[0-9a-f]+$/i.test(text) && text.length > 140)
       return (
-        <pre className="mono text-[11.5px] text-text-secondary whitespace-pre-wrap">{String(v.value)}</pre>
+        <details>
+          <summary className="cursor-pointer">
+            <span className="mono">{text.slice(0, 66)}…</span> <span className="text-brand hover:underline">{(text.length - 2) / 2} bytes</span>
+          </summary>
+          <span className="mono mt-1.5 block break-all text-[11.5px] text-text-secondary">{text}</span>
+        </details>
       );
-    if (v.type === "amount" || v.type === "hash") return <span className="mono">{String(v.value)}</span>;
-    return String(v.value);
+    if (f.type === "amount" || f.type === "hash" || /^0x[0-9a-f]+$/i.test(text)) return <span className="mono">{text}</span>;
+    return text;
   };
+
   return (
     <Card padding="none">
       <CardHeading icon={<Receipt size={14} />} title="Parameters" />
       <div className="grid gap-x-8 px-4 py-2 lg:grid-cols-2">
         {fields.map((f, i) => (
-          <Field key={`${f.label}-${i}`} label={humanize(f.label)}>
+          <Field key={`${f.label}-${i}`} label={actionType === "vaultTransfer" && f.label === "Usd" ? "Amount" : f.label}>
             {show(f)}
           </Field>
         ))}
+      </div>
+    </Card>
+  );
+}
+
+/**
+ * An EVM transaction sent through HyperCore (evmRawTx): the signed payload is
+ * decoded here, and the sender recovered from its signature.
+ */
+function EvmTxCard({ raw }: { raw: Hex }) {
+  const parsed = useMemo(() => {
+    try {
+      return parseTransaction(raw);
+    } catch {
+      return null;
+    }
+  }, [raw]);
+  const [from, setFrom] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    recoverTransactionAddress({ serializedTransaction: raw as Parameters<typeof recoverTransactionAddress>[0]["serializedTransaction"] })
+      .then((a) => !cancelled && setFrom(a))
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [raw]);
+  if (!parsed) return null;
+  const addr = (a: string | null | undefined) =>
+    a ? (
+      <Link href={`/explorer/address/${a}`} className="mono text-brand hover:underline" title={a}>
+        <HlAddressText address={a} />
+      </Link>
+    ) : (
+      <span className="text-text-tertiary">contract creation</span>
+    );
+  return (
+    <Card padding="none">
+      <CardHeading icon={<Cpu size={14} />} title="HyperEVM transaction" meta={parsed.type} />
+      <div className="grid gap-x-8 px-4 py-2 lg:grid-cols-2">
+        <Field label="From">{from ? addr(from) : <span className="text-text-tertiary">recovering…</span>}</Field>
+        <Field label="To">{addr(parsed.to)}</Field>
+        <Field label="Value">
+          <span className="mono">{formatEther(parsed.value ?? BigInt(0))} HYPE</span>
+        </Field>
+        <Field label="Method">
+          <span className="mono">{parsed.data && parsed.data.length >= 10 ? parsed.data.slice(0, 10) : "transfer"}</span>
+        </Field>
+        <Field label="Nonce">
+          <span className="mono">{parsed.nonce ?? "–"}</span>
+        </Field>
+        <Field label="Gas limit">
+          <span className="mono">{parsed.gas != null ? parsed.gas.toLocaleString("en-US") : "–"}</span>
+        </Field>
+        <Field label="Chain">
+          <span className="mono">{parsed.chainId === 999 ? "HyperEVM (999)" : parsed.chainId ?? "–"}</span>
+        </Field>
       </div>
     </Card>
   );
