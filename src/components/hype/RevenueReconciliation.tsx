@@ -13,7 +13,7 @@ import { SourceCoverageNote } from "./SourceCoverageNote";
  *
  * The statement is DefiLlama's, because it is the basis the market quotes and
  * the only public one that splits fees from revenue. The segment view is ours,
- * summed from six sources. They do not land on the same number, and a reader
+ * summed from seven sources. They do not land on the same number, and a reader
  * who spots that without explanation is right to distrust both.
  *
  * So it is stated here instead: same window, both figures, the gap, and what
@@ -65,7 +65,7 @@ export const RevenueReconciliation = memo(function RevenueReconciliation() {
             {
               label: "Liquid Terminal",
               value: ours == null ? "—" : compactUsd(ours),
-              sub: "six sources, used by the segments",
+              sub: "seven sources, used by the segments",
             },
             {
               label: "Difference",
@@ -91,7 +91,8 @@ export const RevenueReconciliation = memo(function RevenueReconciliation() {
         <p className="text-[11.5px] text-text-secondary leading-relaxed mt-3">
           Both are protocol revenue over the same 30 days, counted differently. Ours doubles spot
           fees to approximate the gross-user figure before the deployer takes their half on HIP-1
-          pairs, and it counts HIP-3 deploy auctions and priority fees as revenue lines of their
+          pairs, and it counts HIP-3 deploy auctions, priority fees and the USDC reserve yield
+          (AQAv2, paid once a month and booked on the day it lands) as revenue lines of their
           own. DefiLlama aggregates on its own schedule and methodology. Neither is a correction of
           the other: the segment view is the more granular, the DefiLlama line is the one other
           venues are quoted on, which is why the comparison uses it.

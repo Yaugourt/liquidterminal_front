@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
         warn={warn}
         mascot={mascot}
       >
-        {/* one bar, five sources, in the same colours as the app */}
+        {/* one bar, six sources, in the same colours as the app */}
         <div
           style={{
             display: "flex",

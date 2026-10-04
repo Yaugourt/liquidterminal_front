@@ -21,7 +21,7 @@ const WINDOW_LABELS: Record<RevenueWindow, string> = {
 
 /**
  * RevenueFlywheelCard — protocol revenue framed as the fuel for the HYPE
- * buyback. Reuses the dashboard `RevenueChart` (5-source stacked bars + KPI
+ * buyback. Reuses the dashboard `RevenueChart` (6-source stacked bars + KPI
  * strip + source breakdown). The actual buyback figures live in the Assistance
  * Fund card; here we only note that ~97–99% of these fees fund it.
  */
