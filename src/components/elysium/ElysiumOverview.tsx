@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { memo, useMemo } from "react";
-import { Activity, ArrowDownLeft, ArrowUpRight, Boxes, Coins, Layers, Shield, Waypoints } from "lucide-react";
+import { Activity, ArrowDownLeft, ArrowUpRight, Boxes, Coins, Layers, Rocket, Shield, Waypoints } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   CardHeading,
@@ -471,6 +471,19 @@ export function ElysiumOverview() {
         <ElysiumMark size={13} className="text-text-secondary" />
         Testnet data: balances and amounts are test tokens with no market value.
       </div>
+      <Link
+        href="/elysium/start"
+        className="flex flex-wrap items-center gap-3 rounded-xl border border-brand/30 bg-brand/5 px-4 py-3 hover:border-brand/60 transition-colors"
+      >
+        <Rocket size={16} className="text-brand shrink-0" />
+        <span className="min-w-0 flex-1">
+          <span className="block text-[13px] font-semibold text-text-primary">New to Elysium? Start here</span>
+          <span className="block text-[12px] text-text-secondary">
+            Add the network, claim free test HYPE and make your first transaction, or set up your tools to build.
+          </span>
+        </span>
+        <span className="text-[12px] font-medium text-brand">Get started</span>
+      </Link>
       <ElysiumKpis />
       <ElysiumActivity />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">

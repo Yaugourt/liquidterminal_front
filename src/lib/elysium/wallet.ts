@@ -60,6 +60,16 @@ export async function sendDeployment(provider: EIP1193Provider, tx: { account: A
   return wallet.sendTransaction({ account: tx.account, chain: elysiumTestnet, data: tx.data, value: tx.value, gas: tx.gas, to: null });
 }
 
+/** Wrapped HYPE on Elysium (a proxy; `deposit()` mints WHYPE 1:1 for the HYPE sent). */
+export const ELYSIUM_WHYPE: Address = "0xcd57f65c2b0e5881cfc2e609f7cd53b746e1f234";
+
+/** Wraps `value` wei of HYPE into WHYPE from `account`: a one-call first transaction. */
+export async function sendWrapHype(provider: EIP1193Provider, account: Address, value: bigint): Promise<Hash> {
+  const wallet = createWalletClient({ account, chain: elysiumTestnet, transport: custom(provider) });
+  // deposit() selector
+  return wallet.sendTransaction({ account, chain: elysiumTestnet, to: ELYSIUM_WHYPE, data: "0xd0e30db0", value });
+}
+
 /** Short message for wallet errors (user rejection reads as a plain sentence). */
 export function walletError(e: unknown): string {
   const code = (e as { code?: number }).code;

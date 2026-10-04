@@ -447,8 +447,8 @@ export const seoConfig = {
     path: "/elysium/economics",
   },
   elysiumStart: {
-    title: "Start Building on Elysium Testnet - Network, Faucet, Deploy",
-    description: "Build on Elysium testnet in six steps: add the network, claim test HYPE from the faucet or bridge it, deploy a contract, read its transaction, verify its source, and set up Foundry, Hardhat or viem.",
+    title: "Try Elysium Testnet - Faucet, First Transaction, Build",
+    description: "Get started on Elysium testnet: add the network, claim free test HYPE, make your first transaction and bridge HYPE, or deploy, inspect and verify a contract with Foundry, Hardhat or viem.",
     keywords: ["Elysium testnet", "Elysium faucet", "deploy on Elysium", "Elysium chain id", "Elysium RPC", "verify contract Elysium"],
     path: "/elysium/start",
   },

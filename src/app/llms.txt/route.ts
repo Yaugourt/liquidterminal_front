@@ -62,7 +62,7 @@ These pages are client-rendered dashboards; the numbers below them come from pub
 - [Simulator](${base}/elysium/simulate): dry-run a call or a contract deployment on live state; /elysium/simulate?kind=deploy for deployments
 - [Decoder](${base}/elysium/decode): what a contract is, its functions, proxy and admin powers. Per-address pages at /elysium/address/{address}
 - [Contracts](${base}/elysium/contracts), [Tokens](${base}/elysium/tokens), [DEX](${base}/elysium/dex), [Bridge](${base}/elysium/bridge), [Users](${base}/elysium/users), [Economics](${base}/elysium/economics): computed analytics
-- [Start building](${base}/elysium/start): testnet in six steps: network, faucet and bridge, deploy, inspect, verify, Foundry/Hardhat/viem config, chain differences from Ethereum
+- [Start here](${base}/elysium/start): Elysium testnet guide for users (network, faucet, first transaction, bridge) and builders (deploy, inspect, verify, Foundry/Hardhat/viem, chain differences)
 - [Run a node](${base}/elysium/node): archive snapshots and restore commands
 - [Share studio](${base}/elysium/share): Elysium data cards
 

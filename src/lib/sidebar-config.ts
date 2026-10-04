@@ -275,6 +275,7 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
   {
     groupName: null,
     items: [
+      { name: 'Start here', href: '/elysium/start', icon: null, IconComponent: Rocket },
       { name: 'Overview', href: '/elysium', icon: null, IconComponent: Home },
       { name: 'Contracts', href: '/elysium/contracts', icon: null, IconComponent: Blocks },
       { name: 'DEX', href: '/elysium/dex', icon: null, IconComponent: ArrowLeftRight },
@@ -289,7 +290,6 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
   {
     groupName: 'Build',
     items: [
-      { name: 'Start building', href: '/elysium/start', icon: null, IconComponent: Rocket },
       { name: 'Network', href: '/elysium/network', icon: null, IconComponent: Cpu },
       { name: 'Simulator', href: '/elysium/simulate', icon: null, IconComponent: FlaskConical },
       { name: 'Tx inspector', href: '/elysium/tx', icon: null, IconComponent: Receipt },

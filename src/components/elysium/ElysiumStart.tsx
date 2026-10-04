@@ -2,16 +2,18 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { formatEther, formatGwei, isHash, parseAbi, type Address, type EIP1193Provider } from "viem";
-import { Boxes, Check, Droplets, ExternalLink, FileSearch, Info, Rocket, ShieldCheck, Wallet, Wrench } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { formatEther, formatGwei, isHash, parseAbi, parseEther, type Address, type EIP1193Provider, type Hash } from "viem";
+import { ArrowLeftRight, Boxes, Check, Compass, Droplets, ExternalLink, FileSearch, Info, Rocket, ShieldCheck, Sparkles, Wallet, Wrench } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PillTabs } from "@/components/ui/pill-tabs";
+import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { CopyButton } from "@/components/ui/copy-button";
 import { CardHeading, KpiRibbon, type KpiCell } from "@/components/common";
 import { ELYSIUM_ALT_RPC_URL, ELYSIUM_CHAIN } from "@/lib/elysium-chain";
 import { PRECOMPILE, elysiumClient } from "@/services/elysium/rpc";
-import { connectWallet, injectedWallet, switchToElysium, walletChainId, walletError } from "@/lib/elysium/wallet";
+import { ELYSIUM_WHYPE, connectWallet, injectedWallet, sendWrapHype, switchToElysium, walletChainId, walletError } from "@/lib/elysium/wallet";
 import { EXPLORER, ExtLink, addressHref, short } from "./shared";
 
 const FAUCET_URL = "https://elysium.kinetiq.xyz/testnet-faucet";
@@ -202,14 +204,26 @@ function Step({
   );
 }
 
+type Track = "try" | "build";
+
+/** Amount the first-transaction step wraps: small enough to leave gas for everything else. */
+const WRAP_AMOUNT = "0.001";
+
 /**
- * Elysium · Start building: the testnet path in six steps, from adding the
+ * Elysium · Start here: the testnet path in six steps, from adding the
  * network to reading your own transaction. Steps 1 and 2 are checked live
  * against the connected wallet and the chain; the rest hands over to the
  * deployer, the inspector and the usual toolchains.
  */
 export function ElysiumStart() {
   const router = useRouter();
+  const pathname = usePathname();
+  const sp = useSearchParams();
+  const track: Track = sp.get("track") === "build" ? "build" : "try";
+  const setTrack = (t: Track) => router.replace(t === "build" ? `${pathname}?track=build` : pathname, { scroll: false });
+  const [wrapHash, setWrapHash] = useState<Hash | null>(null);
+  const [wrapErr, setWrapErr] = useState<string | null>(null);
+  const [wrapping, setWrapping] = useState(false);
   const [provider, setProvider] = useState<EIP1193Provider | null>(null);
   const [account, setAccount] = useState<Address | null>(null);
   const [chainId, setChainId] = useState<number | null>(null);
@@ -271,6 +285,25 @@ export function ElysiumStart() {
     }
   };
 
+  const wrap = async () => {
+    if (!provider) return;
+    setWrapErr(null);
+    setWrapping(true);
+    try {
+      const from = account ?? (await connectWallet(provider));
+      setAccount(from);
+      if ((await walletChainId(provider)) !== ELYSIUM_CHAIN.chainId) await switchToElysium(provider);
+      const h = await sendWrapHype(provider, from, parseEther(WRAP_AMOUNT));
+      setWrapHash(h);
+      setHash(h);
+      refreshBalance();
+    } catch (e) {
+      setWrapErr(walletError(e));
+    } finally {
+      setWrapping(false);
+    }
+  };
+
   const live = useChainLive();
   const funded = balance != null && balance > BigInt(0);
   const dash = "–";
@@ -298,17 +331,27 @@ export function ElysiumStart() {
   return (
     <div className="space-y-4">
       <Card padding="none">
-        <div className="p-4 space-y-2">
-          <h1 className="text-[18px] font-semibold text-text-primary">Start building on Elysium testnet</h1>
-          <p className="text-[13px] leading-relaxed text-text-secondary max-w-[70ch]">
-            Elysium is a chain that settles on HyperEVM, with HYPE as its gas token. Six steps take you from an empty
-            wallet to a contract deployed, verified and its transaction decoded. Steps 1 and 2 check themselves against your
-            wallet and the chain as you go.
-          </p>
+        <div className="flex flex-wrap items-start gap-4 p-4">
+          <div className="min-w-0 flex-1 space-y-2">
+            <h1 className="text-[18px] font-semibold text-text-primary">{track === "build" ? "Build on Elysium testnet" : "Try Elysium testnet"}</h1>
+            <p className="text-[13px] leading-relaxed text-text-secondary max-w-[70ch]">
+              Elysium is a new chain built by Kinetiq on top of HyperEVM, with HYPE as its gas. The testnet is free: the
+              HYPE you use has no value. Pick your path below. Both start with the same two steps, and each step checks
+              itself against your wallet as you go.
+            </p>
+          </div>
+          <PillTabs
+            tabs={[
+              { value: "try", label: "I want to try it" },
+              { value: "build", label: "I'm a builder" },
+            ]}
+            activeTab={track}
+            onTabChange={(v) => setTrack(v as Track)}
+          />
         </div>
       </Card>
 
-      <KpiRibbon cells={cells} />
+      {track === "build" && <KpiRibbon cells={cells} />}
 
       <div className="grid gap-4 lg:grid-cols-2 items-start">
         <Step n={1} title="Add the network" icon={<Wallet size={14} />} done={onElysium}>
@@ -375,6 +418,108 @@ export function ElysiumStart() {
           <p className="text-[11.5px] text-text-tertiary">Refreshed every 10 seconds from the Elysium RPC.</p>
         </Step>
 
+      </div>
+
+      {track === "try" ? (
+        <div className="grid gap-4 lg:grid-cols-2 items-start">
+          <Step n={3} title="Make your first transaction" icon={<Sparkles size={14} />} done={wrapHash != null}>
+            <p>
+              One click wraps {WRAP_AMOUNT} HYPE into WHYPE, the ERC-20 version of HYPE that apps use. It is a real
+              transaction on Elysium: your wallet asks you to confirm it, and the gas is a tiny amount of test HYPE.
+            </p>
+            {!provider ? (
+              <p>Open this page in a browser with a wallet to send it.</p>
+            ) : wrapHash ? (
+              <p className="text-success">
+                Sent.{" "}
+                <Link href={`/elysium/tx/${wrapHash}`} className="underline">
+                  See it in the inspector
+                </Link>
+                .
+              </p>
+            ) : (
+              <Button variant="ghostBrand" className="w-full" onClick={wrap} disabled={wrapping || (account != null && !funded)}>
+                {wrapping ? <InlineSpinner /> : <Sparkles />}
+                {wrapping ? "Confirm in your wallet…" : `Wrap ${WRAP_AMOUNT} HYPE`}
+              </Button>
+            )}
+            {account != null && !funded && !wrapHash && <p className="text-text-tertiary">Claim test HYPE in step 2 first.</p>}
+            {wrapErr && <p className="text-danger">{wrapErr}</p>}
+            <p className="text-[11.5px] text-text-tertiary">
+              WHYPE contract{" "}
+              <Link href={addressHref(ELYSIUM_WHYPE)} className="mono text-text-secondary hover:text-brand">
+                {short(ELYSIUM_WHYPE)}
+              </Link>
+              . Unwrapping gives the HYPE back.
+            </p>
+          </Step>
+
+          <Step n={4} title="See it on the chain" icon={<FileSearch size={14} />}>
+            <p>
+              Every transaction on Elysium is public. The inspector shows what yours did in plain words: who sent what,
+              the fee paid, the events it produced.
+            </p>
+            {wrapHash ? (
+              <Button variant="ghostBrand" className="w-full" asChild>
+                <Link href={`/elysium/tx/${wrapHash}`}>
+                  <FileSearch /> Open my transaction
+                </Link>
+              </Button>
+            ) : (
+              <p className="text-text-tertiary">Your transaction from step 3 will show up here.</p>
+            )}
+            {account && (
+              <p>
+                <Link href={addressHref(account)} className="text-brand hover:underline">
+                  Your address page
+                </Link>{" "}
+                lists everything your wallet has done on Elysium.
+              </p>
+            )}
+          </Step>
+
+          <Step n={5} title="Look around" icon={<Compass size={14} />}>
+            <p>See what is already running on the testnet, live:</p>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { href: "/elysium", label: "Overview", hint: "Blocks, transactions, activity" },
+                { href: "/elysium/dex", label: "DEX", hint: "Pools and swaps" },
+                { href: "/elysium/tokens", label: "Tokens", hint: "What has been launched" },
+                { href: "/elysium/users", label: "Users", hint: "Who is active" },
+              ].map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="rounded-lg border border-border-subtle bg-surface-2/50 px-3 py-2 hover:border-brand/40 transition-colors"
+                >
+                  <div className="text-[12.5px] font-medium text-text-primary">{l.label}</div>
+                  <div className="text-[11px] text-text-tertiary">{l.hint}</div>
+                </Link>
+              ))}
+            </div>
+          </Step>
+
+          <Step n={6} title="Move HYPE between chains" icon={<ArrowLeftRight size={14} />}>
+            <p>
+              The{" "}
+              <a href={BRIDGE_URL} target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">
+                Elysium bridge
+              </a>{" "}
+              moves test HYPE between HyperEVM testnet and Elysium, 1:1. A deposit to Elysium takes about a minute
+              according to the bridge. A withdrawal back becomes claimable on HyperEVM once the rollup confirms it.
+            </p>
+            <p>
+              Want to build something?{" "}
+              <button type="button" onClick={() => setTrack("build")} className="text-brand hover:underline">
+                Switch to the builder path
+              </button>
+              .
+            </p>
+          </Step>
+        </div>
+      ) : (
+      <>
+      <div className="grid gap-4 lg:grid-cols-2 items-start">
         <Step n={3} title="Deploy a contract" icon={<Rocket size={14} />}>
           <p>
             The deployer comes loaded with a small Greeter contract. Simulate it first: you see the address it will get,
@@ -541,6 +686,8 @@ export function ElysiumStart() {
           </ExtLink>
         </div>
       </Card>
+      </>
+      )}
     </div>
   );
 }
