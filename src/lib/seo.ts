@@ -446,6 +446,12 @@ export const seoConfig = {
     keywords: ["Elysium fees", "Elysium gas fees", "Elysium spam", "failed transactions"],
     path: "/elysium/economics",
   },
+  elysiumStart: {
+    title: "Start Building on Elysium Testnet - Network, Faucet, Deploy",
+    description: "Build on Elysium testnet in five steps: add the network to your wallet, claim test HYPE from the faucet, deploy a contract, read its transaction, and set up Foundry, Hardhat or viem.",
+    keywords: ["Elysium testnet", "Elysium faucet", "deploy on Elysium", "Elysium chain id", "Elysium RPC"],
+    path: "/elysium/start",
+  },
   elysiumNode: {
     title: "Run an Elysium Node - Archive Snapshots & Sync",
     description: "Run an Elysium testnet node: the latest archive snapshot and its checksum, the Nitro and Docker commands to restore it, and how many blocks are left to sync.",

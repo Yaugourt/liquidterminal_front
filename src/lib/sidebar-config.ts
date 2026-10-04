@@ -28,6 +28,7 @@ import { AtSign,
   Coins,
   Server,
   FlaskConical,
+  Rocket,
   FileSearch,
   HandCoins,
 } from "lucide-react";
@@ -288,6 +289,7 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
   {
     groupName: 'Build',
     items: [
+      { name: 'Start building', href: '/elysium/start', icon: null, IconComponent: Rocket },
       { name: 'Network', href: '/elysium/network', icon: null, IconComponent: Cpu },
       { name: 'Simulator', href: '/elysium/simulate', icon: null, IconComponent: FlaskConical },
       { name: 'Tx inspector', href: '/elysium/tx', icon: null, IconComponent: Receipt },
