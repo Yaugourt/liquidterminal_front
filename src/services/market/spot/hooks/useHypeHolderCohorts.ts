@@ -25,55 +25,24 @@ export interface HypeHolderCohorts {
 }
 
 /**
- * Tier definitions by HYPE balance. Order matters: buckets are matched
- * top-down, so the first threshold a balance clears wins.
- */
-const TIER_DEFS: { label: string; min: number }[] = [
-  { label: 'Whale', min: 100_000 },
-  { label: 'Shark', min: 10_000 },
-  { label: 'Dolphin', min: 1_000 },
-  { label: 'Fish', min: 100 },
-  { label: 'Shrimp', min: 0 },
-];
-
-/**
- * useHypeHolderCohorts — buckets HYPE holders into size tiers.
+ * useHypeHolderCohorts — HYPE holders bucketed into size tiers (Whale
+ * ≥ 100K, Shark ≥ 10K, Dolphin ≥ 1K, Fish ≥ 100, Shrimp), spot + staked
+ * balances summed per address.
  *
- * Wraps `useTokenHolders("HYPE")` (Hypurrscan holders + staked, already merged
- * into one address → balance map) and folds the balances into whale → retail
- * cohorts, computing per-tier holder count, summed balance and share of the
- * total tracked supply.
+ * The backend folds the Hypurrscan lists into the tiers; this only asks for
+ * the smallest page and derives each tier's share of the tracked supply.
  */
 export function useHypeHolderCohorts(): HypeHolderCohorts {
-  const { holders, isLoading, error } = useTokenHolders('HYPE');
+  const { cohorts, holdersCount, totalBalance, isLoading, error } = useTokenHolders('HYPE', 0, 1);
 
   return useMemo(() => {
-    const counts = TIER_DEFS.map(() => 0);
-    const balances = TIER_DEFS.map(() => 0);
-    let totalSupply = 0;
-    let totalHolders = 0;
-
-    for (const value of Object.values(holders ?? {})) {
-      const balance = Number(value);
-      if (!Number.isFinite(balance) || balance <= 0) continue;
-
-      // First tier whose threshold the balance clears (top-down).
-      const idx = TIER_DEFS.findIndex((tier) => balance >= tier.min);
-      if (idx === -1) continue;
-
-      counts[idx] += 1;
-      balances[idx] += balance;
-      totalSupply += balance;
-      totalHolders += 1;
-    }
-
-    const tiers: HolderCohortTier[] = TIER_DEFS.map((tier, i) => ({
+    const tiers: HolderCohortTier[] = cohorts.map((tier) => ({
       label: tier.label,
-      count: counts[i],
-      balance: balances[i],
-      supplyPct: totalSupply > 0 ? (balances[i] / totalSupply) * 100 : 0,
+      count: tier.count,
+      balance: tier.balance,
+      supplyPct: totalBalance > 0 ? (tier.balance / totalBalance) * 100 : 0,
     }));
 
-    return { tiers, totalHolders, totalSupply, isLoading, error };
-  }, [holders, isLoading, error]);
+    return { tiers, totalHolders: holdersCount, totalSupply: totalBalance, isLoading, error };
+  }, [cohorts, holdersCount, totalBalance, isLoading, error]);
 }

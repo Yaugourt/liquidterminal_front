@@ -46,7 +46,9 @@ export default function TokenPage() {
         () => new Set<BottomTab>(["twap"])
     );
 
-    // Shared data — one fetch each, feeding TokenDetailsBand and HoldersTable.
+    // Shared data — one fetch each. The holders' first page feeds the band's
+    // count and the tab's badge; HoldersTable reads the same page (shared
+    // request) and then its own.
     const { data: tokenDetails, isLoading: detailsLoading } = useTokenDetails(token?.tokenId || null);
     const holdersData = useTokenHolders(tokenName);
 
@@ -190,13 +192,9 @@ export default function TokenPage() {
                         {visitedTabs.has('holders') && (
                             <div className={activeTab === 'holders' ? '' : 'hidden'}>
                                 <HoldersTable
-                                    holders={holdersData.holders}
-                                    isLoading={holdersData.isLoading}
-                                    error={holdersData.error}
                                     tokenName={tokenName}
                                     tokenPrice={token.price}
                                     totalSupply={tokenDetails?.totalSupply ? parseFloat(tokenDetails.totalSupply) : undefined}
-                                    stakedHolders={holdersData.stakedHolders}
                                 />
                             </div>
                         )}

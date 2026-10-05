@@ -1,8 +1,8 @@
-import { SpotGlobalStats, SpotToken, SpotPairMeta, TokenHoldersResponse } from './types';
-import { get, getExternal, postExternal } from '../../api/axios-config';
+import { SpotGlobalStats, SpotToken, SpotPairMeta, TokenHoldersPage } from './types';
+import { get, postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse, buildQueryParams } from '../../common';
-import { API_URLS, buildHypurrscanUrl } from '../../api/constants';
+import { API_URLS } from '../../api/constants';
 
 /**
  * Récupère les statistiques globales du marché spot
@@ -97,24 +97,25 @@ export const fetchSpotPairMeta = async (): Promise<Record<number, SpotPairMeta>>
 };
 
 /**
- * Récupère les holders d'un token spécifique
+ * One page of a spot token's holders, largest first (spot + staked balances
+ * summed per address), with the holder count, summed balance and cohorts of
+ * every holder. The backend aggregates Hypurrscan's lists (HYPE's weigh
+ * 17.7 MB) so the browser no longer downloads them.
+ *
+ * @param page starts at 1
  */
-export const fetchTokenHolders = async (tokenName: string): Promise<TokenHoldersResponse> => {
+export const fetchTokenHolders = async (
+  tokenName: string,
+  page: number,
+  limit: number,
+  signal?: AbortSignal
+): Promise<TokenHoldersPage> => {
   return withErrorHandling(async () => {
-    const url = `${buildHypurrscanUrl('HYPURRSCAN_HOLDERS')}/${tokenName}`;
-    // Hypurrscan is a THIRD-PARTY host — use the external client so the backend
-    // Privy JWT is never attached to (and leaked toward) this request.
-    return await getExternal<TokenHoldersResponse>(url);
+    const response = await get<{ success: boolean; data: TokenHoldersPage }>(
+      `/market/holders/${encodeURIComponent(tokenName)}`,
+      { page, limit },
+      { signal }
+    );
+    return response.data;
   }, 'fetching token holders');
 };
-
-/**
- * Récupère les holders stakés d'un token spécifique
- */
-export const fetchStakedHolders = async (tokenName: string): Promise<TokenHoldersResponse> => {
-  return withErrorHandling(async () => {
-    const url = `${buildHypurrscanUrl('HYPURRSCAN_HOLDERS')}/staked${tokenName}`;
-    // Third-party host — external client (no Authorization header). See above.
-    return await getExternal<TokenHoldersResponse>(url);
-  }, 'fetching staked holders');
-}; 

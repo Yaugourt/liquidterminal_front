@@ -1,26 +1,19 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { useNumberFormat, NumberFormatType } from "@/store/number-format.store";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useGlobalAliases } from "@/services/explorer";
 import { TypedDataTable, ModuleAsset, CellValue, type Column } from "@/components/common";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { useTokenHolders } from "@/services/market/spot/hooks/useTokenHolders";
+import type { TokenHolderRow } from "@/services/market/spot/types";
 
 interface HoldersTableProps {
-  holders: Record<string, number>;
-  isLoading: boolean;
-  error: Error | null;
   tokenName: string;
   tokenPrice?: number;
   totalSupply?: number;
-  stakedHolders?: Record<string, number>;
-}
-
-interface HolderRow {
-  address: string;
-  amount: number;
 }
 
 const formatPercentage = (amount: number, totalSupply: number, format: NumberFormatType) => {
@@ -29,25 +22,23 @@ const formatPercentage = (amount: number, totalSupply: number, format: NumberFor
   return `${formatNumber(percentage, format, { maximumFractionDigits: 2 })}%`;
 };
 
-export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, totalSupply, stakedHolders }: HoldersTableProps) => {
+/**
+ * Paged server-side: each page is one small `/market/holders/:token` read
+ * (the backend keeps the largest 10,000 holders of each token).
+ */
+export const HoldersTable = memo(({ tokenName, tokenPrice, totalSupply }: HoldersTableProps) => {
   const { format } = useNumberFormat();
   const { getAlias } = useGlobalAliases();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { holders, rowsPage, rowsLimit, total, totalBalance, isLoading, error } =
+    useTokenHolders(tokenName, currentPage, rowsPerPage);
 
-  const holdersArray = useMemo<HolderRow[]>(
-    () =>
-      Object.entries(holders)
-        .map(([address, amount]) => ({ address, amount }))
-        .sort((a, b) => b.amount - a.amount),
-    [holders]
-  );
+  const supplyForCalculation = totalSupply || totalBalance;
+  // Ranks follow the rows on screen: the previous page stays up while the next loads.
+  const startIndex = rowsPage * rowsLimit;
 
-  const supplyForCalculation = totalSupply || holdersArray.reduce((sum, h) => sum + h.amount, 0);
-  const startIndex = currentPage * rowsPerPage;
-  const paginatedHolders = holdersArray.slice(startIndex, startIndex + rowsPerPage);
-
-  const columns: Column<HolderRow>[] = [
+  const columns: Column<TokenHolderRow>[] = [
     {
       key: "rank",
       header: "#",
@@ -70,7 +61,7 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
       align: "right",
       accessor: (holder) => (
         <span className="inline-flex items-center justify-end gap-1.5">
-          {stakedHolders?.[holder.address] ? <StatusBadge variant="gold">Staked</StatusBadge> : null}
+          {holder.staked > 0 ? <StatusBadge variant="gold">Staked</StatusBadge> : null}
           <CellValue value={formatNumber(holder.amount, format, { maximumFractionDigits: 2 })} />
         </span>
       ),
@@ -94,22 +85,26 @@ export const HoldersTable = memo(({ holders, isLoading, error, tokenPrice, total
   ];
 
   return (
-    <TypedDataTable<HolderRow>
-      data={paginatedHolders}
+    <TypedDataTable<TokenHolderRow>
+      data={holders}
       columns={columns}
       getRowKey={(holder) => holder.address}
-      isLoading={isLoading}
+      isLoading={isLoading && holders.length === 0}
+      paginationDisabled={isLoading}
       error={error}
       errorTitle="Error loading holders"
       emptyMessage="No holders found"
       emptyDescription="No data available"
-      total={holdersArray.length}
+      total={total}
       page={currentPage}
       rowsPerPage={rowsPerPage}
       onPageChange={setCurrentPage}
-      onRowsPerPageChange={setRowsPerPage}
+      onRowsPerPageChange={(rows) => {
+        setRowsPerPage(rows);
+        setCurrentPage(0);
+      }}
       rowsPerPageOptions={[10, 25, 50, 100]}
-      paginationVariant={holdersArray.length > 0 ? "full" : "none"}
+      paginationVariant={total > 0 ? "full" : "none"}
       density="compact"
     />
   );
