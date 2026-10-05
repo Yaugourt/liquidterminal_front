@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/mini";
 import { HIP4_CONFIG } from "@/lib/hip4/config";
 
 const CHUNK = 1000;
@@ -15,21 +15,21 @@ function padUint(n: string | bigint) {
   return "0".repeat(64 - h.length) + h;
 }
 
-const HexStringSchema = z.string().regex(/^0x[0-9a-fA-F]*$/, "expected 0x-prefixed hex");
+const HexStringSchema = z.string().check(z.regex(/^0x[0-9a-fA-F]*$/, "expected 0x-prefixed hex"));
 const RpcLogSchema = z.object({
-  topics: z.array(z.string()).optional(),
-  data: z.string().optional(),
+  topics: z.optional(z.array(z.string())),
+  data: z.optional(z.string()),
 });
 const RpcLogsSchema = z.array(RpcLogSchema);
 const RpcErrorSchema = z.object({
-  code: z.number().optional(),
-  message: z.string().optional(),
+  code: z.optional(z.number()),
+  message: z.optional(z.string()),
 });
 const RpcEnvelopeSchema = z.object({
-  jsonrpc: z.string().optional(),
-  id: z.union([z.string(), z.number(), z.null()]).optional(),
-  result: z.unknown().optional(),
-  error: RpcErrorSchema.optional(),
+  jsonrpc: z.optional(z.string()),
+  id: z.optional(z.union([z.string(), z.number(), z.null()])),
+  result: z.optional(z.unknown()),
+  error: z.optional(RpcErrorSchema),
 });
 
 function contestIdFromCreatedLog(log: { topics?: string[]; data?: string }) {

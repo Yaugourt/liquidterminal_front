@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/mini";
 
 const BuildersTimeframeSchema = z.enum(["1h", "24h", "7d", "30d"]);
 
@@ -6,9 +6,9 @@ const BuilderListRowSchema = z.object({
   address: z.string(),
   // 748/1037 rows in /builders/list ship name:null (unnamed builders) and a
   // few ship referrerStage:null; rendering falls back to a truncated address.
-  name: z.string().nullable(),
-  referredBy: z.string().nullable(),
-  referrerStage: z.string().nullable(),
+  name: z.nullable(z.string()),
+  referredBy: z.nullable(z.string()),
+  referrerStage: z.nullable(z.string()),
 });
 
 const BuilderStatsMetricsSchema = z.object({
@@ -16,18 +16,18 @@ const BuilderStatsMetricsSchema = z.object({
   totalVolume: z.number(),
   totalFees: z.number(),
   totalBuilderFees: z.number(),
-  uniqueBuilders: z.number().optional(),
+  uniqueBuilders: z.optional(z.number()),
   uniqueUsers: z.number(),
   uniqueCoins: z.number(),
 });
 
 const BuilderStatsVariationsSchema = z.object({
-  fillCountPct: z.number().nullable().optional(),
-  totalVolumePct: z.number().nullable().optional(),
-  totalFeesPct: z.number().nullable().optional(),
-  totalBuilderFeesPct: z.number().nullable().optional(),
-  uniqueBuildersPct: z.number().nullable().optional(),
-  uniqueUsersPct: z.number().nullable().optional(),
+  fillCountPct: z.optional(z.nullable(z.number())),
+  totalVolumePct: z.optional(z.nullable(z.number())),
+  totalFeesPct: z.optional(z.nullable(z.number())),
+  totalBuilderFeesPct: z.optional(z.nullable(z.number())),
+  uniqueBuildersPct: z.optional(z.nullable(z.number())),
+  uniqueUsersPct: z.optional(z.nullable(z.number())),
 });
 
 export const BuildersGlobalStatsPayloadSchema = z.object({
@@ -68,36 +68,38 @@ export const BuildersTopPayloadSchema = z.object({
 });
 
 // Upstream-evolving shape: keep additional keys with catchall.
-const BuilderCoinBreakdownRowSchema = z
-  .object({
-    coin: z.string().optional(),
-    fillCount: z.number().optional(),
-    totalVolume: z.number().optional(),
-    totalFees: z.number().optional(),
-    totalBuilderFees: z.number().optional(),
-    uniqueUsers: z.number().optional(),
-  })
-  .catchall(z.unknown());
+const BuilderCoinBreakdownRowSchema = z.catchall(
+  z.object({
+    coin: z.optional(z.string()),
+    fillCount: z.optional(z.number()),
+    totalVolume: z.optional(z.number()),
+    totalFees: z.optional(z.number()),
+    totalBuilderFees: z.optional(z.number()),
+    uniqueUsers: z.optional(z.number()),
+  }),
+  z.unknown()
+);
 
 export const BuilderDetailStatsPayloadSchema = z.object({
   builder: z.string(),
-  builderName: z.string().nullable(),
+  builderName: z.nullable(z.string()),
   timeframe: BuildersTimeframeSchema,
-  current: BuilderStatsMetricsSchema.omit({ uniqueBuilders: true }),
-  previous: BuilderStatsMetricsSchema.omit({ uniqueBuilders: true }),
+  current: z.omit(BuilderStatsMetricsSchema, { uniqueBuilders: true }),
+  previous: z.omit(BuilderStatsMetricsSchema, { uniqueBuilders: true }),
   variations: BuilderStatsVariationsSchema,
   coinBreakdown: z.array(BuilderCoinBreakdownRowSchema),
 });
 
-const BuilderUserRowSchema = z
-  .object({
-    user: z.string().optional(),
-    address: z.string().optional(),
-    totalBuilderFees: z.number().optional(),
-    builderFees: z.number().optional(),
-    volume: z.number().optional(),
-  })
-  .catchall(z.unknown());
+const BuilderUserRowSchema = z.catchall(
+  z.object({
+    user: z.optional(z.string()),
+    address: z.optional(z.string()),
+    totalBuilderFees: z.optional(z.number()),
+    builderFees: z.optional(z.number()),
+    volume: z.optional(z.number()),
+  }),
+  z.unknown()
+);
 
 export const BuilderUsersPayloadSchema = z.object({
   timeframe: BuildersTimeframeSchema,

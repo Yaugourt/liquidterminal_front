@@ -1,4 +1,4 @@
-import { z, ZodType } from "zod";
+import { z, type ZodMiniType } from "zod/mini";
 
 /**
  * Backend envelope: `{ success, data, error?, message? }`.
@@ -7,10 +7,10 @@ import { z, ZodType } from "zod";
  */
 
 const LtEnvelopeShape = z.object({
-  success: z.boolean().optional(),
-  data: z.unknown().optional(),
-  error: z.string().optional(),
-  message: z.string().optional(),
+  success: z.optional(z.boolean()),
+  data: z.optional(z.unknown()),
+  error: z.optional(z.string()),
+  message: z.optional(z.string()),
 });
 
 class LtResponseError extends Error {
@@ -35,7 +35,7 @@ function unwrap(body: unknown): unknown {
   return env.data;
 }
 
-export function parseLtData<T>(schema: ZodType<T>, body: unknown): T {
+export function parseLtData<T>(schema: ZodMiniType<T>, body: unknown): T {
   const data = unwrap(body);
   const result = schema.safeParse(data);
   if (!result.success) {

@@ -1,14 +1,14 @@
-import { z } from "zod";
+import { z } from "zod/mini";
 
 const EvmBridgeEventSchema = z.object({
   event_type: z.string(),
   user_addr: z.string(),
   amount: z.number(),
   time: z.string(),
-  block_height: z.number().optional(),
-  validator: z.string().optional(),
-  destination: z.string().optional(),
-  nonce: z.number().optional(),
+  block_height: z.optional(z.number()),
+  validator: z.optional(z.string()),
+  destination: z.optional(z.string()),
+  nonce: z.optional(z.number()),
 });
 
 export const EvmBridgeEventsArraySchema = z.array(EvmBridgeEventSchema);
@@ -36,11 +36,11 @@ const EvmBlockSchema = z.object({
   block_time: z.string(),
   block_number: z.number(),
   block_hash: z.string(),
-  parent_hash: z.string().optional(),
-  gas_limit: z.number().optional(),
-  gas_used: z.number().optional(),
-  base_fee_per_gas: z.number().optional(),
+  parent_hash: z.optional(z.string()),
+  gas_limit: z.optional(z.number()),
+  gas_used: z.optional(z.number()),
+  base_fee_per_gas: z.optional(z.number()),
   tx_count: z.number(),
-  system_tx_count: z.number().optional(),
+  system_tx_count: z.optional(z.number()),
 });
 export const EvmBlocksArraySchema = z.array(EvmBlockSchema);
