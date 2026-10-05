@@ -1,4 +1,4 @@
-import { z } from "zod/mini";
+import * as z from "@/lib/zod-mini";
 import { HIP4_CONFIG } from "@/lib/hip4/config";
 
 const CHUNK = 1000;

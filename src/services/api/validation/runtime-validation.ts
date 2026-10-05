@@ -1,4 +1,4 @@
-import { z, type ZodMiniType } from "zod/mini";
+import * as z from "@/lib/zod-mini";
 
 /**
  * Backend envelope: `{ success, data, error?, message? }`.
@@ -35,7 +35,7 @@ function unwrap(body: unknown): unknown {
   return env.data;
 }
 
-export function parseLtData<T>(schema: ZodMiniType<T>, body: unknown): T {
+export function parseLtData<T>(schema: z.ZodMiniType<T>, body: unknown): T {
   const data = unwrap(body);
   const result = schema.safeParse(data);
   if (!result.success) {

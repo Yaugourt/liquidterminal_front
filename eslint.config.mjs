@@ -7,6 +7,36 @@ const nextTypescript = require("eslint-config-next/typescript");
 /** Vendored agent tooling (gstack, etc.): not app source; linting it breaks CI and is upstream-owned. */
 const VENDOR_AGENT_PATHS = [".agents/**", ".cursor/**"];
 
+const PRIVY_ROOT = "src/services/auth/privy/PrivyRoot.tsx";
+const PRIVY_RESTRICTED = {
+  paths: [
+    {
+      name: "@privy-io/react-auth",
+      allowTypeImports: true,
+      message:
+        "Le SDK Privy est chargé à la demande. Utilise usePrivy / useLogin / useModalStatus depuis '@/services/auth/privy' (seul PrivyRoot.tsx importe le SDK).",
+    },
+  ],
+  patterns: [
+    {
+      group: ["@privy-io/*/*"],
+      allowTypeImports: true,
+      message:
+        "Le SDK Privy est chargé à la demande : ses sous-modules ne doivent pas entrer dans le shell. Passe par '@/services/auth/privy'.",
+    },
+  ],
+};
+
+const ZOD_BARREL = "src/lib/zod-mini.ts";
+const ZOD_RESTRICTED = {
+  paths: ["zod", "zod/mini", "zod/v4", "zod/v4-mini", "zod/v4/mini"].map((name) => ({
+    name,
+    allowTypeImports: true,
+    message:
+      "Importe zod via `import * as z from '@/lib/zod-mini'` (ajoute la fonction au barrel si besoin) : le namespace de zod n'est pas tree-shaké par Turbopack.",
+  })),
+};
+
 const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
@@ -196,36 +226,32 @@ const eslintConfig = [
    * only the lazily imported PrivyRoot may import the SDK at runtime. Type
    * imports stay allowed (erased at build time).
    *
+   * zod goes through `@/lib/zod-mini`: importing `zod` or `zod/mini` directly
+   * hands Turbopack the library's namespace object, which it can't tree-shake
+   * (~50 KB gzipped of schema types and locales on the dashboard).
+   *
    * The typescript-eslint variant is used for `allowTypeImports`, and because
    * a separate rule name can't override the core `no-restricted-imports`
-   * design-system config above.
+   * design-system config above. A later block replaces the rule's options
+   * for its files, so the two exempt files get the other restriction back.
    */
   {
     files: ["src/**/*.{ts,tsx}"],
-    ignores: ["src/services/auth/privy/PrivyRoot.tsx"],
+    ignores: [PRIVY_ROOT, ZOD_BARREL],
     rules: {
       "@typescript-eslint/no-restricted-imports": [
         "error",
-        {
-          paths: [
-            {
-              name: "@privy-io/react-auth",
-              allowTypeImports: true,
-              message:
-                "Le SDK Privy est chargé à la demande. Utilise usePrivy / useLogin / useModalStatus depuis '@/services/auth/privy' (seul PrivyRoot.tsx importe le SDK).",
-            },
-          ],
-          patterns: [
-            {
-              group: ["@privy-io/*/*"],
-              allowTypeImports: true,
-              message:
-                "Le SDK Privy est chargé à la demande : ses sous-modules ne doivent pas entrer dans le shell. Passe par '@/services/auth/privy'.",
-            },
-          ],
-        },
+        { paths: [...PRIVY_RESTRICTED.paths, ...ZOD_RESTRICTED.paths], patterns: PRIVY_RESTRICTED.patterns },
       ],
     },
+  },
+  {
+    files: [PRIVY_ROOT],
+    rules: { "@typescript-eslint/no-restricted-imports": ["error", ZOD_RESTRICTED] },
+  },
+  {
+    files: [ZOD_BARREL],
+    rules: { "@typescript-eslint/no-restricted-imports": ["error", PRIVY_RESTRICTED] },
   },
   {
     ignores: [

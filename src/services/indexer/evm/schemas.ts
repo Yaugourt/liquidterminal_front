@@ -1,4 +1,4 @@
-import { z } from "zod/mini";
+import * as z from "@/lib/zod-mini";
 
 const EvmBridgeEventSchema = z.object({
   event_type: z.string(),
