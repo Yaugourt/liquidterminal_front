@@ -83,10 +83,13 @@ export function NetworkPill({ className }: { className?: string }) {
           "inline-flex h-9 items-center gap-2 rounded-lg border border-border-subtle bg-surface-2 px-3 text-[12.5px] text-text-primary hover:border-border-default focus-ring",
           className
         )}
-        aria-label="Switch network"
+        aria-label={`Switch network (${NETWORKS[active].label})`}
+        title={NETWORKS[active].label}
       >
         <Mark id={active} />
-        <span className="font-medium">{NETWORKS[active].label}</span>
+        {/* Mark only on phones: with the donate and account buttons the
+            header row ran 13px past a 375px screen on every page. */}
+        <span className="hidden sm:inline font-medium">{NETWORKS[active].label}</span>
         <ChevronDown className="h-3.5 w-3.5 text-text-tertiary" />
       </DropdownMenuTrigger>
       <NetworkMenu active={active} go={go} />
