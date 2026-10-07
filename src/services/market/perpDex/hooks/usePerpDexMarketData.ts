@@ -11,6 +11,32 @@ import {
 import { extractPerpDexAssetTicker } from '../utils';
 
 /**
+ * `perpDexs` and `allPerpMetas` only change when a dex or an asset is deployed
+ * or reconfigured — the live numbers come from the socket. Every consumer of
+ * this hook (3 on /dashboard/market, 5 on /market/perpdex) used to download
+ * both every minute (~105 KB, sent uncompressed by Hyperliquid); they now share
+ * one download per META_TTL_MS, across pages too.
+ */
+const META_TTL_MS = 5 * 60_000;
+
+function sharedFor<T>(load: () => Promise<T>): () => Promise<T> {
+  let entry: { at: number; pending: Promise<T> } | null = null;
+  return () => {
+    if (entry && Date.now() - entry.at < META_TTL_MS) return entry.pending;
+    const current = { at: Date.now(), pending: load() };
+    // A failed read isn't kept: the next poll or retry asks again.
+    current.pending.catch(() => {
+      if (entry === current) entry = null;
+    });
+    entry = current;
+    return current.pending;
+  };
+}
+
+const loadPerpDexs = sharedFor(fetchPerpDexs);
+const loadAllPerpMetas = sharedFor(fetchAllPerpMetas);
+
+/**
  * Hook that combines all PerpDex data sources:
  * - Basic info from perpDexs API
  * - Metadata from allPerpMetas API
@@ -23,8 +49,8 @@ export function usePerpDexMarketData() {
     isLoading: dexsLoading, 
     error: dexsError 
   } = useDataFetching<PerpDex[]>({
-    fetchFn: fetchPerpDexs,
-    refreshInterval: 60000, // Refresh every minute
+    fetchFn: loadPerpDexs,
+    refreshInterval: 60000, // Picks up the shared copy's refresh within a minute
     maxRetries: 3
   });
 
@@ -34,7 +60,7 @@ export function usePerpDexMarketData() {
     isLoading: metasLoading, 
     error: metasError 
   } = useDataFetching<ParsedPerpMetas>({
-    fetchFn: fetchAllPerpMetas,
+    fetchFn: loadAllPerpMetas,
     refreshInterval: 60000,
     maxRetries: 3
   });
