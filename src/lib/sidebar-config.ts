@@ -1,5 +1,5 @@
 import { ComponentType } from "react";
-import {
+import { AtSign,
   Heart,
   Network,
   Vault,
@@ -23,6 +23,15 @@ import {
   Download,
   Share2,
   Percent,
+  BellRing,
+  Receipt,
+  ArrowLeftRight,
+  Coins,
+  Server,
+  FlaskConical,
+  Rocket,
+  FileSearch,
+  HandCoins,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -101,6 +110,8 @@ export const defaultNavigationGroups: NavigationGroup[] = [
       // Same page-agnostic tool slot as Export: the share studio turns any
       // metric into a post-ready image, for every family.
       { name: 'Share', href: '/share', icon: null, IconComponent: Share2 },
+      // Page-agnostic too: alerts span markets, liquidations and wallets.
+      { name: 'Alerts', href: '/alerts', icon: null, IconComponent: BellRing },
     ],
   },
   {
@@ -152,6 +163,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Projects', href: '/ecosystem/project', icon: null, IconComponent: Boxes },
       { name: 'Public Goods', href: '/ecosystem/publicgoods', icon: null, IconComponent: Heart },
+      { name: '.hl Names', href: '/names', icon: null, IconComponent: AtSign },
     ],
   },
   {
@@ -254,3 +266,37 @@ export const applyPreferencesToNavigation = (
   }));
 };
 
+
+/**
+ * Rail shown while the Elysium network is active. It only links to /elysium
+ * pages: any other link would leave the section and flip the network back to
+ * Hyperliquid (the active network follows the URL). Hyperliquid pages are
+ * one switch away.
+ */
+export const elysiumNavigationGroups: NavigationGroup[] = [
+  {
+    groupName: null,
+    items: [
+      { name: 'Start here', href: '/elysium/start', icon: null, IconComponent: Rocket },
+      { name: 'Overview', href: '/elysium', icon: null, IconComponent: Home },
+      { name: 'Contracts', href: '/elysium/contracts', icon: null, IconComponent: Blocks },
+      { name: 'DEX', href: '/elysium/dex', icon: null, IconComponent: ArrowLeftRight },
+      { name: 'Tokens', href: '/elysium/tokens', icon: null, IconComponent: Coins },
+      { name: 'Users', href: '/elysium/users', icon: null, IconComponent: Wallet },
+      { name: 'Bridge', href: '/elysium/bridge', icon: null, IconComponent: Network },
+      { name: 'Economics', href: '/elysium/economics', icon: null, IconComponent: Fuel },
+      { name: 'Fees by app', href: '/elysium/fees', icon: null, IconComponent: HandCoins },
+      { name: 'Share', href: '/elysium/share', icon: null, IconComponent: Share2 },
+    ],
+  },
+  {
+    groupName: 'Build',
+    items: [
+      { name: 'Network', href: '/elysium/network', icon: null, IconComponent: Cpu },
+      { name: 'Simulator', href: '/elysium/simulate', icon: null, IconComponent: FlaskConical },
+      { name: 'Tx inspector', href: '/elysium/tx', icon: null, IconComponent: Receipt },
+      { name: 'Decoder', href: '/elysium/decode', icon: null, IconComponent: FileSearch },
+      { name: 'Run a node', href: '/elysium/node', icon: null, IconComponent: Server },
+    ],
+  },
+];

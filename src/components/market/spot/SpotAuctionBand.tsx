@@ -87,7 +87,9 @@ export function SpotAuctionBand() {
       : 1;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+    // Three columns from xl only: at md-lg a third is too narrow for the
+    // deploys table, which then takes its own full-width row.
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 items-stretch">
       {/* Live dutch-auction state */}
       <OverviewModule
         title="Current auction"
@@ -192,6 +194,7 @@ export function SpotAuctionBand() {
         title="Recent deploys"
         href="/market/spot/auction"
         viewAllLabel="All auctions"
+        className="md:col-span-2 xl:col-span-1"
       >
         <ModuleTable
           columns={[

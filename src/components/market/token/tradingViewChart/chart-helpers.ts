@@ -9,6 +9,8 @@ import type { TokenCandle } from "@/services/market/token/types";
 // ── Timeframes ──────────────────────────────────────────────────────────
 
 export type TimeframeType =
+  | "5s"
+  | "30s"
   | "1m"
   | "3m"
   | "5m"
@@ -25,6 +27,8 @@ export type TimeframeType =
   | "1M";
 
 export const TIMEFRAMES: readonly TimeframeType[] = [
+  "5s",
+  "30s",
   "1m",
   "3m",
   "5m",
@@ -44,9 +48,11 @@ export const TIMEFRAMES: readonly TimeframeType[] = [
 /**
  * Quick-access bar shown in the toolbar. The rest live behind the "more" popover.
  */
-export const QUICK_TIMEFRAMES: readonly TimeframeType[] = ["1h", "1d", "1w"] as const;
+export const QUICK_TIMEFRAMES: readonly TimeframeType[] = ["5s", "1h", "1d", "1w"] as const;
 
 export const TIMEFRAME_GROUPS: { label: string; items: readonly TimeframeType[] }[] = [
+  // Sub-minute bars come from our indexer; Hyperliquid's own API starts at 1m.
+  { label: "Seconds", items: ["5s", "30s"] },
   { label: "Minutes", items: ["1m", "3m", "5m", "15m", "30m"] },
   { label: "Hours", items: ["1h", "2h", "4h", "8h", "12h"] },
   { label: "Days & up", items: ["1d", "3d", "1w", "1M"] },
@@ -101,6 +107,8 @@ export function getIntervalSeconds(interval: TimeframeType): number {
   const value = parseInt(interval);
   const unit = interval.slice(-1);
   switch (unit) {
+    case "s":
+      return value;
     case "m":
       return value * 60;
     case "h":

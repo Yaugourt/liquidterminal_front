@@ -13,6 +13,8 @@ export interface User {
   referralCode?: string;
   // TELEGRAM LINK
   telegramUsername?: string | null;
+  /** True when a Telegram account is linked (it may have no public username). */
+  telegramLinked?: boolean;
 }
 
 export interface AuthResponse {

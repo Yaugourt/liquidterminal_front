@@ -9,6 +9,7 @@ import {
   ModuleTableRow,
   ModuleAsset,
   TableStat,
+  RowFillList,
   DominanceBar,
   chartPalette,
   type Column,
@@ -104,7 +105,7 @@ export function OperatorLens() {
     total: validationsTotal,
     isLoading: validationsLoading,
     error: validationsError,
-  } = useStakingValidationsPaginated({ limit: 8 });
+  } = useStakingValidationsPaginated({ limit: 30 });
 
   // Toolbar state — local search + status text-tabs.
   const [search, setSearch] = useState("");
@@ -190,6 +191,7 @@ export function OperatorLens() {
     () => [
       {
         key: "rank",
+        className: "hidden sm:table-cell",
         header: "#",
         type: "rank",
         width: 48,
@@ -199,14 +201,14 @@ export function OperatorLens() {
         key: "validator",
         header: "Validator",
         accessor: (row) => (
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 max-w-[150px] sm:max-w-none">
             <ModuleAsset
               logo={initials(row.name)}
               name={row.name}
               sub={truncateAddress(row.validator)}
             />
             {isFoundationName(row.name) && (
-              <StatusBadge variant="neutral">Foundation</StatusBadge>
+              <StatusBadge variant="neutral" className="hidden sm:inline-flex">Foundation</StatusBadge>
             )}
           </div>
         ),
@@ -219,6 +221,7 @@ export function OperatorLens() {
       },
       {
         key: "share",
+        className: "hidden md:table-cell",
         header: "Share",
         type: "numeric",
         tone: () => "muted",
@@ -234,6 +237,7 @@ export function OperatorLens() {
       },
       {
         key: "uptime",
+        className: "hidden sm:table-cell",
         header: "Uptime",
         type: "numeric",
         tone: (row) => (row.uptime >= 99.9 ? "success" : undefined),
@@ -241,6 +245,7 @@ export function OperatorLens() {
       },
       {
         key: "commission",
+        className: "hidden md:table-cell",
         header: "Comm.",
         // Commission is the validator's fee on rewards → gold (DS: gold = fees).
         type: "fees",
@@ -248,12 +253,14 @@ export function OperatorLens() {
       },
       {
         key: "blocks",
+        className: "hidden xl:table-cell",
         header: "Blocks",
         type: "numeric",
         accessor: (row) => row.nRecentBlocks,
       },
       {
         key: "status",
+        className: "hidden sm:table-cell",
         header: "Status",
         align: "right",
         accessor: (row) => (
@@ -373,7 +380,7 @@ export function OperatorLens() {
       {/* ───────────── Validator directory ───────────── */}
       <section className="space-y-3">
         <SectionLabel title="Validator directory" hint="Sorted by stake" />
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_300px] gap-4">
           {/* LEFT — searchable / filterable validator table */}
           <TypedDataTable<Validator>
             className="min-w-0"
@@ -393,8 +400,11 @@ export function OperatorLens() {
           />
 
           {/* RIGHT — slim recent staking activity rail */}
-          <aside className="xl:sticky xl:top-6">
+          {/* The rail stretches to the directory and its list fills that height
+              (it ended 292px above the table with eight rows). */}
+          <aside className="flex flex-col min-w-0">
             <OverviewModule
+              className="flex-1 overflow-hidden"
               title="Recent staking activity"
               tag={validationsTotal > 0 ? `${validationsTotal} events` : undefined}
               href={VALIDATIONS_HREF}
@@ -414,36 +424,38 @@ export function OperatorLens() {
                   description="Delegations will appear here."
                 />
               ) : (
-                <ModuleTable
-                  density="compact"
-                  columns={[
-                    { header: "When", align: "left", width: 52 },
-                    { header: "Type", align: "left" },
-                    { header: "Amount", align: "right", width: 84 },
-                  ]}
-                >
-                  {validations.map((v: FormattedStakingValidation) => (
-                    <ModuleTableRow
-                      key={v.hash}
-                      cells={[
-                        <span key="t" className="mono text-[11px] text-text-tertiary" title={v.time}>
-                          {relativeTime(v.timestamp)}
-                        </span>,
-                        <div key="type" className="space-y-1">
-                          <StatusBadge variant="neutral">
-                            {v.type}
-                          </StatusBadge>
-                          <div className="mono text-[10px] text-text-tertiary truncate">
-                            {truncateAddress(v.validator)}
-                          </div>
-                        </div>,
-                        <span key="amt" className="mono text-[12px] text-text-secondary">
-                          {compactHype(v.amount)}
-                        </span>,
-                      ]}
-                    />
-                  ))}
-                </ModuleTable>
+                <RowFillList mobileHeight="h-[360px]" minHeight="lg:min-h-[360px]">
+                  <ModuleTable
+                    density="compact"
+                    columns={[
+                      { header: "When", align: "left", width: 52 },
+                      { header: "Type", align: "left" },
+                      { header: "Amount", align: "right", width: 84 },
+                    ]}
+                  >
+                    {validations.map((v: FormattedStakingValidation) => (
+                      <ModuleTableRow
+                        key={v.hash}
+                        cells={[
+                          <span key="t" className="mono text-[11px] text-text-tertiary" title={v.time}>
+                            {relativeTime(v.timestamp)}
+                          </span>,
+                          <div key="type" className="space-y-1">
+                            <StatusBadge variant="neutral">
+                              {v.type}
+                            </StatusBadge>
+                            <div className="mono text-[10px] text-text-tertiary truncate">
+                              {truncateAddress(v.validator)}
+                            </div>
+                          </div>,
+                          <span key="amt" className="mono text-[12px] text-text-secondary">
+                            {compactHype(v.amount)}
+                          </span>,
+                        ]}
+                      />
+                    ))}
+                  </ModuleTable>
+                </RowFillList>
               )}
             </OverviewModule>
           </aside>

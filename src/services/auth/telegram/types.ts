@@ -24,6 +24,8 @@ export interface TelegramLinkStatusResponse {
   data: {
     linked: boolean;
     telegramUsername?: string; // Only present when linked=true
+    /** Not linked and the code is gone: stop polling, offer a new link. */
+    expired?: boolean;
   };
 }
 

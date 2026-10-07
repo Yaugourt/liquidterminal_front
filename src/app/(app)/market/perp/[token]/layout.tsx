@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { generateMetadata as buildMetadata, decodeEntityParam } from "@/lib/seo";
 import { JsonLd, breadcrumbSchema } from "@/components/JsonLd";
+import { perpFacts } from "@/lib/seo-entity-facts";
 
 export async function generateMetadata({
   params,
@@ -26,6 +27,7 @@ export default async function PerpMarketLayout({
 }) {
   const { token } = await params;
   const name = decodeEntityParam(token);
+  const facts = await perpFacts(name);
   return (
     <>
       <JsonLd
@@ -39,6 +41,7 @@ export default async function PerpMarketLayout({
       {/* See the spot token layout: the client trading view renders no
           heading, so this is the page's only document outline anchor. */}
       <h1 className="sr-only">{name} perpetual market on Hyperliquid</h1>
+      {facts ? <p className="sr-only">{facts}</p> : null}
       {children}
     </>
   );

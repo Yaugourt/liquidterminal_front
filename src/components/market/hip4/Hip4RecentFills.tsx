@@ -67,6 +67,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "px",
+      className: "hidden sm:table-cell",
       header: "Price",
       type: "numeric",
       sortable: true,
@@ -75,6 +76,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "sz",
+      className: "hidden md:table-cell xl:hidden 2xl:table-cell",
       header: "Size",
       type: "numeric",
       tone: () => "muted",
@@ -92,6 +94,7 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "fee",
+      className: "hidden md:table-cell xl:hidden 2xl:table-cell",
       header: "Fee",
       type: "fees",
       sortable: true,
@@ -100,11 +103,13 @@ export function Hip4RecentFills({ fills, isLoading, marketIndex }: Hip4RecentFil
     },
     {
       key: "user",
+      className: "hidden sm:table-cell xl:hidden 2xl:table-cell",
       header: "User",
       accessor: (row) => <AddressDisplay address={row.user} showCopy={false} />,
     },
     {
       key: "time",
+      className: "hidden sm:table-cell",
       header: "Time",
       type: "time",
       align: "right",

@@ -47,7 +47,7 @@ export function formatPriceBinaryTitle(
  */
 export function isPlaceholderMarketName(name: string | null | undefined): boolean {
   const n = (name ?? "").trim().toLowerCase();
-  return n === "" || n === "recurring named outcome" || n.startsWith("template");
+  return n === "" || n === "recurring named outcome" || n === "recurring" || n.startsWith("template");
 }
 
 export function formatMarketTitle(market: Hip4MarketEnrichedRow): string {
@@ -144,4 +144,32 @@ export function formatExpiryCountdown(expiry: string | null): string | null {
   if (diffH < 24) return `Expires in ${diffH}h`;
   const diffD = Math.floor(diffH / 24);
   return `Expires in ${diffD}d`;
+}
+
+/** `key:value|key:value` description fields (HIP-4 questions and outcomes). */
+export function descriptionFields(desc: string | null | undefined): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const part of (desc ?? "").split("|")) {
+    const i = part.indexOf(":");
+    if (i === -1) continue;
+    out[part.slice(0, i).trim()] = part.slice(i + 1).trim();
+  }
+  return out;
+}
+
+/**
+ * Title for a recurring price-bucket question, built only from its own
+ * description (`class:priceBucket|underlying:BTC|expiry:…|priceThresholds:a,b`).
+ * Null when a field is missing, so callers keep their own fallback.
+ */
+export function formatPriceBucketTitle(desc: string | null | undefined): string | null {
+  const f = descriptionFields(desc);
+  if (f.class !== "priceBucket" || !f.underlying || !f.expiry) return null;
+  const bounds = (f.priceThresholds ?? "")
+    .split(",")
+    .map((x) => Number(x))
+    .filter((x) => Number.isFinite(x) && x > 0)
+    .map((x) => x.toLocaleString("en-US", { maximumFractionDigits: 0 }));
+  const range = bounds.length ? ` · ${bounds.join(" / ")}` : "";
+  return `${f.underlying} price range on ${formatExpiryDate(f.expiry)}${range}`;
 }

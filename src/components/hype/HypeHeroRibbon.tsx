@@ -94,5 +94,12 @@ export const HypeHeroRibbon = memo(function HypeHeroRibbon() {
     },
   ];
 
-  return <KpiRibbon cells={cells} columns="grid-cols-1 xl:grid-cols-7" />;
+  // Seven cells: 2 and 4 per row below xl with the last one spanning (one
+  // column stacked seven rows at 1024), one row from xl.
+  return (
+    <KpiRibbon
+      cells={cells}
+      columns="grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 [&>*:last-child]:col-span-2 xl:[&>*:last-child]:col-span-1"
+    />
+  );
 });

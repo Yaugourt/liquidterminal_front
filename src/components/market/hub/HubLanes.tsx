@@ -8,7 +8,7 @@ import { useHip4QuestionsWithOutcomes } from "@/services/indexer/hip4/hooks/useH
 import { useBuildersTop, useBuildersStatsAllTimeframes } from "@/services/indexer/builders";
 import { BuilderAvatar, resolveBuilderLabel } from "@/components/market/builders";
 import { AuctionStrip } from "./AuctionStrip";
-import { SourceBadge, sourceStatus, combinedSourceStatus, type SourceBadgeStatus } from "@/components/common";
+import { SourceBadge, sourceStatus, combinedSourceStatus, RowFillList, type SourceBadgeStatus } from "@/components/common";
 
 function LaneShell({
   title,
@@ -42,7 +42,7 @@ function LaneShell({
           </Link>
         </div>
       </div>
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 flex flex-col">{children}</div>
       {footer}
     </div>
   );
@@ -80,7 +80,7 @@ export function PerpDexsLane({
   );
 }
 
-/** HIP-4 predictions lane: the 3 biggest live questions with their probability. */
+/** HIP-4 predictions lane: the biggest live questions with their probability, filling the lane height. */
 export function Hip4Lane() {
   // Same params as the HIP-4 pages and the dashboard card: one backend entry.
   const { questions, isLoading: questionsLoading, error: questionsError } = useHip4QuestionsWithOutcomes({ limit: 200 });
@@ -89,7 +89,7 @@ export function Hip4Lane() {
     const rows = (questions ?? [])
       .filter((q) => q.status === "live" && q.title)
       .sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0))
-      .slice(0, 3);
+      .slice(0, 12);
     return rows.map((q) => {
       const lead = [...q.outcomes].sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0))[0];
       const prob = lead?.mid_price != null ? Math.max(0, Math.min(1, lead.mid_price)) : null;
@@ -113,12 +113,12 @@ export function Hip4Lane() {
       hrefLabel={liveCount > 0 ? `${liveCount} live` : "All"}
       actions={<SourceBadge source="hypedexer" status={sourceStatus(questionsError, questionsLoading)} />}
     >
-      <div className="px-3.5 py-3 space-y-3">
+      <RowFillList mobileHeight="h-[320px]" className="px-3.5 py-3 space-y-3">
         {top.length === 0 && <p className="text-[11.5px] text-text-tertiary">Loading live questions…</p>}
         {top.map((q) => (
           <Link key={q.id} href="/market/hip4" className="block group">
             <div className="flex items-baseline justify-between gap-2">
-              <span className="text-[12px] text-text-primary truncate group-hover:text-brand transition-colors">
+              <span className="text-[12px] text-text-primary truncate group-hover:text-brand transition-colors" title={q.title}>
                 {q.title}
               </span>
               {q.prob != null && (
@@ -137,21 +137,21 @@ export function Hip4Lane() {
             </div>
           </Link>
         ))}
-      </div>
+      </RowFillList>
     </LaneShell>
   );
 }
 
-/** Builders lane: 7d top by volume + concentration note. */
+/** Builders lane: 7d top builders by volume, filling the lane height, + top-3 concentration note. */
 export function BuildersLane() {
-  const top = useBuildersTop({ timeframe: "7d", sort: "volume", limit: 3 });
+  const top = useBuildersTop({ timeframe: "7d", sort: "volume", limit: 12 });
   const allTf = useBuildersStatsAllTimeframes();
 
   const rows = top.data?.builders ?? [];
   const totals = allTf.stats?.["7d"]?.current;
   const concentration =
-    totals && totals.totalVolume > 0 && rows.length === 3
-      ? (rows.reduce((acc, b) => acc + (b.totalVolume ?? 0), 0) / totals.totalVolume) * 100
+    totals && totals.totalVolume > 0 && rows.length >= 3
+      ? (rows.slice(0, 3).reduce((acc, b) => acc + (b.totalVolume ?? 0), 0) / totals.totalVolume) * 100
       : null;
 
   return (
@@ -170,7 +170,7 @@ export function BuildersLane() {
         ) : undefined
       }
     >
-      <div className="px-3.5 py-3 space-y-2.5">
+      <RowFillList mobileHeight="h-[220px]" minHeight="lg:min-h-[120px]" className="px-3.5 py-3 space-y-2.5">
         {rows.length === 0 && <p className="text-[11.5px] text-text-tertiary">Loading builders…</p>}
         {rows.map((b, i) => (
           <div key={b.builder} className="flex items-center gap-2.5">
@@ -180,14 +180,14 @@ export function BuildersLane() {
               label={resolveBuilderLabel(b.builder, b.builderName).label}
               size={16}
             />
-            <span className="text-[12.5px] text-text-primary truncate flex-1">
+            <span className="text-[12.5px] text-text-primary truncate flex-1" title={resolveBuilderLabel(b.builder, b.builderName).label}>
               {resolveBuilderLabel(b.builder, b.builderName).label}
             </span>
             <span className="mono text-[12px] text-text-secondary shrink-0">{compactUsd(b.totalVolume ?? 0)}</span>
             <span className="mono text-[11px] text-gold shrink-0">{compactUsd(b.totalBuilderFees ?? 0)}</span>
           </div>
         ))}
-      </div>
+      </RowFillList>
     </LaneShell>
   );
 }

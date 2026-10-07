@@ -62,7 +62,7 @@ export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
                   </td>
                   <td className={`py-1.5 pr-2 ${l.liq_dir === "Long" ? "text-success" : "text-danger"}`}>{l.liq_dir}</td>
                   <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactUsd(l.notional_total)}</td>
-                  <td className="py-1.5 text-right whitespace-nowrap">
+                  <td className="py-1.5 text-right whitespace-nowrap lg:hidden xl:table-cell">
                     <Link href={`/market/tracker/wallet/${l.liquidated_user}`} prefetch={false} className="text-text-tertiary hover:text-brand" title="Liquidated wallet">
                       {short(l.liquidated_user)}
                     </Link>

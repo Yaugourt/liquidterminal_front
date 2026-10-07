@@ -32,7 +32,7 @@ export function NetworkGrowthSection() {
         title="Network growth"
         subtitle="Open interest, active users and protocol fees, sampled hourly · trailing 7d"
       />
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 items-start lg:[&>*:last-child:nth-child(odd)]:col-span-2 xl:[&>*:last-child:nth-child(odd)]:col-span-1">
         {hasOi && (
           <MetricHistoryCard
             title="Open interest"

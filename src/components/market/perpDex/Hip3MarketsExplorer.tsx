@@ -100,6 +100,7 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
     },
     {
       key: "volume24h",
+      className: "hidden sm:table-cell",
       header: "Volume",
       type: "numeric",
       sortable: true,
@@ -108,6 +109,7 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
     },
     {
       key: "openInterestUsd",
+      className: "hidden md:table-cell",
       header: "OI",
       type: "numeric",
       sortable: true,
@@ -117,6 +119,7 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
     {
       // Mark-vs-oracle premium; sub-1bp noise reads as flat.
       key: "basisBps",
+      className: "hidden sm:table-cell",
       header: "Basis",
       type: "change",
       sortable: true,

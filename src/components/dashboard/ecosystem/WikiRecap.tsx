@@ -8,7 +8,7 @@ import { useEducationalCategories } from "@/services/wiki";
 import { slugify, categoryHref } from "@/components/wiki/hub/topics";
 import { PopularArticlesModule } from "./PopularArticlesModule";
 
-const POPULAR_SHOWN = 5;
+const POPULAR_SHOWN = 12;
 const READLISTS_SHOWN = 4;
 const TOPICS_SHOWN = 8;
 
@@ -41,8 +41,8 @@ export const WikiRecap = memo(function WikiRecap() {
   const { categories, isLoading: categoriesLoading } = useEducationalCategories();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-      <PopularArticlesModule limit={POPULAR_SHOWN} className="lg:col-span-2 min-w-0" />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <PopularArticlesModule limit={POPULAR_SHOWN} fillRow className="lg:col-span-2 min-w-0 overflow-hidden" />
 
       <div className="min-w-0 space-y-4">
         {/* Public read lists */}

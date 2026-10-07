@@ -40,7 +40,7 @@ export const WhalesVsRetailCard = memo(function WhalesVsRetailCard() {
     },
     {
       key: "whaleShare",
-      label: "Whale % of supply",
+      label: "Whale share",
       value: `${whales.supplyPct.toFixed(1)}%`,
       tone: "gold",
       sub: "top tier",

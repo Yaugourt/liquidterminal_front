@@ -20,7 +20,7 @@ import { useNumberFormat } from "@/store/number-format.store";
  * sort param yet. Refresh follows the hook's default 10 s cadence.
  */
 
-const TOP_N = 5; // aligned with ValidatorsModule so both cards share row count + density
+const TOP_N = 6; // aligned with ValidatorsModule so both cards share row count + density
 const FETCH_LIMIT = 200; // backend Zod cap; covers the heaviest unstakes
 
 /** "in 3d 4h" / "in 2h 14m" / "in 8m" / "released" — relative to `now`. */

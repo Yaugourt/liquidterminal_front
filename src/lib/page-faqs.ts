@@ -214,3 +214,27 @@ export const ECOSYSTEM_FAQ: FaqItem[] = [
     a: "A project only shows TVL and fees when it is tracked as a protocol on DefiLlama. Wallets, tooling and interfaces often hold no capital of their own, so they are listed with their links and category but without financial metrics.",
   },
 ];
+
+/** Facts from the Elysium docs (chain specifications, building on Elysium, token bridging architecture, testnet bridge), read 2026-09-30. */
+export const ELYSIUM_FAQ: FaqItem[] = [
+  {
+    q: "What is Elysium?",
+    a: "Elysium is Kinetiq's Layer 2 on HyperEVM: an Arbitrum Orbit chain that settles its batches on HyperEVM and uses HYPE as its gas token. Its public testnet opened on 22 September 2026, and mainnet is announced as coming soon.",
+  },
+  {
+    q: "What are the Elysium testnet network details?",
+    a: "Chain ID 99801, public RPC https://testnet-rpc.elysium.kinetiq.xyz, explorer at test-explorer.elysium.kinetiq.xyz and HYPE as gas. It settles on HyperEVM testnet, chain 998. The Network page reads the live parameters from the chain and adds Elysium to your wallet in one click.",
+  },
+  {
+    q: "Can I deploy contracts on Elysium with Foundry or Hardhat?",
+    a: "Yes. The Elysium docs state that Foundry, Hardhat, viem, ethers and standard JSON-RPC work as on any Arbitrum Orbit chain. The Simulator's deploy mode dry-runs a contract creation on live testnet state first, then lets you deploy from your own wallet.",
+  },
+  {
+    q: "How does bridging to and from Elysium work?",
+    a: "ERC-20 tokens from HyperEVM move through Arbitrum's canonical gateways. Writes on the Elysium side arrive as retryable tickets, which the docs say normally land within a minute, and funds leaving Elysium are claimed on HyperEVM.",
+  },
+  {
+    q: "Where does the data on these pages come from?",
+    a: "From the public Elysium RPC endpoints and from Liquid Terminal's own indexing of the chain. Liquid Terminal is independent and is not operated by Kinetiq.",
+  },
+];

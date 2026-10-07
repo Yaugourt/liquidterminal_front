@@ -276,14 +276,17 @@ export function UniversalTokenTable({
                 { ...nameCol, width: '20%' },
                 { ...priceCol, width: '12%' },
                 { ...change24hCol, width: '12%' },
-                { ...volumeCol, width: '15%' },
+                // Compact money here: full-precision volume and OI pushed the
+                // seven columns past the card at 1024.
+                { ...volumeCol, width: '15%', className: "hidden sm:table-cell", accessor: (t) => compactUsd(t.volume) },
                 {
                     key: "openInterest",
                     header: "Open Interest",
                     type: "numeric",
                     sortable: true,
                     width: '15%',
-                    accessor: (t) => `$${formatNumber(t.openInterest, format)}`,
+                    className: "hidden md:table-cell",
+                    accessor: (t) => compactUsd(t.openInterest),
                 },
                 {
                     key: "funding",
@@ -291,6 +294,7 @@ export function UniversalTokenTable({
                     type: "change",
                     width: '13%',
                     getSortValue: (t) => t.funding,
+                    className: "hidden xl:table-cell",
                     // `funding` is HL's hourly rate as a fraction (0.0000125 = 0.00125%).
                     accessor: (t) => `${t.funding > 0 ? '+' : ''}${formatNumber(t.funding * 100, format, { minimumFractionDigits: 4, maximumFractionDigits: 4 })}%`,
                 },
@@ -302,6 +306,7 @@ export function UniversalTokenTable({
                     type: "change",
                     width: '13%',
                     getSortValue: (t) => t.funding * 8760 * 100,
+                    className: "hidden sm:table-cell",
                     accessor: (t) => {
                         const apr = t.funding * 8760 * 100;
                         return `${apr > 0 ? '+' : ''}${formatNumber(apr, format, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;

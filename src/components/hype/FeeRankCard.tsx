@@ -41,7 +41,7 @@ export const FeeRankCard = memo(function FeeRankCard() {
               sub: `of ${data.protocolCount} protocols`,
             },
             {
-              label: "Hyperliquid fees 24h",
+              label: "Fees 24h",
               value: compactUsd(data.hlFees24h),
               tone: "gold",
             },

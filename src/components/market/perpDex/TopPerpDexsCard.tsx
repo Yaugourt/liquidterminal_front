@@ -48,10 +48,12 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
       .slice(0, 5);
   }, [dexs]);
 
+  const tradedCount = useMemo(() => dexs.filter((d) => d.totalVolume24h > 0).length, [dexs]);
+
   return (
     <TypedDataTable<PerpDexWithMarketData>
       title="Top perp DEXs"
-      subtitle="By 24h volume"
+      subtitle={dexs.length > 0 ? `By 24h volume · ${tradedCount} of ${dexs.length} traded in 24h` : "By 24h volume"}
       tag={dexs.length > 0 ? `${dexs.length} DEXs` : undefined}
       data={topDexs}
       columns={COLUMNS}

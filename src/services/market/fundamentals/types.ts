@@ -3,7 +3,7 @@
  *
  * Mirrors the backend's DefiLlama aggregate (`GET /defillama/overview/:slug`),
  * which is the same basis the market quotes when it compares Hyperliquid to
- * other venues. Our own `/market/revenue/history` breaks revenue into six
+ * other venues. Our own `/market/revenue/history` breaks revenue into seven
  * sources and is the more precise number, but it has no counterpart for the
  * fee/revenue split, which is what makes an income statement possible.
  */

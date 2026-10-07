@@ -5,6 +5,9 @@ import strictList from '@/../public/strict.json';
 
 export type SpotDirectoryTab = 'all' | 'strict';
 
+/** Rows per movers board: eight keep the rail level with the directory table. */
+const MOVERS_SHOWN = 8;
+
 /** Movers below this 24h volume are dust — they distort the gainers/losers boards. */
 const MOVER_VOLUME_FLOOR = 10_000;
 
@@ -99,7 +102,7 @@ export function useSpotDirectory(): UseSpotDirectoryResult {
       movers
         .filter((t) => t.change24h > 0)
         .sort((a, b) => b.change24h - a.change24h)
-        .slice(0, 5),
+        .slice(0, MOVERS_SHOWN),
     [movers]
   );
   const losers = useMemo(
@@ -107,7 +110,7 @@ export function useSpotDirectory(): UseSpotDirectoryResult {
       movers
         .filter((t) => t.change24h < 0)
         .sort((a, b) => a.change24h - b.change24h)
-        .slice(0, 5),
+        .slice(0, MOVERS_SHOWN),
     [movers]
   );
 

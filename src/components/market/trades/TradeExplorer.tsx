@@ -85,6 +85,8 @@ export function TradeExplorer() {
   const columns: Column<WalletRoundTrip>[] = [
     {
       key: "user",
+      // Phones keep coin, side and PnL, the columns that fit a 343px card.
+      className: "max-sm:hidden whitespace-nowrap",
       header: "Trader",
       accessor: (t) =>
         t.user ? <AddressDisplay address={t.user} href={`/market/tracker/wallet/${t.user}`} /> : "—",
@@ -107,11 +109,14 @@ export function TradeExplorer() {
       header: "Entry → Exit",
       type: "numeric",
       tone: () => "muted",
-      className: "max-lg:hidden",
+      // Two prices on one line need the width: from xl only, rows stayed
+      // three lines tall at 1024.
+      className: "max-xl:hidden whitespace-nowrap",
       accessor: (t) => `${formatPrice(t.entry_price, format)} → ${formatPrice(t.exit_price, format)}`,
     },
     {
       key: "volume",
+      className: "max-sm:hidden",
       header: "Volume",
       type: "numeric",
       sortable: true,
@@ -120,6 +125,7 @@ export function TradeExplorer() {
     },
     {
       key: "pnl",
+      className: "whitespace-nowrap",
       header: "Realized PnL",
       type: "change",
       sortable: true,
@@ -131,7 +137,7 @@ export function TradeExplorer() {
       header: "Held",
       type: "numeric",
       tone: () => "muted",
-      className: "max-md:hidden",
+      className: "max-xl:hidden",
       accessor: (t) => formatDuration(t.duration_s),
     },
     {
@@ -139,7 +145,7 @@ export function TradeExplorer() {
       header: "Closed",
       type: "time",
       align: "right",
-      className: "max-md:hidden",
+      className: "max-md:hidden whitespace-nowrap",
       accessor: (t) => formatDateTime(t.end_time, dateFormat),
     },
   ];

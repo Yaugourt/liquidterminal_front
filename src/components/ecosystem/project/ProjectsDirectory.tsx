@@ -45,12 +45,24 @@ function categoryLabelOf(project: Project): string | null {
  * then a "Listing only" section, alphabetical, with honest dashes) plus a
  * category rail that replaces the clipping filter pills.
  */
+/** Rows added per "Show more": enough to fill a screen without a 16,000px page. */
+const PAGE_ROWS = 20;
+
 export const ProjectsDirectory = memo(function ProjectsDirectory() {
   const router = useRouter();
   const { user } = useAuthContext();
   const [search, setSearch] = useState("");
   const [dataState, setDataState] = useState<DataState>("all");
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  // Rows rendered so far: all 343 at once made a 16,000px page.
+  const [visible, setVisible] = useState(PAGE_ROWS);
+  const filterKey = `${search}|${dataState}|${categoryFilter ?? ""}`;
+  const [shownFor, setShownFor] = useState(filterKey);
+  if (shownFor !== filterKey) {
+    // A new filter starts again from the first rows.
+    setShownFor(filterKey);
+    setVisible(PAGE_ROWS);
+  }
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
 
   const { metricsById } = useProjectsMetricsMap();
@@ -124,12 +136,12 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
   }, [projects, metricsById, search, categoryFilter, dataState]);
 
   const columns = [
-    { header: "#", width: 44, align: "right" as const },
+    { header: "#", width: 44, align: "right" as const, className: "hidden sm:table-cell" },
     { header: "Project", align: "left" as const },
-    { header: "Category", width: 150, align: "left" as const },
+    { header: "Category", width: 190, align: "left" as const, className: "hidden md:table-cell" },
     { header: "TVL on HL", width: 105 },
-    { header: "7d", width: 70 },
-    { header: "Fees 24h", width: 90 },
+    { header: "7d", width: 70, className: "hidden sm:table-cell" },
+    { header: "Fees 24h", width: 90, className: "hidden sm:table-cell" },
   ];
 
   const renderRow = (project: Project, rank: number | null) => {
@@ -144,12 +156,12 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
           <span key="rank" className="mono text-[11px] text-text-tertiary">{rank ?? "—"}</span>,
           <span key="name" className="flex items-center gap-2.5 min-w-0">
             <ProjectLogo logo={project.logo} name={project.title} muted={rank == null} />
-            <span className="font-medium text-text-primary truncate shrink-0 max-w-[160px]">{project.title}</span>
-            <span className="text-text-tertiary truncate hidden lg:inline text-[12px]">{project.desc}</span>
+            <span className="font-medium text-text-primary truncate shrink-0 max-w-[160px]" title={project.title}>{project.title}</span>
+            <span className="text-text-tertiary truncate hidden xl:inline text-[12px]" title={project.desc}>{project.desc}</span>
           </span>,
           // The DefiLlama category (Lending, Liquid Staking…) carries the rank;
           // the broader DB label (DeFi) is only the fallback for untracked rows.
-          <span key="cat" className="text-[12px] text-text-secondary">
+          <span key="cat" className="text-[12px] text-text-secondary whitespace-nowrap">
             {metric?.category ?? label ?? ""}
             {metric?.categoryRank != null && metric.category && (
               <span className="mono text-brand text-[11px] ml-1.5">#{metric.categoryRank}</span>
@@ -196,19 +208,33 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
         ) : error && projects.length === 0 ? (
           <ErrorState title="Failed to load projects" message={error.message || "Please try again later."} />
         ) : (
-          <div className="overflow-x-auto">
-            <div className="min-w-[720px]">
+          <div>
+            <div>
               <ModuleTable columns={columns}>
-                {tracked.map((p, i) => renderRow(p, i + 1))}
-                {listing.length > 0 && dataState === "all" && (
+                {tracked.slice(0, visible).map((p, i) => renderRow(p, i + 1))}
+                {listing.length > 0 && dataState === "all" && visible > tracked.length && (
                   <tr>
                     <td colSpan={columns.length} className="px-4 pt-4 pb-2 text-[10px] uppercase tracking-[0.08em] text-text-tertiary border-b border-border-subtle">
                       Listing only · {listingTotal} projects with no tracked on-chain data · A–Z
                     </td>
                   </tr>
                 )}
-                {listing.map((p) => renderRow(p, null))}
+                {listing.slice(0, Math.max(0, visible - tracked.length)).map((p) => renderRow(p, null))}
               </ModuleTable>
+              {tracked.length + listing.length > visible && (
+                <div className="px-4 py-3 border-t border-border-subtle flex items-center justify-between gap-3 text-[11.5px] text-text-tertiary">
+                  <span className="mono">
+                    {visible} of {tracked.length + listing.length}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setVisible((v) => v + PAGE_ROWS)}
+                    className="text-brand hover:text-brand-hover font-medium focus-ring rounded"
+                  >
+                    Show {Math.min(PAGE_ROWS, tracked.length + listing.length - visible)} more
+                  </button>
+                </div>
+              )}
               {tracked.length === 0 && listing.length === 0 && (
                 <p className="px-4 py-10 text-center text-[12.5px] text-text-tertiary">
                   No project matches {search ? `"${search}"` : "this filter"}.
@@ -219,8 +245,9 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
         )}
       </div>
 
-      {/* Category rail — the filter that never clips */}
-      <div className="space-y-4">
+      {/* Category rail — the filter that never clips; it stays in view while
+          the directory scrolls. */}
+      <div className="space-y-4 xl:sticky xl:top-20">
         <div className="bg-surface border border-border-subtle rounded-lg">
           <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
             <h3 className="text-[13px] font-medium text-text-primary">Categories</h3>

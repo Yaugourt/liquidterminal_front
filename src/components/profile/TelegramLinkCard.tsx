@@ -29,11 +29,17 @@ const TelegramIcon = ({ className }: { className?: string }) => (
 
 interface TelegramLinkCardProps {
   initialTelegramUsername?: string | null;
+  /** Linked even without a public @username. */
+  initialLinked?: boolean;
+  /** Called once the bot confirms the link (e.g. to reload alert settings). */
+  onLinked?: () => void;
   className?: string;
 }
 
 export const TelegramLinkCard = memo(function TelegramLinkCard({
   initialTelegramUsername,
+  initialLinked,
+  onLinked,
   className
 }: TelegramLinkCardProps) {
   const {
@@ -49,7 +55,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
     isUnlinking,
     error,
     clearError,
-  } = useTelegramLink(initialTelegramUsername);
+  } = useTelegramLink(initialTelegramUsername, { initialLinked, onLinked });
 
   // Format countdown display
   const formattedCountdown = useMemo(() => {
@@ -157,7 +163,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
   }
 
   // Render linked state
-  if (state === 'linked' && telegramUsername) {
+  if (state === 'linked') {
     return (
       <Card className={cn("p-5 border-success/20", className)}>
         <div className="flex items-center justify-between">
@@ -171,7 +177,7 @@ export const TelegramLinkCard = memo(function TelegramLinkCard({
                 <CheckCircle2 className="h-4 w-4 text-success" />
               </div>
               <p className="text-xs text-success">
-                @{telegramUsername}
+                {telegramUsername ? `@${telegramUsername}` : 'Connected'}
               </p>
             </div>
           </div>

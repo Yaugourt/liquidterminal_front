@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { usePageTitle } from "@/store/use-page-title";
 import { useWallets } from "@/store/use-wallets";
 import { WalletTabs } from "@/components/market/tracker";
@@ -10,6 +9,8 @@ import { AssetsSection } from "@/components/market/tracker/assets";
 import { WalletAssetsNavigation } from "@/components/market/tracker/WalletAssetsNavigation";
 import { OrdersSection, AddressTwapSection } from "@/components/explorer/address/orders";
 import { WalletRecentFillsSection } from "@/components/market/tracker";
+import { ListAlertsPanel } from "@/components/market/tracker/walletlists/ListAlertsPanel";
+import { LiveWalletActivity } from "@/components/market/tracker/LiveWalletActivity";
 import { useAuthContext } from "@/contexts/auth.context";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -25,17 +26,9 @@ import { usePortfolio } from "@/services/explorer/address/hooks/usePortfolio";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
 import { usePrivy, useModalStatus, useSignedOut } from "@/services/auth/privy";
 
-// Telegram brand icon
-const TelegramIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-  </svg>
-);
-
 export default function MyWallets() {
-  const router = useRouter();
   const { setTitle } = usePageTitle();
-  const { login, user: currentUser } = useAuthContext();
+  const { login } = useAuthContext();
   const { authenticated } = usePrivy();
   const signedOut = useSignedOut();
   // Privy's own modal open-state — the gate hides while Privy's login modal is
@@ -95,25 +88,11 @@ export default function MyWallets() {
           <WalletTabs />
         </div>
 
-        {/* Telegram Alert Banner - only show if authenticated and not linked */}
-        {authenticated && !currentUser?.telegramUsername && (
-          <div className="mb-6 p-4 rounded-lg bg-brand-telegram/10 border border-brand-telegram/20 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg bg-brand-telegram/20 flex items-center justify-center">
-                <TelegramIcon className="h-5 w-5 text-brand-telegram" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-text-primary">Get wallet alerts on Telegram</p>
-                <p className="text-xs text-text-tertiary">Receive notifications for your tracked wallets</p>
-              </div>
-            </div>
-            <Button
-              onClick={() => router.push('/profile')}
-              className="bg-brand-telegram hover:bg-brand-telegram/90 text-text-primary text-sm"
-            >
-              <TelegramIcon className="h-4 w-4 mr-2" />
-              Connect
-            </Button>
+        {/* Telegram alerts per list (links Telegram in place when needed) */}
+        {authenticated && (
+          <div className="mb-8 grid grid-cols-1 items-start gap-4 xl:grid-cols-2">
+            <ListAlertsPanel />
+            <LiveWalletActivity />
           </div>
         )}
 

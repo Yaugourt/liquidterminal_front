@@ -35,6 +35,11 @@ export interface EnrichedTwapOrder extends TwapOrder {
   estimatedEndTime: number;
   /** Resolved from `action.twap.a` — drives the badge in the UI. */
   marketType: TwapMarketType;
+  /** Indexer source only: Hyperliquid TWAP id, raw status and executed amounts (0 while running). */
+  twapId?: number;
+  status?: string;
+  executedSz?: number;
+  executedNtl?: number;
 }
 
 // Paramètres pour la récupération des ordres TWAP

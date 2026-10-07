@@ -25,6 +25,11 @@ const initials = (name: string) =>
   name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2).toUpperCase() || "?";
 const vaultHref = (addr: string) => `/explorer/vaults/${encodeURIComponent(addr)}`;
 
+/** Rows per rail board at xl, where the rail sits beside the directory table. */
+const RAIL_ROWS = 12;
+/** Rows past five only show in the xl rail; below xl the boards sit in a row. */
+const EXTRA_ROW = "hidden xl:table-row";
+
 /**
  * Leaderboards rail for /explorer/vaults: a vertical stack of OverviewModule +
  * ModuleTable cards sitting to the right of the directory table — Top APR
@@ -45,18 +50,18 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
             parseFloat(r.summary.tvl) >= APR_TVL_FLOOR
         )
         .sort((a, b) => b.apr - a.apr)
-        .slice(0, 5),
+        .slice(0, RAIL_ROWS),
     [rows]
   );
 
   const { followersGained, outflows, isLoading: leaderboardsLoading, error: leaderboardsError } = useVaultsLeaderboards({
     window: "24h",
-    followersLimit: 6,
+    followersLimit: RAIL_ROWS + 1,
     outflowsLimit: 4,
   });
 
   const followersRows = useMemo(
-    () => followersGained.filter((f) => f.vaultAddress.toLowerCase() !== HLP_ADDRESS).slice(0, 5),
+    () => followersGained.filter((f) => f.vaultAddress.toLowerCase() !== HLP_ADDRESS).slice(0, RAIL_ROWS),
     [followersGained]
   );
 
@@ -66,17 +71,17 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
   );
 
   return (
-    // Full-width 3-col row below xl; a stacked vertical rail at xl (next to the
-    // directory table). Keeps cards roomy at 1024 (no clip) and tucks them to
-    // the right on wide screens.
-    <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-1 gap-4">
+    // Two cards side by side below xl (three crushed the vault names to one
+    // letter at 1024); a stacked vertical rail at xl, next to the directory.
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-4">
       <OverviewModule title="Top APR · current" tag="min $1M">
         <ModuleTable
           columns={[{ header: "Vault" }, { header: "TVL", width: 84 }, { header: "APR", width: 72 }]}
         >
-          {topApr.map((v) => (
+          {topApr.map((v, i) => (
             <ModuleTableRow
               key={v.summary.vaultAddress}
+              className={i >= 5 ? EXTRA_ROW : undefined}
               href={vaultHref(v.summary.vaultAddress)}
               cells={[
                 <ModuleAsset
@@ -112,9 +117,10 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         <ModuleTable
           columns={[{ header: "Vault" }, { header: "Total", width: 72 }, { header: "Δ 24h", width: 64 }]}
         >
-          {followersRows.map((v) => (
+          {followersRows.map((v, i) => (
             <ModuleTableRow
               key={v.vaultAddress}
+              className={i >= 5 ? EXTRA_ROW : undefined}
               href={vaultHref(v.vaultAddress)}
               cells={[
                 <ModuleAsset key="v" logo={initials(v.name)} name={v.name} />,
@@ -131,15 +137,16 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         )}
       </OverviewModule>
 
+      {/* Shown only with data: an empty card here was a 100px "no data" box. */}
+      {(leaderboardsLoading || outflowsRows.length > 0) && (
       <OverviewModule
         title="Largest outflows · 24h"
         tag="24h"
+        className="md:col-span-2 xl:col-span-1"
         actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading)} />}
       >
         {leaderboardsLoading ? (
           <ModuleSkeleton />
-        ) : outflowsRows.length === 0 ? (
-          <ModuleEmpty>No outflow data for this window.</ModuleEmpty>
         ) : (
         <ModuleTable
           columns={[{ header: "Vault" }, { header: "% TVL", width: 64 }, { header: "Out", width: 84 }]}
@@ -162,6 +169,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         </ModuleTable>
         )}
       </OverviewModule>
+      )}
     </div>
   );
 }

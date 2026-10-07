@@ -23,6 +23,9 @@ interface AuroraHistogramChartProps {
   data: HistogramDataPoint[];
   defaultColor?: string;
   formatValue?: (value: number) => string;
+  /** Y-axis tick label; defaults to `formatValue`. Keep it short: the tooltip
+   * carries the long form, the axis has `yAxisWidth` px. */
+  formatAxisValue?: (value: number) => string;
   formatTime?: (time: number) => string;
   onCrosshairMove?: (value: number | null, time: number | null) => void;
   /**
@@ -30,7 +33,8 @@ interface AuroraHistogramChartProps {
    * at low bar widths; raise to 4 for chunkier, more decorative bars.
    */
   barRadius?: number;
-  /** Width reserved for Y-axis labels in px. Defaults to 48. */
+  /** Width reserved for Y-axis labels in px. Defaults to 56: 48 cut the
+   * minus sign off compact negatives ("-$9.00M" read "$9.00M"). */
   yAxisWidth?: number;
 }
 
@@ -102,10 +106,11 @@ const AuroraHistogramChartComponent = ({
   data,
   defaultColor = chartColors.rose,
   formatValue,
+  formatAxisValue,
   formatTime,
   onCrosshairMove,
   barRadius = 2,
-  yAxisWidth = 48,
+  yAxisWidth = 56,
 }: AuroraHistogramChartProps) => {
   const uid = useId().replace(/:/g, "");
   const gradientId = `aurora-bar-${uid}`;
@@ -159,7 +164,8 @@ const AuroraHistogramChartComponent = ({
       >
         <BarChart
           data={sorted}
-          margin={{ top: 8, right: 8, bottom: 0, left: 0 }}
+          // Bottom room for the lowest Y tick: at 0 it was cut in half.
+          margin={{ top: 8, right: 8, bottom: 6, left: 0 }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
         >
@@ -185,7 +191,7 @@ const AuroraHistogramChartComponent = ({
           />
           <YAxis
             tickFormatter={(v) =>
-              formatValue ? formatValue(Number(v)) : Number(v).toLocaleString()
+              (formatAxisValue ?? formatValue)?.(Number(v)) ?? Number(v).toLocaleString()
             }
             tick={{ fill: chartColors.textMuted, fontSize: 10 }}
             axisLine={false}

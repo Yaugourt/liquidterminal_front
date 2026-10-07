@@ -86,13 +86,17 @@ const UserTwapTableComponent = ({
         key: "hash",
         header: "Hash",
         className: "max-md:hidden",
-        accessor: (twap) => (
-          <AddressDisplay
-            address={twap.hash}
-            href={`/explorer/transaction/${twap.hash}`}
-            copyMessage="Hash copied to clipboard"
-          />
-        ),
+        accessor: (twap) =>
+          // Indexed TWAPs carry their Hyperliquid TWAP id instead of a transaction hash.
+          twap.hash.startsWith("0x") ? (
+            <AddressDisplay
+              address={twap.hash}
+              href={`/explorer/transaction/${twap.hash}`}
+              copyMessage="Hash copied to clipboard"
+            />
+          ) : (
+            <span className="mono text-text-secondary">TWAP #{twap.hash.replace(/^twap-/, "")}</span>
+          ),
       },
       {
         key: "timeLeft",

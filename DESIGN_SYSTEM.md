@@ -484,6 +484,8 @@ The primitive locks the look (the recipe below); callers pass data only.
 
 - **No `items-start`** on rows of paired cards (`grid-cols-2`, `grid-cols-3`) → cards stretch to equal height (default `stretch`). Components designed to stretch (`flex-1` on the main section, `mt-auto` on footers) fill in correctly.
 - `items-start` is reserved for asymmetric main+aside layouts (e.g. main chart + shorter right column).
+- **Short list next to a taller card**: don't leave a hole (`items-start`) and don't stretch a blank card. Let the row stretch, give the short card `h-full flex flex-col` (and its grid wrapper `flex flex-col`), and wrap its list in `<RowFillList>` (`@/components/common`): from `lg` the list fills the height the neighbour sets without adding to it, so it shows more real rows; below `lg` it scrolls in a fixed height. Fetch more rows than fit; the `.fade-bottom` mask hides the cut row. Use `.fade-bottom` on any fixed-height scroll list for the same reason.
+- Check with `node scripts/ux-audit.mjs <route>`: it reports dead space inside grid items, uneven rows, clipped text, horizontal overflow and leftover placeholders at 1440/1024/375.
 
 ### 7.d — Outcome row (prediction markets)
 

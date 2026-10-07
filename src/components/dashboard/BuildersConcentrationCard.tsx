@@ -101,22 +101,25 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
         actions={
           <div className="flex items-center gap-2.5 text-[10px] mono">
             <SourceBadge source="hypedexer" status={combinedSourceStatus(global, topFeed)} />
-            <span className="text-text-tertiary/40">·</span>
-            <span className="text-text-tertiary">
-              Vol{" "}
-              <span className="text-text-primary font-semibold">
-                {stats?.current?.totalVolume
-                  ? compactUsd(stats.current.totalVolume)
-                  : "—"}
+            {/* Phones keep the badge: the live stats need the width. */}
+            <span className="hidden sm:flex items-center gap-2.5">
+              <span className="text-text-tertiary/40">·</span>
+              <span className="text-text-tertiary">
+                Vol{" "}
+                <span className="text-text-primary font-semibold">
+                  {stats?.current?.totalVolume
+                    ? compactUsd(stats.current.totalVolume)
+                    : "—"}
+                </span>
               </span>
-            </span>
-            <span className="text-text-tertiary/40">·</span>
-            <span className="text-text-tertiary">
-              Users{" "}
-              <span className="text-text-primary font-semibold">
-                {stats?.current?.uniqueUsers
-                  ? compactCount(stats.current.uniqueUsers)
-                  : "—"}
+              <span className="text-text-tertiary/40">·</span>
+              <span className="text-text-tertiary">
+                Users{" "}
+                <span className="text-text-primary font-semibold">
+                  {stats?.current?.uniqueUsers
+                    ? compactCount(stats.current.uniqueUsers)
+                    : "—"}
+                </span>
               </span>
             </span>
           </div>
@@ -131,7 +134,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
       ) : (
         <>
           {/* Body — donut hero (left) + legend (right) */}
-          <div className="flex-1 flex items-stretch gap-3 px-4 py-4">
+          <div className="flex-1 flex flex-col sm:flex-row items-stretch gap-3 px-4 py-4">
             <div className="self-center shrink-0">
               <DonutTopN
                 data={segments}
@@ -182,6 +185,7 @@ export const BuildersConcentrationCard = memo(function BuildersConcentrationCard
                       style={{ background: s.color }}
                     />
                     <span
+                      title={s.name}
                       className={`text-[12px] flex-1 truncate ${
                         s.isRest
                           ? "text-text-tertiary italic"

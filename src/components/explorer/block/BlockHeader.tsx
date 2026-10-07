@@ -49,7 +49,7 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
       </div>
 
       <Card className="p-5 hover:border-border-default transition-all duration-300 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-6">
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -65,8 +65,8 @@ export function BlockHeader({ blockDetails }: BlockHeaderProps) {
                 <Hash size={14} className="text-gold" />
                 <p className="text-text-primary text-xs uppercase tracking-wide font-medium">Hash</p>
               </div>
-              <div className="flex items-center gap-1.5 ml-6">
-                <p className="text-text-primary break-all text-sm font-medium overflow-x-auto py-1 scrollbar-brand">
+              <div className="flex items-center gap-1.5 ml-6 min-w-0">
+                <p className="text-text-primary break-all text-sm font-medium py-1 min-w-0">
                   {blockDetails.hash}
                 </p>
                 <button

@@ -15,9 +15,10 @@ import {
   type AddressTabId,
 } from "./address-tabs.config";
 
-import { AddressTransactionList } from "@/components/explorer/address";
+import { AddressActivityTable } from "@/components/explorer/address";
 import { AssetsSection } from "@/components/market/tracker/assets";
 import { HyperEvmCard } from "@/components/market/tracker/evm/HyperEvmCard";
+import { WalletRiskCard } from "@/components/market/tracker/WalletRiskCard";
 import { WalletRoundTrips } from "@/components/market/tracker/WalletRoundTrips";
 import {
   OrdersSection,
@@ -26,7 +27,7 @@ import {
 import { WalletRecentFillsSection } from "@/components/market/tracker/fills";
 import { VaultDepositList } from "@/components/explorer/address/VaultDepositList";
 import { StakingTable } from "@/components/explorer/address/StakingTable";
-import { useTransactions } from "@/services/explorer/address";
+import { useAddressActivity } from "@/services/explorer/address";
 
 const ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
@@ -145,6 +146,9 @@ export function AddressAnalyticsLayout({
         variant={summaryVariant}
         onShowPositions={hasHoldings ? showPositions : undefined}
       >
+        {/* Live liquidation ladder of the perp account, above the tabs. */}
+        <WalletRiskCard address={address} />
+
         {/* The bar sticks while its panels scroll. */}
         <div ref={tabBarRef} className="space-y-4 scroll-mt-16">
           <AddressTabBar
@@ -215,13 +219,6 @@ function AddressTabPanel({ tabId, address, holdingsFocus }: AddressTabPanelProps
 }
 
 function TransactionsTabPanel({ address }: { address: string }) {
-  const { transactions, isLoading, error } = useTransactions(address);
-  return (
-    <AddressTransactionList
-      transactions={transactions || []}
-      isLoading={isLoading}
-      error={error}
-      currentAddress={address}
-    />
-  );
+  const { activity, isLoading, error } = useAddressActivity(address);
+  return <AddressActivityTable activity={activity} isLoading={isLoading} error={error} currentAddress={address} />;
 }

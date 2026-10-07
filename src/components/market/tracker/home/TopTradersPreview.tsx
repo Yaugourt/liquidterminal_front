@@ -16,6 +16,7 @@ export function TopTradersPreview() {
       key: "rank",
       header: "#",
       type: "rank",
+      className: "hidden sm:table-cell",
       accessor: (_t, _i, absoluteIndex) => absoluteIndex + 1,
     },
     {
@@ -31,7 +32,8 @@ export function TopTradersPreview() {
       sortable: true,
       getSortValue: (t) => t.tradeCount,
       type: "numeric",
-      className: "max-sm:hidden",
+      // Dropped in the half-width xl column, where it pushed the table 7px past its card.
+      className: "hidden sm:table-cell xl:hidden 2xl:table-cell",
       accessor: (t) => compactCount(t.tradeCount),
     },
     {
@@ -40,6 +42,7 @@ export function TopTradersPreview() {
       sortable: true,
       getSortValue: (t) => t.totalVolume,
       type: "numeric",
+      className: "whitespace-nowrap",
       accessor: (t) => compactUsd(t.totalVolume),
     },
     {
@@ -49,6 +52,7 @@ export function TopTradersPreview() {
       getSortValue: (t) => t.winRate,
       type: "numeric",
       tone: (t) => (t.winRate >= 0.5 ? "success" : "muted"),
+      className: "hidden sm:table-cell whitespace-nowrap",
       accessor: (t) => `${(t.winRate * 100).toFixed(1)}%`,
     },
     {
@@ -57,6 +61,7 @@ export function TopTradersPreview() {
       sortable: true,
       getSortValue: (t) => t.totalPnl,
       type: "change",
+      className: "whitespace-nowrap",
       accessor: (t) => signedCompactUsd(t.totalPnl),
     },
   ];

@@ -7,6 +7,14 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
     async redirects() {
         return [
+            // One host: www served the whole site in 200 (a second copy for
+            // crawlers, and a sitemap whose URLs did not match its host).
+            {
+                source: '/:path*',
+                has: [{ type: 'host', value: 'www.liquidterminal.xyz' }],
+                destination: 'https://liquidterminal.xyz/:path*',
+                permanent: true,
+            },
             // /market has no page of its own but is linked from the landing
             // header/footer and the Cmd+K palette: land on the spot overview.
             // /market is a real page now (the Market hub) — no redirect.

@@ -17,7 +17,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
   const createdAgo = timeAgo(list.createdAt);
 
   return (
-    <Card className="rounded-lg hover:border-border-default transition-all duration-200 group">
+    <Card className="rounded-lg hover:border-border-default transition-all duration-200 group flex flex-col">
       <CardHeader className="space-y-3">
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-text-primary text-lg line-clamp-2 group-hover:text-brand transition-colors">
@@ -36,7 +36,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         )}
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 flex-1 flex flex-col">
         {/* Stats */}
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1.5 text-text-secondary">
@@ -60,7 +60,7 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-2 pt-2">
+        <div className="flex gap-2 pt-2 mt-auto">
           <Button
             onClick={() => onPreview(list)}
             className="flex-1 bg-brand hover:bg-brand text-brand-text-on font-medium"

@@ -1,7 +1,9 @@
 import { withErrorHandling } from '../../api/error-handler';
-import { postExternal } from '../../api/axios-config';
+import { get, postExternal } from '../../api/axios-config';
 import { buildHyperliquidUrl } from '../../api/constants';
-import { TokenDetails, TokenDetailsRequest, TokenCandle, TokenCandleRequest } from './types';
+import { TokenDetails, TokenDetailsRequest, TokenCandle, TokenCandleRequest, CandleInterval } from './types';
+
+const SUB_MINUTE = new Set<CandleInterval>(['5s', '30s']);
 
 /**
  * Récupère les détails d'un token par son tokenId
@@ -22,11 +24,16 @@ export const fetchTokenDetails = async (tokenId: string): Promise<TokenDetails |
  */
 export const fetchTokenCandles = async (
   coin: string,
-  interval: "1m" | "3m" | "5m" | "15m" | "30m" | "1h" | "2h" | "4h" | "8h" | "12h" | "1d" | "3d" | "1w" | "1M",
+  interval: CandleInterval,
   startTime: number,
   endTime: number
 ): Promise<TokenCandle[]> => {
   return withErrorHandling(async () => {
+    // Sub-minute bars: our indexer (Hyperliquid's API starts at 1m).
+    if (SUB_MINUTE.has(interval)) {
+      const res = await get<{ success: boolean; data: TokenCandle[] }>('/indexer/candles', { coin, interval, startTime, endTime });
+      return res.data ?? [];
+    }
     const requestBody: TokenCandleRequest = {
       type: "candleSnapshot",
       req: {

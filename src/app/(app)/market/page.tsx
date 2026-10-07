@@ -78,7 +78,7 @@ export default function MarketHubPage() {
     if (traders24h) {
       out.push({
         key: "traders",
-        label: "Active traders · 24h",
+        label: "Traders · 24h",
         value: compactCount(traders24h.value),
         sub: variationSub(traders24h.variationPct),
       });
@@ -104,7 +104,7 @@ export default function MarketHubPage() {
     if (stableTotal) {
       out.push({
         key: "stables",
-        label: "Stablecoins on spot",
+        label: "Stables on spot",
         value: compactUsd(stableTotal.total),
         sub: stableTotal.usdcPct != null ? `USDC ${stableTotal.usdcPct.toFixed(1)}%` : undefined,
       });
@@ -145,23 +145,27 @@ export default function MarketHubPage() {
         spotVolume={spotStats?.totalVolume24h ?? null}
       />
 
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
-        <div className="min-w-0 space-y-4">
+      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4">
+        <div className="min-w-0 flex flex-col gap-4">
           {/* The two order books — the sidebar replacements get the first visual rank. */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <SpotVenueCard stats={spotStats ?? undefined} tokens={spotTokens} />
             <PerpVenueCard stats={perpStats ?? undefined} markets={perpMarkets} />
           </div>
 
-          {/* One lane per remaining sidebar sibling. */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            <PerpDexsLane overview={hip3} sourceStatus={sourceStatus(hip3Feed.error, hip3Feed.isLoading)} />
+          {/* One lane per remaining sidebar sibling. Perp DEXs and builders stack
+              in one column, predictions fill the other: the column then ends
+              near the rail instead of 440px above it. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:flex-1">
+            <div className="min-w-0 flex flex-col gap-4 [&>*:last-child]:flex-1">
+              <PerpDexsLane overview={hip3} sourceStatus={sourceStatus(hip3Feed.error, hip3Feed.isLoading)} />
+              <BuildersLane />
+            </div>
             <Hip4Lane />
-            <BuildersLane />
           </div>
         </div>
 
-        <aside className="xl:sticky xl:top-20 space-y-4">
+        <aside className="xl:sticky xl:top-20 xl:self-start space-y-4">
           <TopTradersCard />
           <BiggestTradesCard />
           <TwapFlowCard />

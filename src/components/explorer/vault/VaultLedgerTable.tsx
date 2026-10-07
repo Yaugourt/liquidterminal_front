@@ -201,6 +201,10 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
     </>
   );
 
+  // No ledger at all for this vault (e.g. HLP): an empty table says nothing
+  // the page doesn't already show.
+  if (!isLoading && !error && entries.length === 0) return null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}

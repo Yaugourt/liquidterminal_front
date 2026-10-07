@@ -5,3 +5,5 @@ export * from './usePortfolio';
 export * from './useAddressBalance';
 export * from './useUserFills';
 export * from './useLedgerUpdates';
+export * from './useAddressActivity';
+export * from './useAssetResolver';

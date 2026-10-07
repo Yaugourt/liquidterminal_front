@@ -4,10 +4,10 @@ import { ReactNode, useCallback, useMemo, useState } from "react";
 import { Database } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { truncateAddress } from "@/lib/formatters/numberFormatting";
 import { type PaginationProps } from "./pagination";
 import { ScrollableTable } from "./ScrollableTable";
 import { AddressIdenticon } from "./AddressIdenticon";
+import { HlAddressText } from "./HlAddressText";
 import {
     Table,
     TableBody,
@@ -146,9 +146,11 @@ interface DensityStyles {
 }
 
 // DS minimal table densities (DS_MINIMAL_SPEC §B1, kit.html TypedDataTable block).
+// Phones get tighter side padding: on a 343px card it is what pushed tables
+// past the edge.
 const DENSITY_STYLES: Record<Density, DensityStyles> = {
-    comfortable: { head: "px-4 py-2.5", cell: "px-4 py-3", textSize: "text-[13px]" },
-    compact:     { head: "px-3 py-2",   cell: "px-3 py-2", textSize: "text-[12px]" },
+    comfortable: { head: "px-2.5 sm:px-4 py-2.5", cell: "px-2.5 sm:px-4 py-3", textSize: "text-[13px]" },
+    compact:     { head: "px-2 sm:px-3 py-2",     cell: "px-2 sm:px-3 py-2", textSize: "text-[12px]" },
 };
 
 // ─── TypedDataTable (the canonical primitive) ─────────────────────────
@@ -730,7 +732,7 @@ function renderCellContent<T>(
         return (
             <span className="inline-flex items-center gap-2 align-middle">
                 <AddressIdenticon address={raw} size={18} />
-                {truncateAddress(raw)}
+                <HlAddressText address={raw} />
             </span>
         );
     }

@@ -182,5 +182,6 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
     },
   ];
 
-  return <KpiRibbon cells={cells} />;
+  // Ten cells: two rows of five (three columns left a lone cell and a hole).
+  return <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-5" />;
 }

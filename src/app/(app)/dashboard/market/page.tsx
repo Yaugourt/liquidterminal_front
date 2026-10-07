@@ -38,12 +38,15 @@ export default function DashboardMarket() {
           <MoversCard market="perp" />
           <Hip3MarketsPanel />
         </div>
-        {/* xl, not lg: at 1024 a third of the content column is ~200px, which no
-            dense table survives. */}
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,0.85fr)_minmax(0,1.3fr)] gap-4">
+        {/* Three columns from xl only: at 1024 a third of the content column is
+            ~200px, which no dense table survives. At lg the two auction cards
+            pair up and the deployers table takes the full row. */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,0.85fr)_minmax(0,1.3fr)] gap-4">
           <AuctionsPanel market="perp" />
           <Hip3PastAuctionsCard />
-          <Hip3TopDeployersCard />
+          <div className="lg:col-span-2 xl:col-span-1 min-w-0 flex flex-col [&>*]:flex-1">
+            <Hip3TopDeployersCard />
+          </div>
         </div>
       </section>
 
@@ -55,11 +58,13 @@ export default function DashboardMarket() {
           linkLabel="All spot →"
           linkHref="/market/spot"
         />
-        {/* xl, not lg: see above. */}
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_264px_minmax(0,1fr)] gap-4">
+        {/* Same pairing as above: movers + auction at lg, builders on their own row. */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_264px_minmax(0,1fr)] gap-4">
           <MoversCard market="spot" />
           <AuctionsPanel market="spot" />
-          <BuildersConcentrationCard />
+          <div className="lg:col-span-2 xl:col-span-1 min-w-0 flex flex-col [&>*]:flex-1">
+            <BuildersConcentrationCard />
+          </div>
         </div>
       </section>
 

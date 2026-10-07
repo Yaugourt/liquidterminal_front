@@ -39,7 +39,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
   return (
     <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
       {/* CARD HEADER (V4 ref: px-3.5 py-3 border-b, title-row + small tabs) */}
-      <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle gap-3">
+      <div className="flex flex-wrap items-center justify-between px-3.5 py-3 border-b border-border-subtle gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <span className="h-[5px] w-[5px] rounded-full bg-brand shrink-0" />
           <span className="text-[11px] uppercase tracking-wide font-medium text-text-tertiary truncate">
@@ -103,6 +103,7 @@ export function BuildersFlowChart({ rows, isLoading, timeframe }: BuildersFlowCh
                           size={16}
                         />
                         <span
+                          title={label}
                           className={`text-[11px] truncate ${
                             isAnonymous ? "mono text-text-secondary" : "font-medium text-text-primary"
                           }`}

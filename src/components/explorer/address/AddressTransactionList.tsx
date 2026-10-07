@@ -140,12 +140,14 @@ export function AddressTransactionList({
       },
       {
         key: "age",
+        className: "hidden sm:table-cell",
         header: "Age",
         type: "time",
         accessor: (tx) => tx.age,
       },
       {
         key: "from",
+        className: "hidden md:table-cell lg:hidden xl:table-cell",
         header: "From",
         accessor: (tx) => (
           <AddressCell address={tx.from} currentAddress={currentAddress} />
@@ -153,6 +155,7 @@ export function AddressTransactionList({
       },
       {
         key: "to",
+        className: "hidden md:table-cell lg:hidden xl:table-cell",
         header: "To",
         accessor: (tx) => (
           <AddressCell address={tx.to} currentAddress={currentAddress} />
@@ -171,6 +174,7 @@ export function AddressTransactionList({
       },
       {
         key: "price",
+        className: "hidden sm:table-cell",
         header: "Price",
         type: "numeric",
         accessor: (tx) => {
@@ -181,6 +185,8 @@ export function AddressTransactionList({
       },
       {
         key: "value",
+        // Phones keep hash, method and the amount; the USD value is derived.
+        className: "hidden sm:table-cell",
         header: "Value",
         type: "numeric",
         accessor: (tx) => calculateValueWithDirection(tx, formatterConfig),

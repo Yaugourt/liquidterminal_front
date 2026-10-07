@@ -26,12 +26,12 @@ import {
 const PAGE_SIZE = 12;
 
 const COLUMNS: ModuleColumn[] = [
-  { header: "Time", width: 84, align: "left" },
+  { header: "Time", width: 72, align: "left", className: "hidden sm:table-cell" },
   { header: "Market", align: "left" },
   { header: "Side", width: 54 },
-  { header: "Size", width: 96 },
+  { header: "Size", width: 80, className: "hidden sm:table-cell xl:hidden 2xl:table-cell" },
   { header: "Priority gas", width: 116 },
-  { header: "Payer", width: 118 },
+  { header: "Payer", width: 118, className: "hidden md:table-cell" },
 ];
 
 function formatFillTime(t: unknown): string {
@@ -48,6 +48,8 @@ function formatFillTime(t: unknown): string {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
+    // 24h clock: "06:37:37 AM" wrapped onto two lines in its 84px column.
+    hour12: false,
     timeZone: "UTC",
   });
 }
@@ -134,7 +136,7 @@ export const PriorityFillsCard = memo(function PriorityFillsCard({
                     </span>,
                     <span key="c" className="flex items-center gap-1.5 min-w-0">
                       {row.coin && <TokenAvatar assetName={row.coin} size="sm" />}
-                      <span className="text-[12px] text-text-primary truncate">{row.coin ?? "—"}</span>
+                      <span className="text-[12px] text-text-primary truncate" title={row.coin ?? undefined}>{row.coin ?? "—"}</span>
                     </span>,
                     <span key="s" className={`text-[12px] ${sideClass}`}>
                       {formatFillSideLabel(row.side)}
@@ -157,7 +159,10 @@ export const PriorityFillsCard = memo(function PriorityFillsCard({
                         className="flex items-center justify-end gap-1.5 min-w-0 group"
                       >
                         <AddressIdenticon address={payer} size={16} />
-                        <span className="mono text-[11px] text-text-secondary truncate group-hover:text-brand transition-colors">
+                        <span
+                          className="mono text-[11px] text-text-secondary truncate group-hover:text-brand transition-colors"
+                          title={payer}
+                        >
                           {truncateAddress(payer)}
                         </span>
                       </Link>

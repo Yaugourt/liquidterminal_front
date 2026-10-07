@@ -21,7 +21,7 @@ import { SourceCoverageNote } from "./SourceCoverageNote";
  *
  * The aggregate everyone quotes is a single line. This is the same money split
  * by where it came from, which is the question an analyst asks next: how much
- * of the business is one product, and is that share moving. Six sources, from
+ * of the business is one product, and is that share moving. Seven sources, from
  * our own endpoint — the public aggregates do not carry this breakdown.
  *
  * HIP-1 and HIP-3 stay separate here, unlike the dashboard chart which merges
@@ -39,7 +39,7 @@ import { SourceCoverageNote } from "./SourceCoverageNote";
  */
 
 interface Segment {
-  key: "perp" | "spot" | "hip1" | "hip3" | "hip4" | "priority";
+  key: "perp" | "spot" | "hip1" | "hip3" | "hip4" | "priority" | "reserve";
   label: string;
   hint: string;
   color: string;
@@ -52,6 +52,7 @@ const SEGMENTS: Segment[] = [
   { key: "hip3", label: "HIP-3 auctions", hint: "Perp DEX deploy auctions", color: chartPalette.multiSeries[7] },
   { key: "priority", label: "Order priority", hint: "Write priority, burned · gossip not counted", color: chartPalette.multiSeries[4] },
   { key: "hip4", label: "HIP-4", hint: "Outcome markets", color: chartPalette.multiSeries[6] },
+  { key: "reserve", label: "Reserve yield", hint: "USDC reserve yield (AQAv2), paid monthly", color: chartPalette.multiSeries[5] },
 ];
 
 /** The revenue endpoint and the timeframe selector do not use the same words. */

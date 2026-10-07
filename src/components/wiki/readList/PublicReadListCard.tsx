@@ -70,7 +70,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <h3 className="text-sm font-semibold text-text-primary truncate group-hover:text-brand transition-colors">
+              <h3 className="text-sm font-semibold text-text-primary truncate group-hover:text-brand transition-colors" title={readList.name}>
                 {readList.name}
               </h3>
               <Globe className="w-3 h-3 text-brand/60 flex-shrink-0" />
@@ -88,7 +88,7 @@ export const PublicReadListCard = memo(function PublicReadListCard({
           <div className="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xs flex-shrink-0">
             {initial}
           </div>
-          <span className="text-xs text-text-secondary truncate">{readList.creator.name}</span>
+          <span className="text-xs text-text-secondary truncate" title={readList.creator.name}>{readList.creator.name}</span>
           <span className="text-text-tertiary text-xs">·</span>
           <span className="text-xs text-text-tertiary">{updatedAgo}</span>
         </div>

@@ -98,7 +98,7 @@ export const BridgeTransfers = memo(function BridgeTransfers() {
             { header: "Stage",  align: "left" },
             { header: "User",   align: "left" },
             { header: "Amount", align: "right" },
-            { header: "Age",    align: "right" },
+            { header: "Age",    align: "right", className: "hidden sm:table-cell" },
           ]}
         >
           {rows.map((e: EvmBridgeEvent, i: number) => {

@@ -7,7 +7,7 @@ interface RevenueResponse {
 }
 
 /**
- * Fetch the daily revenue breakdown (5 sources stacked) for a given window.
+ * Fetch the daily revenue breakdown (seven sources) for a given window.
  * Backed by Hypurrscan (perp/spot/HIP-1) + HypeDexer (HIP-3) + HL info (HYPE price).
  */
 export const getRevenueBreakdown = async (

@@ -27,6 +27,7 @@ export function ActiveUsersPreview() {
       key: "rank",
       header: "#",
       type: "rank",
+      className: "hidden sm:table-cell",
       accessor: (_u, _i, absoluteIndex) => absoluteIndex + 1,
     },
     {
@@ -42,6 +43,7 @@ export function ActiveUsersPreview() {
       sortable: true,
       getSortValue: (u) => u.fill_count,
       type: "numeric",
+      className: "whitespace-nowrap",
       accessor: (u) => compactCount(u.fill_count),
     },
     {
@@ -50,6 +52,7 @@ export function ActiveUsersPreview() {
       sortable: true,
       getSortValue: (u) => u.total_volume,
       type: "numeric",
+      className: "whitespace-nowrap",
       accessor: (u) => compactUsd(u.total_volume),
     },
     {
@@ -68,6 +71,7 @@ export function ActiveUsersPreview() {
       type: "time",
       align: "right",
       getSortValue: (u) => new Date(u.last_activity).getTime(),
+      className: "hidden sm:table-cell whitespace-nowrap",
       accessor: (u) => timeAgo(u.last_activity),
     },
   ];

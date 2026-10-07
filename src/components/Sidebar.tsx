@@ -1,5 +1,7 @@
 import Link from "next/link"
 import { Settings, Shield, MessageCircle, Github, BookOpen, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { NetworkSubtitle } from "@/components/network/NetworkSwitch";
+import { NETWORKS, networkFromPath } from "@/lib/networks";
 import { cn } from "@/lib/utils"
 import { SidebarToggle } from "@/components/common"
 import { TokenAvatar, LiquidMark, SponsorCard } from "@/components/common"
@@ -13,6 +15,7 @@ import { useSidebarUi } from "@/store/use-sidebar-ui"
 import { useSidebarBadges } from "@/hooks/useSidebarBadges"
 import {
     defaultNavigationGroups,
+    elysiumNavigationGroups,
     getDefaultSidebarPreferences,
     applyPreferencesToNavigation,
     getGroupId,
@@ -86,6 +89,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     // shows the full menu. Gate on hasMounted to avoid hydration mismatch on
     // the persisted flag.
     const isCollapsed = hasMounted && collapsed && !isOpen;
+    const network = networkFromPath(pathname);
+    // The Elysium rail is fixed; user preferences only reshape the Hyperliquid one.
+    const railGroups = network === "elysium" ? elysiumNavigationGroups : navigationGroups;
 
     // Hover flyout (collapsed mode). JS-positioned because the nav scroll
     // container would clip an absolutely-positioned CSS flyout.
@@ -271,7 +277,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     };
 
     /** Ids of the foldable families, in render order (the home block has none). */
-    const namedGroupIds = navigationGroups
+    const namedGroupIds = railGroups
         .filter((group) => group.groupName)
         .map((group) => getGroupId(group.groupName));
 
@@ -385,24 +391,28 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         isCollapsed ? "pb-12" : "pb-[14px]"
                     )}
                 >
-                    <Link
-                        href="/dashboard"
-                        className="flex flex-1 items-center gap-2 overflow-hidden hover:opacity-80 transition-opacity"
-                        onClick={() => setIsOpen(false)}
-                        aria-label="Liquid Terminal — Dashboard"
-                    >
-                        <LiquidMark size={26} decorative className="shrink-0" />
-                        <div className={cn("whitespace-nowrap transition-opacity duration-150", isCollapsed ? "opacity-0" : "opacity-100 delay-75")}>
-                            <div className="text-[14px] font-semibold leading-none text-text-primary">
+                    {/* Mark and wordmark go home on the active network; the
+                        subtitle underneath is the network selector. */}
+                    <div className="flex flex-1 items-center gap-2 overflow-hidden">
+                        <Link
+                            href={NETWORKS[network].home}
+                            className="shrink-0 hover:opacity-80 transition-opacity"
+                            onClick={() => setIsOpen(false)}
+                            aria-label={`Liquid Terminal ${NETWORKS[network].label} home`}
+                        >
+                            <LiquidMark size={26} decorative className="shrink-0" />
+                        </Link>
+                        <div className={cn("min-w-0 whitespace-nowrap transition-opacity duration-150", isCollapsed ? "opacity-0 pointer-events-none" : "opacity-100 delay-75")}>
+                            <Link
+                                href={NETWORKS[network].home}
+                                onClick={() => setIsOpen(false)}
+                                className="block text-[14px] font-semibold leading-none text-text-primary hover:opacity-80 transition-opacity"
+                            >
                                 Liquid Terminal
-                            </div>
-                            {/* tracking kept under 0.12em: the trailing letter-space made the
-                                wordmark overflow the 208px mobile drawer by 4px. */}
-                            <div className="text-[9px] uppercase tracking-[0.1em] text-text-tertiary mt-[3px]">
-                                Hyperliquid Data
-                            </div>
+                            </Link>
+                            <NetworkSubtitle />
                         </div>
-                    </Link>
+                    </div>
                     {/* Desktop collapse toggle */}
                     <button
                         onClick={toggleCollapsed}
@@ -430,7 +440,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 {/* Navigation */}
                 <nav className="flex-1 px-2.5 py-3 overflow-y-auto overflow-x-hidden scrollbar-brand">
                     <ul className={cn("transition-all duration-200", isCollapsed ? "space-y-3" : "space-y-1.5")}>
-                        {navigationGroups.map((group, groupIndex) => {
+                        {railGroups.map((group, groupIndex) => {
                             // Header-less home block: no family header, no fold.
                             if (!group.groupName) {
                                 return (
@@ -513,9 +523,13 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         )}
                     >
                         <div className="flex items-center gap-1.5 text-[10px] text-text-tertiary">
-                            <span className="w-1.5 h-1.5 rounded-full bg-success shrink-0" title="Mainnet" />
+                            <span
+                                className={cn("w-1.5 h-1.5 rounded-full shrink-0", network === "elysium" ? "bg-warning" : "bg-success")}
+                                title={`${NETWORKS[network].label} · ${NETWORKS[network].status}`}
+                            />
                             <span className={cn("whitespace-nowrap transition-opacity duration-150", isCollapsed ? "opacity-0 w-0" : "opacity-100 delay-75")}>
-                                Mainnet
+                                {/* Status only: the network itself is named by the selector above. */}
+                                {NETWORKS[network].status}
                             </span>
                         </div>
                         <div className={cn("flex items-center gap-0.5 transition-opacity duration-150", isCollapsed && "opacity-0 w-0 pointer-events-none overflow-hidden")}>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
-import { SidebarToggle } from "@/components/common";
+import { SidebarToggle, DonatePrompt } from "@/components/common";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useSidebarUi } from "@/store/use-sidebar-ui";
 // Direct paths (not the barrels): the barrels also re-export the lazy-loaded
@@ -45,8 +45,9 @@ export function AppShell({ children, footer }: { children: React.ReactNode; foot
 
     return (
         <div className="min-h-screen bg-base text-text-primary font-inter">
-            {/* Mobile menu button */}
-            <div className="fixed top-4 left-4 z-50 lg:hidden">
+            {/* Mobile menu button: centred on the header row (py-2.5, 36px
+                controls) and clear of the network pill, which it used to touch. */}
+            <div className="fixed top-2.5 left-2 z-50 lg:hidden">
                 <SidebarToggle onClick={() => setIsSidebarOpen(!isSidebarOpen)} />
             </div>
 
@@ -74,6 +75,7 @@ export function AppShell({ children, footer }: { children: React.ReactNode; foot
             <OnboardingGate />
             <MissionsGate />
             {/* The Cmd+K palette is mounted once in the root layout. */}
+            <DonatePrompt />
         </div>
     );
 }

@@ -80,7 +80,7 @@ export function TopicsIndex() {
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="text-[13px] font-medium text-text-primary">{t.chapter.title}</div>
-                      <div className="truncate text-[11px] text-text-tertiary">{t.meta.tagline}</div>
+                      <div className="truncate text-[11px] text-text-tertiary" title={t.meta.tagline}>{t.meta.tagline}</div>
                     </div>
                     <span className="mono shrink-0 text-[11.5px] text-text-secondary">{t.articleCount}</span>
                   </Link>
@@ -105,7 +105,7 @@ export function TopicsIndex() {
                     href={categoryHref(c.name)}
                     className="flex items-center justify-between gap-3 border-b border-border-subtle px-4 py-2.5 transition-colors last:border-b-0 hover:bg-surface-2/60"
                   >
-                    <span className="truncate text-[13px] text-text-secondary">{c.name}</span>
+                    <span className="truncate text-[13px] text-text-secondary" title={c.name}>{c.name}</span>
                     <span className="mono shrink-0 text-[11.5px] text-text-tertiary">{c.resourcesCount ?? 0}</span>
                   </Link>
                 ))

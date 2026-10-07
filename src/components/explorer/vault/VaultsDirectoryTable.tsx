@@ -7,7 +7,7 @@ import { useDateFormat } from "@/store/date-format.store";
 import { TypedDataTable, ModuleAsset, TableStat, TableSearch, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { formatNumber, truncateAddress } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatNumber, truncateAddress } from "@/lib/formatters/numberFormatting";
 import { formatDate } from "@/lib/formatters/dateFormatting";
 import type {
   UseVaultsDirectoryResult,
@@ -26,6 +26,7 @@ function buildColumns(
   return [
     {
       key: "rank",
+      className: "hidden sm:table-cell",
       header: "#",
       type: "rank",
       accessor: (_v, _i, absoluteIndex) => absoluteIndex + 1,
@@ -46,6 +47,7 @@ function buildColumns(
     },
     {
       key: "leader",
+      className: "hidden md:table-cell lg:hidden 2xl:table-cell",
       header: "Leader",
       accessor: (v) => <AddressDisplay address={v.summary.leader} />,
     },
@@ -55,8 +57,7 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (v) => parseFloat(v.summary.tvl),
-      accessor: (v) =>
-        `$${formatNumber(parseFloat(v.summary.tvl), format, { maximumFractionDigits: 0 })}`,
+      accessor: (v) => compactUsd(parseFloat(v.summary.tvl)),
     },
     {
       key: "apr",
@@ -68,17 +69,19 @@ function buildColumns(
     },
     {
       key: "followers",
+      className: "hidden sm:table-cell",
       header: "Followers",
       type: "numeric",
       sortable: true,
       getSortValue: (v) => v.followerCount ?? -1,
       accessor: (v) =>
         v.followerCount !== null
-          ? formatNumber(v.followerCount, format, { maximumFractionDigits: 0 })
+          ? formatNumber(v.followerCount, format, { minimumFractionDigits: 0, maximumFractionDigits: 0 })
           : "—",
     },
     {
       key: "commission",
+      className: "hidden 2xl:table-cell",
       header: "Comm.",
       type: "numeric",
       sortable: true,
@@ -91,6 +94,7 @@ function buildColumns(
       header: "Created",
       type: "time",
       align: "right",
+      className: "hidden 2xl:table-cell",
       sortable: true,
       getSortValue: (v) => v.summary.createTimeMillis,
       accessor: (v) => formatDate(v.summary.createTimeMillis, dateFormat),

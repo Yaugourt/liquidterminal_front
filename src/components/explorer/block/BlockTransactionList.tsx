@@ -1,22 +1,28 @@
 "use client";
 
+import { useMemo } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { BlockTransactionListProps } from "@/components/types/explorer.types";
-import { useDateFormat } from "@/store/date-format.store";
-import { useNumberFormat } from "@/store/number-format.store";
-import { formatDateTime } from "@/lib/formatters/dateFormatting";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { BlockTransaction } from "@/services/explorer";
+import { decodeAction, useAssetResolver, type Activity } from "@/services/explorer/address";
+import type { UserTransaction } from "@/services/explorer/address/types";
+import { ActionLabel, ActivityDetails, ActivityValue } from "@/components/explorer/address";
 
 /**
- * Transactions of one block. Hash and user cells are `AddressDisplay` links
- * (`/explorer/transaction/…`, `/explorer/address/…`).
+ * Transactions of one block, decoded into what each one did. Hash and user
+ * cells are `AddressDisplay` links (`/explorer/transaction/…`, `/explorer/address/…`).
  */
 export function BlockTransactionList({ transactions }: BlockTransactionListProps) {
-  const { format: dateFormat } = useDateFormat();
-  const { format: numberFormat } = useNumberFormat();
+  const assets = useAssetResolver();
+  // Decoded once per block: what each transaction did, in words.
+  const decoded = useMemo(() => {
+    const m = new Map<string, Activity>();
+    if (!assets) return m;
+    for (const tx of transactions) m.set(tx.hash, decodeAction(tx as unknown as UserTransaction, assets));
+    return m;
+  }, [transactions, assets]);
 
   const columns: Column<BlockTransaction>[] = [
     {
@@ -33,19 +39,29 @@ export function BlockTransactionList({ transactions }: BlockTransactionListProps
     {
       key: "action",
       header: "Action",
-      accessor: (tx) => <StatusBadge variant="neutral">{tx.action.type}</StatusBadge>,
+      accessor: (tx) => {
+        const a = decoded.get(tx.hash);
+        return a ? <ActionLabel a={a} /> : <StatusBadge variant="neutral">{tx.action.type}</StatusBadge>;
+      },
     },
     {
-      key: "block",
-      header: "Block",
-      type: "numeric",
-      accessor: (tx) => formatNumber(tx.block, numberFormat, { maximumFractionDigits: 0 }),
+      key: "details",
+      header: "Details",
+      className: "hidden md:table-cell",
+      accessor: (tx) => {
+        const a = decoded.get(tx.hash);
+        return a ? <ActivityDetails a={a} currentAddress={tx.user} /> : null;
+      },
     },
     {
-      key: "time",
-      header: "Time",
-      type: "time",
-      accessor: (tx) => formatDateTime(tx.time, dateFormat),
+      key: "value",
+      header: "Value",
+      align: "right",
+      className: "hidden md:table-cell",
+      accessor: (tx) => {
+        const a = decoded.get(tx.hash);
+        return a ? <ActivityValue a={a} /> : null;
+      },
     },
     {
       key: "user",

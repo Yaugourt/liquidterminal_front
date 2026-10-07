@@ -3,11 +3,18 @@ import { SITE_CONFIG } from '@/lib/site-config'
 import { CHAPTER_CATEGORY_MAP, slugify } from '@/components/wiki/hub/topics'
 import { env } from '@/lib/env'
 import { API_URLS } from '@/services/api/constants'
+import { HIP4_SLUGS } from '@/lib/hip4-chapters'
 
 export const revalidate = 3600
 
-/** Learn chapter slugs, derived from the same map the wiki routes use. */
-const WIKI_CHAPTERS = Object.keys(CHAPTER_CATEGORY_MAP).map(slugify)
+/**
+ * Learn chapter slugs, derived from the same map the wiki routes use.
+ * "introduction" redirects to /wiki (next.config): a redirecting URL in a
+ * sitemap is reported as an error, so it is left out.
+ */
+const WIKI_CHAPTERS = Object.keys(CHAPTER_CATEGORY_MAP)
+  .map(slugify)
+  .filter((slug) => slug !== 'introduction')
 
 /**
  * Static sections. No lastModified on purpose: a build-time `new Date()`
@@ -35,12 +42,30 @@ const STATIC_ROUTES: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   { path: '/market/spot/auction', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/perp/auction', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/tracker', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/alerts', changeFrequency: 'weekly', priority: 0.7 },
+  { path: '/names', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/market/tracker/public-lists', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/builders', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/perpdex', changeFrequency: 'daily', priority: 0.7 },
   { path: '/market/hip4', changeFrequency: 'hourly', priority: 0.7 },
-  // HIP-4 docs
-  { path: '/hip4', changeFrequency: 'weekly', priority: 0.6 },
+  { path: '/market/trades', changeFrequency: 'hourly', priority: 0.6 },
+  { path: '/market/builders/intelligence', changeFrequency: 'daily', priority: 0.5 },
+  // HYPE token chapters
+  { path: '/hype', changeFrequency: 'daily', priority: 0.8 },
+  { path: '/hype/financials', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/hype/valuation', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/hype/capital', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/hype/reserve-yield', changeFrequency: 'daily', priority: 0.7 },
+  { path: '/hype/operations', changeFrequency: 'daily', priority: 0.6 },
+  // HyperEVM and the share studio
+  { path: '/evm', changeFrequency: 'daily', priority: 0.6 },
+  { path: '/share', changeFrequency: 'weekly', priority: 0.5 },
+  // Elysium testnet (address pages are noindex: not listed)
+  ...['', '/start', '/network', '/simulate', '/tx', '/decode', '/contracts', '/tokens', '/dex', '/bridge', '/users', '/economics', '/fees', '/node', '/share'].map(
+    (p) => ({ path: `/elysium${p}`, changeFrequency: 'daily' as const, priority: p === '' ? 0.7 : 0.6 })
+  ),
+  // HIP-4 docs: /hip4 itself only redirects to /hip4/home, so list the chapters
+  ...HIP4_SLUGS.map((slug) => ({ path: `/hip4/${slug}`, changeFrequency: 'monthly' as const, priority: slug === 'home' ? 0.6 : 0.4 })),
   // Ecosystem (the bare /ecosystem route does not exist — never list it)
   { path: '/ecosystem/publicgoods', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/ecosystem/project', changeFrequency: 'weekly', priority: 0.7 },

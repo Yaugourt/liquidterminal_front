@@ -114,11 +114,14 @@ export function ModuleRow({
         {logo}
       </div>
       <div className="min-w-0">
-        <div className="text-[12.5px] font-medium text-text-primary truncate">
+        <div
+          className="text-[12.5px] font-medium text-text-primary truncate"
+          title={typeof name === "string" ? name : undefined}
+        >
           {name}
         </div>
         {sub != null && (
-          <div className="mono text-[10px] text-text-tertiary truncate">{sub}</div>
+          <div className="mono text-[10px] text-text-tertiary truncate" title={typeof sub === "string" ? sub : undefined}>{sub}</div>
         )}
       </div>
       <div className="ml-auto flex shrink-0 gap-5">
@@ -180,6 +183,11 @@ export interface ModuleColumn {
    * remaining space.
    */
   width?: number | string;
+  /**
+   * Responsive visibility for the whole column (`<col>`, header and cells),
+   * e.g. `"hidden sm:table-cell"` to drop a secondary column on phones.
+   */
+  className?: string;
 }
 
 export type ModuleTableDensity = "comfortable" | "compact";
@@ -188,11 +196,14 @@ interface ModuleTableCtx {
   density: ModuleTableDensity;
   /** Per-column alignment, looked up by cell index. */
   alignments: Array<"left" | "right">;
+  /** Per-column visibility classes, looked up by cell index. */
+  colClasses: Array<string | undefined>;
 }
 
 const ModuleTableContext = createContext<ModuleTableCtx>({
   density: "comfortable",
   alignments: [],
+  colClasses: [],
 });
 
 /** Resolve `width` into the inline style for a `<col>` element. */
@@ -204,8 +215,8 @@ function colStyle(width: number | string | undefined): React.CSSProperties | und
 /**
  * ModuleTable — compact table card body (alias `.tbl` in the mockup).
  *
- * `<colgroup>` propagates width to header + rows so column edges stay aligned
- * pixel-perfect even when rows render in different React subtrees. Use the
+ * Widths sit on the header cells, which set the columns of the fixed table,
+ * so column edges stay aligned even when rows render in different subtrees. Use the
  * `density="compact"` variant for dense feeds (blocks/tx live streams).
  */
 export function ModuleTable({
@@ -226,29 +237,27 @@ export function ModuleTable({
   const alignments = columns.map(
     (c, i) => c.align ?? (i === 0 ? "left" : "right"),
   );
+  const colClasses = columns.map((c) => c.className);
   return (
-    <ModuleTableContext.Provider value={{ density, alignments }}>
+    <ModuleTableContext.Provider value={{ density, alignments, colClasses }}>
       <div className="overflow-x-auto scrollbar-brand">
       <table
         className={`w-full border-collapse ${hasWidths ? "table-fixed" : "table-auto"}`}
       >
-        {hasWidths && (
-          <colgroup>
-            {columns.map((c, i) => (
-              <col key={i} style={colStyle(c.width)} />
-            ))}
-          </colgroup>
-        )}
         <thead>
           <tr>
             {columns.map((c, i) => (
               <th
                 key={i}
+                // Widths live on the header row (it sets a fixed table's
+                // columns), so a header hidden per breakpoint drops its whole
+                // column; a hidden <col> would keep reserving its width.
+                style={hasWidths ? colStyle(c.width) : undefined}
                 className={`${
                   density === "compact" ? "px-3 py-1.5" : "px-3 py-2"
                 } text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle ${
                   alignments[i] === "left" ? "text-left" : "text-right"
-                }`}
+                } ${c.className ?? ""}`}
               >
                 {c.header}
               </th>
@@ -305,7 +314,7 @@ function ModuleCell({
   prefetch?: boolean;
   index: number;
 }) {
-  const { density, alignments } = useContext(ModuleTableContext);
+  const { density, alignments, colClasses } = useContext(ModuleTableContext);
   // Fallback: first cell left, the rest right (legacy ModuleTable behaviour).
   const align = alignments[index] ?? (index === 0 ? "left" : "right");
   const content = href ? (
@@ -321,7 +330,7 @@ function ModuleCell({
         density === "compact" ? "px-3 py-1.5" : "px-3 py-2"
       } text-[12.5px] overflow-hidden ${
         align === "left" ? "text-left" : "text-right"
-      }`}
+      } ${colClasses[index] ?? ""}`}
     >
       {content}
     </td>
@@ -368,9 +377,14 @@ export function ModuleAsset({
         <TokenAvatar assetName={assetName} src={src} kind={kind} size="lg" />
       ) : null}
       <div className="min-w-0">
-        <div className="text-[12.5px] font-medium text-text-primary truncate">{name}</div>
+        <div
+          className="text-[12.5px] font-medium text-text-primary truncate"
+          title={typeof name === "string" ? name : undefined}
+        >
+          {name}
+        </div>
         {sub != null && (
-          <div className="mono text-[10px] text-text-tertiary truncate">{sub}</div>
+          <div className="mono text-[10px] text-text-tertiary truncate" title={typeof sub === "string" ? sub : undefined}>{sub}</div>
         )}
       </div>
     </div>

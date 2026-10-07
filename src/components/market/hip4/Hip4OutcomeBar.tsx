@@ -30,7 +30,7 @@ export function Hip4OutcomeBar({ outcome, colorIndex = 0 }: Hip4OutcomeBarProps)
 
   return (
     <div className="flex items-center gap-3">
-      <span className="flex-1 min-w-0 truncate text-[12px] font-semibold text-text-primary">
+      <span className="flex-1 min-w-0 truncate text-[12px] font-semibold text-text-primary" title={outcome.display_name || `#${outcome.outcome_id}`}>
         {outcome.display_name || `#${outcome.outcome_id}`}
       </span>
       <div className="relative h-1 w-24 sm:w-32 rounded-full bg-surface-2 overflow-hidden">

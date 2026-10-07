@@ -112,7 +112,10 @@ export function MarketStatsStrip({ market }: MarketStatsStripProps) {
   return (
     <div
       className={`grid grid-cols-2 gap-2 ${
-        items.length === 3 ? "xl:grid-cols-3" : "xl:grid-cols-4"
+        // Three cells: one row from sm, the lone third spans on phones.
+        items.length === 3
+          ? "sm:grid-cols-3 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1"
+          : "xl:grid-cols-4"
       }`}
     >
       {items.map((item, i) => (

@@ -136,6 +136,12 @@ export const FeesRevenuePanel = memo(function FeesRevenuePanel() {
             <span className="text-danger/80">HIP-4 fees unavailable</span>
           </>
         ) : null}
+        {breakdown?.meta?.sourceStatus?.reserve === "error" ? (
+          <>
+            <span className="opacity-50">·</span>
+            <span className="text-danger/80">Reserve yield unavailable</span>
+          </>
+        ) : null}
       </div>
     </Card>
   );

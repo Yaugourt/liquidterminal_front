@@ -76,14 +76,20 @@ function getErrorMessage(code: TelegramErrorCode): string {
  * Handles link generation, polling, countdown timer, and unlinking
  */
 export function useTelegramLink(
-  initialTelegramUsername?: string | null
+  initialTelegramUsername?: string | null,
+  options: { initialLinked?: boolean; onLinked?: () => void } = {}
 ): UseTelegramLinkResult {
+  const { initialLinked = false, onLinked } = options;
+  const onLinkedRef = useRef(onLinked);
+  onLinkedRef.current = onLinked;
   const { authenticated, ready } = usePrivy();
 
   // State
   const [state, setState] = useState<TelegramLinkState>(
-    initialTelegramUsername ? 'linked' : 'not_linked'
+    initialTelegramUsername || initialLinked ? 'linked' : 'not_linked'
   );
+  // Linked accounts may have no public @username, so track the link itself.
+  const [isLinked, setIsLinked] = useState(Boolean(initialTelegramUsername || initialLinked));
   const [telegramUsername, setTelegramUsername] = useState<string | null>(
     initialTelegramUsername || null
   );
@@ -121,11 +127,12 @@ export function useTelegramLink(
 
   // Update initial state when prop changes
   useEffect(() => {
-    if (initialTelegramUsername) {
+    if (initialTelegramUsername || initialLinked) {
       setState('linked');
-      setTelegramUsername(initialTelegramUsername);
+      setIsLinked(true);
+      setTelegramUsername(initialTelegramUsername || null);
     }
-  }, [initialTelegramUsername]);
+  }, [initialTelegramUsername, initialLinked]);
 
   /**
    * Cancel the linking process - defined before countdown effect
@@ -145,8 +152,8 @@ export function useTelegramLink(
     setCode(null);
     setExpiresAt(null);
     setRemainingSeconds(0);
-    setState(telegramUsername ? 'linked' : 'not_linked');
-  }, [telegramUsername]);
+    setState(isLinked ? 'linked' : 'not_linked');
+  }, [isLinked]);
 
   // Countdown timer effect
   useEffect(() => {
@@ -230,7 +237,9 @@ export function useTelegramLink(
           if (statusResponse.success && statusResponse.data.linked) {
             // Successfully linked!
             setTelegramUsername(statusResponse.data.telegramUsername || null);
+            setIsLinked(true);
             setState('linked');
+            onLinkedRef.current?.();
             setIsPolling(false);
             setDeepLink(null);
             setCode(null);
@@ -240,6 +249,10 @@ export function useTelegramLink(
               clearInterval(pollingIntervalRef.current);
               pollingIntervalRef.current = null;
             }
+          } else if (statusResponse.success && statusResponse.data.expired) {
+            cancelLinking();
+            setError({ code: 'CODE_EXPIRED', message: getErrorMessage('CODE_EXPIRED') });
+            setState('error');
           }
         } catch (pollError) {
           // Don't stop polling on individual poll errors
@@ -292,6 +305,7 @@ export function useTelegramLink(
 
       if (response.success) {
         setTelegramUsername(null);
+        setIsLinked(false);
         setState('not_linked');
       } else {
         throw { code: 'UNKNOWN_ERROR', message: response.message };
@@ -319,9 +333,9 @@ export function useTelegramLink(
   const clearError = useCallback(() => {
     setError(null);
     if (state === 'error') {
-      setState(telegramUsername ? 'linked' : 'not_linked');
+      setState(isLinked ? 'linked' : 'not_linked');
     }
-  }, [state, telegramUsername]);
+  }, [state, isLinked]);
 
   return {
     state,

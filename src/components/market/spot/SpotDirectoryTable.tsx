@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { TypedDataTable, ModuleAsset, TableStat, TableSearch, type Column } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import {
-  formatNumber,
+  compactUsd,
   formatMetricValue,
   formatPrice,
 } from "@/lib/formatters/numberFormatting";
@@ -36,6 +36,7 @@ function buildColumns(
       key: "rank",
       header: "#",
       type: "rank",
+      className: "hidden sm:table-cell",
       accessor: (_t, _i, absoluteIndex) => absoluteIndex + 1,
     },
     {
@@ -76,7 +77,9 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (t) => t.volume,
-      accessor: (t) => `$${formatNumber(t.volume, format, { maximumFractionDigits: 0 })}`,
+      // Phones keep token, price and 24h; the movers boards carry volume there.
+      className: "hidden sm:table-cell whitespace-nowrap",
+      accessor: (t) => compactUsd(t.volume),
     },
     {
       key: "marketCap",
@@ -84,10 +87,8 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (t) => (isBridged(t.name) ? -1 : marketCapOf(t)),
-      accessor: (t) =>
-        isBridged(t.name)
-          ? "—"
-          : `$${formatNumber(marketCapOf(t), format, { maximumFractionDigits: 0 })}`,
+      className: "hidden sm:table-cell whitespace-nowrap",
+      accessor: (t) => (isBridged(t.name) ? "—" : compactUsd(marketCapOf(t))),
     },
     {
       key: "supply",
@@ -95,6 +96,7 @@ function buildColumns(
       type: "numeric",
       sortable: true,
       getSortValue: (t) => t.supply,
+      className: "hidden md:table-cell whitespace-nowrap",
       accessor: (t) =>
         formatMetricValue(t.supply, {
           format: "US",

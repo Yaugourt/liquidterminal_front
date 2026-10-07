@@ -231,7 +231,7 @@ export const TwapPanel = memo(function TwapPanel() {
           <span className="shrink-0">Side</span>
           <span className="shrink-0">Ticker</span>
           <span className="shrink-0">Amount</span>
-          <span className="w-[100px] text-right hidden sm:block">Filled</span>
+          <span className="w-[100px] lg:w-auto xl:w-[100px] text-right hidden sm:block">Filled</span>
           <span className="w-[72px] text-right">Value</span>
         </div>
 
@@ -294,9 +294,13 @@ export const TwapPanel = memo(function TwapPanel() {
                   <MarketTypeBadge type={order.marketType} />
                 </div>
                 <div className="min-w-0">
-                  <div className="mono text-[12.5px] font-semibold text-text-primary leading-tight truncate">
+                  <div
+                    className="mono text-[12.5px] font-semibold text-text-primary leading-tight truncate"
+                    title={`${formatSize(String(remainingAmount))} ${order.tokenSymbol}`}
+                  >
                     {formatSize(String(remainingAmount))}{" "}
-                    <span className="text-[10px] text-text-tertiary font-normal">
+                    {/* The ticker column already names the unit; the narrow lg column drops it. */}
+                    <span className="text-[10px] text-text-tertiary font-normal lg:hidden xl:inline">
                       {order.tokenSymbol}
                     </span>
                   </div>
@@ -304,8 +308,9 @@ export const TwapPanel = memo(function TwapPanel() {
                     {formatDuration(twap.m)}
                   </div>
                 </div>
-                <div className="w-[100px] hidden sm:flex items-center gap-2">
-                  <span className="flex-1 h-1.5 rounded bg-base overflow-hidden">
+                {/* In the narrow lg column only the percentage stays, the bar needs room. */}
+                <div className="w-[100px] lg:w-auto xl:w-[100px] hidden sm:flex items-center gap-2">
+                  <span className="flex-1 h-1.5 rounded bg-base overflow-hidden lg:hidden xl:block">
                     <i
                       className={`block h-full ${
                         isBuy ? "bg-success" : "bg-danger"

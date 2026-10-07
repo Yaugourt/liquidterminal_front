@@ -15,8 +15,25 @@ import {
     processOrphanLedgerUpdates
 } from './processors';
 import { isNullHash, withRowIds } from './utils';
+import { decodeAddressActivity, type Activity } from './decode';
+import { loadAssetResolver } from './assets';
+
+/** The address page asks for the same raw history from several widgets: share it for 30s. */
+const rawCache = new Map<string, { at: number; value: Promise<unknown> }>();
+function shared<T>(key: string, load: () => Promise<T>): Promise<T> {
+    const hit = rawCache.get(key);
+    if (hit && Date.now() - hit.at < 30_000) return hit.value as Promise<T>;
+    const value = load();
+    rawCache.set(key, { at: Date.now(), value });
+    value.catch(() => rawCache.delete(key));
+    return value;
+}
 
 async function getUserTransactionsRaw(address: string): Promise<UserTransactionsResponse> {
+    return shared(`details:${address.toLowerCase()}`, () => getUserTransactionsRawUncached(address));
+}
+
+async function getUserTransactionsRawUncached(address: string): Promise<UserTransactionsResponse> {
     return withErrorHandling(async () => {
         const url = `${API_URLS.HYPERLIQUID_RPC}/explorer`;
         return await postExternal<UserTransactionsResponse>(url, {
@@ -31,24 +48,40 @@ async function getUserTransactionsRaw(address: string): Promise<UserTransactions
  * liquidations) since 2022 — the capital-flow source for the address digest.
  */
 export async function getUserNonFundingLedgerUpdates(address: string): Promise<NonFundingLedgerUpdate[]> {
-    return withErrorHandling(async () => {
+    return shared(`ledger:${address.toLowerCase()}`, () => withErrorHandling(async () => {
         const url = `${API_URLS.HYPERLIQUID_API}/info`;
         return await postExternal<NonFundingLedgerUpdate[]>(url, {
             type: "userNonFundingLedgerUpdates",
             user: address,
             startTime: 1640995200000
         });
-    }, 'fetching ledger updates');
+    }, 'fetching ledger updates'));
 }
 
 export async function getUserFills(address: string): Promise<UserFill[]> {
-    return withErrorHandling(async () => {
+    return shared(`fills:${address.toLowerCase()}`, () => withErrorHandling(async () => {
         const url = `${API_URLS.HYPERLIQUID_API}/info`;
         return await postExternal<UserFill[]>(url, {
             type: "userFills",
             user: address
         });
-    }, 'fetching user fills');
+    }, 'fetching user fills'));
+}
+
+/**
+ * The address activity feed: explorer transactions, fills and non-funding
+ * ledger decoded into readable rows (see decode.ts).
+ */
+export async function getAddressActivity(address: string): Promise<Activity[]> {
+    return withErrorHandling(async () => {
+        const [raw, ledger, fills, assets] = await Promise.all([
+            getUserTransactionsRaw(address),
+            getUserNonFundingLedgerUpdates(address),
+            getUserFills(address),
+            loadAssetResolver(),
+        ]);
+        return decodeAddressActivity(address, raw.txs ?? [], fills, ledger, assets);
+    }, 'fetching address activity');
 }
 
 export async function getUserTransactions(address: string): Promise<FormattedUserTransaction[]> {

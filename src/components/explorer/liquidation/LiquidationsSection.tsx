@@ -42,6 +42,8 @@ export function LiquidationsSection() {
   const columns: Column<Liquidation>[] = [
     {
       key: "time",
+      // Rows are newest first; phones keep coin, side and notional.
+      className: "max-sm:hidden whitespace-nowrap",
       header: "Time",
       type: "time",
       accessor: (liq) => formatDateTime(liq.time, dateFormat),
@@ -69,7 +71,7 @@ export function LiquidationsSection() {
       key: "size",
       header: "Size",
       type: "numeric",
-      className: "max-lg:hidden",
+      className: "max-xl:hidden",
       accessor: (liq) => formatNumber(liq.size_total, format, { maximumFractionDigits: 4 }),
     },
     {
@@ -77,13 +79,13 @@ export function LiquidationsSection() {
       header: "Fee",
       type: "numeric",
       tone: () => "muted",
-      className: "max-md:hidden",
+      className: "max-xl:hidden",
       accessor: (liq) => usd(liq.fee_total_liquidated, 4),
     },
     {
       key: "method",
       header: "Method",
-      className: "max-lg:hidden",
+      className: "max-2xl:hidden",
       accessor: (liq) => liq.method,
     },
     {
@@ -107,7 +109,7 @@ export function LiquidationsSection() {
       // table only ever showed the liquidated user, never the liquidators.
       key: "liquidators",
       header: "Liquidators",
-      className: "max-lg:hidden",
+      className: "max-xl:hidden",
       accessor: (liq) =>
         liq.liquidators && liq.liquidators.length > 0 ? (
           <div className="inline-flex items-center gap-1.5">
@@ -122,11 +124,13 @@ export function LiquidationsSection() {
     },
     {
       key: "user",
+      className: "max-sm:hidden",
       header: "User",
       accessor: (liq) => <AddressDisplay address={liq.liquidated_user} />,
     },
     {
       key: "hash",
+      className: "max-2xl:hidden",
       header: "Hash",
       accessor: (liq) => (
         <AddressDisplay

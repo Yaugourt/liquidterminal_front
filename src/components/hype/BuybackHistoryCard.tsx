@@ -165,12 +165,13 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
         {[
           {
             label: "Bought back",
-            value: compactUsd(matched.buyback),
+            // "…" while loading: "$0.00" read as a fund that bought nothing.
+            value: matched.days > 0 ? compactUsd(matched.buyback) : isLoading ? "…" : "—",
             sub: "on-chain fills",
           },
           {
             label: "Revenue",
-            value: compactUsd(matched.revenue),
+            value: matched.days > 0 ? compactUsd(matched.revenue) : isLoading ? "…" : "—",
             sub: "same days",
           },
           {
@@ -266,7 +267,7 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
       />
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
-        <span>Bars: Assistance Fund fills · line: our six-source revenue</span>
+        <span>Bars: Assistance Fund fills · line: our seven-source revenue</span>
         {matched.hype > 0 && (
           <>
             <span className="opacity-50">·</span>

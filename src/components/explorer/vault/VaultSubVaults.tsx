@@ -37,7 +37,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
           <span className="text-sm">Loading sub-vaults…</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {childAddresses.map((addr) => {
             const summary = childSummaries.find((s) => s.vaultAddress === addr);
             return (
@@ -47,11 +47,12 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
                 className="flex items-center justify-between px-3 py-2 rounded-md bg-surface-2 border border-border-subtle hover:border-border-default hover:bg-white/[0.04] transition-all group"
               >
                 <div className="min-w-0">
-                  <p className="text-xs font-medium text-text-primary truncate">
+                  <p className="text-xs font-medium text-text-primary truncate" title={summary?.name ?? addr}>
                     {summary?.name ?? `${addr.slice(0, 8)}…${addr.slice(-6)}`}
                   </p>
-                  <p className="mono text-[10px] text-text-tertiary">
-                    {addr.slice(0, 8)}…{addr.slice(-4)}
+                  <p className="mono text-[10px] text-text-tertiary truncate">
+                    {/* The address line only adds something under a real name. */}
+                    {summary?.name ? `${addr.slice(0, 8)}…${addr.slice(-4)}` : "sub-vault"}
                     {summary && (
                       <span className="ml-2 text-text-secondary">
                         · {summary.followerCount.toLocaleString()} followers

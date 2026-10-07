@@ -30,7 +30,7 @@ export function EcosystemBanner({ stats, helper }: EcosystemBannerProps) {
       out.push({ key: "vol", label: "DEX volume 24h", value: compactUsd(stats.volumeDex24h), sub: "on HL" });
     }
     if (stats.protocolsTracked > 0) {
-      out.push({ key: "protos", label: "Protocols tracked", value: compactCount(stats.protocolsTracked), sub: "via DefiLlama" });
+      out.push({ key: "protos", label: "Protocols", value: compactCount(stats.protocolsTracked), sub: "via DefiLlama" });
     }
     return out;
   }, [stats]);

@@ -1,6 +1,7 @@
 import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { TwapOrder, TwapOrderParams, TwapOrderPaginatedResponse, EnrichedTwapOrder, TwapMarketType } from './types';
+import { fetchIndexedTwaps } from './twap-source';
 
 /** A `/market/twap` row: the Hypurrscan order with its market resolved by the backend. */
 interface TwapOrderWithMarket extends TwapOrder {
@@ -11,10 +12,9 @@ interface TwapOrderWithMarket extends TwapOrder {
 }
 
 /**
- * TWAP orders of the last ~24 h with their market (name, price, family)
- * resolved by the backend, which downloads Hypurrscan's dump once for every
- * visitor. Every consumer used to fetch that dump, `allPerpMetas` and the spot
- * and perp lists itself on each 30 s cycle.
+ * Fallback source: Hypurrscan's TWAP orders of the last ~24 h with their
+ * market (name, price, family) resolved by the backend, which downloads the
+ * dump once for every visitor instead of each browser on every 30 s cycle.
  */
 const fetchTwapOrdersWithMarket = async (
   status: 'active' | 'all',
@@ -74,16 +74,21 @@ export const fetchTwapOrders = async (
   signal?: AbortSignal
 ): Promise<TwapOrderPaginatedResponse> => {
   return withErrorHandling(async () => {
-    // Every consumer asks for active orders: only those cross the wire then.
-    const allOrders = await fetchTwapOrdersWithMarket(
-      params.status === 'active' ? 'active' : 'all',
-      signal
-    );
-
-    const enrichedOrders = enrichTwapOrders(allOrders);
+    // Indexer first (wider and more accurate, see twap-source.ts); the
+    // backend's Hypurrscan list stays as the fallback when the indexer is down.
+    let enrichedOrders: EnrichedTwapOrder[];
+    try {
+      enrichedOrders = await fetchIndexedTwaps();
+    } catch {
+      // Every consumer asks for active orders: only those cross the wire then.
+      enrichedOrders = enrichTwapOrders(
+        await fetchTwapOrdersWithMarket(params.status === 'active' ? 'active' : 'all', signal)
+      );
+    }
     
     // Filtrer selon les paramètres
-    let filteredOrders = enrichedOrders;
+    // Copy: the indexed list is a shared cache, sorting must not reorder it.
+    let filteredOrders = [...enrichedOrders];
     
     // Filtrer par utilisateur
     if (params.user) {

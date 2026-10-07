@@ -14,7 +14,7 @@ import { SourceCoverageNote } from "./SourceCoverageNote";
  * Where revenue comes from, over time.
  *
  * The single most useful thing our own endpoint has that no public aggregate
- * does: revenue split six ways rather than reported as one line. A venue that
+ * does: revenue split seven ways rather than reported as one line. A venue that
  * earns 95% of its revenue from perp taker fees is a different business from
  * one that earns 70% and is growing three other books, and only the mix over
  * time tells them apart.
@@ -32,6 +32,7 @@ const SOURCES = [
   // Order priority only. Gossip priority is the other HyperCore burn and is not
   // in this series; see RevenueSegmentsCard for the full note.
   { key: "priority", label: "Order priority", color: chartPalette.multiSeries[7] },
+  { key: "reserve", label: "Reserve yield", color: chartPalette.multiSeries[5] },
 ] as const;
 
 type SourceKey = (typeof SOURCES)[number]["key"];
@@ -263,7 +264,7 @@ export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
       />
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
-        <span>Source: our own six-source breakdown</span>
+        <span>Source: our own seven-source breakdown</span>
         <span className="opacity-50">·</span>
         <span>Percentages are the share of the whole window, not of the last day.</span>
         <SourceCoverageNote meta={breakdown?.meta} />

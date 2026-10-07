@@ -123,8 +123,8 @@ export function PrimerBand({ topic, activeSubId, onSubChange }: PrimerBandProps)
           )}
         >
           {stats.slice(0, 3).map((stat) => (
-            <div key={stat.label} className="px-5 py-3">
-              <div className="truncate text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
+            <div key={stat.label} className="px-3 py-3 sm:px-5">
+              <div className="truncate text-[10px] uppercase tracking-[0.08em] text-text-tertiary" title={stat.label}>
                 {stat.label}
               </div>
               <div className="mono mt-1 text-[17px] font-medium text-text-primary">{stat.value}</div>

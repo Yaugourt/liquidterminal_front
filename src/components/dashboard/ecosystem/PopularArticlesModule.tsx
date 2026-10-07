@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { OverviewModule, ModuleRow, Skeleton, DataStatus } from "@/components/common";
+import { OverviewModule, ModuleRow, RowFillList, Skeleton, DataStatus } from "@/components/common";
 import { safeHref } from "@/lib/safeUrl";
 import { usePopularWikiResources } from "@/services/wiki";
 import type { EducationalResource } from "@/services/wiki/types";
@@ -27,12 +27,45 @@ function titleOf(resource: EducationalResource): string {
 export const PopularArticlesModule = memo(function PopularArticlesModule({
   limit = 5,
   className,
+  fillRow = false,
 }: {
   limit?: number;
   className?: string;
+  /** Scroll the list inside the height of its grid row (see RowFillList). */
+  fillRow?: boolean;
 }) {
   const { resources, isLoading, isRefreshing, refetch, dataUpdatedAt } =
     usePopularWikiResources(limit);
+
+  const rows = resources.map((resource, index) => (
+    <a
+      key={resource.id}
+      href={safeHref(resource.url)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block"
+    >
+      <ModuleRow
+        rank={index + 1}
+        logo={
+          <FaviconTile
+            favicon={resource.linkPreview?.favicon}
+            hostname={hostnameOf(resource.url)}
+            size={28}
+          />
+        }
+        name={titleOf(resource)}
+        sub={hostnameOf(resource.url)}
+        stats={[
+          {
+            value: `★ ${resource.savesCount ?? 0}`,
+            valueClassName: "text-gold",
+            width: 40,
+          },
+        ]}
+      />
+    </a>
+  ));
 
   return (
     <OverviewModule
@@ -60,36 +93,10 @@ export const PopularArticlesModule = memo(function PopularArticlesModule({
         <p className="px-3.5 py-4 text-[11.5px] text-text-tertiary">
           No saved resource yet.
         </p>
+      ) : fillRow ? (
+        <RowFillList mobileHeight="h-[360px]">{rows}</RowFillList>
       ) : (
-        resources.map((resource, index) => (
-          <a
-            key={resource.id}
-            href={safeHref(resource.url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block"
-          >
-            <ModuleRow
-              rank={index + 1}
-              logo={
-                <FaviconTile
-                  favicon={resource.linkPreview?.favicon}
-                  hostname={hostnameOf(resource.url)}
-                  size={28}
-                />
-              }
-              name={titleOf(resource)}
-              sub={hostnameOf(resource.url)}
-              stats={[
-                {
-                  value: `★ ${resource.savesCount ?? 0}`,
-                  valueClassName: "text-gold",
-                  width: 40,
-                },
-              ]}
-            />
-          </a>
-        ))
+        rows
       )}
     </OverviewModule>
   );

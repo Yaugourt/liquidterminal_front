@@ -8,6 +8,7 @@ import type { RevenueMeta } from "@/services/market/revenue";
 const WATCHED = [
   { key: "perpSpot", label: "Perp and spot" },
   { key: "priority", label: "Order priority" },
+  { key: "reserve", label: "Reserve yield" },
 ] as const;
 
 // UTC: every series in the breakdown buckets by UTC day, so the label must too.
@@ -47,7 +48,7 @@ export const SourceCoverageNote = memo(function SourceCoverageNote({
   const frozen = WATCHED.filter((s) => {
     const status = meta.sourceStatus?.[s.key];
     return status === "stale" || status === "error";
-  }).map((s) => ({ ...s, through: meta.coverage?.[s.key] ?? null }));
+  }).map((s) => ({ ...s, through: s.key === "reserve" ? null : (meta.coverage?.[s.key] ?? null) }));
 
   if (frozen.length === 0) return null;
 

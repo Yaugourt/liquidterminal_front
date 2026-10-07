@@ -47,6 +47,7 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
     },
     {
       key: "settledPrice",
+      className: "hidden sm:table-cell",
       header: "Settled Price",
       type: "numeric",
       tone: () => "brand",
@@ -65,6 +66,7 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
     },
     {
       key: "yesFraction",
+      className: "hidden sm:table-cell",
       header: "YES %",
       type: "numeric",
       tone: () => "muted",
@@ -79,6 +81,7 @@ export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip
     },
     {
       key: "tx",
+      className: "hidden sm:table-cell",
       header: "Tx",
       align: "right",
       accessor: (row) =>
