@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHeading, KpiRibbon, SearchBar, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
-import { useElysiumEcosystem, type EcoToken } from "@/services/elysium";
+import { useElysiumLaunchpads, type EcoToken } from "@/services/elysium";
 import { AddrLink, EMPTY, Empty, ago, useNow } from "./shared";
 import { EcoLogo, EcoSource, TH, signedPct, tinyUsd } from "./eco-shared";
 
@@ -24,20 +24,20 @@ const GAINER_MIN_VOLUME = 100;
 function sorter(sort: Sort): (a: EcoToken, b: EcoToken) => number {
   switch (sort) {
     case "new":
-      return (a, b) => (b.bornAt ?? 0) - (a.bornAt ?? 0);
+      return (a, b) => b.bornAt - a.bornAt;
     case "gainers":
       return (a, b) => (b.change24h ?? -Infinity) - (a.change24h ?? -Infinity);
     case "mcap":
       return (a, b) => (b.marketCap ?? 0) - (a.marketCap ?? 0);
     default:
-      return (a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0) || (b.txns24h ?? 0) - (a.txns24h ?? 0);
+      return (a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0) || b.txns24h - a.txns24h;
   }
 }
 
 function TokenCell({ t }: { t: EcoToken }) {
   return (
     <div className="flex items-center gap-2.5 min-w-0">
-      <EcoLogo src={t.image} label={t.symbol} />
+      <EcoLogo src={null} label={t.symbol} />
       <div className="min-w-0">
         <div className="flex items-baseline gap-1.5 min-w-0">
           <AddrLink address={t.address} explorer={false} className="text-text-primary font-medium">{t.symbol}</AddrLink>
@@ -86,10 +86,11 @@ function MiniList({ title, icon, rows, value, meta }: { title: string; icon: Rea
 
 /**
  * Elysium · Launchpads: every token launched on the Elysium launchpads, with
- * price, volume, holders and bonding progress, from the elysiumeco.xyz index.
+ * price, volume, holders and bonding progress, decoded by our backend from
+ * the launchpads' own launch and trade events.
  */
 export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
-  const { data, isLoading, error } = useElysiumEcosystem();
+  const { data, isLoading, error } = useElysiumLaunchpads();
   const now = useNow(30_000);
   const [pad, setPad] = useState("All");
   const [sort, setSort] = useState<Sort>("hot");
@@ -112,10 +113,10 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
   }, [tokens, pad, sort, query]);
 
   const vol24 = tokens.reduce((s, t) => s + (t.volume24h ?? 0), 0);
-  const txns24 = tokens.reduce((s, t) => s + (t.txns24h ?? 0), 0);
+  const txns24 = tokens.reduce((s, t) => s + t.txns24h, 0);
   const graduated = tokens.filter((t) => t.graduated).length;
   const day = now / 1000 - 86_400;
-  const born24 = tokens.filter((t) => (t.bornAt ?? 0) >= day).length;
+  const born24 = tokens.filter((t) => t.bornAt >= day).length;
   const v = (x: string) => (data ? x : "…");
   const cells: KpiCell[] = [
     { key: "tokens", label: "Tokens", value: v(compactCount(tokens.length)), sub: `${pads.length} launchpads` },
@@ -150,7 +151,7 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
           title="Just launched"
           icon={<Sparkles size={13} className="text-brand" />}
           rows={fresh}
-          value={(t) => <span className="text-text-tertiary">{t.bornAt ? ago(t.bornAt * 1000, now) : EMPTY}</span>}
+          value={(t) => <span className="text-text-tertiary">{ago(t.bornAt * 1000, now)}</span>}
         />
       </div>
       <Card className="overflow-hidden flex flex-col">
@@ -180,10 +181,10 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
                   <th className={`${TH} text-right px-2`}>Price</th>
                   <th className={`${TH} text-right px-2`}>24h</th>
                   <th className={`${TH} text-right px-2`}>Vol 24h</th>
-                  <th className={`${TH} text-right px-2`}>MCap</th>
+                  <th className={`${TH} text-right px-2`} title="Price x 1B tokens (every launch mints 1B)">MCap</th>
                   <th className={`${TH} text-right px-2`}>Holders</th>
-                  <th className={`${TH} text-right px-2`} title="Share of supply held by the 10 largest wallets">Top 10</th>
-                  <th className={`${TH} text-right px-2`} title="Share of supply still held by the creator">Dev</th>
+                  <th className={`${TH} text-right px-2`} title="Share of supply held by the 10 largest wallets, the token's own pool or curve left out">Top 10</th>
+                  <th className={`${TH} text-right px-2`} title="Share of supply held by the creator wallet">Dev</th>
                   <th className={`${TH} text-right px-2`}>Bonding</th>
                   <th className={`${TH} text-right px-3.5`}>Age</th>
                 </tr>
@@ -202,7 +203,7 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
                       <td className="px-2 py-2 text-right mono text-text-secondary">{t.top10Pct == null ? EMPTY : `${t.top10Pct.toFixed(1)}%`}</td>
                       <td className="px-2 py-2 text-right mono text-text-secondary">{t.devPct == null ? EMPTY : `${t.devPct.toFixed(1)}%`}</td>
                       <td className="px-2 py-2 text-right"><Curve t={t} /></td>
-                      <td className="px-3.5 py-2 text-right mono text-text-tertiary whitespace-nowrap">{t.bornAt ? ago(t.bornAt * 1000, now) : EMPTY}</td>
+                      <td className="px-3.5 py-2 text-right mono text-text-tertiary whitespace-nowrap">{ago(t.bornAt * 1000, now)}</td>
                     </tr>
                   );
                 })}

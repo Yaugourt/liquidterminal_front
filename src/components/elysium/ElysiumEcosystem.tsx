@@ -6,32 +6,27 @@ import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHeading, KpiRibbon, SearchBar, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
-import { useElysiumEcosystem, type EcoProject } from "@/services/elysium";
+import { useElysiumProjects, type EcoProject } from "@/services/elysium";
 import { EMPTY, Empty } from "./shared";
 import { EcoLogo, EcoSource, StatusTag, TH } from "./eco-shared";
 
-type MetricKey = "wallets7d" | "txs7d" | "volume7d" | "launches7d" | "sales7d" | "bets7d" | "plays7d" | "tvl" | "accounts" | "followers";
+type MetricKey = "wallets7d" | "txs7d" | "volume7d" | "launches7d" | "contracts";
 interface MetricCol {
   key: MetricKey;
   label: string;
   money?: boolean;
 }
 
-/** What "activity" means changes with the kind of app: the columns follow the category. */
+/** Every project gets on-chain usage; launchpads also get the volume and launches we decode from their events. */
 const COLUMNS: Record<string, MetricCol[]> = {
-  All: [{ key: "wallets7d", label: "Wallets 7d" }, { key: "txs7d", label: "Txs 7d" }, { key: "followers", label: "X followers" }],
+  All: [{ key: "wallets7d", label: "Wallets 7d" }, { key: "txs7d", label: "Txs 7d" }, { key: "contracts", label: "Contracts" }],
   Launchpad: [{ key: "volume7d", label: "Volume 7d", money: true }, { key: "launches7d", label: "Launches 7d" }, { key: "wallets7d", label: "Wallets 7d" }],
-  "Prediction markets": [{ key: "volume7d", label: "Wagered 7d", money: true }, { key: "bets7d", label: "Bets 7d" }, { key: "wallets7d", label: "Wallets 7d" }],
-  Derivatives: [{ key: "volume7d", label: "Volume 7d", money: true }, { key: "accounts", label: "Accounts" }, { key: "wallets7d", label: "Wallets 7d" }],
-  DEX: [{ key: "volume7d", label: "Volume 7d", money: true }, { key: "tvl", label: "TVL", money: true }, { key: "wallets7d", label: "Wallets 7d" }],
-  NFT: [{ key: "volume7d", label: "Sales vol. 7d", money: true }, { key: "sales7d", label: "Sales 7d" }, { key: "wallets7d", label: "Wallets 7d" }],
-  Games: [{ key: "volume7d", label: "Wagered 7d", money: true }, { key: "plays7d", label: "Plays 7d" }, { key: "wallets7d", label: "Wallets 7d" }],
 };
 
 const STATUS_ORDER = { powers: 0, live: 1, testnet: 2, verifying: 3, announced: 4, exploring: 5 } as const;
 const ON_CHAIN = new Set(["powers", "live", "testnet"]);
 
-const fmt = (v: number | null, money?: boolean) => (v == null ? EMPTY : money ? compactUsd(v) : compactCount(v));
+const fmt = (v: number | null | undefined, money?: boolean) => (v == null ? EMPTY : money ? compactUsd(v) : compactCount(v));
 
 /** Top 5 by one metric, projects without a reading left out. */
 function top(projects: EcoProject[], key: MetricKey): EcoProject[] {
@@ -68,10 +63,10 @@ function TopList({ title, icon, rows, metric, money }: { title: string; icon: Re
 
 /**
  * Elysium · Ecosystem: every project building on Elysium, its status and its
- * last 7 days of activity, from the elysiumeco.xyz community index.
+ * last 7 days of on-chain activity, computed by our backend from the chain.
  */
 export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
-  const { data, isLoading, error } = useElysiumEcosystem();
+  const { data, isLoading, error } = useElysiumProjects();
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
   const projects = useMemo(() => data?.projects ?? [], [data]);
@@ -99,13 +94,13 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
   }, [projects, category, query, sortKey]);
 
   const onChain = projects.filter((p) => ON_CHAIN.has(p.status)).length;
-  const tvl = projects.reduce((s, p) => s + (p.tvl ?? 0), 0);
+  const txs = projects.reduce((s, p) => s + (p.txs7d ?? 0), 0);
   const v = (x: string) => (data ? x : "…");
   const cells: KpiCell[] = [
     { key: "projects", label: "Projects", value: v(String(projects.length)), sub: `${categories.length} categories` },
     { key: "onchain", label: "On chain", value: v(String(onChain)), sub: "deployed on the testnet" },
     { key: "coming", label: "Coming", value: v(String(projects.length - onChain)), sub: "announced, exploring or being verified" },
-    { key: "tvl", label: "Value in apps", value: v(compactUsd(tvl)), sub: "testnet TVL, summed" },
+    { key: "txs", label: "Txs to apps", value: v(compactCount(txs)), sub: "last 7 days, all projects" },
   ];
 
   const tabs = [
@@ -118,8 +113,8 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
       <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-4" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
         <TopList title="Most used" icon={<Users size={13} className="text-brand" />} rows={top(projects, "wallets7d")} metric="wallets7d" />
-        <TopList title="Most volume" icon={<Flame size={13} className="text-brand" />} rows={top(projects, "volume7d")} metric="volume7d" money />
         <TopList title="Most transactions" icon={<Zap size={13} className="text-brand" />} rows={top(projects, "txs7d")} metric="txs7d" />
+        <TopList title="Launchpad volume" icon={<Flame size={13} className="text-brand" />} rows={top(projects, "volume7d")} metric="volume7d" money />
       </div>
       <Card className="overflow-hidden flex flex-col">
         <CardHeading
@@ -193,8 +188,8 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
       </Card>
       <p className="text-[11px] text-text-tertiary flex items-start gap-1.5">
         <Boxes size={12} className="mt-px shrink-0" />
-        A dash means no reading: the project has no contract indexed yet, or the metric does not apply to it. Volume means wagers for games and
-        prediction markets, and sales for NFT marketplaces.
+        Wallets and txs count the non-spam transactions sent to each project&apos;s known contracts over the last 7 days. A dash means the
+        project has no contract on chain yet. Launchpad volume is decoded from Chainzy, CorePad and Signal trades.
       </p>
       <EcoSource what="Project list, statuses and 7-day activity" />
     </div>
