@@ -81,11 +81,13 @@ export const fetchSpotPairMeta = async (): Promise<Record<number, SpotPairMeta>>
     const tokenNameByIndex = new Map<number, string>(
       meta.tokens.map((t) => [t.index, t.name])
     );
+    // The contexts also list pairs the universe leaves out (1,005 vs 330 on
+    // 2026-10-08), so positions don't line up: match them by coin name.
+    const ctxByCoin = new Map<string, SpotAssetCtxRaw>(ctxs.map((c) => [c.coin, c]));
 
     const map: Record<number, SpotPairMeta> = {};
-    meta.universe.forEach((pair, i) => {
-      // ctxs is aligned with the universe array order
-      const rawSupply = ctxs[i]?.circulatingSupply;
+    meta.universe.forEach((pair) => {
+      const rawSupply = ctxByCoin.get(pair.name)?.circulatingSupply;
       const circulating = rawSupply ? parseFloat(rawSupply) : NaN;
       map[pair.index] = {
         quote: tokenNameByIndex.get(pair.tokens[1]) ?? 'USDC',
