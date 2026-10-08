@@ -100,7 +100,7 @@
         --sidebar-ring: 191 100% 76%;
     }
 
-    /* Inherit Inter down the tree (portals, third-party roots, etc.). */
+    /* Inherit Geist down the tree (portals, third-party roots, etc.). */
     html {
         @apply font-sans antialiased;
     }
@@ -197,12 +197,12 @@
     /* ===== V4 utility classes ===== */
 
     /**
-     * `.mono` — JetBrains Mono + tabular-nums for all numeric data in V4.
+     * `.mono` — Geist Mono + tabular-nums for all numeric data in V4.
      * Non-negotiable on Builders V4 (and on V4-migrated pages going forward).
      * Usage: <span className="mono">$182,541,344</span>
      */
     .mono {
-        font-family: var(--font-mono), 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+        font-family: var(--font-mono), 'Geist Mono', 'JetBrains Mono', 'SF Mono', Menlo, monospace;
         font-variant-numeric: tabular-nums;
         letter-spacing: -0.01em;
     }
@@ -427,9 +427,9 @@ html {
 
 /* ─── USDH widget — Liquid Terminal theme ──────────────────────────── */
 
-/* Inter font — matches the rest of LT */
+/* Geist font — matches the rest of LT */
 .usdh-widget {
-  font-family: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans), Geist, ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Subtle cyan glow on the swap CTA button */

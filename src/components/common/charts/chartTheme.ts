@@ -121,7 +121,7 @@ export const lwcDefaults: DeepPartial<ChartOptions> = {
   layout: {
     background: { type: ColorType.Solid, color: chartColors.bg },
     textColor: chartColors.textMuted,
-    fontFamily: "var(--font-inter), Inter, sans-serif",
+    fontFamily: "var(--font-sans), Inter, sans-serif",
     fontSize: 10,
   },
   grid: {

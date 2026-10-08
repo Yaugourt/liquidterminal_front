@@ -190,7 +190,7 @@ export function TradingViewChart({
         layout: {
           background: { type: ColorType.Solid, color: "transparent" },
           textColor: chartColors.textMuted,
-          fontFamily: "var(--font-inter), Inter, sans-serif",
+          fontFamily: "var(--font-sans), Inter, sans-serif",
           fontSize: 10,
           attributionLogo: false,
         },

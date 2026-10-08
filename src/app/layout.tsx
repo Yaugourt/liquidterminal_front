@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { SITE_CONFIG } from "@/lib/site-config";
 
-/** Inter for body / headings / UI. */
-const inter = Inter({
-  variable: "--font-inter",
+/** Geist for body / headings / UI. */
+const geist = Geist({
+  variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-/** JetBrains Mono for all numeric data (V4 signature, consumed via `.mono` utility / Tailwind `font-mono`). */
-const jetbrainsMono = JetBrains_Mono({
+/** Geist Mono for all numeric data (consumed via `.mono` utility / Tailwind `font-mono`). */
+const geistMono = Geist_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",
@@ -105,8 +105,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${inter.className} font-sans`}>
-      <body className={`${inter.className} font-sans antialiased bg-base`}>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${geist.className} font-sans`}>
+      <body className={`${geist.className} font-sans antialiased bg-base`}>
         {children}
         <SpeedInsights />
         <Analytics />
