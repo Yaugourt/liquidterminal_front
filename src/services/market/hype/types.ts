@@ -64,6 +64,20 @@ export interface DailyBuyback {
   usd: number;
 }
 
+/** Backend `/market/revenue/af-buybacks`. */
+export interface AfBuybacksPayload {
+  /** Completed UTC days read whole, oldest first (a day Hyperliquid no longer holds whole is left out). */
+  days: DailyBuyback[];
+  /** The running UTC day so far. */
+  today: DailyBuyback;
+  /** The running day's latest buys, newest first. */
+  recent: AfFill[];
+  /** Completed days the window spans. */
+  windowDays: number;
+  /** Epoch ms of the backend's last read of the running day. */
+  lastUpdate: number;
+}
+
 /** Real Assistance Fund buyback activity over a trailing window of days. */
 export interface AfBuybacks {
   /** Per-day buyback series (ascending), today last and partial. */

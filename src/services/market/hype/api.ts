@@ -1,35 +1,19 @@
-import { postExternal } from '../../api/axios-config';
+import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
-import { API_URLS } from '../../api/constants';
-import { ASSISTANCE_FUND_ADDRESS, HYPE_SPOT_COIN } from './constants';
-import type { AfFill } from './types';
-
-interface RawFill {
-  coin: string;
-  px: string;
-  sz: string;
-  side: string;
-  time: number;
-}
+import type { AfBuybacksPayload } from './types';
 
 /**
- * Fetch the Assistance Fund's HYPE buy fills in a time window — the real,
- * on-chain buyback feed. `userFillsByTime` returns fills ascending from
- * `startTime`, capped at 2000 (a single UTC day stays well under that).
+ * The Assistance Fund's HYPE buybacks, aggregated per UTC day by the backend
+ * from the fund's on-chain buy fills: the last 13 completed days (only days it
+ * read whole), the running day and its latest buys. The browser used to post
+ * one `userFillsByTime` per day (~300 KB each, uncompressed) and got busy days
+ * cut at 2,000 fills.
  */
-export const fetchAfFills = async (
-  startTime: number,
-  endTime: number,
-): Promise<AfFill[]> => {
+export const fetchAfBuybacks = async (): Promise<AfBuybacksPayload> => {
   return withErrorHandling(async () => {
-    const res = await postExternal<RawFill[]>(`${API_URLS.HYPERLIQUID_API}/info`, {
-      type: 'userFillsByTime',
-      user: ASSISTANCE_FUND_ADDRESS,
-      startTime,
-      endTime,
-    });
-    return (res ?? [])
-      .filter((f) => f.coin === HYPE_SPOT_COIN && f.side === 'B')
-      .map((f) => ({ time: f.time, px: parseFloat(f.px), sz: parseFloat(f.sz) }));
-  }, 'fetching assistance fund fills');
+    const response = await get<{ success: boolean; data: AfBuybacksPayload }>(
+      '/market/revenue/af-buybacks'
+    );
+    return response.data;
+  }, 'fetching assistance fund buybacks');
 };
