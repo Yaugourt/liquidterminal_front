@@ -422,6 +422,18 @@ export const seoConfig = {
     keywords: ["Elysium tokens", "Elysium token launches", "ERC-20 Elysium", "new tokens"],
     path: "/elysium/tokens",
   },
+  elysiumEcosystem: {
+    title: "Elysium Ecosystem - Every Project Building on Elysium",
+    description: "Every project building on Elysium testnet: launchpads, DEXs, derivatives, games, NFT and infrastructure, with their status and last 7 days of wallets, transactions and volume.",
+    keywords: ["Elysium ecosystem", "Elysium projects", "Elysium dapps", "build on Elysium", "Kinetiq Elysium"],
+    path: "/elysium/ecosystem",
+  },
+  elysiumLaunchpads: {
+    title: "Elysium Launchpads - New Tokens, Prices & Bonding Curves",
+    description: "Every token launched on Elysium testnet launchpads: price, 24h volume and change, market cap, holders, dev and top-10 share, and bonding curve progress.",
+    keywords: ["Elysium launchpad", "Elysium tokens", "Elysium memecoins", "bonding curve Elysium", "new tokens Elysium"],
+    path: "/elysium/launchpads",
+  },
   elysiumDex: {
     title: "Elysium DEX - Pools, Swaps & Factories",
     description: "Decentralized exchanges on Elysium testnet: pools created, swaps per day, the most traded pools and the newest ones, by factory.",

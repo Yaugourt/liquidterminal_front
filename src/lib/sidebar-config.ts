@@ -31,6 +31,7 @@ import { AtSign,
   Rocket,
   FileSearch,
   HandCoins,
+  LayoutGrid,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -277,6 +278,8 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Start here', href: '/elysium/start', icon: null, IconComponent: Rocket },
       { name: 'Overview', href: '/elysium', icon: null, IconComponent: Home },
+      { name: 'Ecosystem', href: '/elysium/ecosystem', icon: null, IconComponent: LayoutGrid },
+      { name: 'Launchpads', href: '/elysium/launchpads', icon: null, IconComponent: Sparkles },
       { name: 'Contracts', href: '/elysium/contracts', icon: null, IconComponent: Blocks },
       { name: 'DEX', href: '/elysium/dex', icon: null, IconComponent: ArrowLeftRight },
       { name: 'Tokens', href: '/elysium/tokens', icon: null, IconComponent: Coins },
