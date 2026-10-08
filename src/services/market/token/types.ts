@@ -66,12 +66,11 @@ export interface UseTokenWebSocketResult {
   error: string | null;
 }
 
-// Types for token details API
-interface TokenGenesis {
-  userBalances: [string, string][]; // [address, balance]
-  existingTokenBalances: unknown[];
-}
-
+/**
+ * HL `tokenDetails` as the backend serves it (`/market/token-details/:tokenId`):
+ * every scalar field as HL sends it, and the length of each address list in
+ * place of the list (HYPE's genesis list alone is 5 MB).
+ */
 export interface TokenDetails {
   name: string;
   maxSupply: string;
@@ -79,21 +78,20 @@ export interface TokenDetails {
   circulatingSupply: string;
   szDecimals: number;
   weiDecimals: number;
-  midPx: string;
+  midPx: string | null;
   markPx: string;
   prevDayPx: string;
-  genesis: TokenGenesis;
-  deployer: string;
-  deployGas: string;
-  deployTime: string;
+  /** null for genesis tokens (HYPE, USDC, PURR). */
+  deployer: string | null;
+  deployGas: string | null;
+  deployTime: string | null;
   seededUsdc: string;
-  nonCirculatingUserBalances: unknown[];
   futureEmissions: string;
-}
-
-export interface TokenDetailsRequest {
-  type: "tokenDetails";
-  tokenId: string;
+  /** Addresses credited at genesis (0 without a genesis). */
+  genesisUserCount: number;
+  /** Genesis balances granted to holders of an existing token. */
+  genesisExistingTokenCount: number;
+  nonCirculatingUserCount: number;
 }
 
 // Types for candle data API

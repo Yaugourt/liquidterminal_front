@@ -145,9 +145,9 @@ export function TokenDetailsBand({
   const bridged = isBridged(token.name);
   const ph = detailsLoading ? "…" : "—";
 
-  const genesisWallets = details?.genesis?.userBalances?.length ?? 0;
-  const genesisCarried = details?.genesis?.existingTokenBalances?.length ?? 0;
-  const nonCircAddresses = details?.nonCirculatingUserBalances?.length ?? 0;
+  const genesisWallets = details?.genesisUserCount ?? 0;
+  const genesisCarried = details?.genesisExistingTokenCount ?? 0;
+  const nonCircAddresses = details?.nonCirculatingUserCount ?? 0;
   const seededUsdc = details ? parseFloat(details.seededUsdc) : 0;
   const futureEmissions = details ? parseFloat(details.futureEmissions) : 0;
 

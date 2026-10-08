@@ -27,7 +27,7 @@ export interface SidebarBadgeValue {
  * cache is shared and no double fetch happens on the matching page), and asks
  * the list endpoints for a single row (`limit: 1`) — the pagination total is
  * all we need. The HYPE price and 24h change come from the HYPE socket, not
- * from `useHypeOverview` (its supply read is 5.2 MB per minute). A value is
+ * from `useHypeOverview` (it polls the supply and the Assistance Fund). A value is
  * emitted only once its source has loaded; until then the entry shows no
  * number rather than a zero (DS rule: no data → no metric).
  *

@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { useHypePrice, useHypeSupply } from "@/services/market/hype";
+import { useHypeDayChange, useHypePrice } from "@/services/market/hype";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { HypeMark } from "@/components/common";
@@ -9,19 +9,16 @@ import { fmtSignedPct } from "./format";
 
 /**
  * HypePricePill — live HYPE price ticker for the page header `actions` slot.
- * Price comes from the trades socket; the 24h change is computed against the
- * info API's previous-day mark so it stays correct before the first tick.
+ * Everything comes from the HYPE socket, like the sidebar badge: the last
+ * trade (else the asset context's mark) and the 24h change against the
+ * context's previous-day price, so it shows before the first trade. The /hype
+ * layout mounts it on every chapter: no supply poll for chapters that show
+ * no supply.
  */
 export const HypePricePill = memo(function HypePricePill() {
-  const { price: livePrice, lastSide } = useHypePrice();
-  const { supply } = useHypeSupply();
+  const { lastSide } = useHypePrice();
+  const { price, change24hPct: change } = useHypeDayChange();
   const { format } = useNumberFormat();
-
-  const price = livePrice && livePrice > 0 ? livePrice : supply?.markPx ?? null;
-  const change =
-    price != null && supply && supply.prevDayPx > 0
-      ? ((price - supply.prevDayPx) / supply.prevDayPx) * 100
-      : null;
 
   const tickColor =
     lastSide === "B" ? "text-success" : lastSide === "A" ? "text-danger" : "text-text-primary";

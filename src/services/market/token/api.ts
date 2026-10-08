@@ -1,21 +1,21 @@
 import { withErrorHandling } from '../../api/error-handler';
 import { get, postExternal } from '../../api/axios-config';
 import { buildHyperliquidUrl } from '../../api/constants';
-import { TokenDetails, TokenDetailsRequest, TokenCandle, TokenCandleRequest, CandleInterval } from './types';
+import { TokenDetails, TokenCandle, TokenCandleRequest, CandleInterval } from './types';
 
 const SUB_MINUTE = new Set<CandleInterval>(['5s', '30s']);
 
 /**
- * Récupère les détails d'un token par son tokenId
+ * HL `tokenDetails` of a spot token, read through the backend: it drops the
+ * address lists the app only counts (HYPE's genesis list is 5.2 MB that HL
+ * sends uncompressed) and reads HL at most once a minute for every visitor.
  */
 export const fetchTokenDetails = async (tokenId: string): Promise<TokenDetails | null> => {
   return withErrorHandling(async () => {
-    const requestBody: TokenDetailsRequest = {
-      type: "tokenDetails",
-      tokenId: tokenId
-    };
-
-    return await postExternal<TokenDetails>(buildHyperliquidUrl('HYPERLIQUID_INFO'), requestBody);
+    const response = await get<{ success: boolean; data: TokenDetails }>(
+      `/market/token-details/${encodeURIComponent(tokenId)}`
+    );
+    return response.data;
   }, 'fetching token details');
 };
 

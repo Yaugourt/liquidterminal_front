@@ -50,8 +50,8 @@ export function useHypeLivePrice(): number | null {
 /**
  * Live HYPE price and 24h change from the HYPE socket alone (last trade, else
  * the asset context's mark; change against its previous-day price). For spots
- * that only show these two numbers: `useHypeOverview` also pulls the supply
- * (`tokenDetails`, 5.2 MB sent uncompressed) and the Assistance Fund state.
+ * that only show these two numbers: `useHypeOverview` also polls the supply
+ * (`tokenDetails` through the backend) and the Assistance Fund state.
  */
 export function useHypeDayChange(): { price: number | null; change24hPct: number | null } {
   useHypePriceConnection();
