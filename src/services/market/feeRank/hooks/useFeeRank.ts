@@ -4,11 +4,9 @@ import { getFeeRank } from "../api";
 import type { FeeRankData, UseFeeRankResult } from "../types";
 
 /**
- * Hyperliquid's fee rank across the whole DefiLlama field.
- *
- * The aggregate recomputes on a slow cadence and the field of ~2.6k protocols
- * is heavy, so a five-minute poll keeps the ordinal fresh without re-fetching a
- * large payload that rarely moves the position.
+ * Hyperliquid's fee rank across the whole DefiLlama field (~2.9k protocols),
+ * computed by the backend. The aggregate recomputes on a slow cadence, so a
+ * five-minute poll keeps the ordinal fresh.
  */
 export function useFeeRank(): UseFeeRankResult {
   const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } =

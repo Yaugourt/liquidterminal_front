@@ -9,29 +9,13 @@
  */
 
 /**
- * One protocol row as served by DefiLlama's fee overview. Only the fields the
- * ranking needs are typed; the payload carries many more we deliberately ignore.
- * Totals are nullable — a protocol can be tracked without a reported figure.
- */
-export interface DefiLlamaFeeProtocol {
-  name: string;
-  total24h: number | null;
-  total7d: number | null;
-  total30d: number | null;
-  change_1d: number | null;
-}
-
-/** Shape of the `overview/fees` response we consume. */
-export interface DefiLlamaFeeOverview {
-  protocols: DefiLlamaFeeProtocol[];
-}
-
-/**
- * The computed ranking, ready for the card.
+ * The ranking, ready for the card (backend `/defillama/fee-rank`).
  *
  * `rank` is Hyperliquid's 1-based position when the whole field is sorted by
- * 24h fees descending; `protocolCount` is the size of that field so the reader
- * can read the ordinal as "#N of M".
+ * 24h fees descending (ties share the lower rank); `protocolCount` is the size
+ * of that field so the reader can read the ordinal as "#N of M". The row that
+ * carries the venue is the name-matched one with the most 24h fees (perps, not
+ * the HLP vault line).
  */
 export interface FeeRankData {
   /** 1-based position of Hyperliquid in the field, by 24h fees. */
