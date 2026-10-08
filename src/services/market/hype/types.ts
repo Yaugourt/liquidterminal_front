@@ -14,12 +14,12 @@ export interface HypeTradeResponse {
   data: HypeTrade[];
 }
 
-/** `activeAssetCtx` frame of a spot coin (~1/s); prices are decimal strings. */
+/** `activeAssetCtx` frame of a spot coin (~1/s); values are decimal strings. */
 export interface HypeSpotCtxResponse {
   channel: string;     // "activeSpotAssetCtx"
   data: {
     coin: string;
-    ctx: { markPx?: string; prevDayPx?: string };
+    ctx: { markPx?: string; prevDayPx?: string; dayNtlVlm?: string };
   };
 }
 
@@ -29,6 +29,8 @@ interface HypePriceState {
   markPx: number;
   /** Price 24h ago from the spot asset context (0 until its first frame). */
   prevDayPx: number;
+  /** 24h notional volume (USD) from the spot asset context (0 until its first frame). */
+  dayNtlVlm: number;
   lastSide: "A" | "B" | null;
   isConnected: boolean;
   error: string | null;

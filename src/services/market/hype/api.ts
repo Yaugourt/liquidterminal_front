@@ -33,21 +33,3 @@ export const fetchAfFills = async (
       .map((f) => ({ time: f.time, px: parseFloat(f.px), sz: parseFloat(f.sz) }));
   }, 'fetching assistance fund fills');
 };
-
-interface SpotAssetCtx {
-  dayNtlVlm?: string;
-}
-
-/** HYPE 24h spot notional volume from `spotMetaAndAssetCtxs` (ctx index 107). */
-export const fetchHypeDayVolume = async (): Promise<number> => {
-  return withErrorHandling(async () => {
-    const res = await postExternal<[unknown, SpotAssetCtx[]]>(
-      `${API_URLS.HYPERLIQUID_API}/info`,
-      { type: 'spotMetaAndAssetCtxs' },
-    );
-    const ctxs = res?.[1] ?? [];
-    const idx = parseInt(HYPE_SPOT_COIN.replace('@', ''), 10);
-    const vol = ctxs[idx]?.dayNtlVlm;
-    return vol ? parseFloat(vol) : 0;
-  }, 'fetching hype day volume');
-};

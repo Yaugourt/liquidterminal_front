@@ -21,6 +21,7 @@ export const useHypePriceStore = create<HypePriceStore>((set, get) => {
     currentPrice: 0,
     markPx: 0,
     prevDayPx: 0,
+    dayNtlVlm: 0,
     lastSide: null,
     isConnected: false,
     error: null,
@@ -48,7 +49,8 @@ export const useHypePriceStore = create<HypePriceStore>((set, get) => {
               method: 'subscribe',
               subscription: { type: 'trades', coin: HYPE_COIN_ID }
             });
-            // Mark and previous-day prices (~350 B/s), for the 24h change
+            // Mark and previous-day prices (the 24h change) and 24h volume,
+            // ~350 B/s
             client?.send({
               method: 'subscribe',
               subscription: { type: 'activeAssetCtx', coin: HYPE_COIN_ID }
@@ -62,15 +64,22 @@ export const useHypePriceStore = create<HypePriceStore>((set, get) => {
               if (coin !== HYPE_COIN_ID || !ctx) return;
               const markPx = parseFloat(ctx.markPx ?? '');
               const prevDayPx = parseFloat(ctx.prevDayPx ?? '');
+              const dayNtlVlm = parseFloat(ctx.dayNtlVlm ?? '');
               // One frame per second, mostly unchanged: write only what moved.
               const state = get();
+              const update: Partial<HypePriceStore> = {};
               if (
                 Number.isFinite(markPx) &&
                 Number.isFinite(prevDayPx) &&
                 (markPx !== state.markPx || prevDayPx !== state.prevDayPx)
               ) {
-                set({ markPx, prevDayPx });
+                update.markPx = markPx;
+                update.prevDayPx = prevDayPx;
               }
+              if (Number.isFinite(dayNtlVlm) && dayNtlVlm !== state.dayNtlVlm) {
+                update.dayNtlVlm = dayNtlVlm;
+              }
+              if (Object.keys(update).length > 0) set(update);
               return;
             }
 

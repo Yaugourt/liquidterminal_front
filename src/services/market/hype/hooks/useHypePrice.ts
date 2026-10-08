@@ -66,3 +66,13 @@ export function useHypeDayChange(): { price: number | null; change24hPct: number
     return { price, change24hPct };
   }, [tradePx, markPx, prevDayPx]);
 }
+
+/**
+ * HYPE 24h spot notional volume (USD) from the HYPE socket's asset context —
+ * the figure `spotMetaAndAssetCtxs` returns (a ~320 KB read of every spot
+ * pair), pushed about once a second. Null until the first frame.
+ */
+export function useHypeDayVolume(): number | null {
+  useHypePriceConnection();
+  return useHypePriceStore((s) => s.dayNtlVlm) || null;
+}

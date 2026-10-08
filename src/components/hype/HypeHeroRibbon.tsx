@@ -3,22 +3,23 @@
 import { memo } from "react";
 import { KpiRibbon, HypeMark } from "@/components/common";
 import type { KpiCell } from "@/components/common";
-import { useHypeOverview, useHypeLivePrice, useHypeVolume } from "@/services/market/hype";
+import { useHypeOverview, useHypeLivePrice, useHypeDayVolume } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import { formatPrice, compactHype } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { fmtUsd, fmtSignedPct, fmtPct } from "./format";
 
 /**
- * HypeHeroRibbon — the headline KPI strip: price, market cap, FDV, circulating
- * supply, Assistance-Fund value and lifetime protocol revenue. All values are
- * derived from the live on-chain overview; lifetime revenue is read off the
- * (window-stable) revenue breakdown.
+ * HypeHeroRibbon — the headline KPI strip: price, 24h volume, market cap, FDV,
+ * circulating supply, Assistance-Fund value and lifetime protocol revenue. All
+ * values are derived from the live on-chain overview (price and volume off the
+ * HYPE socket); lifetime revenue is read off the (window-stable) revenue
+ * breakdown.
  */
 export const HypeHeroRibbon = memo(function HypeHeroRibbon() {
   const { overview } = useHypeOverview();
   const livePrice = useHypeLivePrice();
-  const { volume } = useHypeVolume();
+  const volume = useHypeDayVolume();
   const { format } = useNumberFormat();
   const { breakdown } = useRevenueBreakdown("7d");
 
