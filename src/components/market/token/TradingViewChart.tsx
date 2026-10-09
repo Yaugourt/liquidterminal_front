@@ -44,6 +44,8 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { TimeframePopover } from "./tradingViewChart/TimeframePopover";
 import { ToolbarStat } from "./tradingViewChart/ToolbarStat";
 
+const LONGEST_TIMEFRAME = TIMEFRAMES[TIMEFRAMES.length - 1];
+
 interface TradingViewChartProps {
   symbol: string;
   marketIndex?: number;
@@ -679,8 +681,12 @@ export function TradingViewChart({
               />
             ) : isLoading ? (
               <ChartLoading />
+            ) : selectedTimeframe === LONGEST_TIMEFRAME ? (
+              // 1,000 monthly candles: the pair has never traded (RUBT/USDT0 on 2026-10-09).
+              <ChartEmpty message="No trades on this pair yet" />
             ) : (
-              <ChartEmpty message="No candle data available" />
+              // Candles only exist where trades happened (AXL: none for weeks, empty below 1d).
+              <ChartEmpty message="No trades in this range" suggestion="Try a longer timeframe" />
             )}
           </div>
         )}
