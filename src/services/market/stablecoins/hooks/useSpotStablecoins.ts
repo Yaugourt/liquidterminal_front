@@ -10,7 +10,7 @@ import {
 } from '../types';
 
 /**
- * Hook des stablecoins on-spot (Hypurrscan `/spotUSDC`).
+ * Hook des stablecoins on-spot (Hypurrscan `/spotUSDC`, lue via le backend).
  *
  * Lit la dernière entrée de la série et la normalise en liste de stablecoins
  * (USDC, USDH, USDT0, USDE) triés par supply décroissante.

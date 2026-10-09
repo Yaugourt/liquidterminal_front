@@ -1,15 +1,15 @@
-import { getExternal } from '../../api/axios-config';
+import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
-import { API_URLS } from '../../api/constants';
 import { SpotUsdcResponse } from './types';
 
 /**
- * Récupère la série des stablecoins on-spot depuis Hypurrscan (`/spotUSDC`).
+ * Récupère la série des stablecoins on-spot (Hypurrscan `/spotUSDC`, un point
+ * par jour) depuis le backend, qui la relit chaque minute et sert sa copie
+ * compressée : ~40 KB au lieu des 184 KB non compressés de Hypurrscan.
  * Retourne la série complète — l'appelant lit la dernière entrée.
  */
 export const fetchSpotStablecoins = async (): Promise<SpotUsdcResponse> => {
   return withErrorHandling(async () => {
-    const url = `${API_URLS.HYPURRSCAN_API}/spotUSDC`;
-    return await getExternal<SpotUsdcResponse>(url);
+    return await get<SpotUsdcResponse>('/market/stablecoins/history');
   }, 'fetching spot stablecoins');
 };

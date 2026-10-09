@@ -1,5 +1,6 @@
 /**
- * Types pour les stablecoins on-spot — endpoint Hypurrscan `/spotUSDC`.
+ * Types pour les stablecoins on-spot — série Hypurrscan `/spotUSDC`, servie
+ * telle quelle par le backend (`/market/stablecoins/history`).
  *
  * Malgré son nom, `/spotUSDC` suit plusieurs stablecoins (USDC, USDT0, USDH,
  * USDE) : supply on-spot, nombre de holders et part HIP-2, en série temporelle.
