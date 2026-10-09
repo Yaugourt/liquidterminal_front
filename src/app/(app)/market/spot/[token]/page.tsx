@@ -113,6 +113,9 @@ export default function TokenPage() {
         );
     }
 
+    // `getToken` keeps the name's busiest pair, which is not always quoted in USDC.
+    const symbol = `${token.name}/${token.quote ?? "USDC"}`;
+
     return (
         <TradingLayout
             marketType="spot"
@@ -120,7 +123,7 @@ export default function TokenPage() {
             tokenInfoSlot={
                 <TokenCard
                     token={{
-                        symbol: `${token.name}/USDC`,
+                        symbol,
                         name: token.name,
                         type: 'spot',
                         logo: token.logo,
@@ -138,7 +141,7 @@ export default function TokenPage() {
             }
             chartSlot={
                 <TradingViewChart
-                    symbol={`${token.name}/USDC`}
+                    symbol={symbol}
                     marketIndex={token.marketIndex}
                     tokenName={token.name}
                     className="flex-1 min-h-[450px]"
@@ -146,7 +149,7 @@ export default function TokenPage() {
             }
             orderBookSlot={
                 <OrderBook
-                    symbol={`${token.name}/USDC`}
+                    symbol={symbol}
                     marketIndex={token.marketIndex}
                     tokenNameProp={token.name}
                 />
