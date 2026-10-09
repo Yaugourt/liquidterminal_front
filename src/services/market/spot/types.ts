@@ -15,6 +15,7 @@ export interface SpotToken {
   volume: number;
   change24h: number;
   liquidity: number;
+  /** Circulating on HyperCore: Hyperliquid's figure less `bridgeReserve`. */
   supply: number;
   marketIndex: number;
   tokenId: string;
@@ -23,6 +24,12 @@ export interface SpotToken {
    * USDE...). Absent from backends that predate it: read it as USDC.
    */
   quote?: string;
+  /**
+   * Bridge reserve on the token's HyperEVM system address (supply minted there,
+   * or parked there by the issuer), which Hyperliquid counts as circulating and
+   * the backend leaves out of `supply` and `marketCap`. Absent when none.
+   */
+  bridgeReserve?: number;
 }
 
 export interface SpotMarketResponse {

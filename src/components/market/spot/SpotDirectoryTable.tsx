@@ -73,7 +73,8 @@ function buildColumns(format: NumberFormatType): Column<SpotToken>[] {
       header: "Market cap",
       type: "numeric",
       sortable: true,
-      // Price × circulating supply, both from the pair's own context.
+      // Price × circulating supply from the pair's own context, less the
+      // bridge reserve on the token's HyperEVM system address (backend).
       getSortValue: (t) => (isBridged(t.name) ? -1 : t.marketCap),
       className: "hidden sm:table-cell whitespace-nowrap",
       accessor: (t) => (isBridged(t.name) ? "—" : compactUsd(t.marketCap)),

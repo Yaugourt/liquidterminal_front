@@ -104,6 +104,10 @@ interface TokenDetailsBandProps {
  * Market cap stays "—" for Unit-bridged tokens: even HL's circulatingSupply
  * mirrors the full underlying supply there (21M for UBTC), so no honest
  * on-HL cap can be derived client-side.
+ *
+ * Circulating leaves out the bridge reserve the backend reads (`/market/spot`
+ * `bridgeReserve`): supply parked on the token's HyperEVM system address,
+ * which HL counts as circulating.
  */
 export function TokenDetailsBand({
   token,
@@ -128,18 +132,23 @@ export function TokenDetailsBand({
     if (!details) return null;
     const max = parseFloat(details.maxSupply);
     const total = parseFloat(details.totalSupply);
-    const circulating = parseFloat(details.circulatingSupply);
-    if (![max, total, circulating].every(Number.isFinite)) return null;
+    const reported = parseFloat(details.circulatingSupply);
+    if (![max, total, reported].every(Number.isFinite)) return null;
+    // HL counts the bridge reserve parked on the token's HyperEVM system
+    // address as circulating (all of AXL's 184.47B but 1.6M).
+    const bridgeReserve = Math.min(Math.max(0, token.bridgeReserve ?? 0), reported);
+    const circulating = reported - bridgeReserve;
     const denom = max > 0 ? max : total;
     return {
       max,
       total,
       circulating,
-      nonCirculating: Math.max(0, total - circulating),
+      bridgeReserve,
+      nonCirculating: Math.max(0, total - reported),
       unminted: Math.max(0, max - total),
       floatPct: denom > 0 ? (circulating / denom) * 100 : 0,
     };
-  }, [details]);
+  }, [details, token.bridgeReserve]);
 
   const deployTimeMs = details?.deployTime ? parseDeployTime(details.deployTime) : null;
   const bridged = isBridged(token.name);
@@ -158,6 +167,12 @@ export function TokenDetailsBand({
           value: supply.circulating,
           colorClass: "bg-brand",
           label: `circulating ${fmtSupply(supply.circulating)}`,
+        },
+        {
+          key: "bridge-reserve",
+          value: supply.bridgeReserve,
+          colorClass: "bg-brand-deep",
+          label: `bridge reserve ${fmtSupply(supply.bridgeReserve)}`,
         },
         {
           key: "non-circulating",
@@ -184,6 +199,11 @@ export function TokenDetailsBand({
               <StackedShareBar height={6} segments={barSegments} />
               <div className="text-[10.5px] text-text-tertiary">
                 <span className="text-brand">circulating</span> ·{" "}
+                {supply && supply.bridgeReserve > 0 && (
+                  <>
+                    <span className="text-brand-deep">bridge reserve</span> ·{" "}
+                  </>
+                )}
                 <span className="text-gold">non-circulating</span> · unminted/burned
               </div>
             </div>
@@ -206,6 +226,16 @@ export function TokenDetailsBand({
                 )
               }
             />
+            {supply && supply.bridgeReserve > 0 && (
+              <Row
+                label={
+                  <span title="Held by the token's HyperEVM system address, not on HyperCore. Hyperliquid counts it as circulating.">
+                    Bridge reserve
+                  </span>
+                }
+                value={fmtSupply(supply.bridgeReserve)}
+              />
+            )}
             <Row
               label="Market cap"
               value={
