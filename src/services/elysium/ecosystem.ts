@@ -31,6 +31,13 @@ export interface EcoProject {
   /** Null when the project has no contract on chain yet. */
   wallets7d: number | null;
   txs7d: number | null;
+  /** Active users (distinct wallets sending a tx to the project) over the last 24h and the 24h before. */
+  users24h: number | null;
+  usersPrev24h: number | null;
+  /** Active users over the 7 days before the last 7 (the current 7 days is `wallets7d`). */
+  usersPrev7d: number | null;
+  /** Active users per rolling 24h bucket over 14 days, oldest first; empty without contracts. */
+  usersDaily: number[];
   /** Launchpads only. */
   volume7d: number | null;
   launches7d: number | null;
