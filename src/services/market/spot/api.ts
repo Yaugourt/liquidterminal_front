@@ -1,8 +1,7 @@
-import { SpotGlobalStats, SpotToken, SpotPairMeta, TokenHoldersPage } from './types';
-import { get, postExternal } from '../../api/axios-config';
+import { SpotGlobalStats, SpotToken, TokenHoldersPage } from './types';
+import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse, buildQueryParams } from '../../common';
-import { API_URLS } from '../../api/constants';
 
 /**
  * Récupère les statistiques globales du marché spot
@@ -43,59 +42,6 @@ export const getToken = async (tokenName: string): Promise<SpotToken | null> => 
     // Silent error handling
     return null;
   }
-};
-
-interface SpotMetaTokenRaw {
-  name: string;
-  index: number;
-}
-
-interface SpotMetaPairRaw {
-  name: string;
-  /** [base token index, quote token index] */
-  tokens: [number, number];
-  index: number;
-}
-
-interface SpotAssetCtxRaw {
-  coin: string;
-  circulatingSupply?: string;
-}
-
-/**
- * Per-market metadata from HL `spotMetaAndAssetCtxs`, keyed by market index:
- * the real quote asset symbol (USDC / USDT0 / USDH ...) and the on-HL
- * circulating supply of the base token. The backend spot payload has neither,
- * so pair labels and market caps are corrected with this map.
- */
-export const fetchSpotPairMeta = async (): Promise<Record<number, SpotPairMeta>> => {
-  return withErrorHandling(async () => {
-    const res = await postExternal<
-      [{ tokens: SpotMetaTokenRaw[]; universe: SpotMetaPairRaw[] }, SpotAssetCtxRaw[]]
-    >(`${API_URLS.HYPERLIQUID_API}/info`, { type: 'spotMetaAndAssetCtxs' });
-
-    const meta = res?.[0];
-    const ctxs = res?.[1] ?? [];
-    if (!meta) return {};
-
-    const tokenNameByIndex = new Map<number, string>(
-      meta.tokens.map((t) => [t.index, t.name])
-    );
-    // The contexts also list pairs the universe leaves out (1,005 vs 330 on
-    // 2026-10-08), so positions don't line up: match them by coin name.
-    const ctxByCoin = new Map<string, SpotAssetCtxRaw>(ctxs.map((c) => [c.coin, c]));
-
-    const map: Record<number, SpotPairMeta> = {};
-    meta.universe.forEach((pair) => {
-      const rawSupply = ctxByCoin.get(pair.name)?.circulatingSupply;
-      const circulating = rawSupply ? parseFloat(rawSupply) : NaN;
-      map[pair.index] = {
-        quote: tokenNameByIndex.get(pair.tokens[1]) ?? 'USDC',
-        circulatingSupply: Number.isFinite(circulating) ? circulating : null,
-      };
-    });
-    return map;
-  }, 'fetching spot pair metadata');
 };
 
 /**

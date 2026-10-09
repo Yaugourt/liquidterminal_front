@@ -18,6 +18,11 @@ export interface SpotToken {
   supply: number;
   marketIndex: number;
   tokenId: string;
+  /**
+   * Quote token of the pair as Hyperliquid names it (USDC, USDH, USDT0,
+   * USDE...). Absent from backends that predate it: read it as USDC.
+   */
+  quote?: string;
 }
 
 export interface SpotMarketResponse {
@@ -29,14 +34,6 @@ export interface SpotMarketResponse {
   totalVolume: number;
   hasNext: boolean;
   hasPrevious: boolean;
-}
-
-/** Per-market metadata derived from HL `spotMetaAndAssetCtxs`. */
-export interface SpotPairMeta {
-  /** Actual quote asset of the pair (USDC, USDT0, USDH, ...). */
-  quote: string;
-  /** On-HL circulating supply of the base token (null when unavailable). */
-  circulatingSupply: number | null;
 }
 
 export interface TokenHolderRow {
