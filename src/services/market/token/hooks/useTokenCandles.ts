@@ -39,8 +39,9 @@ export const useTokenCandles = ({
     if (startTime) return startTime;
     const now = Date.now();
     const intervalMs = getIntervalInMs(interval);
-    // Load 1000 candles by default for good history
-    return now - (1000 * intervalMs);
+    // Load 1000 candles by default for good history. Not before 1970: 1,000
+    // months is, and HL answers a negative startTime with a 422.
+    return Math.max(0, now - (1000 * intervalMs));
   }, [startTime, interval]);
 
   // Set endTime only once using useMemo or update when it changes effectively
