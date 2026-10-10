@@ -49,13 +49,14 @@ interface SidebarUiState {
 /**
  * Families collapsed on a fresh install. Ids come from `getGroupId` in
  * sidebar-config (groupName lowercased, spaces → dashes). Kept in sync with the
- * named groups of `defaultNavigationGroups`. Every family ships folded so the
- * rail arrives tidy; the visitor opens what they need.
+ * named groups of `defaultNavigationGroups`. Markets ships open, the rest
+ * folded; the family holding the current page always opens on its own (see
+ * `isGroupFolded` in Sidebar), so the active entry is never hidden.
  */
-const DEFAULT_FOLDED_GROUPS = ["markets", "capital", "chain", "ecosystem", "learn"];
+const DEFAULT_FOLDED_GROUPS = ["capital", "chain", "tools", "ecosystem", "learn"];
 
 /** Bump alongside a breaking change to the persisted shape, then extend `migrate`. */
-const SIDEBAR_UI_VERSION = 3;
+const SIDEBAR_UI_VERSION = 4;
 
 export const useSidebarUi = create<SidebarUiState>()(
   persist(
@@ -87,7 +88,7 @@ export const useSidebarUi = create<SidebarUiState>()(
       storage: createJSONStorage(() => localStorage),
       // Bumped whenever the default fold set changes so persisted blobs don't
       // pin the old layout. v1: all families collapsed on load. v2: Markets
-      // opens by default. Adding a field (e.g. `navMode`) needs no bump —
+      // opens by default. v4: Tools family, Markets open again. Adding a field (e.g. `navMode`) needs no bump —
       // persist merges shallowly over the initial state, so an older blob
       // simply inherits the new field's default.
       version: SIDEBAR_UI_VERSION,

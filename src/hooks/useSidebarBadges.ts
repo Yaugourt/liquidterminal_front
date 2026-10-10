@@ -45,9 +45,8 @@ export function useSidebarBadges(): Record<string, SidebarBadgeValue> {
 
     const spotPairs = spot?.totalPairs ?? null;
     const perpPairs = perp?.totalPairs ?? null;
-    if (spotPairs !== null || perpPairs !== null) {
-      out["/market"] = { text: compactCount((spotPairs ?? 0) + (perpPairs ?? 0)), tone: "muted" };
-    }
+    if (spotPairs !== null) out["/market/spot"] = { text: compactCount(spotPairs), tone: "muted" };
+    if (perpPairs !== null) out["/market/perp"] = { text: compactCount(perpPairs), tone: "muted" };
 
     if (vaultsTotal > 0) {
       out["/explorer/vaults"] = { text: compactCount(vaultsTotal), tone: "muted" };

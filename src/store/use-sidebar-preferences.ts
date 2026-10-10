@@ -35,7 +35,7 @@ interface SidebarPreferencesState {
   getPreferences: () => SidebarPreferences | null;
 }
 
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 export const useSidebarPreferences = create<SidebarPreferencesState>()(
   persist(

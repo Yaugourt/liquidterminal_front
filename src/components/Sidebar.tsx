@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { SidebarToggle } from "@/components/common"
 import { TokenAvatar, LiquidMark, SponsorCard } from "@/components/common"
 import Image from "next/image"
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useAuthContext } from "@/contexts/auth.context"
 import { usePathname } from 'next/navigation'
 import { hasRole } from "@/lib/roleHelpers"
@@ -31,7 +31,6 @@ import { CustomizeSidebarModal } from "@/components/CustomizeSidebarModal"
  * entry highlighted. /market is deliberately absent: its sub-routes ARE rail
  * entries, so prefix-matching it there would light two rows at once.
  */
-const SCOPE_TAB_ROOTS = ["/dashboard"]
 
 const socials = [
     { name: 'Discord', href: '#', Icon: MessageCircle },
@@ -135,14 +134,25 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
     const isAdmin = hasRole(user, 'ADMIN');
 
+    /**
+     * The one rail entry the current page belongs to: the longest href that is
+     * the path itself or a parent of it. /market/builders lights Builders, not
+     * Overview; /explorer/vaults/0x... lights Vaults, not Explorer. Exactly one
+     * entry is ever lit, whichever family it sits in.
+     */
+    const activeHref = useMemo(() => {
+        let best: string | null = null;
+        const visit = (item: NavigationItem) => {
+            const hit = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            if (hit && (!best || item.href.length > best.length)) best = item.href;
+            item.children?.forEach(visit);
+        };
+        railGroups.forEach((g) => g.items.forEach(visit));
+        return best;
+    }, [pathname, railGroups]);
+
     const isItemActive = (item: NavigationItem): boolean =>
-        pathname === item.href ||
-        (item.href.startsWith("/market/") && pathname.startsWith(`${item.href}/`)) ||
-        // Roots whose sub-routes are scope tabs rather than rail entries: the
-        // parent must stay lit on /dashboard/capital & co, and no sibling entry
-        // can double-highlight since those scopes are not in the rail.
-        (SCOPE_TAB_ROOTS.includes(item.href) && pathname.startsWith(`${item.href}/`)) ||
-        Boolean(item.children && item.children.some((child) => pathname === child.href));
+        item.href === activeHref || Boolean(item.children?.some((child) => child.href === activeHref));
 
     /** Icon node — token logo > custom image > lucide, in a fixed 16px slot. */
     const renderIcon = (item: NavigationItem, isActive: boolean) => {
@@ -265,6 +275,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         );
     };
 
+    const activeGroup = railGroups.find((group) => group.groupName && group.items.some(isItemActive));
+    const activeGroupId = activeGroup ? getGroupId(activeGroup.groupName) : null;
+
     /** Ids of the foldable families, in render order (the home block has none). */
     const namedGroupIds = railGroups
         .filter((group) => group.groupName)
@@ -282,6 +295,8 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     /** Fold state for one family, per layout mode. The 56px rail never folds. */
     const isGroupFolded = (groupId: string): boolean => {
         if (isCollapsed || navMode === "expanded") return false;
+        // The family of the current page always shows its lit entry.
+        if (groupId === activeGroupId) return false;
         if (navMode === "focus") return groupId !== focusOpenId;
         return foldedGroups.includes(groupId);
     };
