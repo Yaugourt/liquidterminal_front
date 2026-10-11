@@ -13,3 +13,4 @@ export { BuilderIntelligenceSecondaryStats } from "./BuilderIntelligenceSecondar
 export { formatBuilderDisplayName } from "./formatBuilderDisplayName";
 export { BuilderAvatar, BuilderIdentity, resolveBuilderLabel } from "./BuilderIdentity";
 export { isBuilderWindowEmpty } from "./builderStatsWindow";
+export { BuildersGrowthChart } from "./BuildersGrowthChart";
