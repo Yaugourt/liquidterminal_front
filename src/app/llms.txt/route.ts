@@ -58,6 +58,7 @@ These pages are client-rendered dashboards; the numbers below them come from pub
 ## Elysium (Kinetiq L2 testnet on HyperEVM, chain 99801)
 
 - [Overview](${base}/elysium): blocks, transactions, active addresses, bridge and batches
+- [Trust](${base}/elysium/trust): validators, challenge period, force inclusion, upgrade keys, bridge beacons and chain parameter changes, read live from the rollup contracts
 - [Network](${base}/elysium/network): chain ID, RPC endpoints, gas, ArbOS and rollup contracts, read live
 - [Simulator](${base}/elysium/simulate): dry-run a call or a contract deployment on live state; /elysium/simulate?kind=deploy for deployments
 - [Decoder](${base}/elysium/decode): what a contract is, its functions, proxy and admin powers. Per-address pages at /elysium/address/{address}

@@ -386,6 +386,12 @@ export const seoConfig = {
     keywords: ["Elysium RPC", "Elysium chain id", "Elysium testnet network", "add Elysium to wallet", "Elysium gas"],
     path: "/elysium/network",
   },
+  elysiumTrust: {
+    title: "Elysium Trust & Security - Validators, Upgrades, Challenge Period",
+    description: "Who orders, validates and can upgrade Elysium, read live from the rollup contracts on HyperEVM: challenge period, allowlisted validators, force inclusion delay, upgrade keys, bridge beacons and every chain parameter change since genesis.",
+    keywords: ["Elysium security", "Elysium validators", "Elysium upgrade keys", "Elysium challenge period", "Kinetiq Elysium risk"],
+    path: "/elysium/trust",
+  },
   elysiumSimulate: {
     title: "Elysium Transaction Simulator - Dry-Run Calls & Deployments",
     description: "Simulate any Elysium call or contract deployment on live testnet state before signing: status, gas, fee, events, revert reason and the address a contract gets. Deploy from your own wallet once the checks pass.",

@@ -46,3 +46,38 @@ export const PRECOMPILE_ROLES: Record<string, string> = {
   ArbWasmCache: "Stylus program cache",
   NodeInterface: "Virtual contract, eth_call only: gas estimates with the parent chain component",
 };
+
+/**
+ * Contracts the trust page reads. Rollup side from the Conduit chain config;
+ * executors, outbox, challenge manager and bridge beacons resolved on chain
+ * from those (rollup getters, proxy admin slots, factory getters), 2026-10-12.
+ */
+export const ELYSIUM_TRUST_CONTRACTS = {
+  rollup: "0xEbf08e34941fd93a0Fc1cD89dbBF7447267039Df",
+  sequencerInbox: "0xb5B1a0AebfFeF819Ec3F8c39a17b5C4E70A001E3",
+  /** UpgradeExecutor on HyperEVM: owner and proxy admin of the rollup contracts. */
+  parentExecutor: "0x340a301a4e26349d8acb09b90734749d94293bff",
+  /** Granted EXECUTOR_ROLE on `parentExecutor` at HyperEVM block 63,983,868 (tx 0xed4da08a…); the deploy wallet revoked its own role at 63,984,478. */
+  parentExecutorHolder: "0xa2fd521f15eb0dea4adf4a1122aeb3a82b57cb35",
+  /** UpgradeExecutor on Elysium: the ArbOS chain owner. */
+  childExecutor: "0xFa78c1a82455a6ce83aA82CF464D74e88b384600",
+  /** `parentExecutor` + 0x1111…1111: how a HyperEVM contract appears as sender on Elysium. */
+  parentExecutorAliased: "0x451b301a4e26349d8acb09b90734749d94294d10",
+  /** Beacon behind every ElysiumBridgeWallet, on Elysium. */
+  bridgeWalletBeacon: "0xFB7B506AA242F41c053603bfd786699428fE3ACe",
+  /** Beacon behind every ElysiumMirrorToken, on HyperEVM. */
+  mirrorTokenBeacon: "0x5182aFF17Fe4d87143Ebc1718F670DFa61571721",
+  bridgeFactory: "0xb94A38a4aC46970559E89E566f2486a3Fc56BE5a",
+  mirrorFactory: "0xcaDb9986F3727177d48FA07294E1730f9D19290b",
+} as const;
+
+export const HYPEREVM_TESTNET_RPC_URL = "https://rpc.hyperliquid-testnet.xyz/evm";
+
+/** Targets announced in the official chain specifications (read 2026-09-30). */
+export const ELYSIUM_ANNOUNCED = {
+  blockTimeMs: [100, 200] as const,
+  gasPerS: 300_000_000,
+  specsUrl: "https://elysium.kinetiq.xyz/docs/chain-specifications",
+  securityUrl: "https://elysium.kinetiq.xyz/docs/security-and-data-availability",
+  bridgeArchitectureUrl: "https://elysium.kinetiq.xyz/docs/token-bridging-architecture",
+} as const;
