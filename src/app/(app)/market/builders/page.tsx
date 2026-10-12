@@ -16,6 +16,7 @@ import {
   BuildersFlowChart,
   BuildersTopTable,
   BuildersAllTable,
+  BuildersGrowthChart,
 } from "@/components/market/builders";
 import { PageHeader, TimeframeTabs, PageFaq, DataStatus, SourceBadge, combinedSourceStatus, TableStat } from "@/components/common";
 import { BUILDERS_FAQ } from "@/lib/page-faqs";
@@ -106,6 +107,9 @@ export default function MarketBuildersPage() {
           timeframe={tf}
         />
       </div>
+
+      {/* Daily history per builder, independent of the timeframe above */}
+      <BuildersGrowthChart />
 
       {/* Directory — one table at a time; the view switcher lives in its toolbar */}
       {view === "top" ? (

@@ -61,6 +61,7 @@ These pages are client-rendered dashboards; the numbers below them come from pub
 - [Network](${base}/elysium/network): chain ID, RPC endpoints, gas, ArbOS and rollup contracts, read live
 - [Simulator](${base}/elysium/simulate): dry-run a call or a contract deployment on live state; /elysium/simulate?kind=deploy for deployments
 - [Decoder](${base}/elysium/decode): what a contract is, its functions, proxy and admin powers. Per-address pages at /elysium/address/{address}
+- [Ecosystem](${base}/elysium/ecosystem), [Launchpads](${base}/elysium/launchpads): every project building on Elysium with its 7-day activity, and every launchpad token with price, volume, holders and bonding progress
 - [Contracts](${base}/elysium/contracts), [Tokens](${base}/elysium/tokens), [DEX](${base}/elysium/dex), [Bridge](${base}/elysium/bridge), [Users](${base}/elysium/users), [Economics](${base}/elysium/economics): computed analytics
 - [Start here](${base}/elysium/start): Elysium testnet guide for users (network, faucet, first transaction, bridge) and builders (deploy, inspect, verify, Foundry/Hardhat/viem, chain differences)
 - [Run a node](${base}/elysium/node): archive snapshots and restore commands

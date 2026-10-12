@@ -107,7 +107,7 @@ export function QuantumCandleChart() {
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: COLORS.muted,
-        fontFamily: "var(--font-inter), Inter, sans-serif",
+        fontFamily: "var(--font-sans), Inter, sans-serif",
         fontSize: 10,
         attributionLogo: false,
       },

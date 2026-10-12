@@ -10,11 +10,11 @@ export default {
 	theme: {
 		extend: {
 			fontFamily: {
-				/** Inter for UI / body / headings. */
-				inter: ['var(--font-inter)', 'Inter', 'sans-serif'],
-				sans: ['var(--font-inter)', 'Inter', 'sans-serif'],
-				/** JetBrains Mono for all numeric data (V4 signature). Tabular-nums via `.mono` utility. */
-				mono: ['var(--font-mono)', 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', 'Menlo', 'monospace'],
+				/** Geist for UI / body / headings (`inter` kept as an alias of `sans`). */
+				inter: ['var(--font-sans)', 'Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+				sans: ['var(--font-sans)', 'Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+				/** Geist Mono for all numeric data. Tabular-nums via `.mono` utility. */
+				mono: ['var(--font-mono)', 'Geist Mono', 'JetBrains Mono', 'SF Mono', 'Menlo', 'monospace'],
 			},
 			/**
 			 * V4 type scale (docs/DESIGN_SYSTEM_V4.md §3.4). Absolute px values so

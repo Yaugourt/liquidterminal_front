@@ -11,8 +11,8 @@ export default function MarketLayout({
 }) {
   return (
     <>
-      {/* Spot/Perp left the sidebar: this bar is the market-wide navigation,
-          persistent on every /market/* page (verdict design). */}
+      {/* Market family tabs, mirrored from the sidebar; hidden on the
+          non-market pages that share the /market prefix. */}
       <MarketScopeBar />
       {children}
     </>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 48 48" fill="none" role="img" aria-labelledby="title">
+  <title id="title">Dex Da Costa — two orbital ellipses</title>
+  <ellipse cx="24" cy="24" rx="11" ry="19.5" transform="rotate(28 24 24)" stroke="#D2EFA4" stroke-width="2"/>
+  <ellipse cx="24" cy="24" rx="19.5" ry="9" transform="rotate(-12 24 24)" stroke="#D2EFA4" stroke-opacity="0.549019608" stroke-width="1"/>
+</svg>

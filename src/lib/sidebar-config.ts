@@ -32,6 +32,8 @@ import { AtSign,
   Rocket,
   FileSearch,
   HandCoins,
+  LayoutGrid,
+  Wrench,
 } from "lucide-react";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
@@ -98,62 +100,65 @@ export const getItemId = (name: string, href: string): string => {
  */
 export const defaultNavigationGroups: NavigationGroup[] = [
   {
-    // Header-less block: the two page-agnostic pins.
+    // Header-less block: the two places everyone starts from.
     groupName: null,
     items: [
       { name: 'Home', href: '/dashboard', icon: null, IconComponent: Home },
       { name: 'HYPE', href: '/hype', icon: null, tokenIcon: 'HYPE' },
-      // Page-agnostic like the two above: the export workbench serves every
-      // family rather than belonging to one, and a tool nobody can navigate to
-      // may as well not ship.
-      { name: 'Export', href: '/export', icon: null, IconComponent: Download },
-      // Same page-agnostic tool slot as Export: the share studio turns any
-      // metric into a post-ready image, for every family.
-      { name: 'Share', href: '/share', icon: null, IconComponent: Share2 },
-      // Page-agnostic too: alerts span markets, liquidations and wallets.
-      { name: 'Alerts', href: '/alerts', icon: null, IconComponent: BellRing },
     ],
   },
   {
-    // What quotes, and what gets forced out — HyperCore order books plus the
-    // liquidation feed that runs off them. The /market hub keeps its
-    // MarketScopeBar (Overview/Spot/Perpetual/Auctions/...), so the rail lists
-    // the peer destinations, not the scope tabs.
+    // Everything that quotes on HyperCore, plus what gets forced out of it.
+    // Same entries, same order as the MarketScopeBar on /market/*, so the rail
+    // and the in-page tabs never disagree.
     groupName: 'Markets',
     IconComponent: BarChart3,
     accent: 'brand',
     items: [
-      { name: 'Market', href: '/market', icon: null, IconComponent: CandlestickChart },
+      { name: 'Overview', href: '/market', icon: null, IconComponent: CandlestickChart },
+      { name: 'Spot', href: '/market/spot', icon: null, IconComponent: Coins },
+      { name: 'Perps', href: '/market/perp', icon: null, IconComponent: BarChart3 },
       { name: 'Perp DEXs', href: '/market/perpdex', icon: null, IconComponent: Layers, tag: 'HIP-3' },
       { name: 'Outcomes', href: '/market/hip4', icon: null, IconComponent: Sparkles, tag: 'HIP-4' },
+      { name: 'Trades', href: '/market/trades', icon: null, IconComponent: ArrowLeftRight },
       { name: 'Liquidations', href: '/explorer/liquidations', icon: null, IconComponent: Zap },
     ],
   },
   {
     // Where value sits and what it earns: pooled (vaults), staked (validators),
-    // tracked (personal), plus the two revenue rails — builder codes and the
-    // priority-fee auction.
+    // and the two revenue rails, builder codes and the priority-fee auction.
     groupName: 'Capital',
     IconComponent: Landmark,
     accent: 'gold',
     items: [
       { name: 'Vaults', href: '/explorer/vaults', icon: null, IconComponent: Vault },
       { name: 'Yields', href: '/market/yields', icon: null, IconComponent: Percent },
-      { name: 'Validators', href: '/explorer/validator', icon: null, IconComponent: Network },
-      { name: 'Tracker', href: '/market/tracker', icon: null, IconComponent: Wallet },
+      { name: 'Staking', href: '/explorer/validator', icon: null, IconComponent: Network },
       { name: 'Builders', href: '/market/builders', icon: null, IconComponent: Hammer },
       { name: 'Priority Fees', href: '/explorer/priority-fees', icon: null, IconComponent: Fuel },
     ],
   },
   {
-    // How the machine runs. Two execution layers on one consensus: the HyperCore
-    // L1 (Explorer) and the HyperEVM.
+    // How the machine runs: the HyperCore L1 (Explorer) and the HyperEVM.
     groupName: 'Chain',
     IconComponent: Boxes,
     accent: 'neutral',
     items: [
       { name: 'Explorer', href: '/explorer', icon: null, IconComponent: Blocks, badge: { label: 'Core', tone: 'core' } },
-      { name: 'HyperEVM', href: '/evm', icon: null, IconComponent: Cpu, badge: { label: 'new', tone: 'new' } },
+      { name: 'HyperEVM', href: '/evm', icon: null, IconComponent: Cpu },
+    ],
+  },
+  {
+    // Personal tools that work across every family: follow wallets, get
+    // alerted, pull the data out, turn a metric into a post.
+    groupName: 'Tools',
+    IconComponent: Wrench,
+    accent: 'neutral',
+    items: [
+      { name: 'Wallet tracker', href: '/market/tracker', icon: null, IconComponent: Wallet },
+      { name: 'Alerts', href: '/alerts', icon: null, IconComponent: BellRing },
+      { name: 'Export', href: '/export', icon: null, IconComponent: Download },
+      { name: 'Share', href: '/share', icon: null, IconComponent: Share2 },
     ],
   },
   {
@@ -173,6 +178,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Wiki', href: '/wiki', icon: null, IconComponent: Library },
       { name: 'Read Lists', href: '/wiki/readlist', icon: null, IconComponent: BookOpen },
+      { name: 'HIP-4 docs', href: '/hip4', icon: null, IconComponent: FileSearch },
     ],
   },
 ];
@@ -199,10 +205,11 @@ const navigationGroupsToPreferences = (groups: NavigationGroup[]): SidebarPrefer
   });
 
   return {
-    // v2: the families were renamed (Markets/Capital/Chain/Ecosystem/Learn) and
-    // resegmented. v1 prefs key off the old group ids, so they must be discarded
-    // rather than merged — else a renamed group has no matching pref and hides.
-    version: 2,
+    // v3: Tools family added, Spot/Perps/Trades back in the rail, tools moved
+    // out of the home block. Older prefs key off the old layout, so they must be
+    // discarded rather than merged, else the new group has no pref and hides.
+    // v2: the families were renamed (Markets/Capital/Chain/Ecosystem/Learn).
+    version: 3,
     groups: groupPreferences
   };
 };
@@ -279,6 +286,8 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Start here', href: '/elysium/start', icon: null, IconComponent: Rocket },
       { name: 'Overview', href: '/elysium', icon: null, IconComponent: Home },
+      { name: 'Ecosystem', href: '/elysium/ecosystem', icon: null, IconComponent: LayoutGrid },
+      { name: 'Launchpads', href: '/elysium/launchpads', icon: null, IconComponent: Sparkles },
       { name: 'Contracts', href: '/elysium/contracts', icon: null, IconComponent: Blocks },
       { name: 'DEX', href: '/elysium/dex', icon: null, IconComponent: ArrowLeftRight },
       { name: 'Tokens', href: '/elysium/tokens', icon: null, IconComponent: Coins },

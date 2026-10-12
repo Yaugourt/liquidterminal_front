@@ -15,10 +15,13 @@ interface ScopeItem {
 }
 
 /**
- * Persistent scope bar of the Market section (verdict design): Spot and
- * Perpetual left the sidebar, so every /market/* page carries this row —
- * any sibling is one click away, the hub is the Overview tab.
+ * In-page tabs of the Market family: the same entries, in the same order, as
+ * the sidebar's Markets group, so any sibling market is one click away.
+ * Builders and the wallet tracker live under /market/* for URL history only;
+ * they belong to other families, so the bar stays off their pages.
  */
+const NOT_MARKET = ["/market/builders", "/market/tracker"];
+
 export function MarketScopeBar() {
   const pathname = usePathname();
   const { stats: spotStats } = useSpotGlobalStats();
@@ -28,18 +31,18 @@ export function MarketScopeBar() {
   const items: ScopeItem[] = [
     { label: "Overview", href: "/market", exact: true },
     { label: "Spot", href: "/market/spot", count: spotStats?.totalPairs ?? null },
-    { label: "Perpetual", href: "/market/perp", count: perpStats?.totalPairs ?? null },
-    { label: "PerpDexs", href: "/market/perpdex", count: hip3?.total_dexs ?? null },
-    { label: "HIP-4", href: "/market/hip4" },
-    { label: "Builders", href: "/market/builders" },
+    { label: "Perps", href: "/market/perp", count: perpStats?.totalPairs ?? null },
+    { label: "Perp DEXs", href: "/market/perpdex", count: hip3?.total_dexs ?? null },
+    { label: "Outcomes", href: "/market/hip4" },
     { label: "Trades", href: "/market/trades" },
-    { label: "Tracker", href: "/market/tracker" },
   ];
 
   const isActive = (item: ScopeItem): boolean => {
     if (item.exact) return pathname === item.href;
     return pathname === item.href || pathname.startsWith(`${item.href}/`);
   };
+
+  if (NOT_MARKET.some((r) => pathname === r || pathname.startsWith(`${r}/`))) return null;
 
   return (
     <nav

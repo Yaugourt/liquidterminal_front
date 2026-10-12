@@ -36,7 +36,7 @@
 
 ### Typography
 
-- Two families, both loaded in `layout.tsx`: **Inter** for UI / body / headings (`font-sans`), **JetBrains Mono** for all numeric data (`font-mono`, the V4 signature).
+- Two families, both loaded in `layout.tsx`: **Geist** for UI / body / headings (`font-sans`), **Geist Mono** for all numeric data (`font-mono`).
 - `.mono` class for tabular numbers (`font-feature-settings: "tnum"`). Prefer `.mono` over `tabular-nums`.
 - Common sizes:
   - Card hero: `text-[20px]` to `text-[23px]`, `font-semibold`, `tracking-[-0.02em]`.
