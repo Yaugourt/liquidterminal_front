@@ -5,8 +5,8 @@ import { withErrorHandling } from "@/services/api/error-handler";
 /**
  * Builder code growth: daily revenue, users, new users and volume per builder.
  * Computed by our backend from the per-builder daily fill files Hyperliquid
- * publishes (one file per builder and per UTC day), for the builders that led
- * at any point since builder codes went live.
+ * publishes (one file per builder and per UTC day), for every builder seen
+ * active since builder codes went live.
  */
 
 export type GrowthMetric = "fees" | "users" | "newUsers" | "volume";
@@ -27,13 +27,21 @@ export interface GrowthSnapshot {
   range: GrowthRange;
   /** UTC days, `YYYY-MM-DD`, oldest first. */
   days: string[];
-  /** Sorted by total, largest first. */
+  /** The top builders over the window, largest first. */
   builders: GrowthBuilder[];
+  /** Every other builder with activity in the window, summed. */
+  others: { count: number; total: number; series: number[] } | null;
+  /** All builders summed, one value per day. */
+  total: number[];
   coverage: {
     tracked: number;
+    /** Builders with a non-zero value in the window. */
+    active: number;
     /** Builders whose history is still being ingested. */
     backfilling: number;
     lastDay: string | null;
+    /** Tracked share of all builder-code volume over 30 days; null when unknown. */
+    volumeShare30d: number | null;
   };
   computedAt: string;
 }

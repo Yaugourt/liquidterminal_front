@@ -19,9 +19,9 @@ import { useBuilderGrowth, type GrowthMetric, type GrowthRange } from "@/service
 import { resolveBuilderLabel } from "./BuilderIdentity";
 
 /**
- * Daily builder code growth, one stacked bar per UTC day and one band per
- * builder. The leaders over the window get their own colour; the rest of the
- * tracked builders share one muted band so the total stays honest.
+ * Daily builder code growth, one stacked bar per UTC day. "By builder" gives
+ * the leaders over the window their own colour and sums every other builder
+ * into one muted band; "Total" draws the sum of all builders as one series.
  */
 
 const METRICS: readonly GrowthMetric[] = ["fees", "users", "newUsers", "volume"];
@@ -35,7 +35,12 @@ const METRIC_LABELS: Record<GrowthMetric, string> = {
 const RANGES: readonly GrowthRange[] = ["30d", "90d", "180d", "all"];
 const RANGE_LABELS: Record<GrowthRange, string> = { "30d": "30D", "90d": "90D", "180d": "180D", all: "All" };
 
+type View = "builders" | "total";
+const VIEWS: readonly View[] = ["builders", "total"];
+const VIEW_LABELS: Record<View, string> = { builders: "By builder", total: "Total" };
+
 const OTHERS_KEY = "others";
+const TOTAL_KEY = "total";
 const SERIES_COLORS = chartPalette.multiSeries;
 const TOP_N = SERIES_COLORS.length;
 
@@ -109,36 +114,52 @@ function GrowthTooltip({
 export const BuildersGrowthChart = memo(function BuildersGrowthChart() {
   const [metric, setMetric] = useState<GrowthMetric>("fees");
   const [range, setRange] = useState<GrowthRange>("90d");
+  const [view, setView] = useState<View>("builders");
   const { data, isLoading, error } = useBuilderGrowth(metric, range);
 
   const { points, series } = useMemo(() => {
     if (!data || data.metric !== metric || data.range !== range) return { points: [] as Point[], series: [] as SeriesDef[] };
+    if (view === "total") {
+      const sum = data.total.reduce((acc, v) => acc + v, 0);
+      if (sum <= 0) return { points: [] as Point[], series: [] as SeriesDef[] };
+      return {
+        points: data.days.map((day, i) => ({ day, [TOTAL_KEY]: data.total[i] ?? 0 })),
+        series: [{ key: TOTAL_KEY, label: `All builders (${data.coverage.active})`, color: chartPalette.accent, total: sum }],
+      };
+    }
+    // The API returns a few more leaders than we have colours: fold the extra
+    // ones into the "others" band with every remaining builder.
     const leaders = data.builders.slice(0, TOP_N);
-    const rest = data.builders.slice(TOP_N);
+    const folded = data.builders.slice(TOP_N);
+    const othersCount = folded.length + (data.others?.count ?? 0);
+    const othersSeries = data.days.map(
+      (_, i) => (data.others?.series[i] ?? 0) + folded.reduce((acc, b) => acc + (b.series[i] ?? 0), 0)
+    );
     const defs: SeriesDef[] = leaders.map((b, i) => ({
       key: b.address,
       label: resolveBuilderLabel(b.address, b.name).label,
       color: SERIES_COLORS[i],
       total: b.total,
     }));
-    if (rest.length > 0) {
+    if (othersCount > 0) {
       defs.push({
         key: OTHERS_KEY,
-        label: `${rest.length} other builders`,
+        label: `${othersCount} other builders`,
         color: chartColors.textMuted,
-        total: rest.reduce((sum, b) => sum + b.total, 0),
+        total: othersSeries.reduce((acc, v) => acc + v, 0),
       });
     }
     const pts: Point[] = data.days.map((day, i) => {
       const p: Point = { day };
       for (const b of leaders) p[b.address] = b.series[i] ?? 0;
-      if (rest.length > 0) p[OTHERS_KEY] = rest.reduce((sum, b) => sum + (b.series[i] ?? 0), 0);
+      if (othersCount > 0) p[OTHERS_KEY] = othersSeries[i];
       return p;
     });
     return { points: pts, series: defs };
-  }, [data, metric, range]);
+  }, [data, metric, range, view]);
 
   const grandTotal = series.reduce((sum, s) => sum + s.total, 0);
+  const share = data?.coverage.volumeShare30d ?? null;
   const backfilling = data?.coverage.backfilling ?? 0;
   const isEmpty = !isLoading && !error && series.length === 0;
 
@@ -154,6 +175,7 @@ export const BuildersGrowthChart = memo(function BuildersGrowthChart() {
       <div className="flex flex-wrap items-center gap-1.5 px-3.5 pt-2.5">
         <PeriodSelector selected={metric} onChange={setMetric} options={METRICS} labels={METRIC_LABELS} variant="aurora" />
         <PeriodSelector selected={range} onChange={setRange} options={RANGES} labels={RANGE_LABELS} variant="aurora" />
+        <PeriodSelector selected={view} onChange={setView} options={VIEWS} labels={VIEW_LABELS} variant="aurora" />
       </div>
 
       <div className="flex-1 px-2 pt-3 pb-2">
@@ -205,9 +227,11 @@ export const BuildersGrowthChart = memo(function BuildersGrowthChart() {
           value:
             metric === "users"
               ? undefined
-              : grandTotal > 0
-                ? `${fmt(metric, s.total)} · ${((s.total / grandTotal) * 100).toFixed(0)}%`
-                : undefined,
+              : view === "total"
+                ? `${fmt(metric, s.total)} over the window`
+                : grandTotal > 0
+                  ? `${fmt(metric, s.total)} · ${((s.total / grandTotal) * 100).toFixed(0)}%`
+                  : undefined,
         }))}
       />
 
@@ -222,9 +246,17 @@ export const BuildersGrowthChart = memo(function BuildersGrowthChart() {
         <span className="opacity-50">·</span>
         <span>
           {metric === "users" || metric === "newUsers"
-            ? "A trader using two apps counts once in each."
-            : `${data?.coverage.tracked ?? "…"} builders tracked: past and current leaders.`}
+            ? "Counted per builder: a trader using two apps counts once in each."
+            : `${data?.coverage.tracked ?? "…"} builders tracked, every one seen active since launch.`}
         </span>
+        {share != null && backfilling === 0 && (
+          <>
+            <span className="opacity-50">·</span>
+            <span>
+              {`${(share * 100).toFixed(0)}% of all builder-code volume over 30 days, against HypeDexer global stats.`}
+            </span>
+          </>
+        )}
         {backfilling > 0 && (
           <>
             <span className="opacity-50">·</span>
