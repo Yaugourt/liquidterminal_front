@@ -6,11 +6,12 @@ import { CardHeading, KpiRibbon, RowFillList, chartPalette, type KpiCell } from 
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumBridgeAnalytics } from "@/services/elysium";
+import { ElysiumBridgeTracker } from "./ElysiumBridgeTracker";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
 import { AddrLink, EMPTY, Empty, completeDays, duration } from "./shared";
 
 /**
- * Elysium · Bridge: daily HYPE flows in and out, per-token volumes, real
+ * Elysium · Bridge: a transfer tracker, daily HYPE flows in and out, per-token volumes, real
  * finality times and the biggest bridgers. Computed by our backend from every
  * indexed bridge transfer. Amounts are token units (testnet, no prices).
  */
@@ -41,6 +42,7 @@ export function ElysiumBridgeAnalyticsView() {
     <div className="space-y-4">
       <IngestNotice />
       <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-2 xl:[&>*:last-child]:col-span-1" />
+      <ElysiumBridgeTracker dep={dep} wd={wd} />
       <DailyChartCard
         title="HYPE bridged per day"
         icon={<ArrowLeftRight size={13} className="text-brand" />}

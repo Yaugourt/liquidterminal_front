@@ -69,7 +69,18 @@ export const ELYSIUM_TRUST_CONTRACTS = {
   mirrorTokenBeacon: "0x5182aFF17Fe4d87143Ebc1718F670DFa61571721",
   bridgeFactory: "0xb94A38a4aC46970559E89E566f2486a3Fc56BE5a",
   mirrorFactory: "0xcaDb9986F3727177d48FA07294E1730f9D19290b",
+  /** Rollup outbox on HyperEVM: withdrawals are claimed here (Rollup.outbox()). */
+  outbox: "0x87391D602aaffB3Fe8051EcCDb75d6EEe8C31060",
 } as const;
+
+/**
+ * HyperEVM testnet RPC that serves eth_getLogs over 100-block windows (the
+ * public one times out on logs). Used only to find the last confirmed root.
+ */
+export const HYPEREVM_TESTNET_LOGS_RPC_URL = "https://hyperliquid-testnet.drpc.org";
+
+/** Official bridge UI, where withdrawals are claimed on HyperEVM. */
+export const ELYSIUM_BRIDGE_UI_URL = "https://elysium.kinetiq.xyz/testnet-bridge";
 
 export const HYPEREVM_TESTNET_RPC_URL = "https://rpc.hyperliquid-testnet.xyz/evm";
 

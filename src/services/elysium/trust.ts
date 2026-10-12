@@ -1,6 +1,7 @@
-import { createPublicClient, decodeFunctionData, defineChain, http, keccak256, parseAbi, parseAbiItem, toHex, type Address, type Hex } from "viem";
+import { decodeFunctionData, keccak256, parseAbi, parseAbiItem, toHex, type Address, type Hex } from "viem";
 import { useDataFetching } from "@/hooks/useDataFetching";
-import { ELYSIUM_CHAIN, ELYSIUM_TRUST_CONTRACTS as T, HYPEREVM_TESTNET_RPC_URL } from "@/lib/elysium-chain";
+import { ELYSIUM_CHAIN, ELYSIUM_TRUST_CONTRACTS as T } from "@/lib/elysium-chain";
+import { parentClient } from "./parent";
 import { elysiumClient, PRECOMPILE } from "./rpc";
 
 /**
@@ -8,22 +9,6 @@ import { elysiumClient, PRECOMPILE } from "./rpc";
  * read live from the rollup contracts on HyperEVM testnet and the system
  * contracts on Elysium. Nothing here comes from a database.
  */
-
-const hyperEvmTestnet = defineChain({
-  id: 998,
-  name: "HyperEVM Testnet",
-  nativeCurrency: { name: "HYPE", symbol: "HYPE", decimals: 18 },
-  rpcUrls: { default: { http: [HYPEREVM_TESTNET_RPC_URL] } },
-  contracts: { multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" } },
-  testnet: true,
-});
-
-// One Multicall3 eth_call for every parent chain read: the public RPC rate limits bursts.
-const parentClient = createPublicClient({
-  chain: hyperEvmTestnet,
-  batch: { multicall: true },
-  transport: http(HYPEREVM_TESTNET_RPC_URL, { retryCount: 2, retryDelay: 1_000 }),
-});
 
 const ROLLUP = parseAbi([
   "function confirmPeriodBlocks() view returns (uint64)",
