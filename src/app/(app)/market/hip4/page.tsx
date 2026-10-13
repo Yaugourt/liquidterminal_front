@@ -118,7 +118,7 @@ export default function MarketHip4Page() {
         questions={mergedQuestions}
         settlements={settlements.settlements}
         isLoading={(enriched.isLoading || questions.isLoading) && live.isLoading}
-        volumesPartial={live.volumesUnavailable}
+        volumesPartial={live.volumesPartial}
       />
 
       <Hip4AnalyticsChart />

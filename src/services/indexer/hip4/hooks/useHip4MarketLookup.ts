@@ -2,6 +2,7 @@ import { useDataFetching } from "@/hooks/useDataFetching";
 import { fetchHip4MarketsEnriched, fetchHip4QuestionsWithOutcomes } from "../api";
 import { sideCoinsQuestion, withYesCoins } from "@/lib/hip4/merge-questions";
 import type { Hip4MarketLookup, UseHip4MarketLookupResult } from "../types";
+import { isFinalError } from "./finalError";
 
 /**
  * The market behind a coin, looked up by id (`#60240` → outcome 6024, Yes
@@ -47,6 +48,7 @@ export function useHip4MarketLookup(coin: string, enabled: boolean): UseHip4Mark
     resolved: current != null,
     isLoading: enabled && isLoading,
     error: enabled ? error : null,
+    failed: enabled && isFinalError(error),
     refetch,
   };
 }

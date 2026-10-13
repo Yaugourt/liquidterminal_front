@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import { useDataFetching } from "@/hooks/useDataFetching";
+import { isFinalError } from "./finalError";
 import {
   fetchHip4OutcomeMeta,
   fetchHip4AllMids,
@@ -12,7 +14,7 @@ import {
   type Hip4TemplateIndex,
 } from "@/lib/hip4/market-names";
 import type {
-  Hip4LiveMarkets,
+  Hip4LiveMarketData,
   Hip4MarketEnrichedRow,
   Hip4OutcomeVolumes,
   Hip4QuestionWithOutcomesRow,
@@ -27,28 +29,41 @@ const EMPTY_QUESTIONS: Hip4QuestionWithOutcomesRow[] = [];
 const EMPTY_MARKETS_BY_COIN: Record<string, Hip4MarketEnrichedRow> = {};
 const EMPTY_MIDS: Record<string, string> = {};
 
-// Lifetime volume moves slowly and costs ~11 uncached indexer calls (the coin
-// filter is capped at 256 chars), so reuse it across the 15s price polls.
+// Lifetime volume moves slowly and costs ~17 uncached indexer calls (the coin
+// filter is capped at 256 chars), so reuse it across polls for 5 minutes. A
+// failed or partial read is retried after a minute instead.
 // Outcomes created since the last load show no volume until the next refresh.
 const VOLUME_TTL_MS = 5 * 60_000;
-let volumeCache: { at: number; pending: Promise<Hip4OutcomeVolumes> } | null = null;
+const VOLUME_RETRY_MS = 60_000;
+let volumeCache: { at: number; ttlMs: number; pending: Promise<Hip4OutcomeVolumes> } | null = null;
 
 function loadOutcomeVolumes(encodings: number[]): Promise<Hip4OutcomeVolumes> {
-  if (volumeCache && Date.now() - volumeCache.at < VOLUME_TTL_MS) {
+  if (volumeCache && Date.now() - volumeCache.at < volumeCache.ttlMs) {
     return volumeCache.pending;
   }
-  const pending = fetchHip4OutcomeVolumes(encodings).catch((err: unknown) => {
-    // Analytics can 402 (indexer instability). Degrade to no volume rather than
-    // dropping the markets, but surface it so the UI doesn't present a bare 0 as
-    // authoritative.
-    console.warn(
-      "[hip4] live-market volumes unavailable, showing partial totals:",
-      err instanceof Error ? err.message : String(err)
-    );
-    return { volumes: {}, partial: true };
-  });
-  volumeCache = { at: Date.now(), pending };
-  return pending;
+  const entry = {
+    at: Date.now(),
+    ttlMs: VOLUME_TTL_MS,
+    pending: Promise.resolve<Hip4OutcomeVolumes>({ volumes: {}, partial: true }),
+  };
+  entry.pending = fetchHip4OutcomeVolumes(encodings)
+    .then((res) => {
+      if (res.partial) entry.ttlMs = VOLUME_RETRY_MS;
+      return res;
+    })
+    .catch((err: unknown) => {
+      // Analytics can 402 (indexer instability). Degrade to no volume rather than
+      // dropping the markets, but surface it so the UI doesn't present a bare 0 as
+      // authoritative.
+      entry.ttlMs = VOLUME_RETRY_MS;
+      console.warn(
+        "[hip4] live-market volumes unavailable, showing partial totals:",
+        err instanceof Error ? err.message : String(err)
+      );
+      return { volumes: {}, partial: true };
+    });
+  volumeCache = entry;
+  return entry.pending;
 }
 
 // The template registry changes when Hyperliquid approves a template: read it
@@ -80,44 +95,66 @@ function loadOutcomeTemplates(): Promise<Hip4TemplateIndex> {
   return entry.pending;
 }
 
+interface LiveMarketsSnapshot {
+  meta: Awaited<ReturnType<typeof fetchHip4OutcomeMeta>>;
+  mids: Record<string, string>;
+  templates: Hip4TemplateIndex;
+}
+
 /**
  * Fetches the canonical live markets that HypeDexer's aggregation tables omit:
  * `outcomeMeta` (metadata) + `allMids` (live implied probabilities) + the
- * template registry (titles), then recovers per-outcome volume from the
- * indexer's analytics (best-effort — the markets still render with prices if
- * analytics 402s).
+ * template registry (titles). All three come from Hyperliquid, so the markets
+ * never wait on the indexer: their volumes load on their own, below.
  */
-async function fetchHip4LiveMarkets(): Promise<Hip4LiveMarkets> {
+async function fetchLiveMarketsSnapshot(): Promise<LiveMarketsSnapshot> {
   const [meta, mids, templates] = await Promise.all([
     fetchHip4OutcomeMeta(),
     fetchHip4AllMids(),
     loadOutcomeTemplates(),
   ]);
-
-  const encodings = meta.outcomes.flatMap((o) => [o.outcome * 10, o.outcome * 10 + 1]);
-  const { volumes, partial } = await loadOutcomeVolumes(encodings);
-
-  return {
-    ...buildLiveMarkets(meta.outcomes, mids, volumes, templates, meta.questions),
-    volumesUnavailable: partial,
-  };
+  return { meta, mids, templates };
 }
 
 export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
   const { data, isLoading, error, dataUpdatedAt, refetch } =
-    useDataFetching<Hip4LiveMarkets>({
-      fetchFn: fetchHip4LiveMarkets,
+    useDataFetching<LiveMarketsSnapshot>({
+      fetchFn: fetchLiveMarketsSnapshot,
       refreshInterval: 15000, // prices are real-time; metadata changes slowly
       maxRetries: 2,
     });
 
+  // Per-outcome volume, recovered from the indexer's analytics (best-effort:
+  // the markets render with prices meanwhile, and still do if analytics 402s).
+  // Polls read the module cache above, which decides when to hit the network.
+  const encodings = useMemo(
+    () => (data?.meta.outcomes ?? []).flatMap((o) => [o.outcome * 10, o.outcome * 10 + 1]),
+    [data?.meta.outcomes]
+  );
+  const encodingsKey = encodings.join(",");
+  const { data: volumes } = useDataFetching<Hip4OutcomeVolumes | null>({
+    fetchFn: () => (encodings.length > 0 ? loadOutcomeVolumes(encodings) : Promise.resolve(null)),
+    refreshInterval: VOLUME_RETRY_MS,
+    dependencies: [encodingsKey],
+    maxRetries: 0,
+  });
+
+  const markets = useMemo<Hip4LiveMarketData | null>(
+    () =>
+      data
+        ? buildLiveMarkets(data.meta.outcomes, data.mids, volumes?.volumes, data.templates, data.meta.questions)
+        : null,
+    [data, volumes]
+  );
+
   return {
-    liveQuestions: data?.questions ?? EMPTY_QUESTIONS,
-    liveMarketsByCoin: data?.marketsByCoin ?? EMPTY_MARKETS_BY_COIN,
-    mids: data?.mids ?? EMPTY_MIDS,
-    volumesUnavailable: data?.volumesUnavailable ?? false,
+    liveQuestions: markets?.questions ?? EMPTY_QUESTIONS,
+    liveMarketsByCoin: markets?.marketsByCoin ?? EMPTY_MARKETS_BY_COIN,
+    mids: markets?.mids ?? EMPTY_MIDS,
+    volumesPartial: volumes?.partial ?? false,
     isLoading,
     error,
+    failed: isFinalError(error),
     dataUpdatedAt,
     refetch,
   };

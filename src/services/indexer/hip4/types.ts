@@ -225,21 +225,18 @@ export interface Hip4OutcomeVolumes {
   partial: boolean;
 }
 
-export interface Hip4LiveMarkets extends Hip4LiveMarketData {
-  /** True when the per-outcome volume fetch failed or was incomplete (analytics
-   * 402, truncated batch), so any volume total is understated. */
-  volumesUnavailable: boolean;
-}
-
 export interface UseHip4LiveMarketsResult {
   liveQuestions: Hip4QuestionWithOutcomesRow[];
   liveMarketsByCoin: Record<string, Hip4MarketEnrichedRow>;
   /** `#<encoding>` → mid price string, for enriching HypeDexer questions. */
   mids: Record<string, string>;
-  /** Volume contribution is partial/0 because the analytics fetch failed. */
-  volumesUnavailable: boolean;
+  /** Some live volumes are missing (an analytics batch failed or was cut by
+   * the row limit), so volume totals are understated. */
+  volumesPartial: boolean;
   isLoading: boolean;
   error: Error | null;
+  /** `error` is final: no retry is pending. */
+  failed: boolean;
   /** Epoch ms of the last successful fetch — null until first success. */
   dataUpdatedAt: number | null;
   refetch: () => void;
@@ -324,6 +321,8 @@ export interface UseHip4MarketLookupResult {
   resolved: boolean;
   isLoading: boolean;
   error: Error | null;
+  /** `error` is final: no retry is pending. */
+  failed: boolean;
   refetch: () => void;
 }
 

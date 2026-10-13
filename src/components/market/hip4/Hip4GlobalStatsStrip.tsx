@@ -13,7 +13,7 @@ interface Hip4GlobalStatsStripProps {
   questions: Hip4QuestionWithOutcomesRow[];
   settlements: Hip4SettlementRow[];
   isLoading: boolean;
-  /** Live-market volumes failed to load → Total Volume is understated. */
+  /** Some live-market volumes are missing → Total Volume is understated. */
   volumesPartial?: boolean;
 }
 
@@ -44,7 +44,7 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading, volume
       {
         label: "Total Volume",
         value: hasQuestions ? compactUsd(totalVolume) : placeholder,
-        sub: volumesPartial ? "live vol. unavailable" : undefined,
+        sub: volumesPartial ? "live vol. partial" : undefined,
       },
       {
         // Questions-derived count first (same universe as the other cells);

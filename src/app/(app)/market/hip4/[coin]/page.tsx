@@ -112,8 +112,9 @@ export default function Hip4MarketDetailPage() {
   const fillsResult = useHip4Fills({ coin: activeCoin, limit: 400 });
 
   // Live-only coins resolve only from the live hook, so wait for it to *settle*
-  // (succeed or hard-fail) before deciding the market is missing.
-  const liveSettled = live.dataUpdatedAt !== null || (!live.isLoading && !!live.error);
+  // (succeed or fail for good, retries included) before deciding the market is
+  // missing.
+  const liveSettled = live.dataUpdatedAt !== null || (!live.isLoading && live.failed);
   const liveMarket = live.liveMarketsByCoin[coin] ?? null;
   // Any other coin (settled, expired, older than the indexer lists) is looked
   // up by id rather than bouncing to the list.
@@ -259,8 +260,9 @@ export default function Hip4MarketDetailPage() {
   }, [setTitle, market, parentQuestion]);
 
   // Still answering: the live list, then the lookup of a coin it doesn't hold.
-  const resolving = !liveSettled || (lookupEnabled && !lookup.resolved && !lookup.error);
-  const unavailable = !resolving && !market && (!!live.error || !!lookup.error);
+  // A failed attempt with a retry pending is still answering.
+  const resolving = !liveSettled || (lookupEnabled && !lookup.resolved && !lookup.failed);
+  const unavailable = !resolving && !market && (live.failed || lookup.failed);
   // An old `#<raw>` link resolves to the indexer's raw outcome row: open its Yes
   // coin, which carries the fills. A coin nobody knows goes back to the list.
   const redirectTo =
