@@ -140,7 +140,8 @@ export const Hip3MarketsExplorer = memo(function Hip3MarketsExplorer() {
       initialSort={{ field: "volume24h", direction: "desc" }}
       paginate
       isLoading={isLoading && rows.length === 0}
-      error={error}
+      // A failed refresh keeps the last rows: error state only without them.
+      error={dexs.length === 0 ? error : null}
       errorTitle="Failed to load markets"
       emptyMessage="No markets"
       onRowClick={(r) => router.push(`/market/perpdex/${r.dexName}`)}

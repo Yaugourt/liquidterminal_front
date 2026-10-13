@@ -59,7 +59,8 @@ export const TopPerpDexsCard = memo(function TopPerpDexsCard() {
       columns={COLUMNS}
       getRowKey={(row) => row.name}
       isLoading={isLoading && topDexs.length === 0}
-      error={error}
+      // A failed refresh keeps the last rows: error state only without them.
+      error={topDexs.length === 0 ? error : null}
       errorTitle="Failed to load data"
       emptyMessage="No DEXs available"
       emptyDescription="Check back later"

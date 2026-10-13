@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
+  AlertTriangle,
   ArrowLeft,
   Database,
   TrendingUp,
@@ -77,13 +78,22 @@ export default function PerpDexDetailPage() {
     );
   }
 
-  if (error || !dex) {
+  // `error` is set by any failed refresh, even with the DEX list still in hand:
+  // "not found" only when the list loaded and has no such DEX, a load failure
+  // otherwise.
+  if (!dex) {
     return (
       <div className="p-8 bg-surface border border-border-subtle rounded-lg shadow-xl shadow-black/20">
         <div className="flex flex-col items-center justify-center text-center">
           <Database className="w-12 h-12 mb-4 text-text-tertiary" />
-          <h2 className="text-xl font-medium text-text-primary mb-2">DEX Not Found</h2>
-          <p className="text-text-secondary mb-4">The PerpDex &quot;{dexName}&quot; was not found.</p>
+          <h2 className="text-xl font-medium text-text-primary mb-2">
+            {error ? "DEX data unavailable" : "DEX Not Found"}
+          </h2>
+          <p className="text-text-secondary mb-4">
+            {error
+              ? <>Couldn&apos;t load the PerpDex &quot;{dexName}&quot;. Retrying shortly.</>
+              : <>The PerpDex &quot;{dexName}&quot; was not found.</>}
+          </p>
           <Button onClick={() => router.push('/market/perpdex')} className="bg-brand hover:bg-brand/90 text-brand-text-on">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to PerpDexs
@@ -131,6 +141,13 @@ export default function PerpDexDetailPage() {
           )}
         </div>
       </div>
+
+      {error && (
+        <div className="flex items-center gap-2 rounded-lg border border-warning/25 bg-warning/10 px-3 py-2 text-[12px] text-warning">
+          <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+          Couldn&apos;t refresh DEX metadata — showing the last loaded data.
+        </div>
+      )}
 
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
