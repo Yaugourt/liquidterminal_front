@@ -11,6 +11,7 @@ export {
   hyperEvmTxUrl,
 } from './api';
 export type { HyperfolioErrorKind } from './api';
+export { evmTokensValueOutsideDefi } from './valuation';
 export { useEvmComposition } from './hooks/useEvmComposition';
 export { useDefiPositions } from './hooks/useDefiPositions';
 export { usePortfolioHistory } from './hooks/usePortfolioHistory';

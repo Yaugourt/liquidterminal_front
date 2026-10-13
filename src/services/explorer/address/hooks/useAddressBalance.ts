@@ -4,7 +4,12 @@ import { useSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useDelegatorSummary } from "@/services/explorer/validator/hooks/delegator/useDelegatorSummary";
 import { useHypeLivePrice } from "@/services/market/hype/hooks/useHypePrice";
 import { useVaultDeposits } from "@/services/explorer/vault/hooks/useVaultDeposits";
-import { useEvmComposition, useDefiPositions, useWalletNfts } from "@/services/market/tracker/hyperfolio";
+import {
+  evmTokensValueOutsideDefi,
+  useDefiPositions,
+  useEvmComposition,
+  useWalletNfts,
+} from "@/services/market/tracker/hyperfolio";
 
 interface UseAddressBalanceOptions {
   /**
@@ -34,14 +39,8 @@ export function useAddressBalance(address: string, options: UseAddressBalanceOpt
   const evmBalances = useMemo(() => {
     const composition = evm.composition;
     // Receipt tokens (kHYPE, hb*, vault shares…) sit both in the wallet
-    // composition and inside a DeFi position — count them once, on the DeFi side.
-    const positionTokens = new Set(
-      defi.protocols.flatMap((p) => p.positions.flatMap((pos) => pos.tokens.map((t) => t.address)))
-    );
-    const doubleCounted = composition
-      ? composition.tokens.filter((t) => positionTokens.has(t.address)).reduce((sum, t) => sum + t.value, 0)
-      : 0;
-    const evmBalance = composition ? Math.max(0, composition.totalValue - doubleCounted) : 0;
+    // composition and inside a DeFi position — count the overlap once, on the DeFi side.
+    const evmBalance = evmTokensValueOutsideDefi(composition, defi.protocols);
     const defiBalance = defi.protocols.reduce((sum, p) => sum + p.totalValue, 0);
     return {
       evmBalance,

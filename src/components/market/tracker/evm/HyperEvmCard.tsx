@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { DataStatus, SourceBadge, TableStat, type SourceBadgeStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { useDefiPositions, useEvmComposition } from "@/services/market/tracker/hyperfolio";
+import { evmTokensValueOutsideDefi, useDefiPositions, useEvmComposition } from "@/services/market/tracker/hyperfolio";
 import { DefiPositionsTab } from "./DefiPositionsTab";
 import { EvmTokensTab } from "./EvmTokensTab";
 import { EvmActivityTab } from "./EvmActivityTab";
@@ -58,9 +58,11 @@ export function HyperEvmCard({ address }: HyperEvmCardProps) {
     setVisited((prev) => (prev.has(id) ? prev : new Set(prev).add(id)));
   }, []);
 
+  // Same dedupe as the wallet's EVM balance (useAddressBalance): tokens a
+  // DeFi position already counts are not added twice.
   const headline = useMemo(() => {
     const defiValue = defi.protocols.reduce((sum, p) => sum + p.totalValue, 0);
-    const tokensValue = composition?.totalValue ?? 0;
+    const tokensValue = evmTokensValueOutsideDefi(composition, defi.protocols);
     if (!composition && defi.protocols.length === 0) return null;
     return compactUsd(defiValue + tokensValue);
   }, [composition, defi.protocols]);
