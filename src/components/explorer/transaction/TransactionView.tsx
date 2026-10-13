@@ -206,10 +206,16 @@ function OrdersCard({ orders, assets }: { orders: WireOrder[]; assets: AssetReso
     },
   ];
   return (
-    <Card padding="none" className="overflow-hidden">
-      <CardHead title="Orders" tag={`${orders.length}`} />
-      <TypedDataTable<OrderRow> data={rows} columns={columns} getRowKey={(r) => String(r.i)} isLoading={false} error={null} emptyMessage="No order" />
-    </Card>
+    <TypedDataTable<OrderRow>
+      title="Orders"
+      tag={`${orders.length}`}
+      data={rows}
+      columns={columns}
+      getRowKey={(r) => String(r.i)}
+      isLoading={false}
+      error={null}
+      emptyMessage="No order"
+    />
   );
 }
 
@@ -263,21 +269,31 @@ function FillsCard({ fills, assets }: { fills: UserFill[] | null; assets: AssetR
     },
   ];
   const total = (fills ?? []).reduce((s, f) => s + Number(f.px) * Number(f.sz), 0);
+  // The table carries its own card; the placeholder states keep a plain one.
+  if (fills != null && fills.length > 0) {
+    return (
+      <TypedDataTable<UserFill>
+        title="Fills in this transaction"
+        tag={`${fills.length} · ${compactUsd(total)}`}
+        data={fills}
+        columns={columns}
+        getRowKey={(f) => String(f.tid)}
+        isLoading={false}
+        error={null}
+        emptyMessage="No fill"
+      />
+    );
+  }
   return (
     <Card padding="none" className="overflow-hidden">
-      <CardHead
-        title="Fills in this transaction"
-        tag={fills && fills.length > 0 ? `${fills.length} · ${compactUsd(total)}` : undefined}
-      />
+      <CardHead title="Fills in this transaction" />
       {fills == null ? (
         <p className="px-4 py-3 text-[12.5px] text-text-tertiary">Reading the signer&apos;s fills…</p>
-      ) : fills.length === 0 ? (
+      ) : (
         <p className="px-4 py-3 text-[12.5px] text-text-tertiary">
           No fill under this hash. A resting order that fills later shows up under the transaction that took it.
           Hyperliquid also only returns an address&apos;s last 2,000 fills.
         </p>
-      ) : (
-        <TypedDataTable<UserFill> data={fills} columns={columns} getRowKey={(f) => String(f.tid)} isLoading={false} error={null} emptyMessage="No fill" />
       )}
     </Card>
   );
