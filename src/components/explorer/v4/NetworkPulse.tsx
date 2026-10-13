@@ -78,6 +78,20 @@ function LiveBlockHeight() {
   return <>{currentBlockHeight > 0 ? currentBlockHeight.toLocaleString() : PLACEHOLDER}</>;
 }
 
+/**
+ * State of that block socket, so the cell never claims "live" while
+ * `LiveActivity` shows it OFF. Static dot: an endless pulse costs frames.
+ */
+function LiveBlockStatus() {
+  const connected = useExplorerStore((s) => s.isBlocksConnected);
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className={`w-1.5 h-1.5 rounded-full ${connected ? "bg-success" : "bg-danger"}`} />
+      {connected ? "live" : "offline"}
+    </span>
+  );
+}
+
 export const NetworkPulse = memo(function NetworkPulse() {
   const { format } = useNumberFormat();
 
@@ -117,12 +131,7 @@ export const NetworkPulse = memo(function NetworkPulse() {
     {
       label: "Block height",
       value: <LiveBlockHeight />,
-      sub: (
-        <span className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-          live
-        </span>
-      ),
+      sub: <LiveBlockStatus />,
     },
     {
       label: "Trades / sec · 24h",
