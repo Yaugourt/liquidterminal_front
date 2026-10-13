@@ -47,13 +47,13 @@ export const fetchTradeExplorer = async (
 };
 
 export const useTradeExplorer = (params: TradeExplorerParams) => {
-  const { data, isLoading, error, refetch } = useDataFetching<WalletRoundTrip[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<WalletRoundTrip[]>({
     fetchFn: () => fetchTradeExplorer(params),
     dependencies: [params.coin ?? "", params.sortBy, params.sortDir],
-    refreshInterval: 60000,
+    refreshInterval: 15000,
     maxRetries: 1,
   });
-  return { trades: data ?? [], isLoading, error, refetch };
+  return { trades: data ?? [], isLoading, error, isStale, refetch };
 };
 
 export const fetchTradeSummary = async (): Promise<TradeSummary | null> => {
@@ -64,10 +64,10 @@ export const fetchTradeSummary = async (): Promise<TradeSummary | null> => {
 };
 
 export const useTradeSummary = () => {
-  const { data, isLoading, error, refetch } = useDataFetching<TradeSummary | null>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<TradeSummary | null>({
     fetchFn: fetchTradeSummary,
-    refreshInterval: 300000,
+    refreshInterval: 60000,
     maxRetries: 1,
   });
-  return { summary: data ?? null, isLoading, error, refetch };
+  return { summary: data ?? null, isLoading, error, isStale, refetch };
 };

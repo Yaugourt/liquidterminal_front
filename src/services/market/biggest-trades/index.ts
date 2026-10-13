@@ -40,11 +40,11 @@ export const fetchBiggestTrades = async (
 };
 
 export const useBiggestTrades = (sortDir: "DESC" | "ASC" = "DESC", limit = 5, sinceHours?: number) => {
-  const { data, isLoading, error, refetch } = useDataFetching<MarketTrade[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<MarketTrade[]>({
     fetchFn: () => fetchBiggestTrades(sortDir, limit, sinceHours),
     dependencies: [sortDir, limit, sinceHours],
-    refreshInterval: 60000,
+    refreshInterval: 15000,
     maxRetries: 1,
   });
-  return { trades: data ?? [], isLoading, error, refetch };
+  return { trades: data ?? [], isLoading, error, isStale, refetch };
 };

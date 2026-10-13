@@ -34,9 +34,10 @@ export function usePriorityFeesRecentFills(
     [limit, offset, coin, user, hasPriority]
   );
 
-  const { data, isLoading, error, refetch } = useDataFetching({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching({
     fetchFn,
-    refreshInterval: 30_000,
+    // A live feed: the backend keeps each fills list 10s.
+    refreshInterval: 15_000,
     dependencies: deps,
     initialData: [],
   });
@@ -45,6 +46,7 @@ export function usePriorityFeesRecentFills(
     data: data ?? [],
     isLoading,
     error,
+    isStale,
     refetch,
   };
 }
