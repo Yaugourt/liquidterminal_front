@@ -109,7 +109,12 @@ export class WebSocketClient {
             const ws = new WebSocket(this.config.url);
             this.ws = ws;
 
+            // Every handler first checks that `ws` is still the current socket:
+            // connect() replaces a CLOSING socket without detaching it, and its
+            // late close must not stop the new socket's heartbeat, report it
+            // disconnected or spend a reconnect attempt.
             ws.onopen = () => {
+                if (this.ws !== ws) return;
                 this.log('Connected');
                 this.reconnectAttempts = 0;
                 this.lastMessageAt = Date.now();
@@ -118,6 +123,7 @@ export class WebSocketClient {
             };
 
             ws.onmessage = (event) => {
+                if (this.ws !== ws) return;
                 this.lastMessageAt = Date.now();
                 try {
                     const data = JSON.parse(event.data);
@@ -128,11 +134,13 @@ export class WebSocketClient {
             };
 
             ws.onerror = (event) => {
+                if (this.ws !== ws) return;
                 this.log('Error', event);
                 if (this.config.onError) this.config.onError(event);
             };
 
             ws.onclose = (event) => {
+                if (this.ws !== ws) return;
                 this.log('Closed', event.code, event.reason);
                 this.stopHeartbeat();
                 if (this.config.onClose) this.config.onClose();
