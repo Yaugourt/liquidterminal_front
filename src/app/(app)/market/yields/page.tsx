@@ -6,7 +6,7 @@ import { YieldsListHeader, YieldsKpiStrip, YieldsDirectoryTable } from "@/compon
 import { SectionHead } from "@/components/dashboard/SectionHead";
 import { PageFaq } from "@/components/common";
 import { YIELDS_FAQ } from "@/lib/page-faqs";
-import { useYieldsDirectory, type YieldCategory } from "@/services/market/yields";
+import { useYieldsDirectory, type YieldCategory, type YieldsQuery } from "@/services/market/yields";
 
 const CATEGORIES: YieldCategory[] = ["lending", "amm", "yield", "staking", "derivatives"];
 
@@ -20,10 +20,19 @@ function YieldsPageContent() {
   const params = useSearchParams();
   const protocol = params.get("protocol") || undefined;
   const category = params.get("category") as YieldCategory | null;
-  const directory = useYieldsDirectory({
-    ...(protocol ? { protocol } : {}),
+  const initial: Partial<YieldsQuery> = {
+    // Lending markets report no TVL upstream: a protocol's page lists all of
+    // its pools, so its link must not apply the TVL floor.
+    ...(protocol ? { protocol, minTvl: undefined } : {}),
     ...(category && CATEGORIES.includes(category) ? { category } : {}),
-  });
+  };
+  // A client navigation that only changes the query keeps this page mounted:
+  // the key restarts the directory from the new link's filters.
+  return <YieldsDirectoryView key={`${initial.protocol ?? ""}|${initial.category ?? ""}`} initial={initial} />;
+}
+
+function YieldsDirectoryView({ initial }: { initial: Partial<YieldsQuery> }) {
+  const directory = useYieldsDirectory(initial);
 
   return (
     <div className="space-y-8">

@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import {
   TOP_YIELDS_MIN_TVL,
+  YIELDS_MAX_PAGE,
   type UseYieldsDirectoryResult,
   type YieldCategory,
   type YieldOpportunity,
@@ -231,6 +232,13 @@ export function YieldsDirectoryTable({ directory }: YieldsDirectoryTableProps) {
     query.maxApy !== undefined ||
     query.minTvl !== TOP_YIELDS_MIN_TVL;
 
+  // Lending markets report no TVL upstream, so a protocol's pools are listed
+  // without the TVL floor ("Deep pools" can put it back).
+  const selectProtocol = (protocol: string) => {
+    if (protocol !== "all") setMinTvl("");
+    updateQuery(protocol !== "all" ? { protocol, minTvl: undefined } : { protocol });
+  };
+
   const clearAll = () => {
     setSearch("");
     setMinApy("");
@@ -263,7 +271,7 @@ export function YieldsDirectoryTable({ directory }: YieldsDirectoryTableProps) {
       />
       <TableStat className="ml-auto" label="Opportunities" value={fmt(total)} />
       <div className="flex w-full flex-wrap items-center gap-2">
-        <Select value={query.protocol ?? "all"} onValueChange={(v) => updateQuery({ protocol: v })}>
+        <Select value={query.protocol ?? "all"} onValueChange={selectProtocol}>
           <SelectTrigger className="h-8 w-[160px] text-xs">
             <SelectValue placeholder="All protocols" />
           </SelectTrigger>
@@ -318,7 +326,8 @@ export function YieldsDirectoryTable({ directory }: YieldsDirectoryTableProps) {
       sortField={query.sortBy}
       sortDirection={query.sortOrder}
       paginationVariant="full"
-      total={total}
+      // The backend serves 100 pages at most: past them a page would 400.
+      total={Math.min(total, YIELDS_MAX_PAGE * query.pageSize)}
       page={query.page - 1}
       rowsPerPage={query.pageSize}
       rowsPerPageOptions={[20, 50, 100]}
