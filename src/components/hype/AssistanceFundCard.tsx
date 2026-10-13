@@ -27,7 +27,7 @@ const ago = (t: number): string => {
  */
 export const AssistanceFundCard = memo(function AssistanceFundCard() {
   const { overview } = useHypeOverview();
-  const { data: bb } = useAfBuybacks();
+  const { data: bb, recent, isLoading: bbLoading, error: bbError } = useAfBuybacks();
 
   const af = overview?.af ?? null;
   const buybackYield =
@@ -159,11 +159,19 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
                 // 56px: 44 clips the leading "$" off six-figure ticks ($776.3K).
                 yAxisWidth={56}
                 formatValue={(v) => fmtUsd(v)}
-                formatTime={(ts) => new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                // UTC: the backend keys each day on UTC midnight, so a local
+                // label names the previous day west of Greenwich.
+                formatTime={(ts) =>
+                  new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })
+                }
               />
             ) : (
               <div className="h-full flex items-center justify-center text-[11px] text-text-tertiary">
-                Loading buybacks…
+                {bbLoading
+                  ? "Loading buybacks…"
+                  : bbError
+                    ? "Buybacks unavailable"
+                    : "No completed buyback day yet"}
               </div>
             )}
           </div>
@@ -173,9 +181,9 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
           <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1.5">
             Recent buys
           </div>
-          {bb && bb.recent.length > 0 ? (
+          {recent.length > 0 ? (
             <div className="flex flex-col gap-1">
-              {bb.recent.slice(0, 6).map((f, i) => (
+              {recent.slice(0, 6).map((f, i) => (
                 <div key={`${f.time}-${i}`} className="flex items-center gap-2 text-[11.5px]">
                   <span className="mono text-text-tertiary w-8 shrink-0">{ago(f.time)}</span>
                   <span className="text-success font-semibold">Buy</span>
@@ -186,7 +194,9 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
               ))}
             </div>
           ) : (
-            <div className="text-[11px] text-text-tertiary py-2">Loading fills…</div>
+            <div className="text-[11px] text-text-tertiary py-2">
+              {bbLoading ? "Loading fills…" : bbError ? "Fills unavailable" : "No buy yet today"}
+            </div>
           )}
         </div>
       </div>

@@ -43,5 +43,7 @@ export function useAfBuybacks(): UseAfBuybacksResult {
     };
   }, [data]);
 
-  return { data: aggregated, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
+  const recent = useMemo(() => data?.recent ?? [], [data]);
+
+  return { data: aggregated, recent, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
 }

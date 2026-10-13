@@ -98,7 +98,11 @@ export interface AfBuybacks {
 }
 
 export interface UseAfBuybacksResult {
+  /** null until the backend holds at least one completed day (cold start). */
   data: AfBuybacks | null;
+  /** The running day's latest buys, newest first — served even before the
+   *  first completed day, while `data` is still null. */
+  recent: AfFill[];
   isLoading: boolean;
   /** True during a background/manual refresh (drives the freshness cue spinner). */
   isRefreshing: boolean;
