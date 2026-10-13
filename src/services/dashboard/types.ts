@@ -2,7 +2,8 @@
 export interface DashboardGlobalStats {
   numberOfUsers: number;
   dailyVolume: number;
-  bridgedUsdc: number;
+  /** Null when DefiLlama is down and the backend has no copy left. */
+  bridgedUsdc: number | null;
   totalHypeStake: number;
   vaultsTvl: number;
 }

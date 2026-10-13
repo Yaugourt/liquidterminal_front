@@ -5,7 +5,8 @@ export const useDashboardStats = (initialData?: DashboardGlobalStats): UseDashbo
   const { data, isLoading, error, refetch } = useDataFetching<DashboardGlobalStats>({
     fetchFn: fetchDashboardGlobalStats,
     initialData,
-    // Assembled from the backend's live pollers (10-30s): no upstream cost.
+    // Assembled from shared backend caches, flat in visitors: live pollers
+    // (15-30 s) plus DefiLlama bridged USDC cached 5 min (null when unavailable).
     refreshInterval: 15000,
     maxRetries: 3
   });
