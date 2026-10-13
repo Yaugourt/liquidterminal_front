@@ -5,7 +5,8 @@ export const useDashboardStats = (initialData?: DashboardGlobalStats): UseDashbo
   const { data, isLoading, error, refetch } = useDataFetching<DashboardGlobalStats>({
     fetchFn: fetchDashboardGlobalStats,
     initialData,
-    refreshInterval: 60000, 
+    // Assembled from the backend's live pollers (10-30s): no upstream cost.
+    refreshInterval: 15000,
     maxRetries: 3
   });
 
