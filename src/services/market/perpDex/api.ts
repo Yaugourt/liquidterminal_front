@@ -1,4 +1,4 @@
-import { postExternal, getExternal } from '../../api/axios-config';
+import { get, postExternal } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { API_URLS } from '../../api/constants';
 import {
@@ -176,16 +176,15 @@ const transformPastAuction = (raw: PastAuctionPerpRawNew): PastAuctionPerp => {
 };
 
 /**
- * Fetches past perp auctions from Hypurrscan API
+ * Fetches past perp auctions (Hypurrscan's feed, relayed and cached by the backend)
  * Filters only new format entries (with action.registerAsset)
  */
 export const fetchPastAuctionsPerp = async (): Promise<PastAuctionPerp[]> => {
   return withErrorHandling(async () => {
-    const url = `${API_URLS.HYPURRSCAN_API}/pastAuctionsPerp`;
-    const response = await getExternal<PastAuctionsPerpApiResponse>(url);
+    const response = await get<{ success: boolean; data: PastAuctionsPerpApiResponse }>('/market/auction/perp');
 
     // Filter only new format entries and transform
-    return response
+    return response.data
       .filter(isPastAuctionPerpNew)
       .map(transformPastAuction);
   }, 'fetching past perp auctions');

@@ -4,7 +4,7 @@ import {
     DeployData,
     GlobalAliasesData,
 } from './types';
-import { postExternal, getExternal } from '../api/axios-config';
+import { postExternal, get } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import { API_URLS } from '../api/constants';
 
@@ -35,24 +35,24 @@ export async function fetchTransactionDetails(hash: string): Promise<Transaction
 }
 
 /**
- * Récupère les déploiements depuis l'API Hypurrscan
+ * Récupère les déploiements (flux Hypurrscan relayé et mis en cache par le backend)
  * @returns Liste des déploiements bruts
  */
 export async function fetchDeploys(): Promise<DeployData[]> {
     return withErrorHandling(async () => {
-        const url = `${API_URLS.HYPURRSCAN_API}/deploys`;
-        return await getExternal<DeployData[]>(url);
+        const response = await get<{ success: boolean; data: DeployData[] }>('/explorer/deploys');
+        return response.data;
     }, 'fetching deploys');
 }
 
 /**
- * Récupère les alias globaux depuis l'API Hypurrscan
+ * Récupère les alias globaux (flux Hypurrscan relayé et mis en cache par le backend)
  * @returns Mapping des adresses vers leurs alias
  */
 export async function fetchGlobalAliases(): Promise<GlobalAliasesData> {
     return withErrorHandling(async () => {
-        const url = `${API_URLS.HYPURRSCAN_API}/globalAliases`;
-        return await getExternal<GlobalAliasesData>(url);
+        const response = await get<{ success: boolean; data: GlobalAliasesData }>('/explorer/aliases');
+        return response.data;
     }, 'fetching global aliases');
 }
 
