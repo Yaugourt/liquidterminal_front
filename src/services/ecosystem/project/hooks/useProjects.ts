@@ -3,7 +3,10 @@ import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchProjects } from '../api';
 import { ProjectsResponse, ProjectQueryParams, UseProjectsResult } from '../types';
 
-export const useProjects = (params?: ProjectQueryParams): UseProjectsResult => {
+/**
+ * @param refreshInterval poll period; the backend caches each list 5 min
+ */
+export const useProjects = (params?: ProjectQueryParams, refreshInterval = 30000): UseProjectsResult => {
   // Nettoyer les paramètres - supprimer undefined/null
   const cleanParams = useMemo(() => {
     if (!params) return {};
@@ -26,7 +29,7 @@ export const useProjects = (params?: ProjectQueryParams): UseProjectsResult => {
     fetchFn: async () => {
       return await fetchProjects(cleanParams);
     },
-    refreshInterval: 30000, // 30 seconds
+    refreshInterval,
     dependencies: [JSON.stringify(cleanParams)], // Re-fetch when params change
     maxRetries: 3
   });

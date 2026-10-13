@@ -37,8 +37,12 @@ export interface SidebarBadgeValue {
  * needs no live refresh, and a slow poll keeps the per-visitor request rate low
  * on shared IPs. On a page that also polls these stats, the sidebar reads the
  * page's fresher response from the request cache.
+ *
+ * The project count polls every 5 min: the backend caches project lists that
+ * long, so a faster poll only re-reads the same total.
  */
 const BADGE_REFRESH_MS = 60_000;
+const PROJECT_COUNT_REFRESH_MS = 5 * 60_000;
 
 export function useSidebarBadges(): Record<string, SidebarBadgeValue> {
   const { stats: spot } = useSpotGlobalStats(BADGE_REFRESH_MS);
@@ -46,7 +50,7 @@ export function useSidebarBadges(): Record<string, SidebarBadgeValue> {
   const hype = useHypeDayChange();
   const { totalCount: vaultsTotal } = useVaults({ limit: 1 });
   const { stats: validatorStats } = useValidators();
-  const { pagination: projectsPage } = useProjects({ limit: 1 });
+  const { pagination: projectsPage } = useProjects({ limit: 1 }, PROJECT_COUNT_REFRESH_MS);
   const { format } = useNumberFormat();
 
   return useMemo(() => {
