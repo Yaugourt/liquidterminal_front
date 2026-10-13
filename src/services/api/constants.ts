@@ -35,8 +35,7 @@ export const API_URLS = {
   HYPERLIQUID_API: 'https://api.hyperliquid.xyz',
   HYPERLIQUID_UI_API: 'https://api-ui.hyperliquid.xyz',
   
-  // APIs tierces
-  HYPURRSCAN_API: 'https://api.hypurrscan.io',
+  // APIs tierces (Hypurrscan is read through the backend only)
   LLAMA_FI_API: 'https://api.llama.fi',
   /** Public host serving Hyperfolio's relative protocol logos (`/hyperlend.jpg`). */
   HYPERFOLIO_ASSETS: 'https://hyperfolio.xyz',
@@ -56,14 +55,6 @@ export const ENDPOINTS = {
   
   // Hyperliquid UI API endpoints
   HYPERLIQUID_UI_INFO: '/info',
-  
-  // Hypurrscan endpoints
-  HYPURRSCAN_TRANSFERS: '/transfers',
-  HYPURRSCAN_DEPLOYS: '/deploys',
-  HYPURRSCAN_TWAP: '/twap/*',
-  HYPURRSCAN_PAST_AUCTIONS_PERP: '/pastAuctionsPerp',
-  HYPURRSCAN_HOLDERS: '/holders',
-  HYPURRSCAN_STAKED_HOLDERS: '/holders/stakedHYPE',
   
   // LlamaFi endpoints
   LLAMA_FI_HYPERLIQUID_BRIDGE: '/protocol/hyperliquid-bridge',
@@ -117,7 +108,3 @@ const buildUrl = (baseUrl: keyof typeof API_URLS, endpoint: string): string => {
 export const buildHyperliquidUrl = (endpoint: keyof typeof ENDPOINTS): string => {
   return buildUrl('HYPERLIQUID_API', ENDPOINTS[endpoint]);
 };
-
-export const buildHypurrscanUrl = (endpoint: keyof typeof ENDPOINTS): string => {
-  return buildUrl('HYPURRSCAN_API', ENDPOINTS[endpoint]);
-}; 
