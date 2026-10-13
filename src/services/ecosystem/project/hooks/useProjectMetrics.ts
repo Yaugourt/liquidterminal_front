@@ -10,7 +10,7 @@ import { ProjectFundamentals, UseProjectMetricsResult } from '../types';
  * without any retry loop.
  */
 export const useProjectMetrics = (id: number): UseProjectMetricsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<ProjectFundamentals | null>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<ProjectFundamentals | null>({
     fetchFn: () => fetchProjectDefillamaMetrics(id),
     // Backend caches the aggregate for 5 min; refresh in step with it.
     refreshInterval: 120000,
@@ -25,6 +25,7 @@ export const useProjectMetrics = (id: number): UseProjectMetricsResult => {
     tokenSymbol: data?.tokenSymbol ?? null,
     isLoading,
     error,
+    isStale,
     refetch,
   };
 };

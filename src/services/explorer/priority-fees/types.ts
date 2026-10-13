@@ -144,6 +144,8 @@ export interface UsePriorityFeesLeaderboardResult {
   data: PriorityFeesLeaderboardEntry[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -151,5 +153,7 @@ export interface UsePriorityFeesRecentFillsResult {
   data: PriorityFeesFillRow[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }

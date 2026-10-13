@@ -83,7 +83,7 @@ export function PerpDexsLane({
 /** HIP-4 predictions lane: the biggest live questions with their probability, filling the lane height. */
 export function Hip4Lane() {
   // Same params as the HIP-4 pages and the dashboard card: one backend entry.
-  const { questions, isLoading: questionsLoading, error: questionsError } = useHip4QuestionsWithOutcomes({ limit: 200 });
+  const { questions, isLoading: questionsLoading, error: questionsError, isStale: questionsStale } = useHip4QuestionsWithOutcomes({ limit: 200 });
 
   const top = useMemo(() => {
     const rows = (questions ?? [])
@@ -111,7 +111,7 @@ export function Hip4Lane() {
       tag="HIP-4"
       href="/market/hip4"
       hrefLabel={liveCount > 0 ? `${liveCount} live` : "All"}
-      actions={<SourceBadge source="hypedexer" status={sourceStatus(questionsError, questionsLoading)} />}
+      actions={<SourceBadge source="hypedexer" status={sourceStatus(questionsError, questionsLoading, questionsStale)} />}
     >
       <RowFillList mobileHeight="h-[320px]" className="px-3.5 py-3 space-y-3">
         {top.length === 0 && <p className="text-[11.5px] text-text-tertiary">Loading live questions…</p>}

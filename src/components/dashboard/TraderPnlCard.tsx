@@ -54,7 +54,7 @@ function PnlList({ title, rows }: { title: string; rows: CoinPnl[] }) {
  * dashboards show fee/volume flows, not aggregate trader realized PnL per coin.
  */
 export function TraderPnlCard() {
-  const { coins, isLoading, error } = useTraderPnlByCoin();
+  const { coins, isLoading, error, isStale } = useTraderPnlByCoin();
 
   const { gainers, losers } = useMemo(() => {
     const g = coins.filter((c) => c.pnl > 0).slice(0, 7);
@@ -67,7 +67,7 @@ export function TraderPnlCard() {
       <CardHead
         title="Trader PnL by market"
         tag="net realized · 10d"
-        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       />
 
       {isLoading && coins.length === 0 ? (

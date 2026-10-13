@@ -81,6 +81,8 @@ export interface UseEvmBridgeEventsResult {
   events: EvmBridgeEvent[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -88,6 +90,8 @@ export interface UseEvmStatsResult {
   stats: EvmStats | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -95,6 +99,8 @@ export interface UseEvmDailyStatsResult {
   daily: EvmDailyStat[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -102,5 +108,7 @@ export interface UseEvmBlocksResult {
   blocks: EvmBlock[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }

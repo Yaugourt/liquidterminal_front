@@ -20,7 +20,7 @@ const NO_COHORTS: TokenHolderCohort[] = [];
  * @param page starts at 0, like the tables' pagination
  */
 export function useTokenHolders(tokenName: string, page = 0, rowsPerPage = 10) {
-  const { data, isLoading, error, refetch } = useDataFetching<TokenHoldersPage>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<TokenHoldersPage>({
     fetchFn: (signal) => fetchTokenHolders(tokenName, page + 1, rowsPerPage, signal),
     refreshInterval: HOLDERS_REFRESH_MS,
     maxRetries: 3,
@@ -41,6 +41,7 @@ export function useTokenHolders(tokenName: string, page = 0, rowsPerPage = 10) {
     lastUpdate: data?.lastUpdate ?? 0,
     isLoading,
     error,
+    isStale,
     refetch,
   };
 }

@@ -31,7 +31,7 @@ export const HoldersTable = memo(({ tokenName, tokenPrice, totalSupply }: Holder
   const { getAlias } = useGlobalAliases();
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { holders, rowsPage, rowsLimit, total, totalBalance, isLoading, error } =
+  const { holders, rowsPage, rowsLimit, total, totalBalance, isLoading, error, isStale } =
     useTokenHolders(tokenName, currentPage, rowsPerPage);
 
   const supplyForCalculation = totalSupply || totalBalance;
@@ -92,6 +92,7 @@ export const HoldersTable = memo(({ tokenName, tokenPrice, totalSupply }: Holder
       isLoading={isLoading && holders.length === 0}
       paginationDisabled={isLoading}
       error={error}
+      stale={isStale}
       errorTitle="Error loading holders"
       emptyMessage="No holders found"
       emptyDescription="No data available"

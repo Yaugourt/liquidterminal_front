@@ -10,6 +10,8 @@ export interface UsePastAuctionsPerpResult {
   isInitialLoading: boolean;
   isRefreshing: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -17,7 +19,7 @@ export interface UsePastAuctionsPerpResult {
  * Hook for fetching past perp auctions from Hypurrscan
  */
 export function usePastAuctionsPerp(): UsePastAuctionsPerpResult {
-  const { data, isLoading, isInitialLoading, isRefreshing, error, refetch } = useDataFetching<PastAuctionPerp[]>({
+  const { data, isLoading, isInitialLoading, isRefreshing, error, isStale, refetch } = useDataFetching<PastAuctionPerp[]>({
     fetchFn: fetchPastAuctionsPerp,
     refreshInterval: 60000, // 60s - static data
     dependencies: [],
@@ -29,6 +31,7 @@ export function usePastAuctionsPerp(): UsePastAuctionsPerpResult {
     isInitialLoading,
     isRefreshing,
     error,
+    isStale,
     refetch
   };
 }

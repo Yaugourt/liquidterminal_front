@@ -30,12 +30,12 @@ const WINDOW_DAYS = 30;
  * - Net flows · 30D — derived from vaultLedger bucketed per day, signed.
  */
 export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps) {
-  const { snapshots, isLoading: snapsLoading, error: snapsError } = useVaultDailySnapshots({
+  const { snapshots, isLoading: snapsLoading, error: snapsError, isStale: snapsStale } = useVaultDailySnapshots({
     vaultAddress,
     limit: 60,
   });
 
-  const { entries: ledger, isLoading: ledgerLoading, error: ledgerError } = useVaultLedger({
+  const { entries: ledger, isLoading: ledgerLoading, error: ledgerError, isStale: ledgerStale } = useVaultLedger({
     vaultAddress,
     limit: 5000,
   });
@@ -99,7 +99,7 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
         summaryLabel="net over window"
         data={dailyPnl}
         isLoading={snapsLoading}
-        sourceStatus={sourceStatus(snapsError, snapsLoading)}
+        sourceStatus={sourceStatus(snapsError, snapsLoading, snapsStale)}
       />
       {/* No ledger for this vault (e.g. HLP): no net flows card, daily PnL takes the row. */}
       {hasLedger && (
@@ -110,7 +110,7 @@ export function VaultSecondaryCharts({ vaultAddress }: VaultSecondaryChartsProps
         summaryLabel="deposits − withdrawals"
         data={netFlows}
         isLoading={ledgerLoading}
-        sourceStatus={sourceStatus(ledgerError, ledgerLoading)}
+        sourceStatus={sourceStatus(ledgerError, ledgerLoading, ledgerStale)}
         // The indexer ledger returns nothing at all for some vaults (e.g. HLP);
         // say so explicitly instead of implying a quiet window.
         emptyMessage={

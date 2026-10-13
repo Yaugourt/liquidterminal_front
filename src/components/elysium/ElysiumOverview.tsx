@@ -141,7 +141,7 @@ const ElysiumActivity = memo(function ElysiumActivity() {
 
 // ── Live lists ───────────────────────────────────────────────────────────────
 const ElysiumTransactions = memo(function ElysiumTransactions() {
-  const { data: txs, error } = useElysiumTransactions(14);
+  const { data: txs, error, isStale } = useElysiumTransactions(14);
   // Selector -> signature map (our backend, top selectors only); hex stays when unknown.
   const { data: methods } = useElysiumMethods("24h");
   const names = methods?.names;
@@ -151,7 +151,7 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
       <CardHead
         title="Latest transactions"
         tag="spam and system hidden"
-        actions={<DataStatus variant="live" connected={!error} />}
+        actions={<DataStatus variant="live" connected={!error && !isStale} />}
       />
       <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom pl-3.5 pr-2 py-1">
         {!txs ? (
@@ -198,13 +198,13 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
 
 const ElysiumBlocks = memo(function ElysiumBlocks() {
   const { format } = useNumberFormat();
-  const { data: blocks, error } = useElysiumBlocks(14);
+  const { data: blocks, error, isStale } = useElysiumBlocks(14);
   const now = useNow(3_000);
   return (
     <Card className="overflow-hidden flex flex-col">
       <CardHead
         title="Blocks"
-        actions={<DataStatus variant="live" connected={!error} />}
+        actions={<DataStatus variant="live" connected={!error && !isStale} />}
       />
       <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom pl-3.5 pr-2 py-1">
         {!blocks ? (
@@ -239,7 +239,7 @@ const ElysiumBlocks = memo(function ElysiumBlocks() {
 // ── Bridge ───────────────────────────────────────────────────────────────────
 const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
   const { format } = useNumberFormat();
-  const { data: transfers, error } = useElysiumBridgeTransfers(30);
+  const { data: transfers, error, isStale } = useElysiumBridgeTransfers(30);
   const { data: failed } = useElysiumRetryables();
   const now = useNow(5_000);
   const failedCount = failed?.length ?? 0;
@@ -248,7 +248,7 @@ const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
       <CardHead
         title="Bridge"
         tag="HyperEVM ↔ Elysium"
-        actions={<>{<DataStatus variant="live" connected={!error} />}{failedCount > 0 ? (
+        actions={<>{<DataStatus variant="live" connected={!error && !isStale} />}{failedCount > 0 ? (
             <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-danger/10 text-danger" title="Retryable tickets whose redemption failed">
               {failedCount} failed redeem{failedCount > 1 ? "s" : ""}
             </span>

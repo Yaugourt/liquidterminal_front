@@ -18,6 +18,8 @@ export interface TwapTableProps {
   twaps: TwapTableData[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the rows shown are the previous load. */
+  stale?: boolean;
   total: number;
   page: number;
   rowsPerPage: number;

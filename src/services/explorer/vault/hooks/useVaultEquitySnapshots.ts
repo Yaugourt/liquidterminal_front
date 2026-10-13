@@ -12,7 +12,7 @@ export const useVaultEquitySnapshots = (params: {
   endTime?: string;
   limit?: number;
 }): UseVaultEquitySnapshotsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<VaultEquitySnapshot[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<VaultEquitySnapshot[]>({
     fetchFn: () => fetchVaultEquitySnapshots(params),
     dependencies: [params.vaultAddress, params.startTime, params.endTime, params.limit],
     refreshInterval: 60000,
@@ -23,6 +23,7 @@ export const useVaultEquitySnapshots = (params: {
     snapshots: data ?? [],
     isLoading,
     error,
+    isStale,
     refetch,
   };
 };

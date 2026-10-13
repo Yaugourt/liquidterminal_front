@@ -69,7 +69,7 @@ export function Hip4AnalyticsChart() {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
 
   const cfg = INTERVALS.find((x) => x.value === interval)!;
-  const { buckets, isLoading, error } = useHip4Analytics({
+  const { buckets, isLoading, error, isStale } = useHip4Analytics({
     interval,
     limit: cfg.limit,
   });
@@ -115,7 +115,7 @@ export function Hip4AnalyticsChart() {
           }
           actions={
             <>
-              <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+              <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
               <div className="flex items-center rounded-md border border-border-subtle bg-surface-2 p-0.5">
                 {INTERVALS.map((iv) => (
                   <button
@@ -261,7 +261,7 @@ export function Hip4AnalyticsChart() {
       <Card className="overflow-hidden flex flex-col h-[380px]">
         <CardHead
           title="Activity"
-          actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+          actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
         />
 
         <div className="px-3.5 py-3">

@@ -37,9 +37,9 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
   const router = useRouter();
 
   const { project, isLoading, isRefreshing, refetch, dataUpdatedAt } = useProject(projectId);
-  const { metrics, fees, revenue, tokenSymbol, isLoading: metricsLoading, error: metricsError } = useProjectMetrics(projectId);
+  const { metrics, fees, revenue, tokenSymbol, isLoading: metricsLoading, error: metricsError, isStale: metricsStale } = useProjectMetrics(projectId);
   const { context } = useProjectContext(projectId);
-  const { history, isLoading: tvlLoading, error: tvlError } = useTvlHistory(project?.defillamaSlug ?? null);
+  const { history, isLoading: tvlLoading, error: tvlError, isStale: tvlStale } = useTvlHistory(project?.defillamaSlug ?? null);
 
   const position = context?.position ?? null;
   const peers = context?.peers ?? [];
@@ -144,12 +144,12 @@ export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
               color={chartPalette.accent}
               formatValue={(v) => compactUsd(v)}
               defaultTimeframe="1Y"
-              actions={<SourceBadge source="defillama" status={sourceStatus(tvlError, tvlLoading)} />}
+              actions={<SourceBadge source="defillama" status={sourceStatus(tvlError, tvlLoading, tvlStale)} />}
             />
           )}
 
           {isLinked && (
-            <FeesRevenueTable fees={fees} revenue={revenue} sourceStatus={sourceStatus(metricsError, metricsLoading)} />
+            <FeesRevenueTable fees={fees} revenue={revenue} sourceStatus={sourceStatus(metricsError, metricsLoading, metricsStale)} />
           )}
 
           {/* HyperEVM yields — self-gates when Hyperfolio does not index the protocol. */}

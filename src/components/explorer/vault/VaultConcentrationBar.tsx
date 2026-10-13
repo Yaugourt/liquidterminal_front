@@ -23,7 +23,7 @@ interface DepositorAgg {
  * `net` is signed: positive = depositor put more in than they pulled out.
  */
 export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarProps) {
-  const { entries, isLoading, error } = useVaultLedger({ vaultAddress, limit: 2000 });
+  const { entries, isLoading, error, isStale } = useVaultLedger({ vaultAddress, limit: 2000 });
 
   const { top, others, totalNet, hhi } = useMemo(() => {
     if (!entries.length) {
@@ -88,7 +88,7 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
         {/* Only show the stats when real ledger data backs them: zeroed HHI
             and a "Low" level on an empty ledger would be fake values. */}
         <div className="flex items-center gap-3 text-[11px]">
-          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
           {!isLoading && top.length > 0 && (
             <>
             <span className="text-text-tertiary">

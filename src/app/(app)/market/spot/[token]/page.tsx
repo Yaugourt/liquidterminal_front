@@ -179,7 +179,7 @@ export default function TokenPage() {
                                 source={activeTab === 'holders' ? "hypurrscan" : "hypedexer"}
                                 status={
                                     activeTab === 'holders'
-                                        ? sourceStatus(holdersData.error, holdersData.isLoading)
+                                        ? sourceStatus(holdersData.error, holdersData.isLoading, holdersData.isStale)
                                         : twapSourceStatus
                                 }
                                 className="ml-auto"

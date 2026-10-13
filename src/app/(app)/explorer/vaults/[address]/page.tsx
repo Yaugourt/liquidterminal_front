@@ -24,11 +24,11 @@ export default function VaultDetailPage() {
   const params = useParams();
   const vaultAddress = params.address as string;
 
-  const { details, isLoading: detailsLoading, error: detailsError } = useVaultIndexerDetails({
+  const { details, isLoading: detailsLoading, error: detailsError, isStale: detailsStale } = useVaultIndexerDetails({
     vaultAddress,
   });
 
-  const { summaries, isLoading: summariesLoading, error: summariesError } = useVaultSummaries({
+  const { summaries, isLoading: summariesLoading, error: summariesError, isStale: summariesStale } = useVaultSummaries({
     includeClosed: true,
     limit: 5000,
   });
@@ -81,8 +81,8 @@ export default function VaultDetailPage() {
         <SourceBadge
           source="hypedexer"
           status={combinedSourceStatus(
-            { error: detailsError, isLoading: detailsLoading },
-            { error: summariesError, isLoading: summariesLoading },
+            { error: detailsError, isLoading: detailsLoading, isStale: detailsStale },
+            { error: summariesError, isLoading: summariesLoading, isStale: summariesStale },
           )}
           className="ml-auto"
         />

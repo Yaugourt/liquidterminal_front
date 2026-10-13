@@ -77,6 +77,8 @@ export interface UseTwapOrdersResult {
   orders: EnrichedTwapOrder[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; `orders` are the previous load. */
+  isStale?: boolean;
   refetch: () => Promise<void>;
   total: number;
   page: number;

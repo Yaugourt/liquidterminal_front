@@ -44,7 +44,7 @@ export function PerpAuctionContent() {
         headerAction={
           <SourceBadge
             source="hypurrscan"
-            status={sourceStatus(pastAuctions.error, pastAuctions.isLoading)}
+            status={sourceStatus(pastAuctions.error, pastAuctions.isLoading, pastAuctions.isStale)}
           />
         }
       />

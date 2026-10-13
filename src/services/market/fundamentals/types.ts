@@ -69,6 +69,8 @@ export interface UseProtocolFundamentalsResult {
   /** True during a background/manual refresh (drives the freshness cue spinner). */
   isRefreshing: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => Promise<void>;
   /** Epoch ms of the last successful fetch, or null before the first. */
   dataUpdatedAt: number | null;
@@ -124,6 +126,8 @@ export interface UseFeeRevenueHistoryResult {
   /** True during a background/manual refresh (drives the freshness cue spinner). */
   isRefreshing: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => Promise<void>;
   /** Epoch ms of the last successful fetch, or null before the first. */
   dataUpdatedAt: number | null;

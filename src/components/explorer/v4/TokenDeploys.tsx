@@ -21,7 +21,7 @@ import { timeAgo } from "@/lib/formatters/dateFormatting";
 const ROWS = 8;
 
 export const TokenDeploys = memo(function TokenDeploys() {
-  const { deploys, isLoading, error } = useDeploys();
+  const { deploys, isLoading, error, isStale } = useDeploys();
 
   const rows = useMemo(() => (deploys ?? []).slice(0, ROWS), [deploys]);
 
@@ -30,7 +30,7 @@ export const TokenDeploys = memo(function TokenDeploys() {
       <CardHead
         title="Token Deploys"
         tag={`Last ${ROWS}`}
-        actions={<SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading, isStale)} />}
       />
 
       {isLoading && rows.length === 0 ? (

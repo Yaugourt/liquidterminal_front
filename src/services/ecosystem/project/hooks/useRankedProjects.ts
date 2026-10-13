@@ -33,9 +33,13 @@ export interface UseRankedProjectsResult {
   isLoading: boolean;
   isRefreshing?: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   /** DefiLlama batch (`/defillama/projects-map`) state alone — feeds the source badge. */
   metricsLoading: boolean;
   metricsError: Error | null;
+  /** The last metrics refresh failed; the metrics shown are the previous load. */
+  metricsStale?: boolean;
   refetch: () => Promise<void>;
   dataUpdatedAt?: number | null;
 }
@@ -49,13 +53,14 @@ export interface UseRankedProjectsResult {
  * sort on, and padding the table with dashes would be a fake leaderboard.
  */
 export const useRankedProjects = (): UseRankedProjectsResult => {
-  const { metricsById, isLoading: metricsLoading, error: metricsError } = useProjectsMetricsMap();
+  const { metricsById, isLoading: metricsLoading, error: metricsError, isStale: metricsStale } = useProjectsMetricsMap();
 
   const {
     data: catalog,
     isLoading: catalogLoading,
     isRefreshing: catalogRefreshing,
     error: catalogError,
+    isStale,
     refetch,
     dataUpdatedAt,
   } = useDataFetching<Project[]>({
@@ -128,8 +133,10 @@ export const useRankedProjects = (): UseRankedProjectsResult => {
     isLoading: catalogLoading || metricsLoading,
     isRefreshing: catalogRefreshing,
     error: catalogError ?? metricsError,
+    isStale,
     metricsLoading,
     metricsError,
+    metricsStale,
     refetch,
     dataUpdatedAt,
   };

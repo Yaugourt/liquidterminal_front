@@ -106,7 +106,7 @@ export const NetworkPulse = memo(function NetworkPulse() {
   const { stats: validatorStats } = useValidators();
   const builders = useBuildersGlobalStats("24h");
   const builderStats = builders.stats;
-  const { bridgeData, isLoading: bridgeLoading, error: bridgeError } = useHLBridge();
+  const { bridgeData, isLoading: bridgeLoading, error: bridgeError, isStale: bridgeStale } = useHLBridge();
 
   // Trades / sec averaged over the last 24h. `/indexer/overview/total-fills-24h`
   // is the canonical CLOB fill counter (perp + spot + HIP-3) — a Core metric,
@@ -205,7 +205,7 @@ export const NetworkPulse = memo(function NetworkPulse() {
         header={{
           label: "Cross-Chain Capital",
           helper: "USDC bridge (Arbitrum ↔ Hyperliquid L1)",
-          actions: <SourceBadge source="defillama" status={sourceStatus(bridgeError, bridgeLoading)} />,
+          actions: <SourceBadge source="defillama" status={sourceStatus(bridgeError, bridgeLoading, bridgeStale)} />,
         }}
         columns="grid-cols-1 sm:grid-cols-2"
         cells={bridgeCells}

@@ -193,6 +193,8 @@ export interface UseProjectMetricsResult {
   tokenSymbol: string | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => Promise<void>;
 }
 
@@ -265,6 +267,8 @@ export interface UseProjectsMetricsMapResult {
   metricsById: Map<number, ProjectListMetric>;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
 }
 
 /** Backend payload of GET /defillama/tvl-history/:slug. */
@@ -285,6 +289,8 @@ export interface UseTvlHistoryResult {
   history: ProjectTvlHistory | undefined;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
 }
 
 export interface UseChainStatsResult {
@@ -292,6 +298,8 @@ export interface UseChainStatsResult {
   isLoading: boolean;
   isRefreshing?: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => Promise<void>;
   dataUpdatedAt?: number | null;
 }

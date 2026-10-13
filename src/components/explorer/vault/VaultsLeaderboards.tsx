@@ -54,7 +54,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
     [rows]
   );
 
-  const { followersGained, outflows, isLoading: leaderboardsLoading, error: leaderboardsError } = useVaultsLeaderboards({
+  const { followersGained, outflows, isLoading: leaderboardsLoading, error: leaderboardsError, isStale: leaderboardsStale } = useVaultsLeaderboards({
     window: "24h",
     followersLimit: RAIL_ROWS + 1,
     outflowsLimit: 4,
@@ -107,7 +107,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
       <OverviewModule
         title="Followers gained · 24h"
         tag="sampled 50"
-        actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading)} />}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading, leaderboardsStale)} />}
       >
         {leaderboardsLoading ? (
           <ModuleSkeleton />
@@ -143,7 +143,7 @@ export function VaultsLeaderboards({ directory }: VaultsLeaderboardsProps) {
         title="Largest outflows · 24h"
         tag="24h"
         className="md:col-span-2 xl:col-span-1"
-        actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading)} />}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(leaderboardsError, leaderboardsLoading, leaderboardsStale)} />}
       >
         {leaderboardsLoading ? (
           <ModuleSkeleton />

@@ -20,7 +20,7 @@ export function usePriorityFeesLeaderboard(
     [hours, limit]
   );
 
-  const { data, isLoading, error, refetch } = useDataFetching({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching({
     fetchFn,
     refreshInterval: 60_000,
     dependencies: deps,
@@ -31,6 +31,7 @@ export function usePriorityFeesLeaderboard(
     data: data ?? [],
     isLoading,
     error,
+    isStale,
     refetch,
   };
 }

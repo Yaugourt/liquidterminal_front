@@ -219,6 +219,8 @@ export interface UseVaultSummariesResult {
   summaries: IndexerVaultSummaryItem[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -226,6 +228,8 @@ export interface UseVaultDailySnapshotsResult {
   snapshots: VaultDailySnapshot[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -233,6 +237,8 @@ export interface UseVaultEquitySnapshotsResult {
   snapshots: VaultEquitySnapshot[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -240,6 +246,8 @@ export interface UseVaultLedgerResult {
   entries: VaultLedgerEntry[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -247,6 +255,8 @@ export interface UseVaultIndexerDetailsResult {
   details: IndexerVaultDetailsData | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -290,5 +300,7 @@ export interface UseVaultsLeaderboardsResult {
   meta: VaultLeaderboardMeta | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }

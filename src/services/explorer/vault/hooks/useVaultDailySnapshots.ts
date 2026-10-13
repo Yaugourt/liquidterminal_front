@@ -12,7 +12,7 @@ export const useVaultDailySnapshots = (params: {
   endTime?: string;
   limit?: number;
 }): UseVaultDailySnapshotsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<VaultDailySnapshot[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<VaultDailySnapshot[]>({
     fetchFn: () => fetchVaultDailySnapshots(params),
     dependencies: [params.vaultAddress, params.startTime, params.endTime, params.limit],
     refreshInterval: 60000,
@@ -23,6 +23,7 @@ export const useVaultDailySnapshots = (params: {
     snapshots: data ?? [],
     isLoading,
     error,
+    isStale,
     refetch,
   };
 };

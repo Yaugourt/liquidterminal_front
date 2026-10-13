@@ -21,7 +21,7 @@ import { useReserveYield } from "@/services/market/reserve-yield";
  * from the treasury balance it is charged on to the fund that spends it.
  */
 export default function HypeReserveYieldPage() {
-  const { data, isInitialLoading, error, dataUpdatedAt, isRefreshing, refetch } = useReserveYield();
+  const { data, isInitialLoading, error, dataUpdatedAt, isRefreshing, isStale, refetch } = useReserveYield();
 
   return (
     <div className="space-y-8">
@@ -31,7 +31,7 @@ export default function HypeReserveYieldPage() {
             title="Reserve Yield"
             subtitle="USDC reserve yield paid to the protocol · read from HyperEVM and HyperCore"
           />
-          <DataStatus variant="polled" updatedAt={dataUpdatedAt} isRefreshing={isRefreshing} onRefresh={refetch} />
+          <DataStatus variant="polled" updatedAt={dataUpdatedAt} stale={isStale} isRefreshing={isRefreshing} onRefresh={refetch} />
         </div>
         {data ? (
           <ReserveYieldOverviewCard data={data} />

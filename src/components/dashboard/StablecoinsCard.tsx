@@ -93,6 +93,7 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
     isLoading,
     isRefreshing,
     error,
+    isStale,
     refetch,
     dataUpdatedAt,
   } = useSpotStablecoins();
@@ -145,7 +146,7 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
         tag="spot supply"
         actions={
           <>
-            <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} />
+            <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading, isStale)} />
             <DataStatus
               variant="polled"
               updatedAt={dataUpdatedAt}

@@ -88,7 +88,7 @@ function OutcomeRow({ question }: { question: Hip4QuestionWithOutcomesRow }) {
 }
 
 export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
-  const { questions, totalVolume, activeCount, isLoading, error } =
+  const { questions, totalVolume, activeCount, isLoading, error, isStale } =
     useHip4ActiveMarkets(TOP_N);
 
   return (
@@ -100,7 +100,7 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
             {activeCount} live · <span className="mono">{compactUsd(totalVolume)} vol</span>
           </>
         }
-        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
         href="/market/hip4"
       />
 
@@ -109,7 +109,7 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
           <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary">
             Loading…
           </div>
-        ) : error ? (
+        ) : error && questions.length === 0 ? (
           <div className="px-3.5 py-6 text-center text-[11px] text-danger">
             Failed to load HIP-4 markets
           </div>

@@ -6,6 +6,7 @@ export function useHLBridge(): UseHLBridgeResult {
     data: bridgeData,
     isLoading,
     error,
+    isStale,
     refetch
   } = useDataFetching<BridgeData>({
     fetchFn: fetchHLBridge,
@@ -17,6 +18,7 @@ export function useHLBridge(): UseHLBridgeResult {
     bridgeData: bridgeData || null,
     isLoading,
     error,
+    isStale,
     refetch
   };
 } 

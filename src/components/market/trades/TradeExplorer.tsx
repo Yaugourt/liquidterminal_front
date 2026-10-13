@@ -65,7 +65,7 @@ export function TradeExplorer() {
   const { sortBy, sortDir } = SORT_MAP[sort];
   const explorer = useTradeExplorer({ coin, sortBy, sortDir, limit: 100 });
   const summaryFeed = useTradeSummary();
-  const { trades, isLoading, error, refetch } = explorer;
+  const { trades, isLoading, error, isStale, refetch } = explorer;
   const { summary } = summaryFeed;
 
   const cells: KpiCell[] = useMemo(() => {
@@ -180,6 +180,7 @@ export function TradeExplorer() {
         getRowKey={(t, i) => `${t.trade_id}-${i}`}
         isLoading={isLoading}
         error={error}
+        stale={isStale}
         onErrorRetry={refetch}
         errorTitle="Failed to load trades"
         emptyMessage="No trades"

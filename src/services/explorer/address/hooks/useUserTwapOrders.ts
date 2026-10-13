@@ -27,7 +27,7 @@ const transformTwapData = (enrichedOrders: EnrichedTwapOrder[]): TwapTableData[]
  */
 export function useUserTwapOrders(userAddress: string): UseUserTwapOrdersResult {
   // Utiliser le hook dashboard pour récupérer tous les ordres actifs
-  const { orders: allOrders, isLoading, error, refetch } = useTwapOrders({
+  const { orders: allOrders, isLoading, error, isStale, refetch } = useTwapOrders({
     limit: 1000,
     status: "active" // Seulement les ordres actifs
   });
@@ -47,6 +47,7 @@ export function useUserTwapOrders(userAddress: string): UseUserTwapOrdersResult 
     orders: userTwapOrders,
     isLoading,
     error,
+    isStale,
     refetch
   };
 } 

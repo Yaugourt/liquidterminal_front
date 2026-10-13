@@ -112,7 +112,7 @@ export const useDeploys = (): UseDeploysResult => {
     currency: "ALL",
   });
 
-  const { data: rawDeploys, isLoading, error } = useDataFetching<DeployData[]>({
+  const { data: rawDeploys, isLoading, error, isStale } = useDataFetching<DeployData[]>({
     fetchFn: fetchDeploys,
     dependencies: [],
     refreshInterval: 15000,
@@ -133,5 +133,6 @@ export const useDeploys = (): UseDeploysResult => {
     deploys,
     isLoading,
     error,
+    isStale,
   };
 }; 

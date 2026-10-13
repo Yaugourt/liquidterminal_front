@@ -118,7 +118,7 @@ export function PastAuctionsPerpTable({
 }: PastAuctionsPerpTableProps = {}) {
   const { format: numberFormat } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
-  const { auctions, isLoading, error } = usePastAuctionsPerp();
+  const { auctions, isLoading, error, isStale } = usePastAuctionsPerp();
 
   return (
     <TypedDataTable<PastAuctionPerp>
@@ -141,7 +141,7 @@ export function PastAuctionsPerpTable({
             {toolbar}
             <SourceBadge
               source="hypurrscan"
-              status={sourceStatus(error, isLoading)}
+              status={sourceStatus(error, isLoading, isStale)}
               className="ml-auto"
             />
           </>

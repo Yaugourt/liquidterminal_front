@@ -132,7 +132,7 @@ export default function MarketHubPage() {
               source="hypedexer"
               status={combinedSourceStatus(volumeFeed, tradersFeed, feesFeed, hip3Feed)}
             />
-            <SourceBadge source="hypurrscan" status={sourceStatus(stablesFeed.error, stablesFeed.isLoading)} />
+            <SourceBadge source="hypurrscan" status={sourceStatus(stablesFeed.error, stablesFeed.isLoading, stablesFeed.isStale)} />
           </>
         }
       />
@@ -158,7 +158,7 @@ export default function MarketHubPage() {
               near the rail instead of 440px above it. */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:flex-1">
             <div className="min-w-0 flex flex-col gap-4 [&>*:last-child]:flex-1">
-              <PerpDexsLane overview={hip3} sourceStatus={sourceStatus(hip3Feed.error, hip3Feed.isLoading)} />
+              <PerpDexsLane overview={hip3} sourceStatus={sourceStatus(hip3Feed.error, hip3Feed.isLoading, hip3Feed.isStale)} />
               <BuildersLane />
             </div>
             <Hip4Lane />

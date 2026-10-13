@@ -94,7 +94,7 @@ const MultipleTooltip = ({
 
 export const MultipleHistoryCard = memo(function MultipleHistoryCard() {
   const [metric, setMetric] = useState<Metric>("P/E");
-  const { days, isLoading: loadingFees, error } = useFeeRevenueHistory();
+  const { days, isLoading: loadingFees, error, isStale } = useFeeRevenueHistory();
 
   const startTime = useMemo(() => Date.now() - CANDLE_DAYS * DAY_MS, []);
   const { candles, isLoading: loadingCandles } = useTokenCandles({
@@ -142,7 +142,7 @@ export const MultipleHistoryCard = memo(function MultipleHistoryCard() {
         tag="diluted"
         actions={
           <>
-            <SourceBadge source="defillama" status={sourceStatus(error, loadingFees)} />
+            <SourceBadge source="defillama" status={sourceStatus(error, loadingFees, isStale)} />
             <PeriodSelector
               selected={metric}
               onChange={setMetric}

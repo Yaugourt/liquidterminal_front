@@ -412,7 +412,7 @@ export function OperatorLens() {
             >
               {validationsLoading ? (
                 <LoadingState message="Loading…" size="md" withCard={false} />
-              ) : validationsError ? (
+              ) : validationsError && validations.length === 0 ? (
                 <ErrorState
                   title="Could not load activity"
                   message={validationsError.message}

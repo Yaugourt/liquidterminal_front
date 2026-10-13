@@ -33,12 +33,12 @@ interface VaultDetailChartsProps {
 export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
   const [activeTab, setActiveTab] = useState<TabId>("equity");
 
-  const { snapshots, isLoading: snapsLoading, error: snapsError } = useVaultEquitySnapshots({
+  const { snapshots, isLoading: snapsLoading, error: snapsError, isStale: snapsStale } = useVaultEquitySnapshots({
     vaultAddress,
     limit: 500,
   });
 
-  const { entries: ledger, isLoading: ledgerLoading, error: ledgerError } = useVaultLedger({
+  const { entries: ledger, isLoading: ledgerLoading, error: ledgerError, isStale: ledgerStale } = useVaultLedger({
     vaultAddress,
     limit: 2000,
   });
@@ -81,6 +81,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
   const isLoading =
     activeTab === "flow" ? ledgerLoading : snapsLoading;
   const error = activeTab === "flow" ? ledgerError : snapsError;
+  const isStale = activeTab === "flow" ? ledgerStale : snapsStale;
 
   const renderChart = () => {
     if (isLoading) {
@@ -163,7 +164,7 @@ export function VaultDetailCharts({ vaultAddress }: VaultDetailChartsProps) {
         {/* min-w-0 down the chain so the tab strip scrolls on a phone
             instead of pushing the card past the viewport. */}
         <div className="flex min-w-0 max-w-full items-center gap-3">
-          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+          <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
           <PillTabs
             className="min-w-0"
             activeTab={activeTab}

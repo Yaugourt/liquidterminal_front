@@ -418,11 +418,12 @@ The single data-freshness affordance for any card. Lives in the card-head action
 <DataStatus variant="live" connected={wsConnected} />
 
 // Polled data -> "updated Xs ago" (self-ticking) + optional manual refresh.
-<DataStatus variant="polled" updatedAt={dataUpdatedAt}
+// `stale` (last refresh failed, previous data kept) adds a gold dot.
+<DataStatus variant="polled" updatedAt={dataUpdatedAt} stale={isStale}
             isRefreshing={isRefreshing} onRefresh={refetch} />
 ```
 
-Wire the `polled` variant straight to `useDataFetching` (`dataUpdatedAt` / `isRefreshing` / `refetch`). `updatedAt` is optional: omit it and the component shows just the refresh button (`refetch` is exposed by ~all domain hooks; `dataUpdatedAt` by fewer — surface it in the hook when you want the timestamp). Rule of thumb: **one indicator per live surface** — per-card on a mixed page (dashboard), a single page-level chip when the whole page shares one live source (`/market/perpdex`, token pages). Don't stack redundant dots. Lives in `common/`.
+Wire the `polled` variant straight to `useDataFetching` (`dataUpdatedAt` / `isRefreshing` / `isStale` / `refetch`). A failed refresh never replaces loaded data with an error: `useDataFetching` keeps the data and sets `isStale` (its `error` is published only when there is nothing to show), and `TypedDataTable` renders `<ErrorState>` only when it has no rows (pass `stale={isStale}`: with rows, a slim "could not refresh" notice sits above them). Wrapper hooks forward `isStale`, and every health cue reads it: `sourceStatus(error, isLoading, isStale)` turns the `SourceBadge` red, a live dot gets `connected={!error && !isStale}`. Cards follow the same rule: `error && rows.length === 0`. `updatedAt` is optional: omit it and the component shows just the refresh button (`refetch` is exposed by ~all domain hooks; `dataUpdatedAt` by fewer — surface it in the hook when you want the timestamp). Rule of thumb: **one indicator per live surface** — per-card on a mixed page (dashboard), a single page-level chip when the whole page shares one live source (`/market/perpdex`, token pages). Don't stack redundant dots. Lives in `common/`.
 
 ### 6.11 `<SourceBadge>` — third-party data credit + route health
 

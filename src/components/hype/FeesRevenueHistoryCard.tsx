@@ -153,7 +153,7 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
   const [window, setWindow] = useState<Window>("90D");
   const [view, setView] = useState<View>("split");
   const uid = useId().replace(/:/g, "");
-  const { days: history, isLoading, error } = useFeeRevenueHistory();
+  const { days: history, isLoading, error, isStale } = useFeeRevenueHistory();
 
   const days = useMemo(() => {
     const span = WINDOW_DAYS[window];
@@ -201,7 +201,7 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
         title="Fees & Revenue"
         actions={
           <>
-            <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
+            <SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />
             <div className="flex items-center gap-1.5">
               <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
                 <ViewButton

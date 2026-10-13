@@ -77,7 +77,7 @@ export const PriorityFillsCard = memo(function PriorityFillsCard({
 }: PriorityFillsCardProps) {
   const [page, setPage] = useState(0);
   const offset = page * PAGE_SIZE;
-  const { data, isLoading, error, refetch } = usePriorityFeesRecentFills({
+  const { data, isLoading, error, isStale, refetch } = usePriorityFeesRecentFills({
     limit: PAGE_SIZE,
     offset,
     has_priority_gas: true,
@@ -94,7 +94,7 @@ export const PriorityFillsCard = memo(function PriorityFillsCard({
             <StatusBadge variant="success" dot>
               live
             </StatusBadge>
-            <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+            <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
           </>
         }
       />

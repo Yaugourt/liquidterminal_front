@@ -208,6 +208,8 @@ export interface UseDeploysResult {
   deploys: FormattedDeploy[] | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
 }
 
 // Types pour les données WebSocket temps réel

@@ -32,7 +32,7 @@ async function fetchHip4MarketLookup(coin: string): Promise<Hip4MarketLookup> {
  * list. Fetched once per coin — such a market no longer trades.
  */
 export function useHip4MarketLookup(coin: string, enabled: boolean): UseHip4MarketLookupResult {
-  const { data, isLoading, error, refetch } = useDataFetching<Hip4MarketLookup | null>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<Hip4MarketLookup | null>({
     fetchFn: () => (enabled ? fetchHip4MarketLookup(coin) : Promise.resolve(null)),
     refreshInterval: 0,
     dependencies: [coin, enabled],
@@ -48,6 +48,7 @@ export function useHip4MarketLookup(coin: string, enabled: boolean): UseHip4Mark
     resolved: current != null,
     isLoading: enabled && isLoading,
     error: enabled ? error : null,
+    isStale,
     failed: enabled && isFinalError(error),
     refetch,
   };

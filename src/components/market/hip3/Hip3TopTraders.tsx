@@ -75,7 +75,7 @@ export function Hip3TopTraders({
   cumulativeVolume: number | null;
 }) {
   const { format } = useNumberFormat();
-  const { traders, isLoading, error, refetch } = useHip3CoinTraders(coin);
+  const { traders, isLoading, error, isStale, refetch } = useHip3CoinTraders(coin);
 
   const clean = useMemo(() => sanitizeHip3Traders(traders), [traders]);
   const concentration = useMemo(
@@ -94,12 +94,13 @@ export function Hip3TopTraders({
           ? `Top 5 · ${(concentration.share * 100).toFixed(1)}% of ${compactUsd(concentration.reference ?? 0)}`
           : undefined
       }
-      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       data={clean}
       columns={buildColumns(format)}
       getRowKey={(row) => row.trader}
       isLoading={isLoading}
       error={error}
+      stale={isStale}
       onErrorRetry={refetch}
       errorTitle="Trader stats unavailable"
       density="compact"

@@ -10,7 +10,7 @@ import { ECOSYSTEM_FAQ } from "@/lib/page-faqs";
 
 export default function L1ProjectPage() {
   const { setTitle } = usePageTitle();
-  const { stats, isLoading, error, isRefreshing, refetch, dataUpdatedAt } = useChainStats();
+  const { stats, isLoading, error, isStale, isRefreshing, refetch, dataUpdatedAt } = useChainStats();
 
   useEffect(() => {
     setTitle("Ecosystem Projects");
@@ -24,7 +24,7 @@ export default function L1ProjectPage() {
         description="Apps building on Hyperliquid — live fundamentals."
         actions={
           <>
-            <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
+            <SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />
             <DataStatus
               variant="polled"
               updatedAt={dataUpdatedAt}

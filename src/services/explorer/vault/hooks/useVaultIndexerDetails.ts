@@ -11,7 +11,7 @@ export const useVaultIndexerDetails = (params: {
   endTime?: string;
   limit?: number;
 }): UseVaultIndexerDetailsResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<IndexerVaultDetailsData>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<IndexerVaultDetailsData>({
     fetchFn: () => fetchIndexerVaultDetails(params),
     dependencies: [params.vaultAddress, params.startTime, params.endTime],
     refreshInterval: 60000,
@@ -22,6 +22,7 @@ export const useVaultIndexerDetails = (params: {
     details: data,
     isLoading,
     error,
+    isStale,
     refetch,
   };
 };

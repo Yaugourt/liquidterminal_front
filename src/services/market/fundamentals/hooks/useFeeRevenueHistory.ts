@@ -15,7 +15,7 @@ const EMPTY: FeeRevenueDay[] = [];
 export function useFeeRevenueHistory(
   slug: string = HYPERLIQUID_SLUG
 ): UseFeeRevenueHistoryResult {
-  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } =
+  const { data, isLoading, isRefreshing, error, isStale, refetch, dataUpdatedAt } =
     useDataFetching<FeeRevenueDay[]>({
       fetchFn: () => getFeeRevenueHistory(slug),
       refreshInterval: REFRESH_INTERVALS.HOURLY,
@@ -23,5 +23,5 @@ export function useFeeRevenueHistory(
       maxRetries: 2,
     });
 
-  return { days: data ?? EMPTY, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
+  return { days: data ?? EMPTY, isLoading, isRefreshing, error, isStale, refetch, dataUpdatedAt };
 }

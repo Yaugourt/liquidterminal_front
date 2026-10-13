@@ -53,7 +53,7 @@ function Row({ label, hint, circulating, diluted }: RowProps) {
 }
 
 export const ValuationMultiplesCard = memo(function ValuationMultiplesCard() {
-  const { days, isLoading: loadingFees, error } = useFeeRevenueHistory();
+  const { days, isLoading: loadingFees, error, isStale } = useFeeRevenueHistory();
   const { overview, isLoading: loadingOverview } = useHypeOverview();
 
   const multiples = useMemo(
@@ -69,7 +69,7 @@ export const ValuationMultiplesCard = memo(function ValuationMultiplesCard() {
       <CardHead
         title="Valuation Multiples"
         tag={partial ? `${multiples.ttmDays}d trailing` : "trailing 12 months"}
-        actions={<SourceBadge source="defillama" status={sourceStatus(error, loadingFees)} />}
+        actions={<SourceBadge source="defillama" status={sourceStatus(error, loadingFees, isStale)} />}
       />
 
       <div className="grid grid-cols-2 gap-px bg-border-subtle">

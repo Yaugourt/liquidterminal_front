@@ -25,7 +25,7 @@ import { CardHead, SourceBadge, sourceStatus } from "@/components/common";
 const WINDOW = "30d" as const;
 
 export const RevenueReconciliation = memo(function RevenueReconciliation() {
-  const { fundamentals, isLoading, error } = useProtocolFundamentals();
+  const { fundamentals, isLoading, error, isStale } = useProtocolFundamentals();
   const { breakdown } = useRevenueBreakdown(WINDOW);
 
   const llama = useMemo(
@@ -45,7 +45,7 @@ export const RevenueReconciliation = memo(function RevenueReconciliation() {
       <CardHead
         title="Why the two revenue figures differ"
         tag="last 30 days"
-        actions={<SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />}
       />
 
       <div className="px-4 py-3.5">

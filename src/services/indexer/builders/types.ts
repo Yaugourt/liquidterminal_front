@@ -104,6 +104,8 @@ export interface UseBuildersListResult {
   builders: BuilderListRow[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -111,6 +113,8 @@ export interface UseBuildersGlobalStatsResult {
   stats: BuildersGlobalStatsPayload | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -122,6 +126,8 @@ export interface UseBuildersStatsAllTimeframesResult {
   /** Epoch ms of the last successful fetch — drives "updated Xs ago". */
   dataUpdatedAt?: number | null;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -130,6 +136,8 @@ export interface UseBuildersTopResult {
   isLoading: boolean;
   isRefreshing?: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
   dataUpdatedAt?: number | null;
 }
@@ -142,6 +150,8 @@ export interface UseBuilderStatsResult {
   /** Epoch ms of the last successful fetch — drives "updated Xs ago". */
   dataUpdatedAt?: number | null;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }
 
@@ -149,5 +159,7 @@ export interface UseBuilderUsersResult {
   data: BuilderUsersPayload | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => void;
 }

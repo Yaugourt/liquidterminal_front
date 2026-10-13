@@ -43,6 +43,8 @@ export interface UseHLBridgeResult {
   bridgeData: BridgeData | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the data shown is the previous load. */
+  isStale?: boolean;
   refetch: () => Promise<void>;
 }
 

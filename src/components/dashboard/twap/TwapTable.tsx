@@ -92,6 +92,7 @@ export const TwapTable = memo(
     twaps,
     isLoading,
     error,
+    stale,
     total,
     page,
     rowsPerPage,
@@ -112,6 +113,7 @@ export const TwapTable = memo(
         getRowKey={(row) => row.id}
         isLoading={isLoading}
         error={error}
+        stale={stale}
         errorTitle="Failed to load TWAP orders"
         emptyMessage="No active TWAP orders"
         emptyDescription="Active TWAPs will appear here as soon as one is placed."

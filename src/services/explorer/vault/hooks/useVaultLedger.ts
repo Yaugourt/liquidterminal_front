@@ -13,7 +13,7 @@ export const useVaultLedger = (params: {
   endTime?: string;
   limit?: number;
 }): UseVaultLedgerResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<VaultLedgerEntry[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<VaultLedgerEntry[]>({
     fetchFn: () => fetchVaultLedger(params),
     dependencies: [
       params.vaultAddress,
@@ -30,6 +30,7 @@ export const useVaultLedger = (params: {
     entries: data ?? [],
     isLoading,
     error,
+    isStale,
     refetch,
   };
 };

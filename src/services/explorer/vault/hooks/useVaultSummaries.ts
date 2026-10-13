@@ -10,7 +10,7 @@ export const useVaultSummaries = (params?: {
   includeClosed?: boolean;
   limit?: number;
 }): UseVaultSummariesResult => {
-  const { data, isLoading, error, refetch } = useDataFetching<IndexerVaultSummaryItem[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<IndexerVaultSummaryItem[]>({
     fetchFn: () => fetchIndexerVaultSummaries(params),
     dependencies: [params?.includeClosed, params?.limit],
     refreshInterval: 60000,
@@ -21,6 +21,7 @@ export const useVaultSummaries = (params?: {
     summaries: data ?? [],
     isLoading,
     error,
+    isStale,
     refetch,
   };
 };

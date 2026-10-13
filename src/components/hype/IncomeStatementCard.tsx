@@ -84,7 +84,7 @@ function Line({ label, value, deduction, total, hint }: LineProps) {
 
 export const IncomeStatementCard = memo(function IncomeStatementCard() {
   const [tf, setTf] = useState<Timeframe>("30d");
-  const { fundamentals, isLoading, error } = useProtocolFundamentals();
+  const { fundamentals, isLoading, error, isStale } = useProtocolFundamentals();
 
   const entry = PERIODS.find((p) => p.tf === tf) ?? PERIODS[2];
   const statement = useMemo(
@@ -99,7 +99,7 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
         tag={<span className="mono">{entry.copy}</span>}
         actions={
           <>
-            <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
+            <SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />
             <TimeframeTabs
               options={PERIODS.map((p) => p.tf)}
               value={tf}

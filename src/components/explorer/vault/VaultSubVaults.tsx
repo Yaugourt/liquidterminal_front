@@ -12,7 +12,7 @@ interface VaultSubVaultsProps {
 }
 
 export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
-  const { summaries, isLoading, error } = useVaultSummaries({ includeClosed: true, limit: 5000 });
+  const { summaries, isLoading, error, isStale } = useVaultSummaries({ includeClosed: true, limit: 5000 });
 
   const childSummaries = summaries.filter((s) => childAddresses.includes(s.vaultAddress));
 
@@ -28,7 +28,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
         <h3 className="text-sm font-semibold text-text-primary">
           Sub-Vaults ({childAddresses.length})
         </h3>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} className="ml-auto" />
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} className="ml-auto" />
       </div>
 
       {isLoading ? (

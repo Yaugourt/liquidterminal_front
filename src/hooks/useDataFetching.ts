@@ -40,8 +40,22 @@ function cacheMaxAgeFor(mode: FetchMode, refreshInterval: number): number | unde
  * transport had already retried the failing request, their backoff is
  * stretched by this factor: the recovery window stays what it was when every
  * hook retry re-ran a full transport cycle, for ≤7 requests instead of 16.
+ * Only while data is on screen (it stays there meanwhile): an empty card
+ * retries at the base pace so its error shows without a ~35 s spinner.
  */
 const TRANSPORT_RETRIED_BACKOFF_FACTOR = 4;
+
+/**
+ * A poll skips while the previous cycle runs (see `cycleInFlightRef`), but
+ * not forever: a fetchFn that hangs (a raw `fetch` without a timeout) would
+ * freeze the widget with no stale cue. Past this age the hung cycle is marked
+ * failed and the poll restarts it. The longest legit cycle is ~105 s (10 s
+ * timeouts through the transport retries, then the stretched hook backoff),
+ * hence the 120 s floor.
+ */
+function hungCycleAfterMs(refreshInterval: number): number {
+  return Math.max(2 * refreshInterval, 120_000);
+}
 
 // Layout effect in the browser (runs before any passive effect of the same
 // commit), plain effect on the server where layout effects don't run.
@@ -76,7 +90,20 @@ export function useDataFetching<T>({
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialLoading, setIsInitialLoading] = useState(true); // NEW: Only true for first load
   const [isRefreshing, setIsRefreshing] = useState(false); // NEW: True during background refresh
+  /**
+   * The fetch error, published only when there is nothing to show: a cycle
+   * that fails while data for the current dependencies is on screen keeps
+   * that data and sets `isStale` instead, so a transient 429/503/5xx never
+   * swaps a loaded card or table for an error panel. Intermediate failures
+   * (a retry is scheduled) are never published either.
+   */
   const [error, setError] = useState<Error | null>(null);
+  /** True when the last fetch cycle failed and `data` is the previous
+   * successful response (kept on screen). Cleared by the next success or a
+   * dependency change. Forward it from wrapper hooks and drive the stale cues
+   * from it: DataStatus `stale`, `sourceStatus(error, isLoading, isStale)`,
+   * TypedDataTable `stale`, a live dot's `connected`. */
+  const [isStale, setIsStale] = useState(false);
   /** Epoch ms of the data currently shown — its fetch time, or the time the
    * cached response it came from was fetched. null until first success.
    * Use to drive staleness indicators in the UI. */
@@ -89,8 +116,29 @@ export function useDataFetching<T>({
   const mountedRef = useRef(true);
   const hasInitialDataRef = useRef(false); // NEW: Track if we've loaded data before
   const abortControllerRef = useRef<AbortController | null>(null);
-  /** Set on a permanent 4xx: polling cycles skip until deps change or manual refetch. */
+  /** Set on a permanent 4xx with nothing on screen: polling cycles skip until
+   * deps change or manual refetch. With data on screen the polls go on (a 404
+   * while a backend route deploys must not freeze a loaded widget for good). */
   const permanentErrorRef = useRef(false);
+  /**
+   * True from the start of a fetch cycle until it ends (success, final
+   * failure, permanent error). A failing cycle with its retries can outlast
+   * the poll period (transport 1+2+4s, then 4+8+16s stretched backoff ≈ 35s,
+   * vs 10–30s polls): a poll tick must not abort it and restart at attempt 0,
+   * or the cycle never ends — an empty card would spin forever without an
+   * error, a loaded one would never turn stale. Polls skip while it is set;
+   * a manual refetch or a dependency change still aborts and restarts, and
+   * so does a poll once the cycle is older than `hungCycleAfterMs`.
+   */
+  const cycleInFlightRef = useRef(false);
+  /** Epoch ms the current cycle started (watchdog for `cycleInFlightRef`). */
+  const cycleStartedAtRef = useRef(0);
+  /** Latest `initialData`: what `data` falls back to when a cycle for new
+   * dependencies fails (a ref, so an inline literal doesn't rebuild fetchData). */
+  const initialDataRef = useRef(initialData);
+  useIsomorphicLayoutEffect(() => {
+    initialDataRef.current = initialData;
+  }, [initialData]);
 
   // Cleanup effect
   useEffect(() => {
@@ -126,6 +174,19 @@ export function useDataFetching<T>({
 
     // A missing route stays missing: don't re-poll it every interval.
     if (isPolling && permanentErrorRef.current) return;
+    // The previous cycle (or its retries) is still running: let it finish —
+    // unless it has hung, then report it like a failed cycle and restart.
+    if (isPolling && !isRetry && cycleInFlightRef.current) {
+      if (Date.now() - cycleStartedAtRef.current < hungCycleAfterMs(refreshInterval)) return;
+      if (hasInitialDataRef.current) {
+        setIsStale(true);
+      } else {
+        setData(initialDataRef.current ?? null);
+        setError(new Error('The request timed out'));
+        setIsLoading(false);
+        setIsInitialLoading(false);
+      }
+    }
     if (!isRetry && !isPolling) permanentErrorRef.current = false;
 
     // Abort the previous in-flight request (and any pending retry from a
@@ -139,8 +200,19 @@ export function useDataFetching<T>({
         abortControllerRef.current.abort();
       }
       abortControllerRef.current = new AbortController();
+      cycleInFlightRef.current = true;
+      cycleStartedAtRef.current = Date.now();
     }
     const signal = abortControllerRef.current?.signal;
+
+    // Final failure with no data for the current dependencies. `data` may
+    // still hold the previous dependencies' response (kept while the new one
+    // loads): drop it, so `error` is never published next to rows that belong
+    // to another timeframe, page or filter.
+    const failWithoutData = (error: Error) => {
+      setData(initialDataRef.current ?? null);
+      setError(error);
+    };
 
     // Picked up by the requests fetchFn starts synchronously (request-policy.ts).
     const policy: RequestPolicy = {
@@ -149,17 +221,28 @@ export function useDataFetching<T>({
       ...(isRetry ? { transportRetries: false } : {}),
     };
 
+    // True when this attempt failed and scheduled another: the cycle is not
+    // over, so the loading flags stay up and no error is published yet.
+    let retryScheduled = false;
+
     try {
       if (!isRetry) {
-        if (hasInitialDataRef.current && isPolling) {
-          // Background refresh - don't show full loading
+        if (isPolling || (mode === 'manual' && hasInitialDataRef.current)) {
+          // Background refresh - don't show full loading. With no data, a
+          // poll only runs after a final error: that error stays on screen
+          // while the poll retries (no error → spinner → error flicker), and
+          // the next success replaces it. A manual refetch with data on
+          // screen is a background refresh too: the rows stay while it (and
+          // its retries) run, the refresh icon spins.
           setIsRefreshing(true);
         } else {
           // Initial load or manual refetch
           setIsLoading(true);
           setIsInitialLoading(true);
+          setError(null);
         }
-        setError(null);
+        // New dependencies: the stale flag belonged to the previous data.
+        if (!hasInitialDataRef.current) setIsStale(false);
       }
 
       const result = await runWithRequestPolicy(policy, () => fetchFn(signal));
@@ -167,6 +250,7 @@ export function useDataFetching<T>({
       if (mountedRef.current && !signal?.aborted) {
         setData(result);
         setError(null);
+        setIsStale(false);
         setDataUpdatedAt(policy.dataTimestamp ?? Date.now());
         hasInitialDataRef.current = true; // Mark that we have data now
       }
@@ -174,16 +258,27 @@ export function useDataFetching<T>({
       if (!mountedRef.current || signal?.aborted) return;
 
       const error = new Error(getErrorMessage(err));
+      // Data for the current dependencies is on screen: keep it, mark it stale.
+      const keepData = hasInitialDataRef.current;
 
       if (isPermanentClientError(err)) {
-        permanentErrorRef.current = true;
-        setError(error);
+        // No retry either way; with data on screen the next poll asks again.
+        if (keepData) {
+          setIsStale(true);
+        } else {
+          permanentErrorRef.current = true;
+          failWithoutData(error);
+        }
         return;
       }
 
       if (attempt < maxRetries) {
         const nextAttempt = attempt + 1;
-        const stretch = stretched || isTransportRetried(err);
+        // The stretch spreads the retries of a loaded widget over the old
+        // recovery window. With nothing on screen it would hold an empty card
+        // on a spinner for ~35 s: retry at the base pace, the error shows
+        // sooner and the polls keep asking afterwards.
+        const stretch = keepData && (stretched || isTransportRetried(err));
         const backoffBase = stretch
           ? retryDelay * TRANSPORT_RETRIED_BACKOFF_FACTOR
           : retryDelay;
@@ -198,13 +293,21 @@ export function useDataFetching<T>({
             fetchData(mode, nextAttempt, stretch);
           }
         }, retryDelayWithBackoff);
-
-        setError(new Error(`Retry attempt ${nextAttempt} of ${maxRetries}: ${error.message}`));
+        retryScheduled = true;
+      } else if (keepData) {
+        setIsStale(true);
       } else {
-        setError(error);
+        failWithoutData(error);
       }
     } finally {
-      if (mountedRef.current && !isRetry && !signal?.aborted) {
+      // The cycle ends on success, on a final failure or on a permanent
+      // error — not while a retry is pending (an empty card keeps its
+      // loading state rather than flashing an error between attempts).
+      // An aborted cycle was superseded: the new one owns the flags.
+      if (!retryScheduled && !signal?.aborted) {
+        cycleInFlightRef.current = false;
+      }
+      if (mountedRef.current && !retryScheduled && !signal?.aborted) {
         setIsLoading(false);
         setIsInitialLoading(false);
         setIsRefreshing(false);
@@ -262,6 +365,7 @@ export function useDataFetching<T>({
     isInitialLoading, // NEW: Only true during first load
     isRefreshing, // NEW: True during background refresh
     error,
+    isStale,
     dataUpdatedAt,
     refetch
   };

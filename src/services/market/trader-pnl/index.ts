@@ -40,10 +40,10 @@ export const fetchTraderPnlByCoin = async (): Promise<CoinPnl[]> => {
 };
 
 export const useTraderPnlByCoin = () => {
-  const { data, isLoading, error, refetch } = useDataFetching<CoinPnl[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<CoinPnl[]>({
     fetchFn: fetchTraderPnlByCoin,
     refreshInterval: 300000,
     maxRetries: 1,
   });
-  return { coins: data ?? [], isLoading, error, refetch };
+  return { coins: data ?? [], isLoading, error, isStale, refetch };
 };

@@ -12,7 +12,7 @@ import type { ProtocolFundamentals, UseProtocolFundamentalsResult } from "../typ
 export function useProtocolFundamentals(
   slug: string = HYPERLIQUID_SLUG
 ): UseProtocolFundamentalsResult {
-  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } =
+  const { data, isLoading, isRefreshing, error, isStale, refetch, dataUpdatedAt } =
     useDataFetching<ProtocolFundamentals>({
       fetchFn: () => getProtocolFundamentals(slug),
       refreshInterval: REFRESH_INTERVALS.HOURLY,
@@ -20,5 +20,5 @@ export function useProtocolFundamentals(
       maxRetries: 2,
     });
 
-  return { fundamentals: data, isLoading, isRefreshing, error, refetch, dataUpdatedAt };
+  return { fundamentals: data, isLoading, isRefreshing, error, isStale, refetch, dataUpdatedAt };
 }

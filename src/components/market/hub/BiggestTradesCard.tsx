@@ -27,7 +27,7 @@ function fmtHold(s: number): string {
  */
 export function BiggestTradesCard() {
   const [mode, setMode] = useState<Mode>("wins");
-  const { trades, isLoading, error } = useBiggestTrades(mode === "wins" ? "DESC" : "ASC", 5);
+  const { trades, isLoading, error, isStale } = useBiggestTrades(mode === "wins" ? "DESC" : "ASC", 5);
 
   const pill = (m: Mode, label: string) => (
     <button
@@ -46,7 +46,7 @@ export function BiggestTradesCard() {
     <div className="bg-surface border border-border-subtle rounded-lg">
       <div className="px-4 py-3 border-b border-border-subtle flex flex-wrap items-center gap-x-3 gap-y-1.5">
         <h3 className="text-[13px] font-medium text-text-primary">Biggest trades</h3>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
         <div className="ml-auto flex items-center gap-1">
           {pill("wins", "Wins")}
           {pill("losses", "Losses")}

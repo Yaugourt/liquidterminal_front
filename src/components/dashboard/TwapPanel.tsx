@@ -69,7 +69,7 @@ function formatSignedUsd(v: number): string {
 }
 
 export const TwapPanel = memo(function TwapPanel() {
-  const { orders, total, totalVolume, metadata, isLoading, error } = useTwapOrders({
+  const { orders, total, totalVolume, metadata, isLoading, error, isStale } = useTwapOrders({
     limit: 100,
     status: "active",
   });
@@ -179,8 +179,8 @@ export const TwapPanel = memo(function TwapPanel() {
         actions={
           <>
             {/* Rows come from the HypeDexer indexer (Hypurrscan is only the fallback). */}
-            <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
-            <DataStatus variant="live" />
+            <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
+            <DataStatus variant="live" connected={!error && !isStale} />
           </>
         }
       />

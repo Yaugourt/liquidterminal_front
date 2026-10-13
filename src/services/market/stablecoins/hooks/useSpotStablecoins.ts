@@ -23,7 +23,7 @@ const STALE_AFTER_MS = 30 * 60 * 1000;
  * (USDC, USDH, USDT0, USDE) triés par supply décroissante.
  */
 export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsResult {
-  const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<SpotUsdcResponse>({
+  const { data, isLoading, isRefreshing, error, isStale: refreshFailed, refetch, dataUpdatedAt } = useDataFetching<SpotUsdcResponse>({
     fetchFn: fetchSpotStablecoins,
     dependencies: [],
     refreshInterval,
@@ -91,7 +91,8 @@ export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsR
     isLoading,
     isRefreshing,
     error: feedError,
-    isStale,
+    // Old data either way: a frozen series, or a failed refresh (kept data).
+    isStale: isStale || refreshFailed,
     refetch,
     dataUpdatedAt: latestMs ?? dataUpdatedAt,
   };

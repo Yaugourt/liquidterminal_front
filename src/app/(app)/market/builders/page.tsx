@@ -117,6 +117,7 @@ export default function MarketBuildersPage() {
           rows={top.data?.builders ?? []}
           isLoading={top.isLoading}
           error={top.error}
+          stale={top.isStale}
           onRetry={top.refetch}
           toolbar={
             <>

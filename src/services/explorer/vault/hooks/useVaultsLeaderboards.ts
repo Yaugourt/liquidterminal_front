@@ -42,7 +42,7 @@ export const useVaultsLeaderboards = (
     return { followers, outflows };
   }, [window, followersLimit, outflowsLimit]);
 
-  const { data, isLoading, error, refetch } = useDataFetching<CombinedPayload>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<CombinedPayload>({
     fetchFn: fetchBoth,
     dependencies: [window, followersLimit, outflowsLimit],
     refreshInterval: 60000,
@@ -57,6 +57,7 @@ export const useVaultsLeaderboards = (
     meta,
     isLoading,
     error,
+    isStale,
     refetch,
   };
 };

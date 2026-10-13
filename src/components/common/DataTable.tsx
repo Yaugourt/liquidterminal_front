@@ -169,8 +169,18 @@ interface TypedDataTableProps<T> {
     // ── States ────────────────────────────────────────────────────────
     /** Replaces the table body with `<LoadingState>`. */
     isLoading?: boolean;
-    /** Replaces the table body with `<ErrorState>`. */
+    /**
+     * Replaces the table body with `<ErrorState>` when there are no rows to
+     * show. With rows loaded, they stay on screen under a slim "could not
+     * refresh" notice: a failed refresh never swaps a table for an error.
+     */
     error?: Error | null;
+    /**
+     * The last refresh failed and the rows shown are the previous load
+     * (`isStale` from `useDataFetching`): shows the "could not refresh"
+     * notice above them, like an `error` with rows does.
+     */
+    stale?: boolean;
     /** Retry handler attached to the error state. */
     onErrorRetry?: () => void | Promise<void>;
     /** Title for the error state. Defaults to "Could not load data". */
@@ -302,6 +312,7 @@ export function TypedDataTable<T>({
     // States
     isLoading,
     error,
+    stale = false,
     onErrorRetry,
     errorTitle = "Could not load data",
     emptyMessage = "No data available",
@@ -449,7 +460,7 @@ export function TypedDataTable<T>({
             className
         );
     }
-    if (error) {
+    if (error && data.length === 0) {
         return wrapInCard(
             head,
             <>
@@ -656,9 +667,30 @@ export function TypedDataTable<T>({
             />
         ) : null;
 
+    // Rows from the last successful load stay visible when a refresh failed.
+    const staleNotice = error || stale ? (
+        <div
+            role="status"
+            className="flex items-center gap-2 px-4 py-1.5 border-b border-border-subtle text-[11px] text-text-tertiary"
+        >
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold" aria-hidden />
+            <span className="min-w-0 truncate">Could not refresh — showing the last loaded data</span>
+            {onErrorRetry && (
+                <button
+                    type="button"
+                    onClick={() => void onErrorRetry()}
+                    className="focus-ring ml-auto shrink-0 rounded px-1.5 text-text-secondary hover:text-text-primary transition-colors"
+                >
+                    Retry
+                </button>
+            )}
+        </div>
+    ) : null;
+
     const tableContent = (
         <>
             {toolbarStrip}
+            {staleNotice}
             {tableBody}
             {compactFooter}
         </>

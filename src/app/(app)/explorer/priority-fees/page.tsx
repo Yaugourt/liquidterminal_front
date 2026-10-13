@@ -71,6 +71,7 @@ export default function PriorityFeesPage() {
           hypeUsd={hypeUsd}
           isLoading={leaderboard.isLoading}
           error={leaderboard.error}
+          isStale={leaderboard.isStale}
           onRetry={() => leaderboard.refetch()}
         />
         <PriorityFillsCard hypeUsd={hypeUsd} />

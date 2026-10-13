@@ -188,5 +188,7 @@ export interface UseUserTwapOrdersResult {
   orders: TwapTableData[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the orders shown are the previous load. */
+  isStale?: boolean;
   refetch: () => Promise<void>;
 } 

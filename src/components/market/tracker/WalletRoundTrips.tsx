@@ -31,7 +31,7 @@ interface WalletRoundTripsProps {
 export function WalletRoundTrips({ address }: WalletRoundTripsProps) {
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
-  const { trades, isLoading, error, refetch } = useWalletRoundTrips(address, ROUND_TRIPS_LIMIT);
+  const { trades, isLoading, error, isStale, refetch } = useWalletRoundTrips(address, ROUND_TRIPS_LIMIT);
 
   const columns: Column<WalletRoundTrip>[] = [
     {
@@ -92,12 +92,13 @@ export function WalletRoundTrips({ address }: WalletRoundTripsProps) {
       title="Round-trip trades"
       // The fetch is capped: at the cap, say "last N", not a lifetime total.
       tag={trades.length > 0 ? `${trades.length >= ROUND_TRIPS_LIMIT ? "last " : ""}${trades.length} trades` : undefined}
-      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       data={trades}
       columns={columns}
       getRowKey={(t, i) => `${t.trade_id}-${i}`}
       isLoading={isLoading}
       error={error}
+      stale={isStale}
       onErrorRetry={refetch}
       errorTitle="Failed to load round-trips"
       emptyMessage="No closed round-trip trades"

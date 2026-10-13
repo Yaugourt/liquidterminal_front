@@ -60,7 +60,7 @@ function EvmStatsRibbon() {
 
 // ── Daily activity chart ───────────────────────────────────────────────────
 function EvmActivityChart() {
-  const { daily, isLoading, error } = useEvmDailyStats(31);
+  const { daily, isLoading, error, isStale } = useEvmDailyStats(31);
 
   // Series comes newest-first; reverse to chronological for the trend.
   const data = useMemo(
@@ -77,7 +77,7 @@ function EvmActivityChart() {
       <CardHead
         title="Transactions / day"
         tag="31D"
-        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       />
       <div className="p-3 h-[260px]">
         {isLoading && data.length === 0 ? (
@@ -101,7 +101,7 @@ function EvmActivityChart() {
 
 // ── Recent blocks table ────────────────────────────────────────────────────
 function EvmBlocksTable() {
-  const { blocks, isLoading, error, refetch } = useEvmBlocks(20);
+  const { blocks, isLoading, error, isStale, refetch } = useEvmBlocks(20);
   const { format: dateFormat } = useDateFormat();
 
   const columns: Column<EvmBlock>[] = [
@@ -148,12 +148,13 @@ function EvmBlocksTable() {
   return (
     <TypedDataTable<EvmBlock>
       title="Recent blocks"
-      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       data={blocks}
       columns={columns}
       getRowKey={(b) => b.block_number}
       isLoading={isLoading}
       error={error}
+      stale={isStale}
       onErrorRetry={refetch}
       emptyMessage="No blocks"
       density="compact"

@@ -21,7 +21,7 @@ function Change7d({ value }: { value: number | null }) {
 
 /** ProtocolsModule — ecosystem signal on the Dashboard: top protocols by TVL on HL. */
 export const ProtocolsModule = memo(function ProtocolsModule() {
-  const { byTvl, isLoading, isRefreshing, refetch, dataUpdatedAt, metricsLoading, metricsError } = useRankedProjects();
+  const { byTvl, isLoading, isRefreshing, refetch, dataUpdatedAt, metricsLoading, metricsError, metricsStale } = useRankedProjects();
   const { stats } = useChainStats();
 
   const rows = useMemo(() => byTvl.slice(0, TOP_N), [byTvl]);
@@ -34,7 +34,7 @@ export const ProtocolsModule = memo(function ProtocolsModule() {
       href="/ecosystem/project"
       actions={
         <>
-          <SourceBadge source="defillama" status={sourceStatus(metricsError, metricsLoading)} />
+          <SourceBadge source="defillama" status={sourceStatus(metricsError, metricsLoading, metricsStale)} />
           <DataStatus
             variant="polled"
             updatedAt={dataUpdatedAt}

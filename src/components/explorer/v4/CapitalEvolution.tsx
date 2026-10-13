@@ -336,7 +336,7 @@ function BridgeTvlChart({
 
 export const CapitalEvolution = memo(function CapitalEvolution() {
   const { vaults, totalTvl } = useVaults({ limit: 1000, sortBy: "tvl" });
-  const { bridgeData, isLoading: bridgeLoading, error: bridgeError } = useHLBridge();
+  const { bridgeData, isLoading: bridgeLoading, error: bridgeError, isStale: bridgeStale } = useHLBridge();
 
   const concentration = useMemo(() => {
     if (!vaults?.length || !totalTvl) {
@@ -381,7 +381,7 @@ export const CapitalEvolution = memo(function CapitalEvolution() {
         restUsd={concentration.restUsd}
         totalTvl={totalTvl ?? 0}
       />
-      <BridgeTvlChart points={bridgePoints} status={sourceStatus(bridgeError, bridgeLoading)} />
+      <BridgeTvlChart points={bridgePoints} status={sourceStatus(bridgeError, bridgeLoading, bridgeStale)} />
     </div>
   );
 });

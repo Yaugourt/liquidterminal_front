@@ -18,35 +18,35 @@ import type {
 } from './types';
 
 export const useWalletFundingSummary = (address: string) => {
-  const { data, isLoading, error, refetch } = useDataFetching<WalletFundingSummary>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<WalletFundingSummary>({
     fetchFn: () => fetchWalletFundingSummary(address),
     dependencies: [address],
     // Funding is paid hourly and the backend keeps the summary 30 min.
     refreshInterval: 300000,
     maxRetries: 1,
   });
-  return { funding: data, isLoading, error, refetch };
+  return { funding: data, isLoading, error, isStale, refetch };
 };
 
 export const useWalletRoundTrips = (address: string, limit = 50) => {
-  const { data, isLoading, error, refetch } = useDataFetching<WalletRoundTrip[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<WalletRoundTrip[]>({
     // Empty address = feed disabled (the digest opens it on demand).
     fetchFn: () => (address ? fetchWalletRoundTrips(address, limit) : Promise.resolve([])),
     dependencies: [address, limit],
     refreshInterval: 60000,
     maxRetries: 1,
   });
-  return { trades: data ?? [], isLoading, error, refetch };
+  return { trades: data ?? [], isLoading, error, isStale, refetch };
 };
 
 export const useWalletOverview = (address: string) => {
-  const { data, isLoading, error, refetch } = useDataFetching<WalletOverview>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<WalletOverview>({
     fetchFn: () => fetchWalletOverview(address),
     dependencies: [address],
     refreshInterval: 60000,
     maxRetries: 1,
   });
-  return { overview: data, isLoading, error, refetch };
+  return { overview: data, isLoading, error, isStale, refetch };
 };
 
 export const useWalletPerformance = (
@@ -54,31 +54,31 @@ export const useWalletPerformance = (
   options: WalletPerformanceOptions = {}
 ) => {
   const lifetime = options.lifetime === true;
-  const { data, isLoading, error, refetch } = useDataFetching<WalletPerformance>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<WalletPerformance>({
     fetchFn: () => fetchWalletPerformance(address, { lifetime }),
     dependencies: [address, lifetime],
     refreshInterval: 60000,
     maxRetries: 1,
   });
-  return { performance: data, isLoading, error, refetch };
+  return { performance: data, isLoading, error, isStale, refetch };
 };
 
 export const useWalletCoins = (address: string, limit = 8) => {
-  const { data, isLoading, error, refetch } = useDataFetching<WalletCoinStat[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<WalletCoinStat[]>({
     fetchFn: () => fetchWalletCoins(address, limit),
     dependencies: [address, limit],
     refreshInterval: 60000,
     maxRetries: 1,
   });
-  return { coins: data ?? [], isLoading, error, refetch };
+  return { coins: data ?? [], isLoading, error, isStale, refetch };
 };
 
 export const useWalletCoinDistribution = (address: string, limit = 100) => {
-  const { data, isLoading, error, refetch } = useDataFetching<WalletCoinShare[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<WalletCoinShare[]>({
     fetchFn: () => fetchWalletCoinDistribution(address, limit),
     dependencies: [address, limit],
     refreshInterval: 60000,
     maxRetries: 1,
   });
-  return { shares: data ?? [], isLoading, error, refetch };
+  return { shares: data ?? [], isLoading, error, isStale, refetch };
 };

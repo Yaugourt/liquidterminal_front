@@ -12,11 +12,13 @@ import { RefreshCw } from "lucide-react";
  *  - `live`   → green pulsing dot + label ("Live") for WebSocket-pushed cards.
  *               Falls back to a muted "Offline" dot when `connected` is false.
  *  - `polled` → "updated Xs ago" (ticks itself) + an optional manual refresh
- *               button that spins while a fetch is in flight.
+ *               button that spins while a fetch is in flight. With `stale`
+ *               (the last refresh failed, the previous data is kept), a gold
+ *               dot leads the label.
  *
  * Wire the `polled` variant straight to `useDataFetching`:
- *   const { dataUpdatedAt, isRefreshing, refetch } = useDataFetching(...);
- *   <DataStatus variant="polled" updatedAt={dataUpdatedAt}
+ *   const { dataUpdatedAt, isRefreshing, isStale, refetch } = useDataFetching(...);
+ *   <DataStatus variant="polled" updatedAt={dataUpdatedAt} stale={isStale}
  *               isRefreshing={isRefreshing} onRefresh={refetch} />
  */
 
@@ -30,6 +32,8 @@ interface DataStatusProps {
   onRefresh?: () => void;
   /** polled: true while a background/manual fetch runs (`isRefreshing`) — spins the icon. */
   isRefreshing?: boolean;
+  /** polled: the last refresh failed and the data shown is older (`isStale`). */
+  stale?: boolean;
   /** live: connection state. `false` renders a muted "Offline" dot. Defaults to true. */
   connected?: boolean;
   /** live: label next to the dot. Defaults to "Live". */
@@ -57,6 +61,7 @@ const DataStatusComponent = ({
   updatedAt,
   onRefresh,
   isRefreshing = false,
+  stale = false,
   connected = true,
   label = "Live",
   className = "",
@@ -97,9 +102,14 @@ const DataStatusComponent = ({
     <span className={`inline-flex items-center gap-1.5 ${className}`}>
       {date && (
         <span
-          className="text-[10px] text-text-tertiary/70 tabular-nums select-none"
-          title={date.toLocaleString()}
+          className="inline-flex items-center gap-1 text-[10px] text-text-tertiary/70 tabular-nums select-none"
+          title={
+            stale
+              ? `Could not refresh — showing data from ${date.toLocaleString()}`
+              : date.toLocaleString()
+          }
         >
+          {stale && <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden />}
           updated {formatRelativeTime(date)}
         </span>
       )}

@@ -8,6 +8,8 @@ export interface UseHip4ActiveMarketsResult {
   activeCount: number;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the markets shown are the previous load. */
+  isStale?: boolean;
   dataUpdatedAt: number | null;
   refetch: () => void;
 }
@@ -20,7 +22,7 @@ export interface UseHip4ActiveMarketsResult {
  * (useful for card-head tags).
  */
 export function useHip4ActiveMarkets(limit = 5): UseHip4ActiveMarketsResult {
-  const { questions, isLoading, error, dataUpdatedAt, refetch } = useHip4QuestionsWithOutcomes({
+  const { questions, isLoading, error, isStale, dataUpdatedAt, refetch } = useHip4QuestionsWithOutcomes({
     limit: 200,
   });
 
@@ -43,6 +45,7 @@ export function useHip4ActiveMarkets(limit = 5): UseHip4ActiveMarketsResult {
     activeCount,
     isLoading,
     error,
+    isStale,
     dataUpdatedAt,
     refetch,
   };

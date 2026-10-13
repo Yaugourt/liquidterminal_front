@@ -8,7 +8,7 @@ import { ProjectListMetric, UseProjectsMetricsMapResult } from '../types';
  * decorates all list cards and powers the "TVL on HL" sort.
  */
 export const useProjectsMetricsMap = (): UseProjectsMetricsMapResult => {
-  const { data, isLoading, error } = useDataFetching<ProjectListMetric[]>({
+  const { data, isLoading, error, isStale } = useDataFetching<ProjectListMetric[]>({
     fetchFn: () => fetchProjectsMetricsMap(),
     refreshInterval: 300000,
     dependencies: [],
@@ -21,5 +21,5 @@ export const useProjectsMetricsMap = (): UseProjectsMetricsMapResult => {
     return map;
   }, [data]);
 
-  return { metricsById, isLoading, error };
+  return { metricsById, isLoading, error, isStale };
 };

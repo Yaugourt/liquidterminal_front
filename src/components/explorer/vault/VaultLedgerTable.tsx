@@ -59,7 +59,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
   const [typeFilter, setTypeFilter] = useState<LedgerTypeFilter>("all");
   const [limit, setLimit] = useState(PAGE_SIZE);
 
-  const { entries, isLoading, error } = useVaultLedger({ vaultAddress, limit });
+  const { entries, isLoading, error, isStale } = useVaultLedger({ vaultAddress, limit });
 
   const { format } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
@@ -144,7 +144,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
 
   const headerAction = (
     <div className="flex items-center gap-2">
-      <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
+      <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
       <Button
         variant="outline"
         size="sm"
@@ -222,6 +222,7 @@ export function VaultLedgerTable({ vaultAddress }: VaultLedgerTableProps) {
         getRowKey={(e) => `${e.txHash}-${e.time}`}
         isLoading={isLoading}
         error={error}
+        stale={isStale}
         errorTitle="Failed to load ledger"
         emptyMessage="No ledger entries found"
         emptyDescription={

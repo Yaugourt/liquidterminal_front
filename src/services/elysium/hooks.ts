@@ -57,13 +57,13 @@ import type {
 
 /** Shared polling wrapper: every Elysium read degrades to empty on error. */
 function usePoll<T>(fetchFn: () => Promise<T>, refreshInterval: number, dependencies: unknown[] = []) {
-  const { data, isLoading, error, dataUpdatedAt, isRefreshing, refetch } = useDataFetching<T>({
+  const { data, isLoading, error, isStale, dataUpdatedAt, isRefreshing, refetch } = useDataFetching<T>({
     fetchFn,
     refreshInterval,
     dependencies,
     maxRetries: 1,
   });
-  return { data, isLoading, error, dataUpdatedAt, isRefreshing, refetch };
+  return { data, isLoading, error, isStale, dataUpdatedAt, isRefreshing, refetch };
 }
 
 export const useElysiumStats = () => usePoll<ElysiumStats>(fetchElysiumStats, 15_000);

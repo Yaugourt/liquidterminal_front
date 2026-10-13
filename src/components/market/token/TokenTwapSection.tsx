@@ -39,14 +39,14 @@ export const TokenTwapSection = memo(({ tokenName, onSourceStatus }: TokenTwapSe
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Utiliser le hook TWAP avec filtre pour les ordres actifs
-  const { orders: enrichedOrders, isLoading, error } = useTwapOrders({
+  const { orders: enrichedOrders, isLoading, error, isStale } = useTwapOrders({
     limit: 1000,
     status: "active" // Seulement les ordres actifs
   });
 
   useEffect(() => {
-    onSourceStatus?.(sourceStatus(error, isLoading));
-  }, [error, isLoading, onSourceStatus]);
+    onSourceStatus?.(sourceStatus(error, isLoading, isStale));
+  }, [error, isLoading, isStale, onSourceStatus]);
 
   // Transformer les données enrichies en format tableau
   const twapTableData = useMemo(() => transformTwapData(enrichedOrders), [enrichedOrders]);
@@ -78,6 +78,7 @@ export const TokenTwapSection = memo(({ tokenName, onSourceStatus }: TokenTwapSe
       twaps={paginatedTwaps}
       isLoading={isLoading}
       error={error}
+      stale={isStale}
       {...paginationProps}
     />
   );

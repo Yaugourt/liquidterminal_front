@@ -98,7 +98,7 @@ const QuarterTooltip = ({
 
 export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
   const uid = useId().replace(/:/g, "");
-  const { days, isLoading, error } = useFeeRevenueHistory();
+  const { days, isLoading, error, isStale } = useFeeRevenueHistory();
 
   const quarters = useMemo(() => toQuarters(days), [days]);
 
@@ -132,7 +132,7 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
       <CardHead
         title="Quarterly Revenue"
         tag={<span className="mono">{rows.length} quarters</span>}
-        actions={<SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />}
       />
 
       <div className="grid grid-cols-3 gap-px bg-border-subtle">

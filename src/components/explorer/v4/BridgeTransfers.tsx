@@ -69,7 +69,7 @@ function dedupeByNonce(events: EvmBridgeEvent[]): EvmBridgeEvent[] {
 }
 
 export const BridgeTransfers = memo(function BridgeTransfers() {
-  const { events, isLoading, error } = useEvmBridgeEvents(FETCH_LIMIT, WINDOW_HOURS);
+  const { events, isLoading, error, isStale } = useEvmBridgeEvents(FETCH_LIMIT, WINDOW_HOURS);
 
   const deduped = useMemo(() => dedupeByNonce(events), [events]);
   const rows = useMemo(() => deduped.slice(0, ROWS), [deduped]);
@@ -80,7 +80,7 @@ export const BridgeTransfers = memo(function BridgeTransfers() {
         title="Bridge Transfers"
         subtitle="USDC only"
         tag={`Last ${ROWS}`}
-        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       />
 
       {isLoading && rows.length === 0 ? (

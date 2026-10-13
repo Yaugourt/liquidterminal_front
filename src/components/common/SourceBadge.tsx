@@ -9,13 +9,15 @@ import { ArrowUpRight } from "lucide-react";
  * `actions` slot, with a health dot for the upstream route.
  *
  * Sits left of `DataStatus` in the `ml-auto` corner:
- *   <SourceBadge source="hyperfolio" status={sourceStatus(error, isLoading)} />
+ *   <SourceBadge source="hyperfolio" status={sourceStatus(error, isLoading, isStale)} />
  *
  * Sources: `hyperfolio` (/hyperfolio/* proxy), `hypurrscan` (api.hypurrscan.io),
  * `defillama` (api.llama.fi + /defillama/* proxy), `hypedexer` (/indexer/* proxy).
  *
  *  - `ok`      → green dot, the route answered.
- *  - `error`   → red dot, last fetch failed (throttled, 5xx, unreachable…).
+ *  - `error`   → red dot, last fetch failed (throttled, 5xx, unreachable…),
+ *                including a failed refresh whose previous data stays on
+ *                screen (`isStale` from `useDataFetching`).
  *  - `loading` → muted dot, no answer yet (first fetch in flight).
  *
  * Wire `status` from the hook that actually hits the upstream, never from a
@@ -42,10 +44,11 @@ const SOURCES: Record<SourceId, SourceMeta> = {
 
 /**
  * Derive the badge status from a `useDataFetching`-shaped hook: red on any
- * error, muted while the very first fetch is still in flight, green otherwise.
+ * error or failed refresh (`isStale`), muted while the very first fetch is
+ * still in flight, green otherwise.
  */
-export function sourceStatus(error: unknown, isLoading?: boolean): SourceBadgeStatus {
-  if (error) return "error";
+export function sourceStatus(error: unknown, isLoading?: boolean, isStale?: boolean): SourceBadgeStatus {
+  if (error || isStale) return "error";
   if (isLoading) return "loading";
   return "ok";
 }
@@ -55,9 +58,9 @@ export function sourceStatus(error: unknown, isLoading?: boolean): SourceBadgeSt
  * any of them failed, muted only while none has answered yet.
  */
 export function combinedSourceStatus(
-  ...feeds: ReadonlyArray<{ error?: unknown; isLoading?: boolean }>
+  ...feeds: ReadonlyArray<{ error?: unknown; isLoading?: boolean; isStale?: boolean }>
 ): SourceBadgeStatus {
-  if (feeds.some((f) => f.error)) return "error";
+  if (feeds.some((f) => f.error || f.isStale)) return "error";
   if (feeds.length > 0 && feeds.every((f) => f.isLoading)) return "loading";
   return "ok";
 }

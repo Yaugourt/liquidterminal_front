@@ -98,7 +98,7 @@ export function Hip3MarketTape({ coin }: { coin: string }) {
   const [threshold, setThreshold] = useState(Number(THRESHOLDS[1].value));
   const [liquidationsOnly, setLiquidationsOnly] = useState(false);
 
-  const { fills, isLoading, error, refetch } = useHip3CoinFills({
+  const { fills, isLoading, error, isStale, refetch } = useHip3CoinFills({
     coin,
     minNotional: threshold,
     liquidationsOnly,
@@ -111,7 +111,7 @@ export function Hip3MarketTape({ coin }: { coin: string }) {
     <TypedDataTable<Hip3Fill>
       title="Large fills"
       subtitle={`≥ ${compactUsd(threshold)} notional`}
-      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       toolbar={
         <>
           <PillTabs
@@ -134,6 +134,7 @@ export function Hip3MarketTape({ coin }: { coin: string }) {
       getRowKey={(fill) => `${fill.tid}-${fill.user}-${fill.time}`}
       isLoading={isLoading}
       error={error}
+      stale={isStale}
       onErrorRetry={refetch}
       errorTitle="Large fills unavailable"
       density="compact"

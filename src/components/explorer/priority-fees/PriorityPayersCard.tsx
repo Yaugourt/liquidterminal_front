@@ -45,6 +45,8 @@ export interface PriorityPayersCardProps {
   hypeUsd: number | null;
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the rows shown are the previous load. */
+  isStale?: boolean;
   onRetry?: () => void;
 }
 
@@ -62,6 +64,7 @@ export const PriorityPayersCard = memo(function PriorityPayersCard({
   hypeUsd,
   isLoading,
   error,
+  isStale = false,
   onRetry,
 }: PriorityPayersCardProps) {
   const { rows, headGas, restGas } = useMemo(() => {
@@ -84,7 +87,7 @@ export const PriorityPayersCard = memo(function PriorityPayersCard({
       <CardHead
         title="Top payers"
         tag={`top ${TOP_N}`}
-        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />}
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
       />
 
       {rows.length > 0 && (

@@ -68,7 +68,7 @@ const TvlTooltip = ({
 export const TvlHistoryCard = memo(function TvlHistoryCard() {
   const [window, setWindow] = useState<Window>("1Y");
   const uid = useId().replace(/:/g, "");
-  const { history, isLoading, error } = useTvlHistory(HYPERLIQUID_SLUG);
+  const { history, isLoading, error, isStale } = useTvlHistory(HYPERLIQUID_SLUG);
 
   /** The all-chains series: Hyperliquid's own chain is the bulk of it, but the
    *  protocol total is the figure aggregators and comparisons quote. */
@@ -108,7 +108,7 @@ export const TvlHistoryCard = memo(function TvlHistoryCard() {
         title="Total Value Locked"
         actions={
           <>
-            <SourceBadge source="defillama" status={sourceStatus(error, isLoading)} />
+            <SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />
             <PeriodSelector
               selected={window}
               onChange={setWindow}

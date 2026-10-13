@@ -12,6 +12,8 @@ interface BuildersTopTableProps {
   rows: BuilderTopRow[];
   isLoading: boolean;
   error: Error | null;
+  /** The last refresh failed; the rows shown are the previous load. */
+  stale?: boolean;
   /** Refetch handler surfaced as a Retry button in the error state. */
   onRetry?: () => void;
   /** View switcher + window meta, rendered in the table toolbar (owned by the page). */
@@ -89,7 +91,7 @@ function buildColumns(format: NumberFormatType): Column<BuilderTopRow>[] {
   ];
 }
 
-export function BuildersTopTable({ rows, isLoading, error, onRetry, toolbar }: BuildersTopTableProps) {
+export function BuildersTopTable({ rows, isLoading, error, stale, onRetry, toolbar }: BuildersTopTableProps) {
   const router = useRouter();
   const { format } = useNumberFormat();
 
@@ -100,6 +102,7 @@ export function BuildersTopTable({ rows, isLoading, error, onRetry, toolbar }: B
       getRowKey={(row) => row.builder}
       isLoading={isLoading && rows.length === 0}
       error={error}
+      stale={stale}
       onErrorRetry={onRetry}
       errorTitle="Failed to load top builders"
       emptyMessage="No builders"
