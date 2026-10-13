@@ -5,7 +5,7 @@ import {
   fetchHip4OutcomeMeta,
   fetchHip4AllMids,
   fetchHip4OutcomeTemplates,
-  fetchHip4OutcomeVolumes,
+  fetchHip4LiveVolumes,
 } from "../api";
 import { buildLiveMarkets } from "@/lib/hip4/outcome-meta";
 import {
@@ -29,21 +29,19 @@ const EMPTY_QUESTIONS: Hip4QuestionWithOutcomesRow[] = [];
 const EMPTY_MARKETS_BY_COIN: Record<string, Hip4MarketEnrichedRow> = {};
 const EMPTY_MIDS: Record<string, string> = {};
 
-// Volumes refresh every 30s. One read costs ~17 indexer calls (the coin
-// filter is capped at 256 chars) whose answers the backend shares between
-// visitors (hip4AnalyticsFiltered), so the upstream cost does not grow with
-// the audience — but each call counts against the visitor IP's /indexer
-// budget on our backend, so a 15s cadence would let a few dozen HIP-4 tabs
-// behind one shared IP (office, CGNAT) crowd out every other indexer widget.
-// The module memo lives just under the poll: it only dedupes the hook
-// instances of one page.
+// Volumes refresh every 15s. The backend serves every outcome's volume from
+// ONE aggregate it reads once for all visitors (15s, last copy kept), so a poll
+// is a single request whatever the number of coins and tabs. The module memo
+// lives just under the poll: it only dedupes the hook instances of one page.
 // A failed read rejects: the hook keeps the volumes on screen and marks them
 // stale. A partial read (a chunk failed or came back truncated) is merged
 // over the last volumes, coin by coin, keeping the larger total — lifetime
-// volume only grows — so a flaky chunk never blanks or lowers a figure.
-// Outcomes created since the last load show no volume until the next refresh.
-const VOLUME_POLL_MS = 30_000;
-const VOLUME_TTL_MS = 25_000;
+// volume only grows — so a restarted or another backend instance with no
+// history of its own never blanks or lowers a figure.
+// Outcomes created since the last backend read show no volume until the next
+// refresh.
+const VOLUME_POLL_MS = 15_000;
+const VOLUME_TTL_MS = 12_000;
 let volumeCache: { at: number; pending: Promise<Hip4OutcomeVolumes> } | null = null;
 /** The volumes last returned, and whether a complete read stands behind them. */
 let lastVolumes: Hip4OutcomeVolumes | null = null;
@@ -55,14 +53,14 @@ function mergePartialVolumes(fresh: Hip4OutcomeVolumes): Hip4OutcomeVolumes {
     const coin = Number(id);
     volumes[coin] = Math.max(volumes[coin] ?? 0, volume);
   }
-  return { volumes, partial: lastVolumes.partial };
+  return { volumes, partial: lastVolumes.partial, updatedAt: fresh.updatedAt };
 }
 
-function loadOutcomeVolumes(encodings: number[]): Promise<Hip4OutcomeVolumes> {
+function loadOutcomeVolumes(): Promise<Hip4OutcomeVolumes> {
   if (volumeCache && Date.now() - volumeCache.at < VOLUME_TTL_MS) {
     return volumeCache.pending;
   }
-  const pending = fetchHip4OutcomeVolumes(encodings).then((fresh) => {
+  const pending = fetchHip4LiveVolumes().then((fresh) => {
     lastVolumes = mergePartialVolumes(fresh);
     return lastVolumes;
   });
@@ -128,19 +126,13 @@ export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
       maxRetries: 2,
     });
 
-  // Per-outcome volume, recovered from the indexer's analytics (best-effort:
-  // the markets render with prices meanwhile, and still do if analytics 402s:
-  // the last volumes stay, or none on a first failure). Polls read the module
-  // cache above, which decides when to hit the network.
-  const encodings = useMemo(
-    () => (data?.meta.outcomes ?? []).flatMap((o) => [o.outcome * 10, o.outcome * 10 + 1]),
-    [data?.meta.outcomes]
-  );
-  const encodingsKey = encodings.join(",");
-  const { data: volumes, error: volumesError } = useDataFetching<Hip4OutcomeVolumes | null>({
-    fetchFn: () => (encodings.length > 0 ? loadOutcomeVolumes(encodings) : Promise.resolve(null)),
+  // Per-outcome volume, recovered from the indexer's analytics by the backend
+  // (best-effort: the markets render with prices meanwhile, and still do if
+  // analytics 402s: the last volumes stay, or none on a first failure). Polls
+  // read the module cache above, which decides when to hit the network.
+  const { data: volumes, error: volumesError } = useDataFetching<Hip4OutcomeVolumes>({
+    fetchFn: loadOutcomeVolumes,
     refreshInterval: VOLUME_POLL_MS,
-    dependencies: [encodingsKey],
     maxRetries: 0,
   });
 

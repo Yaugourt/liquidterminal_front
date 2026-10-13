@@ -221,8 +221,10 @@ export interface Hip4LiveMarketData {
 /** Lifetime notional volume per outcome encoding, from the indexer analytics. */
 export interface Hip4OutcomeVolumes {
   volumes: Record<number, number>;
-  /** A batch failed or was truncated, so some volumes are understated. */
+  /** A chunk failed or was truncated, so some volumes are understated. */
   partial: boolean;
+  /** Epoch ms of the backend read behind it. */
+  updatedAt: number;
 }
 
 export interface UseHip4LiveMarketsResult {
