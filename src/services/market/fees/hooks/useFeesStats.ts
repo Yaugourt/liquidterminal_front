@@ -14,7 +14,8 @@ export function useFeesStats(): UseFeesStatsResult {
    
   } = useDataFetching<FeesStats>({
     fetchFn: getFeesStats,
-    refreshInterval: 60000,
+    // The backend's Hypurrscan poller runs every 30s.
+    refreshInterval: 30000,
   });
 
   return {
