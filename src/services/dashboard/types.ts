@@ -1,11 +1,16 @@
 // Types pour les statistiques globales du dashboard
 export interface DashboardGlobalStats {
-  numberOfUsers: number;
-  dailyVolume: number;
+  /**
+   * Each field is null while its backend source has nothing to give (a cold
+   * Redis before the pollers' first write, a source failing for more than
+   * 10 min): the others still answer.
+   */
+  numberOfUsers: number | null;
+  dailyVolume: number | null;
   /** Null when DefiLlama is down and the backend has no copy left. */
   bridgedUsdc: number | null;
-  totalHypeStake: number;
-  vaultsTvl: number;
+  totalHypeStake: number | null;
+  vaultsTvl: number | null;
 }
 
 

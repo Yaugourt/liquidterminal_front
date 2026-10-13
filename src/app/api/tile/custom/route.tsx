@@ -30,7 +30,7 @@ interface Sources {
   stables: { totalStablecoins: number } | null;
   liq: { totalVolume_USD: number } | null;
   hip3: { total_volume_24h: number; total_open_interest: number } | null;
-  global: { numberOfUsers: number; bridgedUsdc: number | null; totalHypeStake: number; vaultsTvl: number } | null;
+  global: { numberOfUsers: number | null; bridgedUsdc: number | null; totalHypeStake: number | null; vaultsTvl: number | null } | null;
   builders: { totalBuilderFees: number; uniqueBuilders: number } | null;
   /** Summed HIP-4 volume over the last 24 hourly buckets. */
   hip4Vol: number | null;
