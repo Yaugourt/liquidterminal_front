@@ -40,76 +40,70 @@ interface Envelope<T> {
   data: T;
 }
 
-const PAGE = 500;
-const MAX_PAGES = 12;
 /**
  * Just under the 15s poll of useTwapOrders: the memo dedupes the widgets of
  * one page (and hooks mounted a few seconds apart), and a poll never reads
  * back its own previous list.
  */
 const TTL_MS = 12_000;
-/**
- * Deeper pages (offset > 0) hold older, slower-moving rows and the backend
- * caches them 60s (twapSourceDeepPages): re-walking them every poll would
- * return the same bytes and cost ~15 /indexer requests against the per-IP
- * passthrough budget (an office or CGNAT IP shares it). Each poll re-reads
- * only the first page; the deep pages are re-walked once a minute.
- */
-const DEEP_TTL_MS = 60_000;
 
-const page = async (params: Record<string, unknown>, i: number): Promise<IndexerTwap[]> => {
-  const res = await get<Envelope<IndexerTwap[]>>('/indexer/twaps', { ...params, limit: PAGE, offset: i * PAGE });
-  if (!res.success) throw new Error('indexer twaps unavailable');
-  return res.data;
-};
-
-async function deepPages(params: Record<string, unknown>): Promise<IndexerTwap[]> {
-  const out: IndexerTwap[] = [];
-  for (let i = 1; i < MAX_PAGES; i++) {
-    const rows = await page(params, i);
-    out.push(...rows);
-    if (rows.length < PAGE) break;
-  }
-  return out;
+interface SourcePayload {
+  recent: IndexerTwap[];
+  running: IndexerTwap[];
+  /** Start of the backend's deep walk per query; null when nothing is deeper. */
+  deepAt: { recent: number | null; running: number | null };
+  updatedAt: number;
 }
 
-interface DeepWalk {
+interface DeepRows {
   at: number;
-  /** null when the first page was not full: there is nothing deeper. */
-  deep: Promise<IndexerTwap[]> | null;
-  /** Every first-page row seen since this walk: a row pushed past the first
-   * page by newer TWAPs stays listed (with its last-seen state) until the next
-   * deep walk picks it up at its new offset. */
-  seen: Map<number, IndexerTwap>;
+  rows: IndexerTwap[];
 }
 
-const deepWalks = new Map<string, DeepWalk>();
+interface DeepPayload {
+  recent: DeepRows | null;
+  running: DeepRows | null;
+}
 
 /**
- * One query's rows: a fresh first page every call, merged by twapId over the
- * deep pages (≤60s old) and the first-page rows seen since they were walked.
+ * The backend serves each query in two parts: the first page and what was
+ * seen on it (every poll, ~20 KB compressed), and the deeper rows (~90% of
+ * the bytes, renewed once a minute). The deep rows are fetched only when the
+ * walk they come from changes, keyed by `deepAt`; if that fetch fails the
+ * previous walk's rows are used, and without any the load fails (the
+ * /market/twap fallback in api.ts applies).
  */
-async function pages(key: string, params: Record<string, unknown>): Promise<IndexerTwap[]> {
-  const first = await page(params, 0);
-  let walk = deepWalks.get(key);
-  if (!walk || Date.now() - walk.at >= DEEP_TTL_MS || (!walk.deep && first.length >= PAGE)) {
-    const deep = first.length >= PAGE ? deepPages(params) : null;
-    const next: DeepWalk = { at: Date.now(), deep, seen: new Map() };
-    deep?.catch(() => {
-      if (deepWalks.get(key) === next) deepWalks.delete(key);
-    });
-    deepWalks.set(key, next);
-    walk = next;
+let deepMemo: { key: string; payload: DeepPayload } | null = null;
+
+async function deepRows(deepAt: SourcePayload['deepAt']): Promise<DeepPayload> {
+  if (deepAt.recent === null && deepAt.running === null) return { recent: null, running: null };
+  const key = `${deepAt.recent}:${deepAt.running}`;
+  if (deepMemo?.key === key) return deepMemo.payload;
+  try {
+    const res = await get<Envelope<DeepPayload>>('/indexer/twaps/source/deep');
+    if (!res.success) throw new Error('indexer twaps unavailable');
+    deepMemo = { key, payload: res.data };
+  } catch (error) {
+    if (!deepMemo) throw error;
   }
-  for (const t of first) walk.seen.set(t.twapId, t);
-  const deep = walk.deep ? await walk.deep : [];
-  const byId = new Map<number, IndexerTwap>();
-  // Fresher wins: deep pages, then earlier first-page sightings, then this one.
-  for (const t of deep) byId.set(t.twapId, t);
-  for (const t of walk.seen.values()) byId.set(t.twapId, t);
-  for (const t of first) byId.set(t.twapId, t);
-  return [...byId.values()];
+  return deepMemo.payload;
 }
+
+/** Both queries (TWAPs started in the last 24h, TWAPs still running), deep rows first: the fresher row wins by twapId. */
+const source = async (): Promise<{ recent: IndexerTwap[]; running: IndexerTwap[] }> => {
+  const res = await get<Envelope<SourcePayload>>('/indexer/twaps/source');
+  if (!res.success) throw new Error('indexer twaps unavailable');
+  const { deepAt, recent, running } = res.data;
+  const deep = await deepRows(deepAt);
+  const merge = (name: 'recent' | 'running', rows: IndexerTwap[]): IndexerTwap[] => {
+    const byId = new Map<number, IndexerTwap>();
+    // A query whose first page is no longer full has nothing deeper, whatever an older walk held.
+    for (const t of deepAt[name] === null ? [] : deep[name]?.rows ?? []) byId.set(t.twapId, t);
+    for (const t of rows) byId.set(t.twapId, t);
+    return [...byId.values()];
+  };
+  return { recent: merge('recent', recent), running: merge('running', running) };
+};
 
 /** Indexer timestamps are UTC without a zone suffix. */
 const startMs = (t: IndexerTwap) => Date.parse(t.startTime.endsWith('Z') ? t.startTime : `${t.startTime}Z`);
@@ -140,10 +134,8 @@ async function midsFor(dexes: string[]): Promise<Map<string, number>> {
 
 async function load(): Promise<EnrichedTwapOrder[]> {
   // Everything started in the last 24h, plus whatever is still running from before.
-  const [recent, running, spot, perps] = await Promise.all([
-    pages('recent', { hours: 24 }),
-    // Running TWAPs last at most 7 days (10,080 min): 170h covers them all.
-    pages('running', { status: 'activated', hours: 170 }),
+  const [{ recent, running }, spot, perps] = await Promise.all([
+    source(),
     fetchSpotTokens({ limit: 1000 }).catch(() => ({ data: [] as { name: string; marketIndex: number; price: number }[] })),
     fetchPerpMarkets({ limit: 1000, sortBy: 'volume', sortOrder: 'desc' }).catch(() => ({ data: [] as { name: string; price: number }[] })),
   ]);
@@ -205,8 +197,7 @@ let cache: { at: number; data: Promise<EnrichedTwapOrder[]> } | null = null;
 /**
  * All TWAPs worth showing (last 24h + still running), enriched. Shared across
  * every hook on the page for 12s, so three widgets cost one load; a poll
- * costs two /indexer requests (the first page of each query), plus the deep
- * pages once a minute.
+ * costs one /indexer/twaps/source request, plus /source/deep once a minute.
  */
 export function fetchIndexedTwaps(): Promise<EnrichedTwapOrder[]> {
   if (cache && Date.now() - cache.at < TTL_MS) return cache.data;
