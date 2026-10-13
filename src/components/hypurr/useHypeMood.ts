@@ -1,7 +1,6 @@
 "use client";
 
-import { useDataFetching } from "@/hooks/useDataFetching";
-import { fetchSpotTokens } from "@/services/market/spot/api";
+import { useHypeDayChange } from "@/services/market/hype/hooks/useHypePrice";
 import { marketMood, type HypurrMood } from "./Hypurr";
 
 interface HypeMoodResult {
@@ -12,15 +11,12 @@ interface HypeMoodResult {
 
 /**
  * HYPE 24h move as a Hypurr mood, shared by the landing ribbon and the
- * dashboard PulseBar. Top-of-volume spot page always contains HYPE.
+ * dashboard PulseBar. Read from the HYPE spot socket (last trade against the
+ * previous-day price), the same live source as the sidebar badge: it moves with
+ * the price shown elsewhere on the page and costs no request.
  */
 export function useHypeMood(): HypeMoodResult {
-  const { data } = useDataFetching({
-    fetchFn: () => fetchSpotTokens({ limit: 10, sortBy: "volume", sortOrder: "desc" }),
-    refreshInterval: 60000,
-    maxRetries: 2,
-  });
-  const change24h = data?.data?.find((t) => t.name === "HYPE")?.change24h ?? null;
-  const result = marketMood(change24h);
-  return { mood: result?.mood ?? null, label: result?.label ?? null, change24h };
+  const { change24hPct } = useHypeDayChange();
+  const result = marketMood(change24hPct);
+  return { mood: result?.mood ?? null, label: result?.label ?? null, change24h: change24hPct };
 }
