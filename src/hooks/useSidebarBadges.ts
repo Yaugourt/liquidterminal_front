@@ -32,10 +32,17 @@ export interface SidebarBadgeValue {
  * number rather than a zero (DS rule: no data → no metric).
  *
  * Wiki has no cheap total endpoint, so it carries no count.
+ *
+ * The pair counts poll every 60s, not at the KPI strips' live cadence: a count
+ * needs no live refresh, and a slow poll keeps the per-visitor request rate low
+ * on shared IPs. On a page that also polls these stats, the sidebar reads the
+ * page's fresher response from the request cache.
  */
+const BADGE_REFRESH_MS = 60_000;
+
 export function useSidebarBadges(): Record<string, SidebarBadgeValue> {
-  const { stats: spot } = useSpotGlobalStats();
-  const { stats: perp } = usePerpGlobalStats();
+  const { stats: spot } = useSpotGlobalStats(BADGE_REFRESH_MS);
+  const { stats: perp } = usePerpGlobalStats(BADGE_REFRESH_MS);
   const hype = useHypeDayChange();
   const { totalCount: vaultsTotal } = useVaults({ limit: 1 });
   const { stats: validatorStats } = useValidators();
