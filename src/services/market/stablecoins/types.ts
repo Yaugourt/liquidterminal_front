@@ -62,7 +62,13 @@ export interface UseSpotStablecoinsResult {
   lastUpdate: number | null;
   isLoading: boolean;
   isRefreshing?: boolean;
+  /** Fetch error, or a staleness error when the latest point is too old
+   *  (the backend keeps serving its last copy) — drives the source badge. */
   error: Error | null;
+  /** The latest point is more than 30 min old. */
+  isStale: boolean;
   refetch: () => Promise<void>;
+  /** Epoch ms of the latest point (Hypurrscan's own timestamp), else of the
+   *  fetch — so "updated X ago" shows the data's real age. */
   dataUpdatedAt?: number | null;
 }

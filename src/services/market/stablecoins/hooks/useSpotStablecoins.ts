@@ -10,6 +10,13 @@ import {
 } from '../types';
 
 /**
+ * Age past which the latest point counts as stale. Hypurrscan rewrites the
+ * running point every few minutes and the backend re-reads it every minute,
+ * but serves its last copy (200) when Hypurrscan or its poller fails.
+ */
+const STALE_AFTER_MS = 30 * 60 * 1000;
+
+/**
  * Hook des stablecoins on-spot (Hypurrscan `/spotUSDC`, lue via le backend).
  *
  * Lit la dernière entrée de la série et la normalise en liste de stablecoins
@@ -23,6 +30,17 @@ export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsR
   });
 
   const latest = data && data.length > 0 ? data[data.length - 1] : null;
+
+  // Freshness from the series itself, not from the fetch: a frozen backend
+  // copy answers 200 on every poll. Re-evaluated on each poll's re-render.
+  const latestMs = latest ? latest.lastUpdate * 1000 : null;
+  const isStale = latestMs != null && Date.now() - latestMs > STALE_AFTER_MS;
+  const feedError = useMemo<Error | null>(() => {
+    if (error) return error;
+    if (!isStale || latestMs == null) return null;
+    const minutes = Math.round((Date.now() - latestMs) / 60_000);
+    return new Error(`Stablecoin series is stale: latest point ${minutes} min old`);
+  }, [error, isStale, latestMs]);
 
   const supplyChart = useMemo<StablecoinSupplyPoint[]>(() => {
     if (!data) return [];
@@ -72,8 +90,9 @@ export function useSpotStablecoins(refreshInterval = 60000): UseSpotStablecoinsR
     lastUpdate: latest?.lastUpdate ?? null,
     isLoading,
     isRefreshing,
-    error,
+    error: feedError,
+    isStale,
     refetch,
-    dataUpdatedAt,
+    dataUpdatedAt: latestMs ?? dataUpdatedAt,
   };
 }
