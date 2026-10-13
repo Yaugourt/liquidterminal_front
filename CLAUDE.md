@@ -166,6 +166,8 @@ See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) for the detailed composition patter
 | Number formatting | `src/lib/numberFormatting.ts` |
 | Date formatting | `src/lib/dateFormatting.ts` |
 
+Before changing a poll interval, cache TTL, rate limit or upstream budget, read docs/DATA_BUDGET.md and update it in the same commit.
+
 ## Commands
 
 ```bash
@@ -228,6 +230,7 @@ pnpm run visual-check <route>   # Render gate: screenshots a route at 375/1024/1
 | File | Content |
 |------|---------|
 | `docs/CODEMAP.md` | **Start here for any task**: route → components → data-source map, infra contracts, fragile spots, refactor backlog |
+| `docs/DATA_BUDGET.md` | Upstream calls, limits, caches and cadences with stable row IDs (identical copy in the backend repo); update it with any interval/TTL/limit change |
 | `DESIGN_SYSTEM.md` | Full design system reference |
 | `API_IMPLEMENTATION_GUIDE.md` | Detailed API patterns |
 | `XP_SYSTEM_README.md` | Gamification system |
