@@ -246,7 +246,7 @@ function CumulativeChart({ buckets }: { buckets: CumulativeBucket[] }) {
 export const LiquidationsPanel = memo(function LiquidationsPanel() {
   // 24h aggregated stats (totals, long/short split, top coin) and the 30 min
   // buckets the cumulative chart is built from.
-  const { stats, buckets, isLoading: dataLoading } = useLiquidationsData("24h", 30000);
+  const { stats, buckets, isLoading: dataLoading } = useLiquidationsData("24h");
 
   // The day's largest liquidations, for the standouts footer.
   const {

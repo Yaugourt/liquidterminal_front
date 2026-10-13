@@ -30,10 +30,13 @@ const EMPTY_STATS: LiquidationStats = {
  * liquidations opérationnel (les endpoints `recent` et `analytics/stats` sont
  * respectivement coupés par circuit breaker et en 402). Un seul appel renvoie
  * stats + chart pour 2h / 4h / 8h / 12h / 24h ; on sélectionne la période.
+ *
+ * 10 s par défaut : ces stats s'affichent à côté du flux live (WebSocket), et
+ * le backend les sert depuis la DB locale avec un cache partagé de 15 s.
  */
 export function useLiquidationsData(
   period: ChartPeriod = '24h',
-  refreshInterval = 30000
+  refreshInterval = 10_000
 ) {
   const { data, isLoading, error, refetch } =
     useDataFetching<LiquidationsDataResponse>({

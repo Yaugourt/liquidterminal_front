@@ -188,11 +188,12 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     };
   }, [isLoading, handleNewLiquidation, setOnLiquidation, wsConnect, wsDisconnect]);
 
-  // Periodically refresh stats so the panel stays current
+  // Periodically refresh stats so the panel keeps up with the live rows
+  // (local DB behind a shared 15s backend cache).
   useEffect(() => {
     if (isLoading) return;
 
-    const REFRESH_INTERVAL = 60_000;
+    const REFRESH_INTERVAL = 15_000;
     // Paused while the tab is hidden, with a catch-up tick on return.
     return setVisibleInterval(async () => {
       try {
@@ -209,7 +210,7 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
 
   // Chart buckets from the local DB endpoint (the robust liquidations source).
   // Fetched on mount and whenever the period changes, then refreshed every
-  // 60s (matches the endpoint cache TTL).
+  // 30s for 24h (its backend cache TTL) and every 60s for longer windows.
   useEffect(() => {
     let cancelled = false;
 
@@ -228,7 +229,10 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
     };
 
     loadChart(true);
-    const stopPolling = setVisibleInterval(() => loadChart(false), 60_000);
+    const stopPolling = setVisibleInterval(
+      () => loadChart(false),
+      chartPeriod === "24h" ? 30_000 : 60_000,
+    );
 
     return () => {
       cancelled = true;
