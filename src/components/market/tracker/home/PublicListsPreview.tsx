@@ -1,8 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { usePublicListsPreview } from "@/services/market/tracker/hooks/usePublicListsPreview";
 import { PublicWalletListCard } from "../walletlists/PublicWalletListCard";
+import { PublicWalletListPreviewDialog } from "../walletlists/PublicWalletListPreviewDialog";
 import { List } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CardHead } from "@/components/common";
@@ -15,11 +16,15 @@ import { WalletList } from "@/services/market/tracker/types";
  * Affiche 6 listes publiques récentes/populaires
  */
 export function PublicListsPreview() {
-  const router = useRouter();
   const { lists, isLoading, error, refetch } = usePublicListsPreview(6);
+  // Preview opens in place, as on the public-lists page: there is no
+  // /market/tracker/public-lists/[id] route.
+  const [selectedList, setSelectedList] = useState<WalletList | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const handlePreview = (list: WalletList) => {
-    router.push(`/market/tracker/public-lists/${list.id}`);
+    setSelectedList(list);
+    setIsPreviewOpen(true);
   };
 
   return (
@@ -66,6 +71,12 @@ export function PublicListsPreview() {
           </>
         )}
       </div>
+
+      <PublicWalletListPreviewDialog
+        list={selectedList}
+        isOpen={isPreviewOpen}
+        onOpenChange={setIsPreviewOpen}
+      />
     </Card>
   );
 }
