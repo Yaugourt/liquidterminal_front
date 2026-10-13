@@ -182,12 +182,15 @@ export async function axiosWithConfig<T>(
   // Identical reads fired at the same moment (several hooks mounting on one
   // page) share one request instead of each hitting the upstream — the HL
   // info API rate-limits per IP and the address page alone opened the same
-  // ledger three times.
+  // ledger three times. A read that must hit the network (manual refetch,
+  // maxCacheAgeMs 0) never joins one already in flight: that one may have
+  // started before a mutation. It starts its own, which later callers join.
   const data = isShareableRead(client, requestConfig, useCache)
     ? await joinSharedRead<T>(
         cacheKey,
         (sharedSignal) => runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError, sharedSignal),
-        signal
+        signal,
+        policy?.maxCacheAgeMs === 0
       )
     : await runRequest<T>(client, requestConfig, cacheKey, useCache, retryOnError, signal);
 
@@ -215,11 +218,13 @@ const inflight = new Map<string, SharedRead>();
 function joinSharedRead<T>(
   key: string,
   start: (signal: AbortSignal) => Promise<T>,
-  callerSignal?: AbortSignal
+  callerSignal?: AbortSignal,
+  /** Start a new read even if one is in flight; it replaces the old one in the map. */
+  fresh = false
 ): Promise<T> {
   if (callerSignal?.aborted) return Promise.reject(new CanceledError());
 
-  let entry = inflight.get(key);
+  let entry = fresh ? undefined : inflight.get(key);
   if (!entry) {
     const created: SharedRead = {
       promise: Promise.resolve(),
