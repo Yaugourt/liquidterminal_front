@@ -1,4 +1,5 @@
 import { createPublicClient, http, namehash, parseAbi, type Address } from "viem";
+import { normalize } from "viem/ens";
 import { API_URLS } from "@/services/api/constants";
 
 /**
@@ -13,7 +14,12 @@ import { API_URLS } from "@/services/api/constants";
  *    expired). Verified on-chain on 2026-09-16.
  */
 
-export const HL_NAME_REGEX = /^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?\.(hl|hype)$/i;
+/**
+ * Any dot-separated labels ending in `.hl` / `.hype`. Kept permissive: names
+ * are minted after ENS normalization, so unicode, emoji and `_` labels exist
+ * (and sub-names); `normalize` below rejects what the registries can't hold.
+ */
+export const HL_NAME_REGEX = /^[^\s/?#.]+(\.[^\s/?#.]+)*\.(hl|hype)$/i;
 
 const HYPERLIQUID_NAMES = "0x1d9d87eBc14e71490bB87f1C39F65BDB979f3cb7" as const;
 const DOTHYPE_RESOLVER = "0x4d5e4ed4D5e4A160Fa136853597cDc2eBBe66494" as const;
@@ -40,10 +46,21 @@ const cache = new Map<string, Promise<ResolvedName | null>>();
 
 export const isHlName = (value: string): boolean => HL_NAME_REGEX.test(value.trim());
 
-/** Resolve a `.hl` / `.hype` name; `null` when unregistered, expired or unset. Memoised per session. */
+/**
+ * Resolve a `.hl` / `.hype` name; `null` when unregistered, expired, unset or
+ * not a valid ENS name. Hits are memoised per session; misses are not, so a
+ * name minted after a search resolves on the next one.
+ */
 export const resolveHlName = (raw: string): Promise<ResolvedName | null> => {
-  const name = raw.trim().toLowerCase();
-  if (!HL_NAME_REGEX.test(name)) return Promise.resolve(null);
+  const trimmed = raw.trim();
+  if (!HL_NAME_REGEX.test(trimmed)) return Promise.resolve(null);
+  // The registries key names by the namehash of the ENS-normalized name.
+  let name: string;
+  try {
+    name = normalize(trimmed);
+  } catch {
+    return Promise.resolve(null);
+  }
   const cached = cache.get(name);
   if (cached) return cached;
 
@@ -61,7 +78,12 @@ export const resolveHlName = (raw: string): Promise<ResolvedName | null> => {
   })();
 
   cache.set(name, lookup);
-  lookup.catch(() => cache.delete(name));
+  lookup.then(
+    (result) => {
+      if (!result) cache.delete(name);
+    },
+    () => cache.delete(name)
+  );
   return lookup;
 };
 
