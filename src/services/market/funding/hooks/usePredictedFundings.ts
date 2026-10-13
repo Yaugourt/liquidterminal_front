@@ -11,13 +11,20 @@ interface UsePredictedFundingsResult {
   dataUpdatedAt: number | null;
 }
 
+interface UsePredictedFundingsOptions {
+  /** Poll period in ms; defaults to the 30s market tier. */
+  refreshInterval?: number;
+}
+
 /**
  * Cross-venue predicted funding rates (HL vs Binance vs Bybit), annualized and
- * carry-ranked. Keyless HL source, 30s-refreshed like the other market hooks.
+ * carry-ranked. Keyless HL source, 30s-refreshed like the other market hooks
+ * unless the caller needs it less often.
  */
-export const usePredictedFundings = (): UsePredictedFundingsResult => {
+export const usePredictedFundings = (options: UsePredictedFundingsOptions = {}): UsePredictedFundingsResult => {
   const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<FundingCarryRow[]>({
     fetchFn: getPredictedFundings,
+    refreshInterval: options.refreshInterval,
   });
 
   return {
