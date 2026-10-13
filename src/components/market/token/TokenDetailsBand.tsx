@@ -108,6 +108,10 @@ interface TokenDetailsBandProps {
  * Circulating leaves out the bridge reserve the backend reads (`/market/spot`
  * `bridgeReserve`): supply parked on the token's HyperEVM system address,
  * which HL counts as circulating.
+ *
+ * While `tokenDetails` is unavailable (cold token, failed read), circulating
+ * and the bridge reserve come from the `/market/spot` row already on the page;
+ * only the fields `tokenDetails` alone carries stay "—".
  */
 export function TokenDetailsBand({
   token,
@@ -149,6 +153,10 @@ export function TokenDetailsBand({
       floatPct: denom > 0 ? (circulating / denom) * 100 : 0,
     };
   }, [details, token.bridgeReserve]);
+
+  // `/market/spot` row figures, for when `tokenDetails` has not loaded.
+  const rowCirculating = token.supply > 0 ? token.supply : null;
+  const rowBridgeReserve = Math.max(0, token.bridgeReserve ?? 0);
 
   const deployTimeMs = details?.deployTime ? parseDeployTime(details.deployTime) : null;
   const bridged = isBridged(token.name);
@@ -221,19 +229,21 @@ export function TokenDetailsBand({
                       · {supply.floatPct.toFixed(1)}%
                     </span>
                   </>
+                ) : rowCirculating !== null ? (
+                  fmtSupply(rowCirculating)
                 ) : (
                   ph
                 )
               }
             />
-            {supply && supply.bridgeReserve > 0 && (
+            {(supply ? supply.bridgeReserve : rowBridgeReserve) > 0 && (
               <Row
                 label={
                   <span title="Held by the token's HyperEVM system address, not on HyperCore. Hyperliquid counts it as circulating.">
                     Bridge reserve
                   </span>
                 }
-                value={fmtSupply(supply.bridgeReserve)}
+                value={fmtSupply(supply ? supply.bridgeReserve : rowBridgeReserve)}
               />
             )}
             <Row
