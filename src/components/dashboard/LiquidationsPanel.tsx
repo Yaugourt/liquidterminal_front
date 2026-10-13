@@ -249,7 +249,11 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
   const { stats, buckets, isLoading: dataLoading } = useLiquidationsData("24h", 30000);
 
   // The day's largest liquidations, for the standouts footer.
-  const { liquidations: standouts, isLoading: standoutsLoading } = useTopLiquidations(
+  const {
+    liquidations: standouts,
+    isLoading: standoutsLoading,
+    error: standoutsError,
+  } = useTopLiquidations(
     "24h",
     STANDOUT_THRESHOLD_USD,
     STANDOUT_LIMIT,
@@ -281,14 +285,19 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
     return rawCumulative.slice(start);
   }, [rawCumulative]);
 
-  /** Hours actually covered by the trimmed chart. */
+  /**
+   * Hours actually covered by the trimmed chart. The backend aligns the first
+   * bucket on the 30 min grid before `now - 24h`, so the series holds 49
+   * buckets with a partial one at each end; the data itself never spans more
+   * than the 24h window, hence the clamp.
+   */
   const visibleHours = useMemo(() => {
     if (cumBuckets.length === 0) return 0;
     const spanMs =
       cumBuckets[cumBuckets.length - 1].timestampMs -
       cumBuckets[0].timestampMs +
       HIST_BUCKET_MS;
-    return Math.max(1, Math.round(spanMs / (60 * 60 * 1000)));
+    return Math.min(24, Math.max(1, Math.round(spanMs / (60 * 60 * 1000))));
   }, [cumBuckets]);
 
   /** Time axis labels (start / mid / end of the trimmed window). */
@@ -404,7 +413,9 @@ export const LiquidationsPanel = memo(function LiquidationsPanel() {
           <div className="text-[11px] text-text-tertiary py-1">
             {standoutsLoading
               ? "Loading…"
-              : "No liquidation ≥ $100K in the last 24h"}
+              : standoutsError
+                ? "Notable liquidations unavailable"
+                : "No liquidation ≥ $100K in the last 24h"}
           </div>
         ) : (
           <div className="flex flex-col gap-1">
