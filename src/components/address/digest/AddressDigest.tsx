@@ -50,10 +50,21 @@ export function AddressDigest({ address, variant = "explorer", children, onShowP
                 balancesLoading={model.raw.balancesLoading}
               />
             </div>
-            <WalletInsightsCard insights={model.insights} loading={insightsLoading} className="min-w-0 xl:h-[300px]" />
+            <WalletInsightsCard
+              insights={model.insights}
+              loading={insightsLoading}
+              indexerUnavailable={model.tradingUnavailable}
+              className="min-w-0 xl:h-[300px]"
+            />
           </div>
         ) : (
-          showInsights && <WalletInsightsCard insights={model.insights} loading={insightsLoading} />
+          showInsights && (
+            <WalletInsightsCard
+              insights={model.insights}
+              loading={insightsLoading}
+              indexerUnavailable={model.tradingUnavailable}
+            />
+          )
         )}
       </div>
 

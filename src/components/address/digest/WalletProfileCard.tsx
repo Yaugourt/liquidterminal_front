@@ -21,8 +21,9 @@ import {
   formatPrice,
   signedCompactUsd,
 } from "@/lib/formatters/numberFormatting";
-import { formatDuration, timeAgo } from "@/lib/formatters/dateFormatting";
+import { formatDate, formatDuration, timeAgo } from "@/lib/formatters/dateFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
+import { useDateFormat } from "@/store/date-format.store";
 import { cn } from "@/lib/utils";
 import type {
   AddressDigestModel,
@@ -126,7 +127,13 @@ function ProfileGrid({ children }: { children: ReactNode }) {
 /* ------------------------------------------------------------------ */
 
 function BalancesColumn({ model }: { model: AddressDigestModel }) {
+  const { format: dateFormat } = useDateFormat();
   const { netWorth, isLoading, evm, exposure, flows, variant } = model;
+  // Capped ledger read: the flows stop at the last event read, say so.
+  const partialUntil = flows?.truncated && flows.lastTime != null ? formatDate(flows.lastTime, dateFormat) : null;
+  const partialNote = partialUntil
+    ? ` · partial: first ${compactCount(flows?.events ?? 0)} ledger events, up to ${partialUntil}`
+    : "";
   const segments: DominanceSegment[] = netWorth.buckets
     .filter((b) => b.share > 0)
     .map((b) => ({
@@ -181,13 +188,13 @@ function BalancesColumn({ model }: { model: AddressDigestModel }) {
                 className="cursor-help"
                 title={`Deposits ${compactUsd(flows.deposits)} − withdrawals ${compactUsd(flows.withdrawals)} + transfers in ${compactUsd(flows.transfersIn)} − out ${compactUsd(flows.transfersOut)}${
                   flows.toEvm > 0 || flows.fromEvm > 0 ? ` − net to HyperEVM ${compactUsd(flows.toEvm - flows.fromEvm)}` : ""
-                }`}
+                }${partialNote}`}
               >
                 Net funded
               </span>
             }
             value={signedCompactUsd(flows.netCapitalIn)}
-            sub={flows.deposits > 0 ? `${compactUsd(flows.deposits)} dep.` : undefined}
+            sub={partialUntil ? `partial · to ${partialUntil}` : flows.deposits > 0 ? `${compactUsd(flows.deposits)} dep.` : undefined}
           />
         )}
         {flows?.linked[0] && Math.abs(flows.linked[0].netOut) >= 1_000 && (
@@ -196,13 +203,13 @@ function BalancesColumn({ model }: { model: AddressDigestModel }) {
               <Link
                 href={`/market/tracker/wallet/${flows.linked[0].address}`}
                 className="text-brand hover:text-brand-hover"
-                title={`${flows.linked[0].count} transfers · last ${timeAgo(flows.linked[0].lastTime)} ago`}
+                title={`${flows.linked[0].count} transfers · last ${timeAgo(flows.linked[0].lastTime)} ago${partialNote}`}
               >
                 {flows.linked[0].netOut >= 0 ? "Sends to" : "Funded by"} {shortAddr(flows.linked[0].address)}
               </Link>
             }
             value={compactUsd(Math.abs(flows.linked[0].netOut))}
-            sub="net"
+            sub={partialUntil ? "net · partial" : "net"}
           />
         )}
       </div>
@@ -210,14 +217,21 @@ function BalancesColumn({ model }: { model: AddressDigestModel }) {
   );
 }
 
+/** The indexer failed: its sections are unknown, not empty. */
+const INDEXER_UNAVAILABLE = "Indexer unavailable — trading history cannot be read right now.";
+
 function MarketsColumn({ model }: { model: AddressDigestModel }) {
-  const { markets, trading, tradingLoading, volumes, variant } = model;
+  const { markets, trading, tradingLoading, tradingUnavailable, volumes, variant } = model;
 
   if (!trading) {
     return (
       <ProfileCell>
         <ColumnHead>Markets</ColumnHead>
-        {tradingLoading ? <Skeleton className="h-16 rounded" /> : <EmptyNote>No Hyperliquid trading history.</EmptyNote>}
+        {tradingLoading ? (
+          <Skeleton className="h-16 rounded" />
+        ) : (
+          <EmptyNote>{tradingUnavailable ? INDEXER_UNAVAILABLE : "No Hyperliquid trading history."}</EmptyNote>
+        )}
       </ProfileCell>
     );
   }
@@ -298,13 +312,17 @@ function MarketsColumn({ model }: { model: AddressDigestModel }) {
 }
 
 function EdgeColumn({ model }: { model: AddressDigestModel }) {
-  const { trading, tradingLoading, cadence, pnl } = model;
+  const { trading, tradingLoading, tradingUnavailable, cadence, pnl } = model;
 
   if (!trading) {
     return (
       <ProfileCell>
         <ColumnHead>Edge</ColumnHead>
-        {tradingLoading ? <Skeleton className="h-16 rounded" /> : <EmptyNote>No closed round-trips to score.</EmptyNote>}
+        {tradingLoading ? (
+          <Skeleton className="h-16 rounded" />
+        ) : (
+          <EmptyNote>{tradingUnavailable ? INDEXER_UNAVAILABLE : "No closed round-trips to score."}</EmptyNote>
+        )}
       </ProfileCell>
     );
   }
@@ -423,6 +441,15 @@ function RiskColumn({ model, onShowPositions }: { model: AddressDigestModel; onS
   const shown = positions.slice(0, 3);
   const ledgerLiqs = flows?.liquidationEvents ?? 0;
   const liqCount = Math.max(liquidations.count, ledgerLiqs);
+  // "0 recorded" is a claim: only make it once the DB read has answered.
+  const liqValue: ReactNode =
+    liqCount > 0
+      ? `${liquidations.hasMore ? `${liqCount}+` : liqCount}`
+      : liquidations.status === "loading"
+        ? <Skeleton className="inline-block h-3 w-12 rounded align-middle" />
+        : liquidations.status === "error"
+          ? <span title="The liquidations feed did not answer">unavailable</span>
+          : "0 recorded";
 
   return (
     <ProfileCell>
@@ -497,8 +524,8 @@ function RiskColumn({ model, onShowPositions }: { model: AddressDigestModel; onS
           })}
         <StatRow
           label="Liquidations"
-          value={liqCount === 0 ? "0 recorded" : `${liquidations.hasMore ? `${liqCount}+` : liqCount}`}
-          valueClassName={liqCount > 0 ? "text-danger" : "text-text-primary"}
+          value={liqValue}
+          valueClassName={liqCount > 0 ? "text-danger" : liquidations.status === "error" ? "text-text-tertiary" : "text-text-primary"}
           sub={
             liquidations.count > 0 && liquidations.last
               ? `${compactUsd(liquidations.totalNotional)} · last ${timeAgo(liquidations.last.time_ms)} ago`

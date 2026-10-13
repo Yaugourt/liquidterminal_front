@@ -122,6 +122,8 @@ export interface RiskProfile {
     totalNotional: number;
     last: Liquidation | null;
     hasMore: boolean;
+    /** The liquidations DB read: `count` 0 means nothing only when "ok". */
+    status: "loading" | "error" | "ok";
   };
 }
 
@@ -213,6 +215,9 @@ export interface CapitalFlows {
   firstTime: number | null;
   lastTime: number | null;
   events: number;
+  /** The ledger read stopped at its page cap: every figure above covers
+   *  firstTime → lastTime only, later events are missing. */
+  truncated: boolean;
 }
 
 /** One open position against the smart-money cohort's stance on that coin. */
@@ -284,6 +289,9 @@ export interface AddressDigestModel {
   isLoading: boolean;
   /** Indexer-backed sections still resolving. */
   tradingLoading: boolean;
+  /** The indexer failed before answering: a null `trading` means "unknown",
+   *  not "never traded". */
+  tradingUnavailable: boolean;
   /** Indexer reachable? Drives the card's `<SourceBadge>` health dot. */
   indexerStatus: SourceBadgeStatus;
 }
@@ -484,7 +492,7 @@ const MIN_REAL_TIME = Date.UTC(2020, 0, 1);
 /** Ledger deltas that move USD between two HL accounts. */
 const TRANSFER_TYPES = new Set(["subAccountTransfer", "spotTransfer", "send", "internalTransfer", "usdSend"]);
 
-function capitalFlows(updates: NonFundingLedgerUpdate[], address: string): CapitalFlows | null {
+function capitalFlows(updates: NonFundingLedgerUpdate[], address: string, truncated: boolean): CapitalFlows | null {
   if (updates.length === 0) return null;
   const me = address.toLowerCase();
   const flows: CapitalFlows = {
@@ -503,6 +511,7 @@ function capitalFlows(updates: NonFundingLedgerUpdate[], address: string): Capit
     firstTime: null,
     lastTime: null,
     events: updates.length,
+    truncated,
   };
   const linked = new Map<string, LinkedAccount>();
   for (const u of updates) {
@@ -630,7 +639,8 @@ export function useAddressDigest(address: string, variant: DigestVariant = "expl
   const { positioning } = useAggregatePositioning();
   // Same query as the Holdings tab (`useWalletData`) so it is served once.
   const { data: spotTokens } = useSpotTokens({ limit: 200, sortBy: "volume", sortOrder: "desc" });
-  const { rows: predictedFundings } = usePredictedFundings();
+  // Carry rows only need the rate's ballpark: 5 min, not the funding page's 30 s.
+  const { rows: predictedFundings } = usePredictedFundings({ refreshInterval: 300_000 });
 
   const { balances, perpPositions, spotBalances } = balanceFeed;
   const overview = overviewFeed.overview ?? null;
@@ -733,13 +743,18 @@ export function useAddressDigest(address: string, variant: DigestVariant = "expl
         totalNotional: liqFeed.totalNotional,
         last: liqFeed.liquidations[0] ?? null,
         hasMore: liqFeed.hasMore,
+        status:
+          liqFeed.liquidations.length > 0 ? "ok" : liqFeed.isLoading ? "loading" : liqFeed.error ? "error" : "ok",
       },
     };
-  }, [positions, perpPositions, liqFeed.liquidations, liqFeed.totalNotional, liqFeed.hasMore]);
+  }, [positions, perpPositions, liqFeed.liquidations, liqFeed.totalNotional, liqFeed.hasMore, liqFeed.isLoading, liqFeed.error]);
 
   const exposure = useMemo(() => exposureProfile(positions, perpPositions), [positions, perpPositions]);
   const cadence = useMemo(() => cadenceProfile(roundTripFeed.trades), [roundTripFeed.trades]);
-  const flows = useMemo(() => capitalFlows(ledgerFeed.updates, address), [ledgerFeed.updates, address]);
+  const flows = useMemo(
+    () => capitalFlows(ledgerFeed.updates, address, ledgerFeed.truncated),
+    [ledgerFeed.updates, ledgerFeed.truncated, address]
+  );
 
   // Recency crosses three feeds: explorer txs, indexer fills, HL ledger. The
   // tx list is only the recent window, so the ledger often reaches further back.
@@ -815,6 +830,7 @@ export function useAddressDigest(address: string, variant: DigestVariant = "expl
     },
     isLoading: balanceFeed.isLoading && balances.totalBalance === 0,
     tradingLoading: indexerLoading || (perfFeed.isLoading && !perf),
+    tradingUnavailable: !overview && !indexerLoading && Boolean(overviewFeed.error),
     indexerStatus,
   };
 }

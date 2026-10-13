@@ -1,6 +1,7 @@
 import {
     UserTransactionsResponse,
     NonFundingLedgerUpdate,
+    NonFundingLedgerHistory,
     UserFill,
     FormattedUserTransaction,
     PortfolioApiResponse,
@@ -56,6 +57,68 @@ export async function getUserNonFundingLedgerUpdates(address: string): Promise<N
             startTime: 1640995200000
         });
     }, 'fetching ledger updates'));
+}
+
+/** HL answers at most this many ledger rows per call, oldest first. */
+const LEDGER_PAGE_SIZE = 2000;
+/** Full ledger pages never change (the ledger only appends): kept for the session. */
+const fullLedgerPages = new Map<string, NonFundingLedgerUpdate[]>();
+const MAX_CACHED_LEDGER_PAGES = 24;
+
+async function getLedgerPageFrom(address: string, startTime: number): Promise<NonFundingLedgerUpdate[]> {
+    const cacheKey = `${address.toLowerCase()}:${startTime}`;
+    const hit = fullLedgerPages.get(cacheKey);
+    if (hit) return hit;
+    const page = await withErrorHandling(async () => {
+        const url = `${API_URLS.HYPERLIQUID_API}/info`;
+        return await postExternal<NonFundingLedgerUpdate[]>(url, {
+            type: "userNonFundingLedgerUpdates",
+            user: address,
+            startTime
+        });
+    }, 'fetching ledger updates page');
+    if (page.length >= LEDGER_PAGE_SIZE) {
+        if (fullLedgerPages.size >= MAX_CACHED_LEDGER_PAGES) {
+            const oldest = fullLedgerPages.keys().next().value;
+            if (oldest !== undefined) fullLedgerPages.delete(oldest);
+        }
+        fullLedgerPages.set(cacheKey, page);
+    }
+    return page;
+}
+
+const ledgerRowKey = (u: NonFundingLedgerUpdate): string => `${u.hash}:${JSON.stringify(u.delta)}`;
+
+/**
+ * The non-funding ledger beyond HL's 2,000-row answer: pages forward from the
+ * last row's time while a page comes back full, up to `maxPages` calls. The
+ * first page is the shared `getUserNonFundingLedgerUpdates` read. Several
+ * rows can share the boundary millisecond (a send and its spotTransfer), so
+ * each next page starts AT that time and drops the rows already seen.
+ */
+export async function getUserNonFundingLedgerHistory(
+    address: string,
+    maxPages: number
+): Promise<NonFundingLedgerHistory> {
+    let page = await getUserNonFundingLedgerUpdates(address);
+    const updates = [...page];
+    for (let pages = 1; page.length >= LEDGER_PAGE_SIZE; pages++) {
+        if (pages >= maxPages) return { updates, truncated: true };
+        const boundary = page[page.length - 1].time;
+        const seen = new Set(page.filter((u) => u.time === boundary).map(ledgerRowKey));
+        try {
+            page = await getLedgerPageFrom(address, boundary);
+        } catch {
+            // A tail page failing (HL 429, timeout) keeps what was read, flagged
+            // partial; the next poll resumes from the cached full pages.
+            return { updates, truncated: true };
+        }
+        const fresh = page.filter((u) => u.time !== boundary || !seen.has(ledgerRowKey(u)));
+        // A full page inside a single millisecond: no way to move past it.
+        if (fresh.length === 0) return { updates, truncated: page.length >= LEDGER_PAGE_SIZE };
+        updates.push(...fresh);
+    }
+    return { updates, truncated: false };
 }
 
 export async function getUserFills(address: string): Promise<UserFill[]> {

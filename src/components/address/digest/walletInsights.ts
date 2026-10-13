@@ -1,4 +1,4 @@
-import { compactUsd, signedCompactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import { formatDuration, timeAgo } from "@/lib/formatters/dateFormatting";
 import type {
   CadenceProfile,
@@ -95,11 +95,16 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
     const parent = flows.linked[0];
     const sweptOut = flows.transfersOut - flows.transfersIn;
     const netOut = -flows.netCapitalIn;
+    // Capped ledger read: the flows stop at its last event — said inline.
+    const partial =
+      flows.truncated && flows.lastTime != null
+        ? ` (partial ledger: first ${compactCount(flows.events)} events, up to ${timeAgo(flows.lastTime)} ago)`
+        : "";
     if (parent && parent.netOut > 0 && pnl.allTime != null && pnl.allTime > 0 && sweptOut >= pnl.allTime * 0.5) {
       out.push({
         id: "sweep",
         tone: "warn",
-        text: `Profits swept: ${compactUsd(sweptOut)} moved to ${short(parent.address)} over ${parent.count} transfers vs ${signedCompactUsd(pnl.allTime)} all-time PnL — the equity here does not compound.`,
+        text: `Profits swept: ${compactUsd(sweptOut)} moved to ${short(parent.address)} over ${parent.count} transfers vs ${signedCompactUsd(pnl.allTime)} all-time PnL — the equity here does not compound${partial}.`,
         source: "HL ledger transfers × exchange PnL",
         href: `/market/tracker/wallet/${parent.address}`,
         hrefLabel: "Open linked account",
@@ -108,14 +113,14 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       out.push({
         id: "flows",
         tone: "neutral",
-        text: `Takes profit out: ${compactUsd(netOut)} more withdrawn or sent away than put in, against ${signedCompactUsd(pnl.allTime)} all-time PnL.`,
+        text: `Takes profit out: ${compactUsd(netOut)} more withdrawn or sent away than put in, against ${signedCompactUsd(pnl.allTime)} all-time PnL${partial}.`,
         source: "HL ledger deposits, withdrawals and transfers × exchange PnL",
       });
     } else if (pnl.allTime != null && pnl.allTime < 0 && flows.netCapitalIn > 0 && Math.abs(pnl.allTime) >= flows.netCapitalIn * 0.25) {
       out.push({
         id: "flows",
         tone: "warn",
-        text: `Has burnt ${pct(Math.min(1, Math.abs(pnl.allTime) / flows.netCapitalIn))} of the ${compactUsd(flows.netCapitalIn)} net it put in (${signedCompactUsd(pnl.allTime)} all-time).`,
+        text: `Has burnt ${pct(Math.min(1, Math.abs(pnl.allTime) / flows.netCapitalIn))} of the ${compactUsd(flows.netCapitalIn)} net it put in (${signedCompactUsd(pnl.allTime)} all-time)${partial}.`,
         source: "HL ledger deposits, withdrawals and transfers × exchange PnL",
       });
     } else if (parent && parent.netOut < 0 && Math.abs(parent.netOut) >= Math.max(10_000, flows.deposits * 0.25)) {
@@ -125,7 +130,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
         tone: "neutral",
         text: `Funded from ${short(parent.address)}: ${compactUsd(Math.abs(parent.netOut))} net received over ${parent.count} transfers${
           flows.deposits > 0 ? `, vs ${compactUsd(flows.deposits)} deposited from outside` : ""
-        }.`,
+        }${partial}.`,
         source: "HL ledger transfers",
         href: `/market/tracker/wallet/${parent.address}`,
         hrefLabel: "Open linked account",

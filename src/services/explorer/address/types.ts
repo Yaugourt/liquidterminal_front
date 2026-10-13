@@ -63,6 +63,14 @@ export interface NonFundingLedgerUpdate {
     time: number;
 }
 
+/** The ledger read forward from 2022, page by page, up to a page cap. */
+export interface NonFundingLedgerHistory {
+    /** Oldest → newest. */
+    updates: NonFundingLedgerUpdate[];
+    /** The page cap was hit: events after the last update are missing. */
+    truncated: boolean;
+}
+
 // Fill d'utilisateur (exécution d'ordre)
 export interface UserFill {
     coin: string;

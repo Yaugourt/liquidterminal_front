@@ -45,11 +45,14 @@ export function WalletInsightList({ insights, className }: { insights: WalletIns
 export function WalletInsightsCard({
   insights,
   loading = false,
+  indexerUnavailable = false,
   className,
 }: {
   insights: WalletInsight[];
   /** Feeds still resolving — placeholder lines instead of an empty verdict. */
   loading?: boolean;
+  /** The indexer failed: an empty list means "unknown", not "no history". */
+  indexerUnavailable?: boolean;
   className?: string;
 }) {
   return (
@@ -67,7 +70,11 @@ export function WalletInsightsCard({
           <Skeleton className="h-3 w-2/3 rounded" />
         </div>
       ) : (
-        <p className="px-3.5 py-3 text-[11.5px] text-text-tertiary">Not enough history to cross yet.</p>
+        <p className="px-3.5 py-3 text-[11.5px] text-text-tertiary">
+          {indexerUnavailable
+            ? "Indexer unavailable — trading findings will show once it answers."
+            : "Not enough history to cross yet."}
+        </p>
       )}
     </Card>
   );
