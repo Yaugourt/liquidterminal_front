@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { usePageTitle } from "@/store/use-page-title";
 import { useParams, useRouter } from "next/navigation";
 import { SpotToken } from "@/services/market/spot/types";
-import { getToken } from "@/services/market/spot/api";
+import { fetchTokensWithoutPairs, getToken } from "@/services/market/spot/api";
 import { isBridged } from "@/services/market/spot/bridged";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -27,6 +28,27 @@ const TradingViewChart = dynamic(
 
 type BottomTab = "twap" | "holders";
 
+/** Why the page has no token to show. */
+type Missing = "unknown" | "unlisted" | "error";
+
+const MISSING_COPY: Record<Missing, { title: string; body: (name: string) => string }> = {
+    unknown: {
+        title: "Token not found",
+        body: (name) => `No spot token is named "${name}".`,
+    },
+    unlisted: {
+        title: "No spot market yet",
+        body: (name) => `${name} is deployed on HyperCore, but no pair trades it yet.`,
+    },
+    error: {
+        title: "Couldn't load this token",
+        body: () => "The spot token list didn't load. Retrying every 15 seconds.",
+    },
+};
+
+/** A lookup that failed (after the HTTP layer's own retries) runs again this often. */
+const LOOKUP_RETRY_MS = 15_000;
+
 export default function TokenPage() {
     const { setTitle } = usePageTitle();
     const router = useRouter();
@@ -35,7 +57,9 @@ export default function TokenPage() {
     const tokenName = decodeURIComponent(token_param);
     const [token, setToken] = useState<SpotToken | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [missing, setMissing] = useState<Missing | null>(null);
+    /** Bumped by "Retry" to run the lookup again. */
+    const [lookupRun, setLookupRun] = useState(0);
     const [activeTab, setActiveTab] = useState<BottomTab>('twap');
     // Both bottom tabs are Hypurrscan-fed (`/twap/*`, `/holders`); one badge
     // follows the active tab's route health.
@@ -69,25 +93,52 @@ export default function TokenPage() {
     }, [setTitle, tokenName]);
 
     useEffect(() => {
-        const fetchToken = async () => {
+        let cancelled = false;
+        let retryTimer: ReturnType<typeof setTimeout> | undefined;
+        const lookUp = async () => {
             try {
-                const data = await getToken(tokenName);
-                setToken(data);
-                if (!data) {
-                    setError(`Le token "${tokenName}" n'a pas été trouvé dans la liste des tokens Spot.`);
+                const found = await getToken(tokenName);
+                if (cancelled) return;
+                if (found) {
+                    setToken(found);
+                    setMissing(null);
+                } else {
+                    // Deploy auction winners are linked from the auction cards
+                    // before any pair trades them.
+                    const unlisted = await fetchTokensWithoutPairs()
+                        .then((names) => names.some((n) => n.toLowerCase() === tokenName.toLowerCase()))
+                        .catch(() => false);
+                    if (cancelled) return;
+                    setToken(null);
+                    setMissing(unlisted ? "unlisted" : "unknown");
                 }
             } catch {
-                setError("Une erreur est survenue lors du chargement des données du token.");
-            } finally {
-                setLoading(false);
+                // The spot list didn't load (the HTTP layer already retried). A
+                // backend blip used to end on "not found": say what happened and
+                // look again until it answers.
+                if (cancelled) return;
+                setToken(null);
+                setMissing("error");
+                retryTimer = setTimeout(() => setLookupRun((run) => run + 1), LOOKUP_RETRY_MS);
             }
+            setLoading(false);
         };
 
-        fetchToken();
-    }, [tokenName]);
+        lookUp();
+        return () => {
+            cancelled = true;
+            clearTimeout(retryTimer);
+        };
+    }, [tokenName, lookupRun]);
 
     const handleBackToList = () => {
-        router.push('/market');
+        router.push('/market/spot');
+    };
+
+    const retryLookup = () => {
+        setLoading(true);
+        setMissing(null);
+        setLookupRun((run) => run + 1);
     };
 
     if (loading) {
@@ -98,18 +149,32 @@ export default function TokenPage() {
         );
     }
 
-    if (error || !token) {
+    if (!token) {
+        const reason = missing ?? "unknown";
+        const copy = MISSING_COPY[reason];
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
                 <Card className="p-6 flex flex-col items-center justify-center">
-                    <div className="text-xl font-bold text-text-primary mb-4">Token not found</div>
-                    <div className="text-text-secondary mb-6 text-center">{error}</div>
-                    <Button
-                        onClick={handleBackToList}
-                        className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold"
-                    >
-                        Back to tokens list
-                    </Button>
+                    <div className="text-xl font-bold text-text-primary mb-4">{copy.title}</div>
+                    <div className="text-text-secondary mb-6 text-center">{copy.body(tokenName)}</div>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                        {reason === "error" && (
+                            <Button variant="outline" onClick={retryLookup}>
+                                Retry
+                            </Button>
+                        )}
+                        {reason === "unlisted" && (
+                            <Button variant="outline" asChild>
+                                <Link href="/market/spot/auction">Spot deploys</Link>
+                            </Button>
+                        )}
+                        <Button
+                            onClick={handleBackToList}
+                            className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold"
+                        >
+                            Back to tokens list
+                        </Button>
+                    </div>
                 </Card>
             </div>
         );

@@ -1,4 +1,4 @@
-import { SpotGlobalStats, SpotToken, TokenHoldersPage } from './types';
+import { SpotGlobalStats, SpotToken, TokenHoldersPage, TokensWithoutPairsResponse } from './types';
 import { get } from '../../api/axios-config';
 import { withErrorHandling } from '../../api/error-handler';
 import { PaginatedResponse, buildQueryParams } from '../../common';
@@ -30,18 +30,24 @@ export const fetchSpotTokens = async (params: {
 };
 
 /**
- * Récupère un token spécifique par son nom
+ * The spot token whose name matches (case-insensitively), or null when no
+ * listed pair has it as base. Throws when the list can't be read: a failed
+ * read is not "not found".
  */
 export const getToken = async (tokenName: string): Promise<SpotToken | null> => {
-  try {
-    // Récupère tous les tokens et trouve celui qui correspond au nom
-    const response = await fetchSpotTokens({ limit: 1000 });
-    const token = response.data.find(t => t.name.toLowerCase() === tokenName.toLowerCase());
-    return token || null;
-  } catch {
-    // Silent error handling
-    return null;
-  }
+  const response = await fetchSpotTokens({ limit: 1000 });
+  return response.data.find(t => t.name.toLowerCase() === tokenName.toLowerCase()) ?? null;
+};
+
+/**
+ * Names of the spot tokens deployed on HyperCore that no pair trades yet
+ * (e.g. a deploy auction's winner before its pair is listed). ~1.5 KB.
+ */
+export const fetchTokensWithoutPairs = async (): Promise<string[]> => {
+  return withErrorHandling(async () => {
+    const response = await get<TokensWithoutPairsResponse>('/market/spot/tokens-without-pairs');
+    return response.data;
+  }, 'fetching tokens without pairs');
 };
 
 /**

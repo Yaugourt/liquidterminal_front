@@ -32,6 +32,12 @@ export interface SpotToken {
   bridgeReserve?: number;
 }
 
+/** `GET /market/spot/tokens-without-pairs`: token names, no pair trades them yet. */
+export interface TokensWithoutPairsResponse {
+  success: boolean;
+  data: string[];
+}
+
 export interface SpotMarketResponse {
   data: SpotToken[];
   total: number;
