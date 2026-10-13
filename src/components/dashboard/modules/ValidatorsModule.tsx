@@ -61,7 +61,10 @@ export const ValidatorsModule = memo(function ValidatorsModule() {
         {topValidators.map((v) => (
           <ModuleTableRow
             key={v.validator}
-            href={`/explorer/validator/${encodeURIComponent(v.validator)}`}
+            // A validator is a Hyperliquid account: its address page (with the
+            // Staking tab) is its detail view. There is no /explorer/validator/[id].
+            href={`/explorer/address/${v.validator}`}
+            prefetch={false}
             cells={[
               <ModuleAsset
                 key="validator"
