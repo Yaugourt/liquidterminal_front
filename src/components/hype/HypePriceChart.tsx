@@ -4,7 +4,7 @@ import { Fragment, memo, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { AuroraAreaChart, CardHead, chartPalette } from "@/components/common";
 import { useTokenCandles } from "@/services/market/token";
-import { useHypeLivePrice, HYPE_SPOT_COIN } from "@/services/market/hype";
+import { useHypeLivePrice, HYPE_SPOT_COIN, HYPE_GENESIS_DATE } from "@/services/market/hype";
 import { formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { fmtSignedPct } from "./format";
@@ -13,14 +13,18 @@ type TF = "7D" | "30D" | "90D" | "1Y" | "All";
 type CandleInterval = "1h" | "4h" | "1d";
 
 const TF_ORDER: readonly TF[] = ["7D", "30D", "90D", "1Y", "All"] as const;
-const TF_CFG: Record<TF, { interval: CandleInterval; days: number }> = {
+/** `days: null` = since HYPE's listing. */
+const TF_CFG: Record<TF, { interval: CandleInterval; days: number | null }> = {
   "7D": { interval: "1h", days: 7 },
   "30D": { interval: "4h", days: 30 },
   "90D": { interval: "1d", days: 90 },
   "1Y": { interval: "1d", days: 365 },
-  All: { interval: "1d", days: 430 },
+  All: { interval: "1d", days: null },
 };
 const DAY = 86_400_000;
+/** HYPE spot (@107) has traded since the TGE; 1d candles from there stay far
+ *  under Hyperliquid's 5 000-candle snapshot cap. */
+const HYPE_LISTING_MS = Date.parse(`${HYPE_GENESIS_DATE}T00:00:00Z`);
 
 const fmtUsdAxis = (v: number): string => {
   if (!Number.isFinite(v)) return "";
@@ -29,7 +33,9 @@ const fmtUsdAxis = (v: number): string => {
 
 // Built once and stable: `toLocaleDateString` with options builds a formatter
 // on every call, and the chart formats its axis again on each live HYPE price.
-const DAY_FORMAT = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+// UTC: daily candles open at UTC midnight, so a local label names the previous
+// day west of Greenwich.
+const DAY_FORMAT = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 const fmtTime = (ts: number) => DAY_FORMAT.format(new Date(ts));
 
 /**
@@ -44,19 +50,22 @@ export const HypePriceChart = memo(function HypePriceChart() {
   const livePrice = useHypeLivePrice();
   const cfg = TF_CFG[tf];
 
-  const startTime = useMemo(() => Date.now() - cfg.days * DAY, [cfg.days]);
+  const startTime = useMemo(
+    () => (cfg.days == null ? HYPE_LISTING_MS : Date.now() - cfg.days * DAY),
+    [cfg.days],
+  );
   const { candles, isLoading } = useTokenCandles({
     coin: HYPE_SPOT_COIN,
     interval: cfg.interval,
     startTime,
   });
 
-  // All-time daily candles for a stable ATH / ATL, independent of the selected TF.
-  const allStart = useMemo(() => Date.now() - 430 * DAY, []);
+  // All-time daily candles (since listing) for a stable ATH / ATL, independent
+  // of the selected TF.
   const { candles: allCandles } = useTokenCandles({
     coin: HYPE_SPOT_COIN,
     interval: "1d",
-    startTime: allStart,
+    startTime: HYPE_LISTING_MS,
   });
 
   const series = useMemo(
