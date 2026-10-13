@@ -212,13 +212,14 @@ const normalizeTransaction = (tx: RawTransaction): EvmTransaction => {
 };
 
 const normalizeNft = (n: RawNft, index: number): WalletNft => ({
-  id: `${n.address}:${n.tokenId ?? index}`,
+  id: `${n.address}:${n.tokenId ?? n.token_id ?? index}`,
   collectionAddress: n.address,
   collectionName: n.collection_name || n.symbol,
   name: n.name,
-  tokenId: n.tokenId ?? null,
+  tokenId: n.tokenId ?? n.token_id ?? null,
   image: imageUrl(n.image_url) ?? imageUrl(n.image),
-  price: numOrNull(n.price),
+  // Hyperfolio OpenAPI: `usdPrice` is USD, `floor_price` is HYPE.
+  price: numOrNull(n.usdPrice ?? n.price),
   floorPrice: numOrNull(n.floorPrice ?? n.floor_price),
 });
 
@@ -232,13 +233,18 @@ export const fetchEvmComposition = async (address: string): Promise<EvmCompositi
   }, 'fetching HyperEVM wallet composition');
 };
 
-/** DeFi positions grouped by protocol — blocking fallback of the SSE stream. */
+/**
+ * DeFi positions grouped by protocol — blocking fallback of the SSE stream.
+ * Single attempt: an upstream scan takes up to a minute, and a 503
+ * (not configured / daily quota spent) will not heal on retry.
+ */
 export const fetchDefiPositions = async (
   address: string
 ): Promise<{ protocols: DefiProtocol[]; stats: DefiPortfolioStats }> => {
   return withErrorHandling(async () => {
     const res = await get<HyperfolioEnvelope<RawPositionsResponse>>(walletPath(address, 'positions'), undefined, {
       timeoutMs: 65_000,
+      retryOnError: false,
     });
     return {
       protocols: (res.data.data?.protocols ?? []).map(normalizeProtocol),
@@ -255,7 +261,7 @@ export const fetchPortfolioHistory = async (address: string, days: number): Prom
   }, 'fetching portfolio history');
 };
 
-/** Decoded HyperEVM transactions, paginated server-side. */
+/** Decoded HyperEVM transactions, paginated server-side. Single attempt, like `fetchDefiPositions`. */
 export const fetchEvmTransactions = async (
   address: string,
   params: EvmTransactionsParams
@@ -268,6 +274,7 @@ export const fetchEvmTransactions = async (
     if (params.endDate) query.endDate = params.endDate;
     const res = await get<HyperfolioEnvelope<RawTransactionsResponse>>(walletPath(address, 'transactions'), query, {
       timeoutMs: 50_000,
+      retryOnError: false,
     });
     return {
       transactions: (res.data.transactions ?? []).map(normalizeTransaction),

@@ -6,7 +6,7 @@ import { ImageOff } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination, Skeleton } from "@/components/common";
 import { useNumberFormat } from "@/store/number-format.store";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useWalletNfts, type WalletNft } from "@/services/market/tracker/hyperfolio";
 import { HyperfolioNotice } from "./HyperfolioNotice";
 
@@ -46,7 +46,7 @@ function NftCard({ nft }: { nft: WalletNft }) {
         <p className="text-[11px] text-text-tertiary truncate">{nft.collectionName}</p>
         <div className="flex items-center justify-between pt-1 text-[11px]">
           <span className="text-text-secondary">Price</span>
-          <span className="mono text-text-primary">{hype(nft.price)}</span>
+          <span className="mono text-text-primary">{nft.price === null ? "—" : formatPrice(nft.price, format)}</span>
         </div>
         <div className="flex items-center justify-between text-[11px]">
           <span className="text-text-secondary">Floor</span>

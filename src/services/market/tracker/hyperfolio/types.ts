@@ -204,10 +204,14 @@ export interface RawNft {
   symbol: string;
   collection_name: string;
   tokenId?: string;
+  token_id?: string;
   image?: string | null;
   image_url?: string | null;
+  /** USD (last sale or listing) per the Hyperfolio OpenAPI. */
+  usdPrice?: number | string | null;
   price?: number | string | null;
   floorPrice?: number | string | null;
+  /** HYPE per the Hyperfolio OpenAPI. */
   floor_price?: number | string | null;
 }
 
@@ -222,6 +226,7 @@ export interface RawNftsResponse {
       hasNextPage: boolean;
       hasPrevPage: boolean;
     };
+    /** USD value of all the wallet's NFTs (Hyperfolio OpenAPI). */
     totalNftValue: number;
     whypeUsdPrice: number;
   };
@@ -377,7 +382,9 @@ export interface WalletNft {
   name: string;
   tokenId: string | null;
   image: string | null;
+  /** USD. */
   price: number | null;
+  /** HYPE. */
   floorPrice: number | null;
 }
 
