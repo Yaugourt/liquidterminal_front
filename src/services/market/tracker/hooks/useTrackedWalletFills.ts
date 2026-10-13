@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { WebSocketClient } from "@/lib/websocket-client";
+import { PING_HEARTBEAT, WebSocketClient } from "@/lib/websocket-client";
 
 const WS_URL = "wss://api.hyperliquid.xyz/ws";
 /**
@@ -84,6 +84,9 @@ export function useTrackedWalletFills(
       url: WS_URL,
       maxReconnectAttempts: 10,
       baseReconnectDelay: 2000,
+      // userFills is quiet for most wallets: without it Hyperliquid closes the
+      // socket after 60 s idle and the feed reconnects every minute.
+      heartbeat: PING_HEARTBEAT,
       onOpen: () => {
         connected = true;
         dirty = true;
