@@ -58,7 +58,7 @@ export function useYieldsDirectory(initial: Partial<YieldsQuery> = {}) {
       items: data?.items ?? [],
       total: data?.total ?? 0,
       totalPages: data?.totalPages ?? 0,
-      totals: data?.totals ?? { tvl: 0, weightedApy: 0, count: 0 },
+      totals: data?.totals ?? { tvl: 0, weightedApy: 0, count: 0, trusted: true },
       facets,
       categoryFacets: facets.categories as YieldFacet[],
       protocolFacets: facets.protocols as YieldFacet[],

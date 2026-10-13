@@ -10,6 +10,14 @@ interface Envelope<T> {
 
 const ENDPOINT = '/hyperfolio/yield';
 
+/** The backend rejects `page` above 100. */
+export const YIELDS_MAX_PAGE = 100;
+
+/** Totals above this come from spam pools priced with fake tokens. Same bound
+ * as the backend's `totals_untrusted` flag, checked here too so the KPI strip
+ * never prints such a total. */
+const MAX_TRUSTED_TOTAL_TVL = 50e9;
+
 const finite = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 
 export const normalizeYield = (raw: RawYieldOpportunity): YieldOpportunity => {
@@ -87,6 +95,9 @@ export const fetchYields = async (query: YieldsQuery): Promise<YieldsPage> => {
         tvl: finite(raw.metadata?.totals?.total_value_usd) ?? 0,
         weightedApy: finite(raw.metadata?.totals?.total_apy) ?? 0,
         count: raw.metadata?.totals?.opportunity_count ?? raw.pagination?.total ?? 0,
+        trusted:
+          raw.metadata?.totals_untrusted !== true &&
+          (finite(raw.metadata?.totals?.total_value_usd) ?? 0) <= MAX_TRUSTED_TOTAL_TVL,
       },
     };
   }, 'fetching yield opportunities');

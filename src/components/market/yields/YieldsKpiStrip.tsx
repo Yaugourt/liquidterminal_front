@@ -12,13 +12,15 @@ interface YieldsKpiStripProps {
  * KPI ribbon for the Yields page (§7.b via <KpiRibbon>). Figures come from
  * Hyperfolio's `metadata.totals` for the *current filter set*, so they follow
  * the toolbar. Lending markets report no TVL upstream, which is why a
- * lending-only filter shows "—" rather than a fabricated total.
+ * lending-only filter shows "—" rather than a fabricated total. Totals swamped
+ * by spam pools' fake TVL (`trusted: false`) show "—" too.
  */
 export function YieldsKpiStrip({ directory }: YieldsKpiStripProps) {
   const { totals, protocolFacets, categoryFacets, isLoading } = directory;
   const ph = isLoading ? "…" : "—";
   const activeProtocols = protocolFacets.length;
   const activeCategories = categoryFacets.filter((c) => c.count > 0).length;
+  const hasTvl = totals.trusted && totals.tvl > 0;
 
   const cells: KpiCell[] = [
     {
@@ -28,13 +30,14 @@ export function YieldsKpiStrip({ directory }: YieldsKpiStripProps) {
     },
     {
       label: "Total TVL",
-      value: isLoading && !totals.tvl ? ph : totals.tvl > 0 ? compactUsd(totals.tvl) : "—",
+      value: isLoading && !totals.tvl ? ph : hasTvl ? compactUsd(totals.tvl) : "—",
       sub: "pools with reported depth",
     },
     {
       label: "TVL-weighted APY",
-      value: isLoading && !totals.weightedApy ? ph : totals.tvl > 0 ? `${totals.weightedApy.toFixed(2)}%` : "—",
-      tone: totals.weightedApy > 0 ? "success" : "default",
+      value: isLoading && !totals.weightedApy ? ph : hasTvl ? `${totals.weightedApy.toFixed(2)}%` : "—",
+      // 0.00% is not a yield worth a green.
+      tone: hasTvl && totals.weightedApy >= 0.01 ? "success" : "default",
       sub: "across matching pools",
     },
     {

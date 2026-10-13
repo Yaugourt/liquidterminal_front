@@ -52,6 +52,8 @@ export interface RawYieldResponse {
   metadata: {
     filters: { categories: RawYieldFilterOption[]; protocols: RawYieldFilterOption[] };
     totals: { total_value_usd: number; total_apy: number; opportunity_count: number };
+    /** Set by the backend when the totals are swamped by spam pools' fake TVL. */
+    totals_untrusted?: boolean;
   };
 }
 
@@ -92,7 +94,9 @@ export interface YieldsPage {
   pageSize: number;
   totalPages: number;
   facets: { categories: YieldFacet[]; protocols: YieldFacet[] };
-  totals: { tvl: number; weightedApy: number; count: number };
+  /** `trusted` is false when spam pools' fake TVL swamps the totals: the TVL
+   * and the TVL-weighted APY are then meaningless. */
+  totals: { tvl: number; weightedApy: number; count: number; trusted: boolean };
 }
 
 // ==================== PARAMS ====================
