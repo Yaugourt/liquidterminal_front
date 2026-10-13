@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { env } from '@/lib/env';
-import { WebSocketClient, PING_HEARTBEAT } from '@/lib/websocket-client';
+import { WebSocketClient, PING_HEARTBEAT, HIDDEN_TAB_PAUSE_MS } from '@/lib/websocket-client';
 import type {
   L4BookLevel,
   L4BookMessage,
@@ -121,6 +121,12 @@ export const useL4BookStore = create<L4BookStore>((set, get) => {
         baseReconnectDelay: RECONNECT_DELAY,
         debug: process.env.NODE_ENV === 'development',
         heartbeat: PING_HEARTBEAT,
+        // Every subscribe is answered with a full snapshot, so a background
+        // tab can drop the stream: the backend stops pushing it (and, once
+        // nobody watches the coin, may free its mirror for another), and the
+        // tab gets a fresh snapshot when shown again. The last ladder stays on
+        // screen meanwhile.
+        pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
 
         onOpen: () => {
           // A reconnect lands here too: the book we held is stale, so drop it

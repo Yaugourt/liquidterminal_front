@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { WebSocketClient, PING_HEARTBEAT } from "@/lib/websocket-client";
+import { WebSocketClient, PING_HEARTBEAT, HIDDEN_TAB_PAUSE_MS } from "@/lib/websocket-client";
 
 const WS_URL = "wss://rpc.hyperliquid.xyz/ws";
 /** Rolling window the rates and the sparkline read. */
@@ -54,6 +54,11 @@ const EMPTY: ChainPulse = {
  * HyperCore heartbeat from the public explorer websocket: block height, block
  * and transaction rates, and the action mix. Own socket, buffered in refs and
  * flushed once per second (blocks land ~15 per second).
+ *
+ * The socket closes after a minute in a background tab and reopens when the
+ * tab is shown. Every (re)open starts the window over: blocks from before a
+ * gap would lower the rates and leave zeros in the series for a minute, and
+ * the subscription's first frame (the latest ~25 blocks) refills it at once.
  */
 export function useChainPulse(): ChainPulse {
   const [pulse, setPulse] = useState<ChainPulse>(EMPTY);
@@ -69,8 +74,11 @@ export function useChainPulse(): ChainPulse {
       maxReconnectAttempts: 10,
       baseReconnectDelay: 2000,
       heartbeat: PING_HEARTBEAT,
+      pauseWhenHidden: HIDDEN_TAB_PAUSE_MS,
       onOpen: () => {
         connectedRef.current = true;
+        blocksRef.current = [];
+        txsRef.current = [];
         client.send({ method: "subscribe", subscription: { type: "explorerBlock" } });
         client.send({ method: "subscribe", subscription: { type: "explorerTxs" } });
       },
