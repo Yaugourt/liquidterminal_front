@@ -64,11 +64,16 @@ export function AddressKpiRibbon({ model }: AddressKpiRibbonProps) {
       });
     }
     if (pnl.month != null) {
+      // The shorter windows ride in the sub-line so the strip keeps its six cells.
+      const shorter = [
+        pnl.week != null ? `7D ${signedCompactUsd(pnl.week)}` : null,
+        pnl.day != null ? `24H ${signedCompactUsd(pnl.day)}` : null,
+      ].filter(Boolean);
       out.push({
         key: "pnl30",
         label: "30D PnL",
         value: signedCompactUsd(pnl.month),
-        sub: pnl.week != null ? `7D ${signedCompactUsd(pnl.week)}` : "exchange-reported",
+        sub: shorter.length > 0 ? shorter.join(" · ") : "exchange-reported",
         tone: tone(pnl.month),
       });
     }
