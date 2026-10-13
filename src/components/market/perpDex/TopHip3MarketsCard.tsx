@@ -17,6 +17,8 @@ interface AggregatedHip3MarketRow {
   totalOpenInterest: number;
   /** DEX with highest 24h volume for this ticker (for deep link) */
   primaryDexName: string;
+  /** That DEX's asset name (`flx:TSLA`) — the logo is keyed on its prefix. */
+  primaryAssetName: string;
 }
 
 function aggregateMarketsAcrossDexs(
@@ -28,6 +30,7 @@ function aggregateMarketsAcrossDexs(
       vol: number;
       oi: number;
       primaryDexName: string;
+      primaryAssetName: string;
       primaryDexVol: number;
     }
   >();
@@ -46,6 +49,7 @@ function aggregateMarketsAcrossDexs(
           vol: v,
           oi,
           primaryDexName: dex.name,
+          primaryAssetName: asset.name,
           primaryDexVol: v,
         });
       } else {
@@ -54,6 +58,7 @@ function aggregateMarketsAcrossDexs(
         if (v > existing.primaryDexVol) {
           existing.primaryDexVol = v;
           existing.primaryDexName = dex.name;
+          existing.primaryAssetName = asset.name;
         }
       }
     }
@@ -65,6 +70,7 @@ function aggregateMarketsAcrossDexs(
       totalVolume24h: agg.vol,
       totalOpenInterest: agg.oi,
       primaryDexName: agg.primaryDexName,
+      primaryAssetName: agg.primaryAssetName,
     }))
     .sort((a, b) => b.totalVolume24h - a.totalVolume24h);
 }
@@ -73,7 +79,7 @@ const COLUMNS: Column<AggregatedHip3MarketRow>[] = [
   {
     key: "ticker",
     header: "Ticker",
-    accessor: (row) => <ModuleAsset assetName={`xyz:${row.ticker}`} name={row.ticker} />,
+    accessor: (row) => <ModuleAsset assetName={row.primaryAssetName} name={row.ticker} />,
   },
   {
     key: "totalVolume24h",
@@ -109,14 +115,17 @@ export const TopHip3MarketsCard = memo(function TopHip3MarketsCard() {
     <TypedDataTable<AggregatedHip3MarketRow>
       title="Top HIP-3 markets"
       subtitle="Aggregated across all builder DEXs"
-      tag={allMarkets.length > 0 ? `${allMarkets.length} markets` : undefined}
+      // Rows merge a ticker across DEXs (TSLA on xyz, flx… is one row), so
+      // this counts tickers, not markets (see the Active Markets KPI).
+      tag={allMarkets.length > 0 ? `${allMarkets.length} tickers` : undefined}
       viewAllHref={HIP3_DOCS_URL}
       viewAllLabel="HIP-3 docs"
       data={topMarkets}
       columns={COLUMNS}
       getRowKey={(row) => row.ticker}
       isLoading={isLoading && topMarkets.length === 0}
-      error={error}
+      // A failed refresh keeps the last rows: error state only without them.
+      error={topMarkets.length === 0 ? error : null}
       errorTitle="Failed to load data"
       emptyMessage="No markets"
       emptyDescription="Check back later"
