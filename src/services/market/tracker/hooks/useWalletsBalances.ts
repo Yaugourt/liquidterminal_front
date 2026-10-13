@@ -71,7 +71,9 @@ export const useWalletsBalances = (address?: string) => {
         throw new Error(errorMessage);
       }
     },
-    refreshInterval: 30000, // Rafraîchir toutes les 20 secondes
+    // Every 15s: browser-direct to Hyperliquid (the visitor's own IP budget),
+    // two weight-2 reads per wallet.
+    refreshInterval: 15000,
     maxRetries: 3,
     dependencies: [address]
   });
