@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchStakingHolders } from '../staking-holders';
+import { STAKED_HOLDERS_REFRESH_MS } from './useHoldersStats';
 import { 
   HoldersParams, 
   StakedHoldersResponse, 
@@ -32,7 +33,7 @@ export function useStakingHoldersPaginated({
       const response = await fetchStakingHolders(params);
       return response;
     },
-    refreshInterval: 30000,
+    refreshInterval: STAKED_HOLDERS_REFRESH_MS,
     maxRetries: 3,
     dependencies: [params],
     initialData: initialData ? {
