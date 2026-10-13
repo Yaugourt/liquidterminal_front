@@ -101,7 +101,11 @@ export const useDefiPositionsStore = create<DefiPositionsStore>((set, get) => {
       return;
     }
 
-    patch(address, { ...EMPTY_STATE, status: 'streaming', source: 'stream' });
+    // A refresh keeps the previous protocols (and the DeFi totals built on
+    // them) on screen and swaps the new set in on `complete`; a first load
+    // shows protocols as they arrive.
+    const replacing = (get().wallets[k]?.protocols.length ?? 0) > 0;
+    patch(address, { status: 'streaming', source: 'stream', progress: null, error: null });
     const received = new Map<string, DefiProtocol>();
     const source = new EventSource(buildPositionsStreamUrl(address));
     conn.source = source;
@@ -117,10 +121,12 @@ export const useDefiPositionsStore = create<DefiPositionsStore>((set, get) => {
       if (payload.type === 'protocol') {
         const protocol = normalizeProtocol(payload.data);
         received.set(protocol.id, protocol);
-        patch(address, {
-          protocols: sortProtocols(Array.from(received.values())),
-          progress: payload.progress,
-        });
+        patch(
+          address,
+          replacing
+            ? { progress: payload.progress }
+            : { protocols: sortProtocols(Array.from(received.values())), progress: payload.progress }
+        );
         return;
       }
       if (payload.type === 'error') {
@@ -137,6 +143,7 @@ export const useDefiPositionsStore = create<DefiPositionsStore>((set, get) => {
         closeSource(conn);
         patch(address, {
           status: 'complete',
+          protocols: sortProtocols(Array.from(received.values())),
           progress: payload.progress,
           stats: payload.portfolioStats ? normalizePortfolioStats(payload.portfolioStats) : null,
           updatedAt: Date.now(),
@@ -158,13 +165,17 @@ export const useDefiPositionsStore = create<DefiPositionsStore>((set, get) => {
     subscribe: (address: string) => {
       const k = key(address);
       let conn = connections.get(k);
+      const fresh = !conn;
       if (!conn) {
         conn = { source: null, subscribers: 0, completed: false, fallback: null };
         connections.set(k, conn);
       }
       conn.subscribers += 1;
       const current = get().wallets[k];
-      if (!current || current.status === 'idle') {
+      // A failure is retried by the next mount (a fresh connection), not by
+      // every extra panel joining the current one.
+      const failed = current?.status === 'error' || current?.status === 'rate-limited';
+      if (!current || current.status === 'idle' || (fresh && failed)) {
         open(address);
       }
       return () => {
