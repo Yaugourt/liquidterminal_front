@@ -47,6 +47,10 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Run both `pnpm run build` and `pnpm run lint` before merging: a build can pass while lint fails.
 
+## Deploy
+
+Deploy the backend first, then the front: the front calls backend routes that older backends don't have and has no fallback for them. Routes added since the last release: `/hyperfolio/*` (wallet analytics and `/hyperfolio/yield`; the backend needs `HYPERFOLIO_API_KEY`), `/market/token-details/:tokenId`, `/market/holders/:token`, `/market/twap`, `/market/revenue/af-buybacks`, `/defillama/fee-rank`, `/liquidations/historical/top`, the `outcome_id` filter of `/indexer/hip4/markets-enriched`, and the `quote` / `bridgeReserve` fields of `/market/spot` rows.
+
 ## Configuration
 
 Copy `env.example` to `.env`:
