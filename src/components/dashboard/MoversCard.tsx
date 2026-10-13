@@ -52,8 +52,15 @@ function fmtPrice(price: number, format: NumberFormatType): string {
   });
 }
 
-function SignedPct({ value, decimals = 2 }: { value: number; decimals?: number }) {
+/**
+ * Fewer decimals as the move grows ("+9.87%", "+12.3%", "+123%"): every value
+ * fits the 72 px column in six characters. Two decimals clipped a ±10 % mover
+ * at 64 px.
+ */
+function SignedPct({ value }: { value: number }) {
   const positive = value >= 0;
+  const abs = Math.abs(value);
+  const decimals = abs < 10 ? 2 : abs < 100 ? 1 : 0;
   return (
     <span className={`mono ${positive ? "text-success" : "text-danger"}`}>
       {positive ? "+" : ""}
@@ -95,7 +102,7 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
         columns={[
           { header: isSpot ? "Token" : "Asset" },
           { header: "Price", width: 84 },
-          { header: "24h", width: 64 },
+          { header: "24h", width: 72 },
           { header: "Volume", width: 84, className: "hidden sm:table-cell" },
         ]}
       >
