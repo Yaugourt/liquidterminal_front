@@ -3,9 +3,10 @@ import { fetchHip4Fills } from "../api";
 import type { Hip4FillRow, Hip4FillsQuery, UseHip4FillsResult } from "../types";
 
 export function useHip4Fills(params?: Hip4FillsQuery): UseHip4FillsResult {
-  const { data, isLoading, error, dataUpdatedAt, refetch } = useDataFetching<Hip4FillRow[]>({
+  const { data, isLoading, error, isStale, dataUpdatedAt, refetch } = useDataFetching<Hip4FillRow[]>({
     fetchFn: () => fetchHip4Fills(params),
-    refreshInterval: 15000,
+    // Live trade tape: the backend keeps an active market's fills a few seconds.
+    refreshInterval: 10000,
     dependencies: [JSON.stringify(params)],
     maxRetries: 3,
   });
@@ -14,6 +15,7 @@ export function useHip4Fills(params?: Hip4FillsQuery): UseHip4FillsResult {
     fills: Array.isArray(data) ? data : [],
     isLoading,
     error,
+    isStale,
     dataUpdatedAt,
     refetch,
   };

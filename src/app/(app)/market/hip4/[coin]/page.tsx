@@ -220,11 +220,13 @@ export default function Hip4MarketDetailPage() {
   const { interval, lookbackMs } = useMemo(() => candleWindow(timeframe), [timeframe]);
   const candleStart = useMemo(() => Date.now() - lookbackMs, [lookbackMs]);
   const candleEnabled = !showUnderlyingChart && detailStatus === "live" && chartCoins.length > 0;
+  const candleLive = useMemo(() => ({ mids: live.mids, at: live.dataUpdatedAt }), [live.mids, live.dataUpdatedAt]);
   const candles = useHip4OutcomeCandles(
     candleEnabled ? chartCoins : [],
     interval,
     candleStart,
-    candleEnabled
+    candleEnabled,
+    candleLive
   );
   const probability = useHip4ProbabilityHistory(candleEnabled ? [] : chartCoins);
 
