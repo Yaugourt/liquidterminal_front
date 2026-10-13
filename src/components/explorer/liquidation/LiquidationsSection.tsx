@@ -16,7 +16,7 @@ import {
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AddressDisplay } from "@/components/ui/address-display";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { useLiquidationsContext, MIN_AMOUNT_PRESETS, type MinAmountPreset } from "./LiquidationsContext";
 
@@ -24,6 +24,7 @@ const MIN_AMOUNT_TABS = MIN_AMOUNT_PRESETS.map((p) => ({ value: String(p.value),
 
 export function LiquidationsSection() {
   const {
+    liquidations,
     filteredLiquidations: allLiquidations,
     isLoading,
     error,
@@ -46,7 +47,9 @@ export function LiquidationsSection() {
       className: "max-sm:hidden whitespace-nowrap",
       header: "Time",
       type: "time",
-      accessor: (liq) => formatDateTime(liq.time, dateFormat),
+      // `time` is naive UTC ("2026-10-13T01:14:25") and would parse as local
+      // time; `time_ms` is the same instant as an epoch.
+      accessor: (liq) => formatDateTime(liq.time_ms, dateFormat),
     },
     {
       key: "coin",
@@ -65,7 +68,13 @@ export function LiquidationsSection() {
       key: "notional",
       header: "Notional",
       type: "numeric",
-      accessor: (liq) => usd(liq.notional_total, 2),
+      accessor: (liq) => (
+        <>
+          {/* Compact on phones, where the full figure pushed the row past the card. */}
+          <span className="sm:hidden">{compactUsd(liq.notional_total)}</span>
+          <span className="hidden sm:inline">{usd(liq.notional_total, 2)}</span>
+        </>
+      ),
     },
     {
       key: "size",
@@ -169,7 +178,9 @@ export function LiquidationsSection() {
       columns={columns}
       getRowKey={(liq, idx) => `${liq.tid}-${liq.time_ms}-${idx}`}
       isLoading={isLoading}
-      error={error}
+      // Rows pushed live since a failed seed stay visible; the error only
+      // replaces an empty table.
+      error={liquidations.length > 0 ? null : error}
       errorTitle="Failed to load liquidations"
       emptyMessage={
         minAmount > 0
