@@ -64,6 +64,19 @@ function foldFills(fills: IndexerFill[]): LivePrint[] {
   return prints;
 }
 
+/**
+ * The backend keeps each indexed-fills answer 10s, keyed on every param. The
+ * seed's start time is floored to that bucket so every visitor loading the
+ * page in the same 10s shares one cached answer per coin, instead of each
+ * millisecond-precise start time costing its own upstream call.
+ */
+const START_BUCKET_MS = 10_000;
+
+/** `sinceMs` floored to the backend cache bucket (never later than `sinceMs`). */
+function bucketedStart(sinceMs: number, bucketMs = START_BUCKET_MS): number {
+  return Math.floor(sinceMs / bucketMs) * bucketMs;
+}
+
 /** Coins fetched per wave, and the pause between waves (see fetchRecentPrints). */
 const WAVE_SIZE = 4;
 const WAVE_GAP_MS = 1_100;
@@ -84,7 +97,9 @@ export const fetchRecentPrints = async (
   onWave?: (prints: LivePrint[]) => void
 ): Promise<LivePrint[]> => {
   return withErrorHandling(async () => {
-    const start_time = new Date(sinceMs).toISOString();
+    // Up to 10s earlier than asked, for a shared cache key; the exact cut-off
+    // is applied below (`p.time >= sinceMs`).
+    const start_time = new Date(bucketedStart(sinceMs)).toISOString();
     const all: LivePrint[] = [];
     for (let i = 0; i < coins.length; i += WAVE_SIZE) {
       if (i > 0) await new Promise((r) => setTimeout(r, WAVE_GAP_MS));
