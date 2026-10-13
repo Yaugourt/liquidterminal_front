@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { TypedDataTable, type Column } from "@/components/common";
 import { AddressDisplay } from "@/components/ui/address-display";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -9,6 +9,7 @@ import { BlockTransaction } from "@/services/explorer";
 import { decodeAction, useAssetResolver, type Activity } from "@/services/explorer/address";
 import type { UserTransaction } from "@/services/explorer/address/types";
 import { ActionLabel, ActivityDetails, ActivityValue } from "@/components/explorer/address";
+import { cn } from "@/lib/utils";
 
 /**
  * Transactions of one block, decoded into what each one did. Hash and user
@@ -70,19 +71,52 @@ export function BlockTransactionList({ transactions }: BlockTransactionListProps
     },
   ];
 
+  // Validator heartbeats, votes and oracle updates are most of a block: hidden
+  // by default so user actions are readable, one tap to show them.
+  const [showSystem, setShowSystem] = useState(false);
+  const systemCount = useMemo(() => [...decoded.values()].filter((a) => a.kind === "system").length, [decoded]);
+  const shown = useMemo(
+    () => (showSystem ? transactions : transactions.filter((tx) => decoded.get(tx.hash)?.kind !== "system")),
+    [transactions, decoded, showSystem]
+  );
+  const userCount = transactions.length - systemCount;
+
+  const toolbar =
+    systemCount > 0 ? (
+      <>
+        <span className="text-[12px] text-text-tertiary">
+          {userCount} user transaction{userCount === 1 ? "" : "s"}
+          {" · "}
+          {systemCount} system (validator no-ops, votes, oracle updates)
+        </span>
+        <button
+          type="button"
+          onClick={() => setShowSystem((v) => !v)}
+          aria-pressed={showSystem}
+          className={cn(
+            "ml-auto px-2.5 py-1 rounded-md text-[12px] border transition-colors focus-ring",
+            showSystem ? "text-brand border-brand/30 bg-brand/10" : "text-text-tertiary border-border-subtle hover:text-text-secondary"
+          )}
+        >
+          {showSystem ? "Hide system" : "Show system"}
+        </button>
+      </>
+    ) : undefined;
+
   return (
     <TypedDataTable<BlockTransaction>
       title="Transactions"
       tag={transactions.length > 0 ? `${transactions.length} txs` : undefined}
-      data={transactions}
+      data={shown}
       columns={columns}
       getRowKey={(tx) => tx.hash}
-      emptyMessage="No transactions in this block"
+      emptyMessage={systemCount > 0 && !showSystem ? "No user transactions in this block" : "No transactions in this block"}
       emptyDescription=""
       paginate
       itemsPerPage={15}
       rowsPerPageOptions={[10, 15, 25, 50]}
-      paginationVariant={transactions.length > 15 ? "full" : "none"}
+      paginationVariant={shown.length > 15 ? "full" : "none"}
+      toolbar={toolbar}
     />
   );
 }
