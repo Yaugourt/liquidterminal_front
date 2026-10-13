@@ -6,14 +6,15 @@ export function useActiveTraders24h(): {
   data: OverviewStat24h | null;
   isLoading: boolean;
   error: Error | null;
+  isStale: boolean;
   refetch: () => void;
 } {
-  const { data, isLoading, error, refetch } = useDataFetching<OverviewStat24h>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<OverviewStat24h>({
     fetchFn: fetchActiveTraders24h,
     dependencies: [],
-    refreshInterval: 60_000,
+    refreshInterval: 15_000,
     maxRetries: 3,
   });
 
-  return { data: data ?? null, isLoading, error, refetch };
+  return { data: data ?? null, isLoading, error, isStale, refetch };
 }

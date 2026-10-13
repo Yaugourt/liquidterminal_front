@@ -10,13 +10,13 @@ export function useBuilderUsers(
 ): UseBuilderUsersResult {
   const timeframe = params?.timeframe;
   const limit = params?.limit;
-  const { data, isLoading, error, refetch } = useDataFetching<BuilderUsersPayload | null>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<BuilderUsersPayload | null>({
     fetchFn: async () => {
       if (!address || !ETH_ADDRESS.test(address)) return null;
       return fetchBuilderUsers(address, { timeframe, limit });
     },
     dependencies: [address, timeframe, limit],
-    refreshInterval: 30_000,
+    refreshInterval: 15_000,
     maxRetries: 3,
     initialData: null,
   });
@@ -25,6 +25,7 @@ export function useBuilderUsers(
     data: data ?? null,
     isLoading,
     error,
+    isStale,
     refetch,
   };
 }

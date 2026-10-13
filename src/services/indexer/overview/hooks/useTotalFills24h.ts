@@ -8,17 +8,18 @@ export function useTotalFills24h(): {
   /** True during a background/manual refresh — drives freshness indicators. */
   isRefreshing: boolean;
   error: Error | null;
+  isStale: boolean;
   /** Epoch ms of the most recent successful fetch — null until first success. */
   dataUpdatedAt: number | null;
   refetch: () => void;
 } {
-  const { data, isLoading, isRefreshing, error, dataUpdatedAt, refetch } =
+  const { data, isLoading, isRefreshing, error, isStale, dataUpdatedAt, refetch } =
     useDataFetching<OverviewStat24h>({
       fetchFn: fetchTotalFills24h,
       dependencies: [],
-      refreshInterval: 60_000,
+      refreshInterval: 15_000,
       maxRetries: 3,
     });
 
-  return { data: data ?? null, isLoading, isRefreshing, error, dataUpdatedAt, refetch };
+  return { data: data ?? null, isLoading, isRefreshing, error, isStale, dataUpdatedAt, refetch };
 }

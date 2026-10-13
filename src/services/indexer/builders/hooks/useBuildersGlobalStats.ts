@@ -3,10 +3,10 @@ import { fetchBuildersGlobalStats } from "../api";
 import type { BuildersGlobalStatsPayload, BuildersTimeframe, UseBuildersGlobalStatsResult } from "../types";
 
 export function useBuildersGlobalStats(timeframe?: BuildersTimeframe): UseBuildersGlobalStatsResult {
-  const { data, isLoading, error, refetch } = useDataFetching<BuildersGlobalStatsPayload>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<BuildersGlobalStatsPayload>({
     fetchFn: () => fetchBuildersGlobalStats(timeframe),
     dependencies: [timeframe],
-    refreshInterval: 30_000,
+    refreshInterval: 15_000,
     maxRetries: 3,
   });
 
@@ -14,6 +14,7 @@ export function useBuildersGlobalStats(timeframe?: BuildersTimeframe): UseBuilde
     stats: data ?? null,
     isLoading,
     error,
+    isStale,
     refetch,
   };
 }

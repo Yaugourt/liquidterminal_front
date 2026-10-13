@@ -8,13 +8,13 @@ export function useBuilderStats(
   address: string | undefined,
   timeframe?: BuildersTimeframe
 ): UseBuilderStatsResult {
-  const { data, isLoading, isRefreshing, dataUpdatedAt, error, refetch } = useDataFetching<BuilderDetailStatsPayload | null>({
+  const { data, isLoading, isRefreshing, dataUpdatedAt, error, isStale, refetch } = useDataFetching<BuilderDetailStatsPayload | null>({
     fetchFn: async () => {
       if (!address || !ETH_ADDRESS.test(address)) return null;
       return fetchBuilderStats(address, { timeframe });
     },
     dependencies: [address, timeframe],
-    refreshInterval: 30_000,
+    refreshInterval: 15_000,
     maxRetries: 3,
     initialData: null,
   });
@@ -25,6 +25,7 @@ export function useBuilderStats(
     isRefreshing,
     dataUpdatedAt,
     error,
+    isStale,
     refetch,
   };
 }
