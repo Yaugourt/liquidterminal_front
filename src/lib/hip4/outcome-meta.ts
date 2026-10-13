@@ -318,7 +318,10 @@ export function buildLiveMarkets(
       total_volume: outcomes.reduce((acc, x) => acc + (x.total_volume ?? 0), 0),
       created_at: null,
       resolved_at: null,
-      status: settledNamed.size > 0 ? "settled" : "live",
+      // Hyperliquid settles named outcomes one by one (a tournament's knocked-out
+      // teams) and moves them from namedOutcomes to settledNamedOutcomes, so the
+      // question stays live while any listed outcome still trades.
+      status: outcomes.every((o) => o.is_settled) ? "settled" : "live",
       singleton_outcome_id: null,
       expiry: bucket?.expiry ?? null,
       period: null,
