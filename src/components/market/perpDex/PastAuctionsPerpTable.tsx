@@ -1,7 +1,13 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { TypedDataTable, ModuleAsset, type Column } from "@/components/common";
+import {
+  TypedDataTable,
+  ModuleAsset,
+  SourceBadge,
+  sourceStatus,
+  type Column,
+} from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { formatDateTime } from "@/lib/formatters/dateFormatting";
 import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
@@ -98,12 +104,21 @@ interface PastAuctionsPerpTableProps {
   headerAction?: ReactNode;
   /** Strip under the head (view switcher owned by the page). */
   toolbar?: ReactNode;
+  /** Ends the toolbar with the Hypurrscan `SourceBadge`, driven by this
+   *  table's own fetch: a page-level hook would poll `/pastAuctionsPerp`
+   *  even while the table is not shown. */
+  showSource?: boolean;
 }
 
-export function PastAuctionsPerpTable({ title, headerAction, toolbar }: PastAuctionsPerpTableProps = {}) {
+export function PastAuctionsPerpTable({
+  title,
+  headerAction,
+  toolbar,
+  showSource = false,
+}: PastAuctionsPerpTableProps = {}) {
   const { format: numberFormat } = useNumberFormat();
   const { format: dateFormat } = useDateFormat();
-  const { auctions, isLoading } = usePastAuctionsPerp();
+  const { auctions, isLoading, error } = usePastAuctionsPerp();
 
   return (
     <TypedDataTable<PastAuctionPerp>
@@ -120,7 +135,20 @@ export function PastAuctionsPerpTable({ title, headerAction, toolbar }: PastAuct
       rowsPerPageOptions={[5, 10, 15, 20]}
       title={title}
       headerAction={headerAction}
-      toolbar={toolbar}
+      toolbar={
+        showSource ? (
+          <>
+            {toolbar}
+            <SourceBadge
+              source="hypurrscan"
+              status={sourceStatus(error, isLoading)}
+              className="ml-auto"
+            />
+          </>
+        ) : (
+          toolbar
+        )
+      }
     />
   );
 }

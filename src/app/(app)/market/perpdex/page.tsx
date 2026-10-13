@@ -12,9 +12,8 @@ import {
   Hip3MarketsExplorer,
 } from "@/components/market/perpDex";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { PageHeader, PageFaq, DataStatus, SourceBadge, sourceStatus } from "@/components/common";
+import { PageHeader, PageFaq, DataStatus } from "@/components/common";
 import { usePerpDexMarketDataStore } from "@/services/market/perpDex/websocket.service";
-import { usePastAuctionsPerp } from "@/services/market/perpDex/hooks";
 import { PERPDEX_FAQ } from "@/lib/page-faqs";
 
 export default function PerpDexsPage() {
@@ -25,9 +24,6 @@ export default function PerpDexsPage() {
   // no duplicate REST poll and no re-render on every market tick.
   const wsConnected = usePerpDexMarketDataStore((s) => s.isConnected);
   const [tab, setTab] = useState<"builder-dexs" | "auction-pairs">("builder-dexs");
-  // Auction pairs come from Hypurrscan `/pastAuctionsPerp`; the same GET is
-  // 30s-cached so this shares PastAuctionsPerpTable's fetch for the badge.
-  const pastAuctions = usePastAuctionsPerp();
 
   const viewTabs = (
     <PillTabs
@@ -76,18 +72,9 @@ export default function PerpDexsPage() {
       {tab === "builder-dexs" ? (
         <PerpDexTable toolbar={viewTabs} />
       ) : (
-        <PastAuctionsPerpTable
-          toolbar={
-            <>
-              {viewTabs}
-              <SourceBadge
-                source="hypurrscan"
-                status={sourceStatus(pastAuctions.error, pastAuctions.isLoading)}
-                className="ml-auto"
-              />
-            </>
-          }
-        />
+        // Auction pairs come from Hypurrscan `/pastAuctionsPerp`; the table
+        // owns that fetch and its badge, so nothing polls it on the default view.
+        <PastAuctionsPerpTable toolbar={viewTabs} showSource />
       )}
       <PageFaq items={PERPDEX_FAQ} />
     </motion.div>
