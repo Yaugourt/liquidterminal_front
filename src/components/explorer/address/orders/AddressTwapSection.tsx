@@ -13,11 +13,12 @@ export function AddressTwapSection({ address }: AddressTwapSectionProps) {
     error: twapError
   } = useUserTwapOrders(address);
 
-  // The active TWAP feed is Hypurrscan `/twap/*`.
+  // The active TWAP feed is the HypeDexer indexer (`/indexer/twaps`), with
+  // Hypurrscan `/twap/*` only as the fallback.
   return (
     <UserTwapTable
       title="Active TWAP orders"
-      headerAction={<SourceBadge source="hypurrscan" status={sourceStatus(twapError, twapLoading)} />}
+      headerAction={<SourceBadge source="hypedexer" status={sourceStatus(twapError, twapLoading)} />}
       twaps={twapOrders}
       isLoading={twapLoading}
       error={twapError}

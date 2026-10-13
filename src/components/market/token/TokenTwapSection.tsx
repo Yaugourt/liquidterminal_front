@@ -29,8 +29,8 @@ const transformTwapData = (enrichedOrders: EnrichedTwapOrder[]): TwapTableData[]
 
 interface TokenTwapSectionProps {
   tokenName: string;
-  /** Reports the Hypurrscan `/twap/*` route health so the page can show one
-   * `SourceBadge` next to the TWAP / Holders tabs. */
+  /** Reports the TWAP feed health (HypeDexer indexer, Hypurrscan fallback) so
+   * the page can show one `SourceBadge` next to the TWAP / Holders tabs. */
   onSourceStatus?: (status: SourceBadgeStatus) => void;
 }
 

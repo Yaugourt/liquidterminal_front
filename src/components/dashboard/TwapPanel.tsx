@@ -178,7 +178,8 @@ export const TwapPanel = memo(function TwapPanel() {
         }
         actions={
           <>
-            <SourceBadge source="hypurrscan" status={sourceStatus(error, isLoading)} />
+            {/* Rows come from the HypeDexer indexer (Hypurrscan is only the fallback). */}
+            <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading)} />
             <DataStatus variant="live" />
           </>
         }

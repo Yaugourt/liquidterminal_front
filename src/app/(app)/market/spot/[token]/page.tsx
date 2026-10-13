@@ -176,7 +176,7 @@ export default function TokenPage() {
                                 onTabChange={(v) => selectTab(v as BottomTab)}
                             />
                             <SourceBadge
-                                source="hypurrscan"
+                                source={activeTab === 'holders' ? "hypurrscan" : "hypedexer"}
                                 status={
                                     activeTab === 'holders'
                                         ? sourceStatus(holdersData.error, holdersData.isLoading)
