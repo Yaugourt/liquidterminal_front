@@ -86,12 +86,9 @@ const SourceBadgeComponent = ({ source, status = "ok", className = "" }: SourceB
       title={`Data by ${meta.label} — ${dot.title}`}
       className={`group inline-flex items-center gap-1.5 text-[10px] font-medium text-text-tertiary hover:text-text-secondary transition-colors select-none ${className}`}
     >
-      <span className="relative inline-flex h-1.5 w-1.5 shrink-0" aria-hidden>
-        {status === "error" && (
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75" />
-        )}
-        <span className={`relative inline-flex h-1.5 w-1.5 rounded-full ${dot.className}`} />
-      </span>
+      {/* Static dot, like DataStatus: an endless ping on a failing route
+          kept the page painting frames for as long as it stayed open. */}
+      <span className={`inline-flex h-1.5 w-1.5 shrink-0 rounded-full ${dot.className}`} aria-hidden />
       <Image src={meta.logo} alt="" width={12} height={12} className="rounded-sm shrink-0" unoptimized />
       <span>{meta.label}</span>
       <ArrowUpRight size={10} className="opacity-0 -ml-0.5 group-hover:opacity-100 transition-opacity" />
