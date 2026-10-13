@@ -45,7 +45,10 @@ export default function DashboardCapital() {
           linkLabel="All yields →"
           linkHref="/market/yields"
         />
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+        {/* 3 columns only at 2xl: ValidatorsModule shows its 5 columns from
+            xl up, which leaves no room for the name in a third of 1280px. The
+            lone third card spans the row below 2xl. */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4 lg:[&>*:last-child:nth-child(odd)]:col-span-2 2xl:[&>*:last-child:nth-child(odd)]:col-span-1">
           <VaultsModule />
           <ValidatorsModule />
           <TopYieldsModule />
