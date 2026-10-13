@@ -45,11 +45,12 @@ export const fetchTwapFlow = async (limit = 6): Promise<TwapFlow[]> => {
 };
 
 export const useTwapFlow = (limit = 6) => {
-  const { data, isLoading, error, refetch } = useDataFetching<TwapFlow[]>({
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<TwapFlow[]>({
     fetchFn: () => fetchTwapFlow(limit),
     dependencies: [limit],
-    refreshInterval: 60000,
+    // Live flows: one shared backend key, refreshed every 15s.
+    refreshInterval: 15000,
     maxRetries: 1,
   });
-  return { twaps: data ?? [], isLoading, error, refetch };
+  return { twaps: data ?? [], isLoading, error, isStale, refetch };
 };

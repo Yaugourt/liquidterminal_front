@@ -27,6 +27,7 @@ export function useTwapOrders({
     data: response, 
     isLoading, 
     error,
+    isStale,
     refetch
   } = useDataFetching<TwapOrderPaginatedResponse>({
     fetchFn: async (signal) => {
@@ -35,7 +36,8 @@ export function useTwapOrders({
 
       return response;
     },
-    refreshInterval: 30000,
+    // TWAP cards are shown as live: new and finished TWAPs within ~15s.
+    refreshInterval: 15000,
     maxRetries: 3,
     dependencies: [params],
     initialData: initialData ? {
@@ -67,9 +69,10 @@ export function useTwapOrders({
     metadata: response?.metadata,
     isLoading,
     error,
+    isStale,
     updateParams,
     refetch
-  }), [response, isLoading, error, updateParams, refetch]);
+  }), [response, isLoading, error, isStale, updateParams, refetch]);
 
   return results;
 }
