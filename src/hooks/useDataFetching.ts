@@ -115,7 +115,10 @@ export function useDataFetching<T>({
   // from state: the setTimeout closure captures a stale `retryCount` (always the
   // value at schedule time), which made `retryCount < maxRetries` always true and
   // caused an infinite retry loop (~1 req/1.2s) on any persistent failure (QA audit 15/07).
-  const fetchData = useCallback(async (mode: FetchMode, attempt = 0) => {
+  // `stretched` is threaded the same way: the backoff stretch is decided once per
+  // cycle, from the first error — later retries run single-shot at the transport
+  // layer, so their own errors are never marked as transport-retried.
+  const fetchData = useCallback(async (mode: FetchMode, attempt = 0, stretched = false) => {
     if (!mountedRef.current) return;
 
     const isRetry = attempt > 0;
@@ -180,7 +183,8 @@ export function useDataFetching<T>({
 
       if (attempt < maxRetries) {
         const nextAttempt = attempt + 1;
-        const backoffBase = isTransportRetried(err)
+        const stretch = stretched || isTransportRetried(err);
+        const backoffBase = stretch
           ? retryDelay * TRANSPORT_RETRIED_BACKOFF_FACTOR
           : retryDelay;
         const retryDelayWithBackoff = backoffBase * Math.pow(2, nextAttempt - 1);
@@ -191,7 +195,7 @@ export function useDataFetching<T>({
 
         retryTimeoutRef.current = setTimeout(() => {
           if (mountedRef.current) {
-            fetchData(mode, nextAttempt);
+            fetchData(mode, nextAttempt, stretch);
           }
         }, retryDelayWithBackoff);
 
