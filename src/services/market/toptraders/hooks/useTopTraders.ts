@@ -23,7 +23,8 @@ export const useTopTraders = ({
   const { data, isLoading, isRefreshing, dataUpdatedAt, error, refetch } = useDataFetching<TopTradersResponse>({
     fetchFn: () => fetchTopTraders(params),
     dependencies: [params.sort, params.limit],
-    refreshInterval: 60000, // 60s - aligné avec le cache backend (55s) + marge
+    // 30s: the backend poller refreshes this shared snapshot every 60s.
+    refreshInterval: 30000,
     maxRetries: 3,
     initialData: initialData ? {
       success: true,
