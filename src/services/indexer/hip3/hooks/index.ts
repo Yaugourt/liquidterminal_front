@@ -10,34 +10,38 @@ import type { Hip3CoinTrader, Hip3Fill, Hip3Overview, Hip3Snapshot } from "../ty
 
 /**
  * Every hook here exposes `refetch`. A 402 from the proxy is treated as a
- * permanent client error by `useDataFetching`, which stops the polling loop —
- * correct behaviour, but it means the UI must offer a manual retry or the card
- * stays dead until the user navigates away.
+ * permanent client error by `useDataFetching`: with nothing loaded yet it
+ * stops the polling loop — correct behaviour, but it means the UI must offer a
+ * manual retry or the card stays dead until the user navigates away. With
+ * data on screen the polls go on and `isStale` flags the kept data.
  */
 
 export function useHip3Overview(): {
   data: Hip3Overview | null;
   isLoading: boolean;
   error: Error | null;
+  isStale: boolean;
 } {
-  const { data, isLoading, error } = useDataFetching<Hip3Overview>({
+  const { data, isLoading, error, isStale } = useDataFetching<Hip3Overview>({
     fetchFn: fetchHip3Overview,
     dependencies: [],
-    refreshInterval: REFRESH_INTERVALS.STATIC,
+    // Rolling 24h volume/OI shown beside live prices: same cadence as the
+    // network overview KPIs.
+    refreshInterval: 15_000,
     maxRetries: 3,
   });
-  return { data: data ?? null, isLoading, error };
+  return { data: data ?? null, isLoading, error, isStale };
 }
 
 export function useHip3Snapshot(coin: string | null) {
-  const { data, isLoading, error, refetch, dataUpdatedAt } =
+  const { data, isLoading, error, isStale, refetch, dataUpdatedAt } =
     useDataFetching<Hip3Snapshot | null>({
       fetchFn: () => (coin ? fetchHip3Snapshot(coin) : Promise.resolve(null)),
       dependencies: [coin],
-      refreshInterval: REFRESH_INTERVALS.DEFAULT,
+      refreshInterval: REFRESH_INTERVALS.FAST,
       maxRetries: 1,
     });
-  return { snapshot: data ?? null, isLoading, error, refetch, dataUpdatedAt };
+  return { snapshot: data ?? null, isLoading, error, isStale, refetch, dataUpdatedAt };
 }
 
 export function useHip3CoinFills(params: {
@@ -47,7 +51,7 @@ export function useHip3CoinFills(params: {
   limit?: number;
 }) {
   const { coin, minNotional, liquidationsOnly, limit = 60 } = params;
-  const { data, isLoading, error, refetch, dataUpdatedAt } = useDataFetching<Hip3Fill[]>({
+  const { data, isLoading, error, isStale, refetch, dataUpdatedAt } = useDataFetching<Hip3Fill[]>({
     fetchFn: () =>
       coin
         ? fetchHip3Fills({
@@ -68,17 +72,18 @@ export function useHip3CoinFills(params: {
     fills: liquidationsOnly ? fills.filter((f) => f.is_liquidation === 1) : fills,
     isLoading,
     error,
+    isStale,
     refetch,
     dataUpdatedAt,
   };
 }
 
 export function useHip3CoinTraders(coin: string | null, limit = 25) {
-  const { data, isLoading, error, refetch, dataUpdatedAt } = useDataFetching<Hip3CoinTrader[]>({
+  const { data, isLoading, error, isStale, refetch, dataUpdatedAt } = useDataFetching<Hip3CoinTrader[]>({
     fetchFn: () => (coin ? fetchHip3CoinTraders({ coin, limit }) : Promise.resolve([])),
     dependencies: [coin, limit],
     refreshInterval: REFRESH_INTERVALS.STATIC,
     maxRetries: 1,
   });
-  return { traders: data ?? [], isLoading, error, refetch, dataUpdatedAt };
+  return { traders: data ?? [], isLoading, error, isStale, refetch, dataUpdatedAt };
 }
