@@ -20,6 +20,8 @@ interface AddressDisplayProps extends React.HTMLAttributes<HTMLDivElement> {
     copyMessage?: string;
     label?: React.ReactNode;
     externalLinkHref?: string;
+    /** Forwarded to the internal `<Link>`; `false` for long lists of rows. */
+    prefetch?: boolean;
 }
 
 export function AddressDisplay({
@@ -33,6 +35,7 @@ export function AddressDisplay({
     copyMessage = "Address copied to clipboard",
     label,
     externalLinkHref,
+    prefetch,
     ...props
 }: AddressDisplayProps) {
     const [copied, setCopied] = React.useState(false);
@@ -69,6 +72,7 @@ export function AddressDisplay({
             ) : (
                 <Link
                     href={linkHref}
+                    prefetch={prefetch}
                     className="mono text-brand hover:text-brand-hover transition-colors"
                     onClick={(e) => e.stopPropagation()}
                     title={hlName ? safeAddress : undefined}

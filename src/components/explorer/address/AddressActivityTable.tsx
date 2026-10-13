@@ -85,7 +85,8 @@ export function AddressActivityTable({
         header: "Time",
         type: "time",
         className: "hidden sm:table-cell w-[64px]",
-        accessor: (a) => ago(a.time),
+        // Hover: the exact time, in UTC.
+        accessor: (a) => <span title={new Date(a.time).toISOString().replace("T", " ").slice(0, 19) + " UTC"}>{ago(a.time)}</span>,
       },
       {
         key: "action",
@@ -119,7 +120,14 @@ export function AddressActivityTable({
         className: "hidden md:table-cell",
         accessor: (a) =>
           a.hash ? (
-            <AddressDisplay address={a.hash} href={`/explorer/transaction/${a.hash}`} copyMessage="Hash copied to clipboard" />
+            // Hundreds of rows: no prefetch of every transaction page in view.
+            <AddressDisplay
+              address={a.hash}
+              href={`/explorer/transaction/${a.hash}`}
+              prefetch={false}
+              title={a.hash}
+              copyMessage="Hash copied to clipboard"
+            />
           ) : (
             // System transfer: no transaction hash.
             <StatusBadge variant="neutral">system</StatusBadge>
