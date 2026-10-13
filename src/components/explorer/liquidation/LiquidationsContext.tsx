@@ -4,7 +4,7 @@ import { createContext, useContext, useState, ReactNode, useEffect, useMemo, use
 import { Liquidation } from "@/services/explorer/liquidation";
 import { fetchRecentLiquidations, fetchLiquidationsData, fetchLiquidationsHistoricalChart } from "@/services/explorer/liquidation/api";
 import { useLiquidationWSStore } from "@/services/explorer/liquidation/websocket.store";
-import { mergeLiquidationRows } from "@/services/explorer/liquidation/merge";
+import { insertLiveLiquidation } from "@/services/explorer/liquidation/merge";
 import { setVisibleInterval } from "@/lib/visibility";
 import { LiquidationStats, ChartDataBucket, HistoricalChartBucket, HistoricalChartPeriod, LiquidationsPeriodData } from "@/services/explorer/liquidation/types";
 
@@ -92,6 +92,9 @@ const defaultStats: LiquidationStats = {
 
 const LiquidationsContext = createContext<LiquidationsContextValue | null>(null);
 
+const toError = (reason: unknown): Error =>
+  reason instanceof Error ? reason : new Error("Failed to load data");
+
 const MAX_LIQUIDATIONS = 1000;
 
 export function LiquidationsProvider({ children }: { children: ReactNode }) {
@@ -124,15 +127,9 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
 
   // Callback pour les nouvelles liquidations via WebSocket
   const handleNewLiquidation = useCallback((newLiq: Liquidation) => {
-    setLiquidations(prev => {
-      // Éviter les doublons (même tid)
-      if (prev.some(l => l.tid === newLiq.tid)) {
-        return prev;
-      }
-      // Ajouter en tête, fusionner la paire priced/liquidators (même hash),
-      // limiter la taille
-      return mergeLiquidationRows([newLiq, ...prev]).slice(0, MAX_LIQUIDATIONS);
-    });
+    // Newest first; a liquidators row folds into its priced sibling (same
+    // hash, user and coin), duplicates are skipped, the list is capped.
+    setLiquidations(prev => insertLiveLiquidation(prev, newLiq, MAX_LIQUIDATIONS));
     setLastUpdated(new Date());
   }, []);
 
@@ -145,32 +142,34 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       setDataLoading(true);
 
-      try {
-        // Charger en parallèle : liquidations récentes + stats/chart
-        const [liquidationsResponse, dataResponse] = await Promise.all([
-          fetchRecentLiquidations({ limit: 1000, hours: 2 }),
-          fetchLiquidationsData()
-        ]);
+      // Settled independently: the table seed (HypeDexer passthrough) can fail
+      // while the stats (local DB) answer, and the other way round.
+      const [liquidationsResult, dataResult] = await Promise.allSettled([
+        fetchRecentLiquidations({ limit: 1000, hours: 2 }),
+        fetchLiquidationsData()
+      ]);
 
-        // Liquidations pour le tableau
-        if (liquidationsResponse.success) {
-          setLiquidations(mergeLiquidationRows(liquidationsResponse.data));
+      // Liquidations pour le tableau (already one row per event, see merge.ts)
+      if (liquidationsResult.status === 'fulfilled') {
+        if (liquidationsResult.value.success) {
+          setLiquidations(liquidationsResult.value.data);
         }
-
-        // Stats + Chart pour toutes les périodes
-        if (dataResponse.success) {
-          setAllData(dataResponse.periods);
-        }
-
-        setLastUpdated(new Date());
         setError(null);
-      } catch (err) {
-        console.error('Error loading initial liquidations data:', err);
-        setError(err instanceof Error ? err : new Error('Failed to load data'));
-      } finally {
-        setIsLoading(false);
-        setDataLoading(false);
+      } else {
+        console.error('Error loading initial liquidations:', liquidationsResult.reason);
+        setError(toError(liquidationsResult.reason));
       }
+
+      // Stats + Chart pour toutes les périodes (retried by the 60 s refresh)
+      if (dataResult.status === 'fulfilled' && dataResult.value.success) {
+        setAllData(dataResult.value.periods);
+      }
+
+      if (liquidationsResult.status === 'fulfilled' || dataResult.status === 'fulfilled') {
+        setLastUpdated(new Date());
+      }
+      setIsLoading(false);
+      setDataLoading(false);
     };
 
     loadInitialData();
@@ -238,21 +237,23 @@ export function LiquidationsProvider({ children }: { children: ReactNode }) {
   }, [chartPeriod]);
 
   const refreshData = useCallback(async () => {
-    try {
-      const [liquidationsResponse, dataResponse] = await Promise.all([
-        fetchRecentLiquidations({ limit: 1000, hours: 2 }),
-        fetchLiquidationsData(),
-      ]);
-      if (liquidationsResponse.success) {
-        setLiquidations(mergeLiquidationRows(liquidationsResponse.data));
+    const [liquidationsResult, dataResult] = await Promise.allSettled([
+      fetchRecentLiquidations({ limit: 1000, hours: 2 }),
+      fetchLiquidationsData(),
+    ]);
+    if (liquidationsResult.status === "fulfilled") {
+      if (liquidationsResult.value.success) {
+        setLiquidations(liquidationsResult.value.data);
       }
-      if (dataResponse.success) {
-        setAllData(dataResponse.periods);
-      }
-      setLastUpdated(new Date());
       setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Failed to load data"));
+    } else {
+      setError(toError(liquidationsResult.reason));
+    }
+    if (dataResult.status === "fulfilled" && dataResult.value.success) {
+      setAllData(dataResult.value.periods);
+    }
+    if (liquidationsResult.status === "fulfilled" || dataResult.status === "fulfilled") {
+      setLastUpdated(new Date());
     }
   }, []);
 

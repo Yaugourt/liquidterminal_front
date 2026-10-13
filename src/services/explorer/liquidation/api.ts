@@ -50,9 +50,8 @@ export const fetchRecentLiquidations = async (
 /**
  * Every liquidation recorded against one wallet (as `liquidated_user`), newest
  * first, from the backend `/liquidations` endpoint (HypeDexer's full history,
- * kept 5 min by the backend). The upstream emits two rows per event (priced +
- * liquidators), so callers fold them with `mergeLiquidationRows` before
- * counting.
+ * kept 5 min by the backend). The backend folds the upstream's two rows per
+ * event (priced + liquidators), so each row is one (hash, user, coin) event.
  * @param address Wallet address
  * @param limit Max rows (1-1000, default 100)
  */
