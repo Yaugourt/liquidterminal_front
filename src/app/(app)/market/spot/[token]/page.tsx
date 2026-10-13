@@ -46,11 +46,13 @@ export default function TokenPage() {
         () => new Set<BottomTab>(["twap"])
     );
 
-    // Shared data — one fetch each. The holders' first page feeds the band's
-    // count and the tab's badge; HoldersTable reads the same page (shared
-    // request) and then its own.
+    // Shared data — one fetch each, once the token is found in the spot list
+    // (an unlisted name, e.g. an auction winner with no pair yet, has no
+    // holders view: the backend answers 404). The holders' first page feeds
+    // the band's count and the tab's badge; HoldersTable reads the same page
+    // (shared request) and then its own.
     const { data: tokenDetails, isLoading: detailsLoading } = useTokenDetails(token?.tokenId || null);
-    const holdersData = useTokenHolders(tokenName);
+    const holdersData = useTokenHolders(token ? tokenName : null);
 
     const selectTab = (tab: BottomTab) => {
         setActiveTab(tab);

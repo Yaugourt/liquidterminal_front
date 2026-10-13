@@ -17,11 +17,13 @@ const NO_COHORTS: TokenHolderCohort[] = [];
  * plus the holder count, summed balance and cohorts of every holder —
  * aggregated by the backend (`/market/holders/:token`).
  *
+ * @param tokenName null asks nothing (e.g. until the token is known to be listed)
  * @param page starts at 0, like the tables' pagination
  */
-export function useTokenHolders(tokenName: string, page = 0, rowsPerPage = 10) {
-  const { data, isLoading, error, isStale, refetch } = useDataFetching<TokenHoldersPage>({
-    fetchFn: (signal) => fetchTokenHolders(tokenName, page + 1, rowsPerPage, signal),
+export function useTokenHolders(tokenName: string | null, page = 0, rowsPerPage = 10) {
+  const { data, isLoading, error, isStale, refetch } = useDataFetching<TokenHoldersPage | null>({
+    fetchFn: async (signal) =>
+      tokenName ? fetchTokenHolders(tokenName, page + 1, rowsPerPage, signal) : null,
     refreshInterval: HOLDERS_REFRESH_MS,
     maxRetries: 3,
     dependencies: [tokenName, page, rowsPerPage],
