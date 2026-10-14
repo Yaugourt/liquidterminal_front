@@ -250,6 +250,15 @@ export const seoConfig = {
     image: "/og/market.png",
   },
 
+  marketPortfolioMargin: {
+    title: "Hyperliquid Portfolio Margin - Borrow, Lend & Borrower Health",
+    description:
+      "Hyperliquid portfolio margin live: USDC lent and borrowed, HYPE and BTC posted as collateral, utilization and rates since launch, and the health of every borrower found.",
+    keywords: ["Hyperliquid portfolio margin", "Hyperliquid borrow", "Hyperliquid lending", "HYPE collateral", "USDC borrow rate", "portfolio margin liquidation"],
+    path: "/market/portfolio-margin",
+    image: "/og/market.png",
+  },
+
   marketBuilders: {
     title: "Hyperliquid Builder Codes - Volume & Fees Leaderboard",
     description:

@@ -40,6 +40,7 @@ These pages are client-rendered dashboards; the numbers below them come from pub
 - [Perp DEXs (HIP-3)](${base}/market/perpdex): builder-deployed perp venues, their markets and open interest
 - [Prediction markets (HIP-4)](${base}/market/hip4): outcome markets, probabilities, settlements
 - [Builder codes](${base}/market/builders): order flow and fees per builder
+- [Portfolio margin](${base}/market/portfolio-margin): USDC lent and borrowed, HYPE and BTC collateral, rates since launch and the health of every borrower found
 - [Wallet tracker](${base}/market/tracker): wallets, PnL, public lists, top traders
 - [Ticker auctions (HIP-1)](${base}/market/spot/auction): live spot ticker auction and full history
 - [Deploy auctions (HIP-3)](${base}/market/perp/auction): perp DEX deploy auction and past deployments
