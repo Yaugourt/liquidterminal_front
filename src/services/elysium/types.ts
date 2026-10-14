@@ -94,6 +94,10 @@ export interface ElysiumBridgeTransfer {
   amount: number;
   l1_tx_hash: string;
   l2_tx_hash: string;
+  /** Outbox index of a withdrawal (null for deposits). */
+  position?: number | null;
+  /** Elysium block the transfer landed or started in. */
+  l2_block?: number | null;
   initiated_time: string | null;
   completed_time: string | null;
   duration_s: number | null;
