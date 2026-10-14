@@ -17,10 +17,10 @@ interface ScopeItem {
 /**
  * In-page tabs of the Market family: the same entries, in the same order, as
  * the sidebar's Markets group, so any sibling market is one click away.
- * Builders and the wallet tracker live under /market/* for URL history only;
- * they belong to other families, so the bar stays off their pages.
+ * Builders, portfolio margin and the wallet tracker live under /market/* for
+ * URL history only; they belong to other families, so the bar stays off their pages.
  */
-const NOT_MARKET = ["/market/builders", "/market/tracker"];
+const NOT_MARKET = ["/market/builders", "/market/portfolio-margin", "/market/tracker"];
 
 export function MarketScopeBar() {
   const pathname = usePathname();
