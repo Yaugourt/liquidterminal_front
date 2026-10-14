@@ -2,9 +2,8 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { BookOpen, Landmark, LineChart, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { AuroraAreaChart, CardHeading, DataStatus, KpiRibbon, PageHeader, TypedDataTable, chartPalette } from "@/components/common";
+import { AuroraAreaChart, CardHead, DataStatus, KpiRibbon, PageHeader, TypedDataTable, chartPalette } from "@/components/common";
 import type { Column, KpiCell } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import {
@@ -83,7 +82,7 @@ function HistoryCard({ token, title, valueOf, format }: {
   const points = useMemo(() => (data ?? []).map((r) => ({ time: r.time, value: valueOf(r) })), [data, valueOf]);
   return (
     <Card className="overflow-hidden flex flex-col">
-      <CardHeading icon={<LineChart size={13} className="text-brand" />} title={title} meta={`since ${HISTORY_FROM}, every 4h`} metaVariant="plain" />
+      <CardHead title={title} tag={`since ${HISTORY_FROM}, every 4h`} />
       <div className="px-2 pb-2 pt-1">
         {points.length > 1 ? (
           <AuroraAreaChart data={points} height={200} lineColor={chartPalette.accent} formatValue={format} />
@@ -150,11 +149,7 @@ export function PortfolioMarginView() {
         className: "hidden lg:table-cell",
         accessor: (a) => {
           const hedge = hedgeLine(a);
-          return (
-            <span className="text-[11.5px] text-text-secondary">
-              {hedge ?? (a.perps.length ? `${a.perps.length} position${a.perps.length > 1 ? "s" : ""}` : "None")}
-            </span>
-          );
+          return hedge ?? (a.perps.length ? `${a.perps.length} position${a.perps.length > 1 ? "s" : ""}` : "None");
         },
       },
     ],
@@ -188,7 +183,6 @@ export function PortfolioMarginView() {
       {data ? (
         <TypedDataTable<PmReserve>
           title="Reserves"
-          icon={<Landmark size={13} className="text-brand" />}
           subtitle="Stablecoins are lent and borrowed; HYPE and BTC are posted as collateral"
           data={data.reserves}
           columns={reserveColumns}
@@ -200,7 +194,6 @@ export function PortfolioMarginView() {
       {data ? (
         <TypedDataTable<PmAccount>
           title="Borrowers"
-          icon={<Users size={13} className="text-brand" />}
           subtitle={`${borrowers.length} accounts with debt among the ${data.scan.found} portfolio margin accounts found · health and health factor are Hyperliquid's own`}
           data={borrowers}
           columns={accountColumns}
@@ -215,7 +208,7 @@ export function PortfolioMarginView() {
       ) : null}
 
       <Card className="overflow-hidden">
-        <CardHeading icon={<BookOpen size={13} className="text-brand" />} title="How to read this page" />
+        <CardHead title="How to read this page" />
         <div className="px-3.5 pb-3.5 pt-1 space-y-2 text-[12px] leading-relaxed text-text-secondary max-w-[75ch]">
           <p>
             Portfolio margin puts spot and perps in one account. Balances you lack are borrowed automatically against the
