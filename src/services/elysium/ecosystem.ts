@@ -24,7 +24,7 @@ export interface EcoProject {
   url: string | null;
   urlLabel: string | null;
   x: string | null;
-  /** Launchpad name for the three launchpads whose tokens we decode. */
+  /** Launchpad name, for the launchpads whose tokens we decode. */
   launchpad?: string;
   /** Number of listed contracts. */
   contracts: number;
@@ -41,6 +41,13 @@ export interface EcoProject {
   /** Launchpads only. */
   volume7d: number | null;
   launches7d: number | null;
+  /** Since the first block: non-spam txs and distinct wallets sent to the project's contracts; null without contracts. */
+  txsAll?: number | null;
+  walletsAll?: number | null;
+  /** First non-spam tx to one of its contracts (ISO). */
+  firstTxAt?: string | null;
+  /** Listed contracts with verified source on the explorer; null until checked. */
+  verifiedContracts?: number | null;
 }
 
 export interface EcoToken {

@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { ArrowDown, ArrowUpRight, Boxes } from "lucide-react";
+import { ArrowDown, ArrowUpRight, BadgeCheck, Boxes } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHead, KpiRibbon, SearchBar, Sparkline, TimeframeTabs, type KpiCell } from "@/components/common";
@@ -11,7 +11,7 @@ import { EMPTY, Empty } from "./shared";
 import { EcoLogo, EcoSource, StatusTag, TH, signedPct } from "./eco-shared";
 
 type Window = "24h" | "7d";
-type ValueKey = "users24h" | "wallets7d" | "txs7d" | "volume7d" | "launches7d";
+type ValueKey = "users24h" | "wallets7d" | "txs7d" | "volume7d" | "launches7d" | "txsAll" | "walletsAll";
 type SortKey = ValueKey | "chg24h" | "chg7d";
 
 interface MetricCol {
@@ -29,6 +29,14 @@ const COLUMNS: Record<string, MetricCol[]> = {
     { key: "wallets7d", label: "Users 7d", hint: "Active users over the last 7 days" },
     { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before" },
     { key: "txs7d", label: "Txs 7d", hint: "Transactions sent to the project's contracts over 7 days" },
+    { key: "txsAll", label: "Txs total", hint: "Transactions sent to the project's contracts since its first one" },
+  ],
+  Games: [
+    { key: "wallets7d", label: "Wallets 7d", hint: "Wallets that sent a transaction to the game's contracts over 7 days (a game that relays plays shows fewer wallets than players)" },
+    { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before" },
+    { key: "txs7d", label: "Txs 7d", hint: "Transactions sent to the game's contracts over 7 days" },
+    { key: "walletsAll", label: "Wallets total", hint: "Wallets that ever sent a transaction to the game's contracts" },
+    { key: "txsAll", label: "Txs total", hint: "Transactions sent to the game's contracts since its first one" },
   ],
   Launchpad: [
     { key: "volume7d", label: "Volume 7d", hint: "Traded volume over 7 days", money: true },
@@ -66,7 +74,29 @@ const isNew = (p: EcoProject, w: Window) => {
 function sortValue(p: EcoProject, key: SortKey): number | null {
   if (key === "chg24h") return change(p, "24h");
   if (key === "chg7d") return change(p, "7d");
-  return p[key];
+  return p[key] ?? null;
+}
+
+const SINCE = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+
+/** "since Oct 14" from the first transaction sent to the project, when there is one. */
+function since(p: EcoProject): string | null {
+  return p.firstTxAt ? `since ${SINCE.format(new Date(p.firstTxAt))}` : null;
+}
+
+/** "6/8 verified": how many of the listed contracts have verified source on the explorer. */
+function VerifiedTag({ p }: { p: EcoProject }) {
+  if (p.verifiedContracts == null || p.contracts === 0) return null;
+  const all = p.verifiedContracts === p.contracts;
+  return (
+    <span
+      className={`inline-flex items-center gap-0.5 text-[10px] ${p.verifiedContracts > 0 ? "text-success" : "text-text-tertiary"}`}
+      title={`${p.verifiedContracts} of its ${p.contracts} listed contracts have verified source on the Elysium explorer`}
+    >
+      <BadgeCheck size={10} />
+      {all ? "verified" : `${p.verifiedContracts}/${p.contracts} verified`}
+    </span>
+  );
 }
 
 function ChangeCell({ p, w }: { p: EcoProject; w: Window }) {
@@ -281,8 +311,13 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
                       <div className="flex items-center gap-2.5 min-w-0" title={p.description || undefined}>
                         <EcoLogo src={p.logo} label={p.name} />
                         <div className="min-w-0">
-                          <div className="text-text-primary font-medium truncate">{p.name}</div>
-                          <div className="text-[10px] text-text-tertiary truncate max-w-[260px]">{p.tagline}</div>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="text-text-primary font-medium truncate">{p.name}</span>
+                            {p.verifiedContracts != null && p.verifiedContracts > 0 && <VerifiedTag p={p} />}
+                          </div>
+                          <div className="text-[10px] text-text-tertiary truncate max-w-[260px]">
+                            {[p.tagline, since(p)].filter(Boolean).join(" · ")}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -295,7 +330,7 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
                         </td>
                       ) : (
                         <td key={c.key} className={`px-2 py-2 text-right mono ${p[c.key] == null ? "text-text-tertiary" : "text-text-primary"}`}>
-                          {fmt(p[c.key], c.money)}
+                          {fmt(p[c.key as ValueKey], c.money)}
                         </td>
                       ),
                     )}
@@ -333,7 +368,10 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
         Active users are the distinct wallets that sent a non-spam transaction to a project&apos;s known contracts. Each Δ compares the
         last 24 hours (or 7 days) with the period just before; &ldquo;New&rdquo; means no user in that previous period. Gaining and losing
         lists only rank projects with {MIN_USERS} or more users in one of the two periods. The 14-day curve counts users per rolling 24 hours.
-        A dash means the project has no contract on chain yet. Launchpad volume is decoded from Chainzy, CorePad and Signal trades.
+        Totals and &ldquo;since&rdquo; dates count every transaction since the project&apos;s first one. A dash means the project has no
+        contract on chain yet. Launchpad volume is decoded from Chainzy, CorePad, Signal and Neuriio trades; HYPE is valued at its
+        Hyperliquid price and test USDC at $1. &ldquo;Verified&rdquo; counts the listed contracts whose source is verified on the Elysium
+        explorer.
       </p>
       <EcoSource what="Project list, statuses and user activity" />
     </div>
