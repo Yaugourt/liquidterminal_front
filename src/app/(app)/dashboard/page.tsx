@@ -57,8 +57,10 @@ export default function DashboardOverview() {
         <HypeTwapCard board={twaps} isLoading={twaps.isLoading} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-        <div className="lg:col-span-2 min-w-0">
+      {/* The liquidations feed needs more than a third of the row for its five
+          columns until 2xl: below that both cards span the row. */}
+      <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4 items-start">
+        <div className="2xl:col-span-2 min-w-0">
           <BigPrintsCard prints={feed.prints} connected={feed.connected} seeded={feed.seeded} coinCount={tapeCoins.length} />
         </div>
         <LiveLiquidationsCard />

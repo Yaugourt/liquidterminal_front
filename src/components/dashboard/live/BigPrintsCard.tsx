@@ -3,7 +3,7 @@
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { CardHead, DataStatus, TokenAvatar } from "@/components/common";
+import { CardHead, DataStatus, ModuleTable, ModuleTableRow, SideBadge, TokenAvatar, type ModuleColumn } from "@/components/common";
 import { compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import type { LivePrint } from "@/services/dashboard/live/useLiveMarketFeed";
@@ -11,6 +11,17 @@ import type { LivePrint } from "@/services/dashboard/live/useLiveMarketFeed";
 const THRESHOLDS = [10_000, 25_000, 100_000] as const;
 const DEFAULT_THRESHOLD = 25_000;
 const MAX_ROWS = 14;
+
+// Price and taker are secondary: they drop on phones, and the taker also drops
+// on lg where the card is only a third of the row wide.
+const COLUMNS: ModuleColumn[] = [
+  { header: "Time", width: 80, align: "left" },
+  { header: "Market", align: "left" },
+  { header: "Side", width: 68, align: "left" },
+  { header: "Size", width: 80 },
+  { header: "Price", width: 88, className: "hidden sm:table-cell" },
+  { header: "Taker", width: 100, className: "hidden sm:table-cell" },
+];
 
 function short(addr: string): string {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -104,47 +115,42 @@ export const BigPrintsCard = memo(function BigPrintsCard({
         </div>
       </div>
 
-      <div className="h-[300px] overflow-y-auto scrollbar-brand pl-3.5 pr-2 pb-2">
+      <div className="h-[300px] overflow-y-auto scrollbar-brand">
         {rows.length === 0 ? (
           <div className="h-full grid place-items-center text-[12px] text-text-tertiary text-center px-4">
             {!seeded ? "Loading the last five minutes…" : connected ? `Waiting for a print of ${compactUsd(threshold, { decimals: 0 })} or more…` : "Connecting to the trade stream…"}
           </div>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <tbody>
-              {rows.map((p) => (
-                <tr key={p.tid} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
-                    {p.hash ? (
-                      <Link href={`/explorer/transaction/${p.hash}`} prefetch={false} className="text-text-tertiary hover:text-brand" title="Open the transaction">
-                        {clock(p.time)}
-                      </Link>
-                    ) : (
-                      <span className="text-text-tertiary">{clock(p.time)}</span>
-                    )}
-                  </td>
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
-                    <Link href={`/market/perp/${encodeURIComponent(p.coin)}`} className="inline-flex items-center gap-1.5 text-text-primary hover:text-brand">
-                      <TokenAvatar assetName={p.coin} size="xs" />
-                      {p.coin}
+          <ModuleTable columns={COLUMNS} density="compact">
+            {rows.map((p) => (
+              <ModuleTableRow
+                key={p.tid}
+                cells={[
+                  p.hash ? (
+                    <Link key="t" href={`/explorer/transaction/${p.hash}`} prefetch={false} className="mono text-[11px] text-text-tertiary hover:text-brand whitespace-nowrap" title="Open the transaction">
+                      {clock(p.time)}
                     </Link>
-                  </td>
-                  <td className={`py-1.5 pr-2 font-semibold ${p.side === "B" ? "text-success" : "text-danger"}`}>
-                    {p.side === "B" ? "BUY" : "SELL"}
-                  </td>
-                  <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactUsd(p.ntl)}</td>
-                  <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap hidden sm:table-cell">{formatPrice(p.px, format, { showCurrency: false })}</td>
-                  <td className="py-1.5 text-right whitespace-nowrap hidden sm:table-cell">
-                    {p.taker ? (
-                      <Link href={`/market/tracker/wallet/${p.taker}`} prefetch={false} className="text-text-secondary hover:text-brand" title="Taker wallet">
-                        {short(p.taker)}
-                      </Link>
-                    ) : null}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  ) : (
+                    <span key="t" className="mono text-[11px] text-text-tertiary whitespace-nowrap">{clock(p.time)}</span>
+                  ),
+                  <Link key="m" href={`/market/perp/${encodeURIComponent(p.coin)}`} prefetch={false} className="flex min-w-0 items-center gap-1.5 text-text-primary hover:text-brand">
+                    <TokenAvatar assetName={p.coin} size="xs" />
+                    <span className="truncate">{p.coin}</span>
+                  </Link>,
+                  <SideBadge key="s" side={p.side === "B" ? "buy" : "sell"} />,
+                  <span key="n" className="mono text-[12px] text-text-primary whitespace-nowrap">{compactUsd(p.ntl)}</span>,
+                  <span key="p" className="mono text-[11px] text-text-tertiary whitespace-nowrap">{formatPrice(p.px, format, { showCurrency: false })}</span>,
+                  p.taker ? (
+                    <Link key="u" href={`/market/tracker/wallet/${p.taker}`} prefetch={false} className="mono text-[11px] text-text-secondary hover:text-brand whitespace-nowrap" title="Taker wallet">
+                      {short(p.taker)}
+                    </Link>
+                  ) : (
+                    <span key="u" />
+                  ),
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
     </Card>

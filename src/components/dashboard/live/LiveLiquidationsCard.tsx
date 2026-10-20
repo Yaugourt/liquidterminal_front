@@ -3,9 +3,19 @@
 import { memo, useEffect, useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { CardHead, DataStatus, TokenAvatar } from "@/components/common";
+import { CardHead, DataStatus, ModuleTable, ModuleTableRow, SideBadge, TokenAvatar, type ModuleColumn } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useLiveLiquidations } from "@/services/dashboard/live/useLiveLiquidations";
+
+// The wallet column shows while the card spans the row (sm to xl); from 2xl the
+// card is a third of the row and the market name needs the room.
+const COLUMNS: ModuleColumn[] = [
+  { header: "Age", width: 48, align: "left" },
+  { header: "Market", align: "left" },
+  { header: "Side", width: 76, align: "left" },
+  { header: "Size", width: 68 },
+  { header: "Wallet", width: 104, className: "hidden sm:table-cell 2xl:hidden" },
+];
 
 function age(ms: number, now: number): string {
   const s = Math.max(0, Math.floor((now - ms) / 1000));
@@ -41,36 +51,31 @@ export const LiveLiquidationsCard = memo(function LiveLiquidationsCard() {
         href="/explorer/liquidations"
         viewAllLabel="All"
       />
-      <div className="h-[364px] overflow-y-auto scrollbar-brand pl-3.5 pr-2 py-1">
+      <div className="h-[364px] overflow-y-auto scrollbar-brand">
         {rows.length === 0 ? (
           <div className="h-full grid place-items-center text-[12px] text-text-tertiary">Loading liquidations…</div>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <tbody>
-              {rows.map((l) => (
-                <tr key={l.tid} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
-                    <Link href={`/explorer/transaction/${l.hash}`} prefetch={false} className="text-text-tertiary hover:text-brand" title="Open the transaction">
-                      {age(l.time_ms, now)}
-                    </Link>
-                  </td>
-                  <td className="py-1.5 pr-2 whitespace-nowrap max-w-[108px]">
-                    <Link href={`/market/perp/${encodeURIComponent(l.coin)}`} className="flex items-center gap-1.5 min-w-0 text-text-primary hover:text-brand">
-                      <TokenAvatar assetName={l.coin} size="xs" />
-                      <span className="truncate">{l.coin}</span>
-                    </Link>
-                  </td>
-                  <td className={`py-1.5 pr-2 ${l.liq_dir === "Long" ? "text-success" : "text-danger"}`}>{l.liq_dir}</td>
-                  <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactUsd(l.notional_total)}</td>
-                  <td className="py-1.5 text-right whitespace-nowrap lg:hidden xl:table-cell">
-                    <Link href={`/market/tracker/wallet/${l.liquidated_user}`} prefetch={false} className="text-text-tertiary hover:text-brand" title="Liquidated wallet">
-                      {short(l.liquidated_user)}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ModuleTable columns={COLUMNS} density="compact">
+            {rows.map((l) => (
+              <ModuleTableRow
+                key={l.tid}
+                cells={[
+                  <Link key="t" href={`/explorer/transaction/${l.hash}`} prefetch={false} className="mono text-[11px] text-text-tertiary hover:text-brand whitespace-nowrap" title="Open the transaction">
+                    {age(l.time_ms, now)}
+                  </Link>,
+                  <Link key="m" href={`/market/perp/${encodeURIComponent(l.coin)}`} prefetch={false} className="flex min-w-0 items-center gap-1.5 text-text-primary hover:text-brand">
+                    <TokenAvatar assetName={l.coin} size="xs" />
+                    <span className="truncate">{l.coin}</span>
+                  </Link>,
+                  <SideBadge key="s" side={l.liq_dir === "Long" ? "long" : "short"} />,
+                  <span key="n" className="mono text-[12px] text-text-primary whitespace-nowrap">{compactUsd(l.notional_total)}</span>,
+                  <Link key="u" href={`/market/tracker/wallet/${l.liquidated_user}`} prefetch={false} className="mono text-[11px] text-text-tertiary hover:text-brand whitespace-nowrap" title="Liquidated wallet">
+                    {short(l.liquidated_user)}
+                  </Link>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
     </Card>
