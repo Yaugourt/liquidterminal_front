@@ -3,9 +3,10 @@
 import { memo } from "react";
 
 import { WalletList } from "@/services/market/tracker/types";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, Users, Calendar, Wallet } from "lucide-react";
+import { CardHead } from "@/components/common";
+import { Eye, Calendar, Wallet } from "lucide-react";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
 
 interface PublicWalletListCardProps {
@@ -17,50 +18,40 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
   const createdAgo = timeAgo(list.createdAt);
 
   return (
-    <Card className="rounded-lg hover:border-border-default transition-all duration-200 group flex flex-col">
-      <CardHeader className="space-y-3">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-text-primary text-lg line-clamp-2 group-hover:text-brand transition-colors">
-            {list.name}
-          </CardTitle>
-          <div className="flex items-center gap-1 text-xs text-success bg-success/10 px-2 py-1 rounded-full shrink-0">
-            <Users size={12} />
-            <span>Public</span>
-          </div>
-        </div>
+    <Card className="flex flex-col">
+      <CardHead title={<span title={list.name}>{list.name}</span>} />
 
+      <CardContent className="flex flex-1 flex-col gap-3 p-4">
         {list.description && (
-          <CardDescription className="text-text-secondary text-sm line-clamp-3">
+          <p className="text-[12.5px] leading-relaxed text-text-secondary line-clamp-3">
             {list.description}
-          </CardDescription>
+          </p>
         )}
-      </CardHeader>
 
-      <CardContent className="space-y-4 flex-1 flex flex-col">
         {/* Stats */}
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-1.5 text-text-secondary">
-            <Wallet size={14} className="text-brand" />
-            <span className="text-text-primary font-medium">{list.itemsCount || 0}</span>
+        <div className="flex items-center gap-4 text-[11px] text-text-tertiary">
+          <div className="flex items-center gap-1.5">
+            <Wallet size={13} aria-hidden />
+            <span className="mono text-text-primary">{list.itemsCount || 0}</span>
             <span>wallet{list.itemsCount !== 1 ? 's' : ''}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-text-secondary">
-            <Calendar size={14} className="text-gold" />
+          <div className="flex items-center gap-1.5">
+            <Calendar size={13} aria-hidden />
             <span>{createdAgo}</span>
           </div>
         </div>
 
         {/* Creator */}
-        <div className="flex items-center gap-2 text-sm text-text-secondary pt-2 border-t border-border-subtle">
+        <div className="flex items-center gap-1.5 border-t border-border-subtle pt-3 text-[11px] text-text-tertiary">
           <span>By</span>
-          <span className="text-text-primary font-medium">
+          <span className="text-text-primary">
             {list.creator?.name || 'Anonymous'}
           </span>
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-2 pt-2 mt-auto">
+        <div className="mt-auto flex gap-2">
           <Button
             onClick={() => onPreview(list)}
             className="flex-1 bg-brand hover:bg-brand text-brand-text-on font-medium"
@@ -73,4 +64,3 @@ export const PublicWalletListCard = memo(function PublicWalletListCard({ list, o
     </Card>
   );
 });
-

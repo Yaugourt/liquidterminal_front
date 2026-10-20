@@ -12,6 +12,7 @@ import { WalletRecentFillsSection } from "@/components/market/tracker";
 import { ListAlertsPanel } from "@/components/market/tracker/walletlists/ListAlertsPanel";
 import { LiveWalletActivity } from "@/components/market/tracker/LiveWalletActivity";
 import { useAuthContext } from "@/contexts/auth.context";
+import { PageHeader } from "@/components/common";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import {
@@ -83,6 +84,10 @@ export default function MyWallets() {
       </Dialog>
 
       <div>
+        <div className="mb-8">
+          <PageHeader title="My Wallets" />
+        </div>
+
         {/* Navigation principale */}
         <div className="mb-8">
           <WalletTabs />

@@ -40,14 +40,15 @@ export function PointsTab({ address }: PointsTabProps) {
 
   if (isLoading && points.length === 0) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="bg-surface p-3.5">
-            <Skeleton className="h-3 w-16 mb-2" />
-            <Skeleton className="h-5 w-20" />
-          </div>
-        ))}
-      </div>
+      <KpiRibbon
+        cells={Array.from({ length: 4 }, (_, i) => ({
+          key: `skeleton-${i}`,
+          label: <Skeleton className="h-3 w-16" />,
+          value: <Skeleton className="h-5 w-20" />,
+        }))}
+        columns="grid-cols-2 sm:grid-cols-4"
+        bordered={false}
+      />
     );
   }
 
