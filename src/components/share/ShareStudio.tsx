@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
+import { CardHead, PageHeader } from "@/components/common";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CUSTOM_METRICS, CUSTOM_MAX, SERIES_METRICS, CHART_STATS_MAX } from "@/lib/og/customCatalog";
 
@@ -56,8 +57,10 @@ export interface ShareStudioProps {
   groups: TileGroup[];
   /** Show the "Build your own" composer entry (Hyperliquid metrics only). */
   allowCustom?: boolean;
-  heading: string;
-  subheading: string;
+  /** Page title. Omit it where the route already renders its own PageHeader
+   *  (the Elysium section header), so the page keeps a single h1. */
+  heading?: string;
+  subheading?: string;
   /** Downloaded file names start with this. */
   filenamePrefix?: string;
 }
@@ -228,11 +231,7 @@ export function ShareStudio({ groups, allowCustom = false, heading, subheading, 
 
   return (
     <div className="space-y-5">
-      {/* header */}
-      <div>
-        <h1 className="text-[22px] font-semibold text-text-primary tracking-[-0.01em]">{heading}</h1>
-        <p className="text-[13px] text-text-secondary mt-0.5">{subheading}</p>
-      </div>
+      {heading && <PageHeader title={heading} description={subheading} />}
 
       {/* composer: picker rail + preview stage */}
       <div className="flex flex-col-reverse lg:flex-row gap-4 items-start">
@@ -276,12 +275,7 @@ export function ShareStudio({ groups, allowCustom = false, heading, subheading, 
 
         {/* stage: the tile is the hero */}
         <Card className="flex-1 min-w-0 overflow-hidden w-full">
-          <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-            <h3 className="text-[13px] font-semibold text-text-primary truncate">{headerTitle}</h3>
-            <span className="ml-auto shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle mono">
-              1200 × 630
-            </span>
-          </div>
+          <CardHead title={headerTitle} tag={<span className="mono">1200 × 630</span>} />
           <div className="flex items-center justify-center p-5 bg-base/40">
             <div className="relative w-full max-w-[900px]" style={{ aspectRatio: "1200 / 630" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -293,12 +287,12 @@ export function ShareStudio({ groups, allowCustom = false, heading, subheading, 
                 height={630}
                 onLoad={() => setImgLoading(false)}
                 onError={() => setImgLoading(false)}
-                className={`w-full h-full rounded-xl border border-border-subtle shadow-2xl transition-opacity duration-200 ${
+                className={`w-full h-full rounded-lg border border-border-subtle shadow-2xl transition-opacity duration-200 ${
                   imgLoading ? "opacity-40" : "opacity-100"
                 }`}
               />
               {imgLoading && (
-                <div className="absolute inset-0 grid place-items-center rounded-xl bg-base/30 backdrop-blur-[1px]">
+                <div className="absolute inset-0 grid place-items-center rounded-lg bg-base/30 backdrop-blur-[1px]">
                   <div className="w-7 h-7 rounded-full border-2 border-border-subtle border-t-brand animate-spin" aria-label="Rendering tile" />
                 </div>
               )}
