@@ -23,7 +23,7 @@ export function WalletConnectButton() {
   if (isConnected && address) {
     return (
       <div className="flex items-center gap-2">
-        <span className="font-mono text-xs text-text-secondary bg-white/5 border border-border-subtle rounded-lg px-3 py-1.5">
+        <span className="font-mono text-xs text-text-secondary bg-surface-2 border border-border-subtle rounded-lg px-3 py-1.5">
           {address.slice(0, 6)}…{address.slice(-4)}
         </span>
         <Button

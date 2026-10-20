@@ -4,7 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
+import { CardHead, ModuleTable, ModuleTableRow } from "@/components/common";
 import { useAuthContext } from "@/contexts/auth.context";
 import {
   useExportCatalog,
@@ -176,13 +178,8 @@ export function ExportWorkbench() {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,240px)_minmax(0,1fr)] gap-4 items-start">
       {/* Dataset picker */}
-      <div className="bg-surface border border-border-subtle rounded-lg flex flex-col">
-        <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-          <h3 className="text-[13px] font-semibold text-text-primary">Dataset</h3>
-          <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">
-            {datasets.length || "…"}
-          </span>
-        </div>
+      <Card interactive={false} className="flex flex-col">
+        <CardHead title="Dataset" tag={datasets.length || "…"} />
         <div className="px-2 py-2 space-y-3 max-h-[70vh] overflow-y-auto">
           {catalogLoading && datasets.length === 0 && (
             <p className="px-1.5 py-2 text-[12px] text-text-tertiary">…</p>
@@ -223,21 +220,17 @@ export function ExportWorkbench() {
           <span className="mono text-[10px] text-text-tertiary">time</span>
           <span className="text-[10.5px] text-text-tertiary"> = accepts a date window</span>
         </div>
-      </div>
+      </Card>
 
       <div className="min-w-0 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,300px)] gap-4 items-start">
       {/* Parameters + preview */}
       <div className="min-w-0 space-y-4">
-        <div className="bg-surface border border-border-subtle rounded-lg">
-          <div className="flex flex-wrap items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-            <h3 className="text-[13px] font-semibold text-text-primary">
-              {dataset?.label ?? "…"}
-            </h3>
-            <span className="text-[11px] text-text-tertiary">{dataset?.description}</span>
-            <span className="ml-auto shrink-0 mono text-[10.5px] text-text-tertiary">
-              {dataset?.publicPath}
-            </span>
-          </div>
+        <Card interactive={false}>
+          <CardHead
+            title={dataset?.label ?? "…"}
+            subtitle={dataset?.description}
+            tag={<span className="mono">{dataset?.publicPath}</span>}
+          />
 
           <div className="px-3.5 py-3.5 space-y-4">
             {hasTimeWindow && (
@@ -335,16 +328,14 @@ export function ExportWorkbench() {
               </div>
             )}
           </div>
-        </div>
+        </Card>
 
         {/* Preview */}
-        <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-          <div className="flex flex-wrap items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-            <h3 className="text-[13px] font-semibold text-text-primary">Preview</h3>
-            <span className="text-[11px] text-text-tertiary">
-              first rows · free, does not spend your export
-            </span>
-          </div>
+        <Card interactive={false}>
+          <CardHead
+            title="Preview"
+            subtitle="first rows · free, does not spend your export"
+          />
 
           {!authenticated ? (
             <p className="px-3.5 py-6 text-[12px] text-text-secondary">
@@ -363,46 +354,33 @@ export function ExportWorkbench() {
               No rows match this query.
             </p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr>
-                    {activeColumns.map((column) => (
-                      <th
-                        key={column}
-                        className="px-4 py-2.5 text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle text-left whitespace-nowrap"
-                      >
-                        {column}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="mono text-[11.5px]">
-                  {preview.rows.map((row, index) => (
-                    <tr key={index} className="border-b border-border-subtle last:border-b-0">
-                      {activeColumns.map((column) => (
-                        <td
-                          key={column}
-                          className="px-4 py-2 text-text-secondary whitespace-nowrap max-w-[240px] truncate"
-                        >
-                          {formatCell(row[column])}
-                        </td>
-                      ))}
-                    </tr>
+            <ModuleTable
+              density="compact"
+              columns={activeColumns.map((column) => ({ header: column, align: "left" as const }))}
+            >
+              {preview.rows.map((row, index) => (
+                <ModuleTableRow
+                  key={index}
+                  cells={activeColumns.map((column) => (
+                    <span
+                      key={column}
+                      className="mono block max-w-[240px] truncate whitespace-nowrap text-[11.5px] text-text-secondary"
+                      title={typeof row[column] === "string" ? formatCell(row[column]) : undefined}
+                    >
+                      {formatCell(row[column])}
+                    </span>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                />
+              ))}
+            </ModuleTable>
           )}
-        </div>
+        </Card>
       </div>
 
       {/* Summary rail */}
       <div className="space-y-4">
-        <div className="bg-surface border border-border-subtle rounded-lg flex flex-col">
-          <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-            <h3 className="text-[13px] font-semibold text-text-primary">Your export</h3>
-          </div>
+        <Card interactive={false} className="flex flex-col">
+          <CardHead title="Your export" />
           <div className="px-3.5 py-3 space-y-3">
             <SummaryRow
               label="Rows upstream"
@@ -464,7 +442,7 @@ export function ExportWorkbench() {
               </p>
             )}
           </div>
-        </div>
+        </Card>
       </div>
       </div>
     </div>
