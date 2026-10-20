@@ -37,6 +37,73 @@ const ZOD_RESTRICTED = {
   })),
 };
 
+/** Design-system syntax bans shared by every app/component file (see the block below). */
+const DS_SYNTAX_RULES = [
+  {
+    selector: "Literal[value=/^#[0-9a-fA-F]{3,8}$/]",
+    message:
+      "Pas de hex hardcodé. Utilise un token Tailwind (brand-accent, brand-gold, ...) ou chartTheme.ts (chartPalette) pour les charts.",
+  },
+  {
+    selector:
+      "JSXAttribute[name.name='className'] Literal[value=/\\b(text|bg|border|fill|stroke|shadow|from|via|to|ring|outline|divide|placeholder|accent|caret|decoration)-\\[#[0-9a-fA-F]/]",
+    message:
+      "Pas de classe Tailwind arbitraire avec hex (ex: text-[#83E9FF]). Utilise un token (brand-accent, brand-gold, ...) ou rgb(var(--brand-*-rgb) / X) pour les opacités dynamiques.",
+  },
+  {
+    selector:
+      "JSXOpeningElement[name.name='input'] > JSXAttribute[name.name='type'][value.value='checkbox']",
+    message:
+      'Utilise <Checkbox> de @/components/ui/checkbox au lieu de <input type="checkbox">.',
+  },
+  {
+    // Table cells are styled by the table (Column.type / Column.tone) or by
+    // a primitive (ModuleAsset, StatusBadge, SideBadge, AddressDisplay…).
+    // A column accessor never sets its own size, mono font or raw colour.
+    selector:
+      "Property[key.name='accessor'] JSXAttribute[name.name='className'] Literal[value=/(^|\\s)(text-(xs|sm|base|lg)|text-\\[[0-9.]+px\\]|font-mono|text-white|bg-white\\/|(text|bg|border)-(zinc|gray|slate|emerald|rose|green|red)-[0-9])/]",
+    message:
+      "Cellule de table stylée à la main. Utilise Column.type (numeric|change|fees|time|rank|address) + Column.tone, ou une primitive (ModuleAsset, CellValue, StatusBadge, SideBadge, AddressDisplay). Voir DESIGN_SYSTEM §5.",
+  },
+  {
+    selector:
+      "Property[key.name='accessor'] JSXAttribute[name.name='className'] TemplateElement[value.raw=/(^|\\s)(text-(xs|sm|base|lg)|text-\\[[0-9.]+px\\]|font-mono|text-white|bg-white\\/|(text|bg|border)-(zinc|gray|slate|emerald|rose|green|red)-[0-9])/]",
+    message:
+      "Cellule de table stylée à la main. Utilise Column.type (numeric|change|fees|time|rank|address) + Column.tone, ou une primitive (ModuleAsset, CellValue, StatusBadge, SideBadge, AddressDisplay). Voir DESIGN_SYSTEM §5.",
+  },
+  {
+    // Match grid-cols-[…] with 3+ track segments AND at least one px-fixed
+    // width — the typical signature of a hand-rolled table layout.
+    // Layouts like grid-cols-[1fr_2fr] or grid-cols-[280px_1fr] are 2-col
+    // page-shell patterns and stay allowed.
+    selector:
+      "JSXAttribute[name.name='className'] Literal[value=/grid-cols-\\[[^\\]]*[0-9]+px[^\\]]*_[^\\]]+_[^\\]]+\\]/]",
+    message:
+      "Pas de grid-template hardcodé pour une table. Utilise <ModuleTable> (compact card) ou <TypedDataTable> (page) — les largeurs viennent de la prop `columns`, plus de duplication header/rows.",
+  },
+];
+
+/**
+ * The `gap-px bg-border-*` hairline strip is the KpiRibbon recipe (DESIGN_SYSTEM
+ * §7.b). Hand-rolled copies drift from the primitive's type scale and padding,
+ * so the recipe is banned outside the primitive. Two attribute tests on the same
+ * literal: both classes must sit in it, in any order.
+ */
+const KPI_STRIP_MESSAGE =
+  "Bandeau KPI fait main (gap-px + bg-border-*). Utilise <KpiRibbon> de '@/components/common' (size=\"compact\" dans une carte). Voir DESIGN_SYSTEM §7.b.";
+const KPI_STRIP_RULES = [
+  {
+    selector:
+      "JSXAttribute[name.name='className'] Literal[value=/(^|\\s)gap-px(\\s|$)/][value=/(^|\\s)bg-border-/]",
+    message: KPI_STRIP_MESSAGE,
+  },
+  {
+    selector:
+      "JSXAttribute[name.name='className'] TemplateElement[value.raw=/(^|\\s)gap-px(\\s|$)/][value.raw=/(^|\\s)bg-border-/]",
+    message: KPI_STRIP_MESSAGE,
+  },
+];
+
 const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
@@ -72,51 +139,7 @@ const eslintConfig = [
   {
     files: ["src/components/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"],
     rules: {
-      "no-restricted-syntax": [
-        "error",
-        {
-          selector: "Literal[value=/^#[0-9a-fA-F]{3,8}$/]",
-          message:
-            "Pas de hex hardcodé. Utilise un token Tailwind (brand-accent, brand-gold, ...) ou chartTheme.ts (chartPalette) pour les charts.",
-        },
-        {
-          selector:
-            "JSXAttribute[name.name='className'] Literal[value=/\\b(text|bg|border|fill|stroke|shadow|from|via|to|ring|outline|divide|placeholder|accent|caret|decoration)-\\[#[0-9a-fA-F]/]",
-          message:
-            "Pas de classe Tailwind arbitraire avec hex (ex: text-[#83E9FF]). Utilise un token (brand-accent, brand-gold, ...) ou rgb(var(--brand-*-rgb) / X) pour les opacités dynamiques.",
-        },
-        {
-          selector:
-            "JSXOpeningElement[name.name='input'] > JSXAttribute[name.name='type'][value.value='checkbox']",
-          message:
-            'Utilise <Checkbox> de @/components/ui/checkbox au lieu de <input type="checkbox">.',
-        },
-        {
-          // Table cells are styled by the table (Column.type / Column.tone) or by
-          // a primitive (ModuleAsset, StatusBadge, SideBadge, AddressDisplay…).
-          // A column accessor never sets its own size, mono font or raw colour.
-          selector:
-            "Property[key.name='accessor'] JSXAttribute[name.name='className'] Literal[value=/(^|\\s)(text-(xs|sm|base|lg)|text-\\[[0-9.]+px\\]|font-mono|text-white|bg-white\\/|(text|bg|border)-(zinc|gray|slate|emerald|rose|green|red)-[0-9])/]",
-          message:
-            "Cellule de table stylée à la main. Utilise Column.type (numeric|change|fees|time|rank|address) + Column.tone, ou une primitive (ModuleAsset, CellValue, StatusBadge, SideBadge, AddressDisplay). Voir DESIGN_SYSTEM §5.",
-        },
-        {
-          selector:
-            "Property[key.name='accessor'] JSXAttribute[name.name='className'] TemplateElement[value.raw=/(^|\\s)(text-(xs|sm|base|lg)|text-\\[[0-9.]+px\\]|font-mono|text-white|bg-white\\/|(text|bg|border)-(zinc|gray|slate|emerald|rose|green|red)-[0-9])/]",
-          message:
-            "Cellule de table stylée à la main. Utilise Column.type (numeric|change|fees|time|rank|address) + Column.tone, ou une primitive (ModuleAsset, CellValue, StatusBadge, SideBadge, AddressDisplay). Voir DESIGN_SYSTEM §5.",
-        },
-        {
-          // Match grid-cols-[…] with 3+ track segments AND at least one px-fixed
-          // width — the typical signature of a hand-rolled table layout.
-          // Layouts like grid-cols-[1fr_2fr] or grid-cols-[280px_1fr] are 2-col
-          // page-shell patterns and stay allowed.
-          selector:
-            "JSXAttribute[name.name='className'] Literal[value=/grid-cols-\\[[^\\]]*[0-9]+px[^\\]]*_[^\\]]+_[^\\]]+\\]/]",
-          message:
-            "Pas de grid-template hardcodé pour une table. Utilise <ModuleTable> (compact card) ou <TypedDataTable> (page) — les largeurs viennent de la prop `columns`, plus de duplication header/rows.",
-        },
-      ],
+      "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...KPI_STRIP_RULES],
       "no-restricted-imports": [
         "error",
         {
@@ -165,6 +188,20 @@ const eslintConfig = [
           ],
         },
       ],
+    },
+  },
+  /**
+   * The KPI strip ban's own exceptions: the primitive that owns the recipe and
+   * the labs mockups (isolated showcases). Every other DS rule still applies.
+   */
+  {
+    files: [
+      "src/components/common/KpiRibbon.tsx",
+      "src/app/(app)/labs/**/*.{ts,tsx}",
+      "src/components/labs/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES],
     },
   },
   /**

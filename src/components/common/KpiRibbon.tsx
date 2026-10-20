@@ -3,8 +3,8 @@
 /**
  * This file IS the canonical KPI ribbon primitive (DESIGN_SYSTEM §7.b) — the
  * single allowed place to hand-write the `gap-px bg-border-subtle` strip. Every
- * page must consume <KpiRibbon>. When the ESLint guardrail banning hand-rolled
- * ribbons outside common/ lands, this file gets the sanctioned disable.
+ * page must consume <KpiRibbon>: eslint.config.mjs bans the strip elsewhere and
+ * exempts this file (and the labs showcases) from that one rule.
  */
 import Link from "next/link";
 import type { ReactNode } from "react";
