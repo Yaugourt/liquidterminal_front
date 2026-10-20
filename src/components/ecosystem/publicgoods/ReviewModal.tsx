@@ -130,7 +130,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
               onClick={handleSubmit}
               disabled={isSubmitting || !status}
               className={`rounded-lg font-semibold ${status === 'APPROVED'
-                  ? "bg-success text-text-primary hover:bg-success/90"
+                  ? "bg-success text-brand-text-on hover:bg-success/90"
                   : status === 'REJECTED'
                     ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     : "bg-brand text-brand-text-on hover:bg-brand/90"

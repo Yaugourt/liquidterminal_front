@@ -12,8 +12,8 @@ const THRESHOLDS = [10_000, 25_000, 100_000] as const;
 const DEFAULT_THRESHOLD = 25_000;
 const MAX_ROWS = 14;
 
-// Price and taker are secondary: they drop on phones, and the taker also drops
-// on lg where the card is only a third of the row wide.
+// Price and taker are secondary and drop below sm; the card spans the row below
+// 2xl and two thirds of it from 2xl.
 const COLUMNS: ModuleColumn[] = [
   { header: "Time", width: 80, align: "left" },
   { header: "Market", align: "left" },

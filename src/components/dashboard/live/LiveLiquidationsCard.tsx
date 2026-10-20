@@ -13,7 +13,8 @@ const COLUMNS: ModuleColumn[] = [
   { header: "Age", width: 48, align: "left" },
   { header: "Market", align: "left" },
   { header: "Side", width: 76, align: "left" },
-  { header: "Size", width: 68 },
+  // 84px: a 60px content box holds "$123.45M" (8 mono chars); 68px clipped "$123.4K".
+  { header: "Size", width: 84 },
   { header: "Wallet", width: 104, className: "hidden sm:table-cell 2xl:hidden" },
 ];
 

@@ -132,7 +132,8 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
             <KpiRibbon
               size="compact"
               bordered={false}
-              columns="grid-cols-3"
+              // Stacked on a phone: a third of a 375px card truncates "Gross margin".
+              columns="grid-cols-1 sm:grid-cols-3"
               className="mt-4 rounded-md overflow-hidden"
               cells={[
                 {

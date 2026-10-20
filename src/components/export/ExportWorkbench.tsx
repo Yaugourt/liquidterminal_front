@@ -228,7 +228,7 @@ export function ExportWorkbench() {
         <Card interactive={false}>
           <CardHead
             title={dataset?.label ?? "…"}
-            subtitle={dataset?.description}
+            subtitle={<span title={dataset?.description}>{dataset?.description}</span>}
             tag={<span className="mono">{dataset?.publicPath}</span>}
           />
 

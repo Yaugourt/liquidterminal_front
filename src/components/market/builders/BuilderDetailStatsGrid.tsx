@@ -44,12 +44,15 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error, onRetry }: Bui
   }
 
   if (isLoading && !stats) {
+    // Same shape as the loaded ribbon, so nothing below shifts when the data lands.
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-lg" />
-        ))}
-      </div>
+      <KpiRibbon
+        cells={Array.from({ length: 4 }, (_, i) => ({
+          key: `skeleton-${i}`,
+          label: <Skeleton className="h-3 w-16" />,
+          value: <Skeleton className="h-5 w-20" />,
+        }))}
+      />
     );
   }
 
