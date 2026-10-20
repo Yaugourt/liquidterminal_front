@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { useTransactionDetails } from "@/services/explorer";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -16,11 +14,6 @@ export default function TransactionPage() {
   const txHash = params.hash as string;
   const { transactionDetails, isLoading, error } = useTransactionDetails(txHash);
 
-  const back = (
-    <Link href="/explorer" className="inline-flex items-center gap-1.5 text-[12.5px] text-brand hover:text-text-primary">
-      <ArrowLeft size={14} /> Explorer
-    </Link>
-  );
 
   if (isLoading) {
     return (
@@ -41,7 +34,7 @@ export default function TransactionPage() {
   const tx = transactionDetails as ExtendedTransactionDetails;
   return (
     <>
-      <PageHeader title="Transaction" breadcrumb={back} />
+      <PageHeader title="Transaction" back={{ href: "/explorer", label: "Explorer" }} />
       <TransactionView tx={tx} formatted={TransactionFormatter.formatTransaction(tx)} />
     </>
   );

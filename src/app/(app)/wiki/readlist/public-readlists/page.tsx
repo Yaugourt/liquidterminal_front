@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import Link from "next/link";
 import { usePageTitle } from "@/store/use-page-title";
 import { useAuthContext } from "@/contexts/auth.context";
 import { usePublicReadLists } from "@/services/wiki/readList/hooks/usePublicReadLists";
@@ -11,7 +10,6 @@ import { PageHeader, Pagination, SkeletonGrid } from "@/components/common";
 import { Card } from "@/components/ui/card";
 import {
   AlertCircle,
-  ArrowLeft,
   Search,
   SlidersHorizontal,
   ArrowUpDown,
@@ -133,15 +131,7 @@ export default function PublicReadListsPage() {
           className="space-y-6"
         >
           <PageHeader
-            breadcrumb={
-              <Link
-                href="/wiki/readlist"
-                className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                Read List
-              </Link>
-            }
+            back={{ href: "/wiki/readlist", label: "Read List" }}
             title="Public Read Lists"
             description={
               <>

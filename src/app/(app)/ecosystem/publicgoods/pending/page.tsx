@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { ReviewModal } from "@/components/ecosystem/publicgoods/ReviewModal";
@@ -91,15 +90,7 @@ export default function PendingReviewPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        breadcrumb={
-          <Link
-            href="/ecosystem/publicgoods"
-            className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Public Goods
-          </Link>
-        }
+        back={{ href: "/ecosystem/publicgoods", label: "Public Goods" }}
         title="Pending Submissions"
         description="Review and vote on new project submissions. Community approval is required before projects are listed."
         actions={

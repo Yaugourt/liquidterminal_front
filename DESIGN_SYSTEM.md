@@ -534,6 +534,20 @@ The primitive locks the look (the recipe below); callers pass data only.
   : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">{cards}</div>}
 ```
 
+### 7.g — Page header and back link
+
+`<PageHeader>` (`@/components/common`) is the one page title block: `title`, optional `titleQualifier` (muted words after the h1), `description`, `actions` (right slot: `<DataStatus>`, `<SourceBadge>`, selectors) and `children` (content stacked under the title). A detail page links back to its list with `back`:
+
+```tsx
+<PageHeader
+  back={{ href: "/market/builders", label: "Builders" }}   // renders "← Builders"
+  title={name}
+  actions={<DataStatus variant="live" connected={wsConnected} />}
+/>
+```
+
+The back link is 12.5px `text-text-secondary`, hover primary, `.focus-ring`. Never hand-roll it; `breadcrumb` stays for a free-form trail (several levels).
+
 ## 8. Services — 4-layer architecture
 
 ```

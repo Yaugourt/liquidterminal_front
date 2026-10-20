@@ -1,4 +1,6 @@
 import { ReactNode } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PageHeaderProps {
@@ -16,7 +18,9 @@ interface PageHeaderProps {
   actions?: ReactNode;
   /** Contenu sous l'en-tête (recherche, filtres en ligne). */
   children?: ReactNode;
-  /** Fil d'Ariane optionnel au-dessus du titre. */
+  /** Lien de retour standard au-dessus du titre (« ← Builders »). */
+  back?: { href: string; label: ReactNode };
+  /** Fil d'Ariane libre au-dessus du titre, quand `back` ne suffit pas. */
   breadcrumb?: ReactNode;
   className?: string;
 }
@@ -31,11 +35,20 @@ export function PageHeader({
   description,
   actions,
   children,
+  back,
   breadcrumb,
   className,
 }: PageHeaderProps) {
   return (
     <div className={cn("w-full space-y-3", className)}>
+      {back && (
+        <Link
+          href={back.href}
+          className="focus-ring inline-flex items-center gap-1.5 rounded-sm text-[12.5px] text-text-secondary transition-colors hover:text-text-primary"
+        >
+          <ArrowLeft size={14} aria-hidden /> {back.label}
+        </Link>
+      )}
       {breadcrumb}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-1.5 min-w-0">

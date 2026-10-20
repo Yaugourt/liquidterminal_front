@@ -2,12 +2,11 @@
 
 import { useState, useMemo } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { LoadingState } from "@/components/ui/loading-state";
 import { useSignedOut } from "@/services/auth/privy";
-import { Plus, ArrowLeft, LogIn } from "lucide-react";
+import { Plus, LogIn } from "lucide-react";
 import { PublicGoodsCard } from "@/components/ecosystem/publicgoods/PublicGoodsCard";
 import { PublicGoodsGrid } from "@/components/ecosystem/publicgoods/PublicGoodsGrid";
 import { StatusTabs } from "@/components/ecosystem/publicgoods/StatusTabs";
@@ -154,15 +153,7 @@ export default function MySubmissionsPage() {
   return (
     <div className="space-y-8">
       <PageHeader
-        breadcrumb={
-          <Link
-            href="/ecosystem/publicgoods"
-            className="inline-flex items-center gap-1.5 text-xs text-text-secondary hover:text-text-primary transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Public Goods
-          </Link>
-        }
+        back={{ href: "/ecosystem/publicgoods", label: "Public Goods" }}
         title="My Submissions"
         description="Track the status of your submitted projects and manage your applications."
         actions={
