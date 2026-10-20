@@ -3,7 +3,7 @@
 import { memo, useId, useMemo } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, KpiRibbon, ChartLoading, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toHourlyFeeFlow } from "@/services/market/fees/derive";
 import { useFeesHistory } from "@/services/market/fees/hooks/useFeesHistory";
@@ -122,8 +122,11 @@ export const FeeRunRateCard = memo(function FeeRunRateCard() {
         tag={<span className="mono">{summary.span > 0 ? `hourly · ${summary.span}h` : "hourly"}</span>}
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
-        {[
+      <KpiRibbon
+        size="compact"
+        bordered={false}
+        columns="grid-cols-2 sm:grid-cols-4"
+        cells={[
           {
             label: "Last 24h",
             value: summary.last24h == null ? "—" : compactUsd(summary.last24h),
@@ -144,16 +147,8 @@ export const FeeRunRateCard = memo(function FeeRunRateCard() {
             value: summary.peak == null ? "—" : compactUsd(summary.peak.total),
             sub: summary.peak == null ? "—" : `${formatHour(summary.peak.time)} UTC`,
           },
-        ].map((cell) => (
-          <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {cell.label}
-            </div>
-            <div className="text-[16px] font-semibold text-text-primary mono mt-1">{cell.value}</div>
-            <div className="text-[10.5px] text-text-tertiary/80 mt-0.5 truncate">{cell.sub}</div>
-          </div>
-        ))}
-      </div>
+        ]}
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {error ? (

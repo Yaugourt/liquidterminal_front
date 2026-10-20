@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, chartPalette , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, KpiRibbon, ChartLoading, chartPalette , rechartsGridDefaults } from "@/components/common";
 import { compactHype, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useAfBuybacks } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
@@ -161,8 +161,11 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
         tag={<span className="mono">{matched.days > 0 ? `${matched.days} completed days` : "daily"}</span>}
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
-        {[
+      <KpiRibbon
+        size="compact"
+        bordered={false}
+        columns="grid-cols-2 sm:grid-cols-4"
+        cells={[
           {
             label: "Bought back",
             // "…" while loading: "$0.00" read as a fund that bought nothing.
@@ -184,16 +187,8 @@ export const BuybackHistoryCard = memo(function BuybackHistoryCard() {
             value: matched.hype > 0 ? compactHype(matched.hype) : "—",
             sub: "off the market",
           },
-        ].map((cell) => (
-          <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {cell.label}
-            </div>
-            <div className="text-[16px] font-semibold text-text-primary mono mt-1">{cell.value}</div>
-            <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-          </div>
-        ))}
-      </div>
+        ]}
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {error ? (

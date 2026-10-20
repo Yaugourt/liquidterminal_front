@@ -45,7 +45,8 @@ const WINDOW_LABELS: Partial<Record<RevenueWindow, string>> = {
   all: "All",
 };
 
-type View = "usd" | "share";
+const VIEWS = ["share", "usd"] as const;
+type View = (typeof VIEWS)[number];
 
 interface MixPoint extends Record<SourceKey, number> {
   time: number;
@@ -157,28 +158,14 @@ export const RevenueMixHistoryCard = memo(function RevenueMixHistoryCard() {
         title="Revenue Mix"
         actions={
           <div className="flex items-center gap-1.5">
-            <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
-              <button
-                onClick={() => setView("share")}
-                aria-label="Share of revenue"
-                aria-pressed={view === "share"}
-                className={`px-1.5 py-1 rounded-md transition-colors ${
-                  view === "share" ? "bg-white/[0.06] text-brand" : "text-text-tertiary hover:text-text-secondary"
-                }`}
-              >
-                <Percent size={12} />
-              </button>
-              <button
-                onClick={() => setView("usd")}
-                aria-label="Revenue in dollars"
-                aria-pressed={view === "usd"}
-                className={`px-1.5 py-1 rounded-md transition-colors ${
-                  view === "usd" ? "bg-white/[0.06] text-brand" : "text-text-tertiary hover:text-text-secondary"
-                }`}
-              >
-                <DollarSign size={12} />
-              </button>
-            </div>
+            <PeriodSelector
+              variant="aurora"
+              options={VIEWS}
+              selected={view}
+              onChange={setView}
+              labels={{ share: <Percent size={12} />, usd: <DollarSign size={12} /> }}
+              ariaLabels={{ share: "Share of revenue", usd: "Revenue in dollars" }}
+            />
             <PeriodSelector
               selected={window}
               onChange={setWindow}

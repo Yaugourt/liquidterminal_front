@@ -2,7 +2,7 @@
 
 import { memo, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, TimeframeTabs, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, KpiRibbon, TimeframeTabs, SourceBadge, sourceStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Timeframe } from "@/lib/timeframe";
 import {
@@ -129,16 +129,22 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
             />
             <Line label="Protocol revenue" value={statement.protocolRevenue} total />
 
-            <div className="grid grid-cols-3 gap-px bg-border-subtle mt-4 rounded-md overflow-hidden">
-              {[
+            <KpiRibbon
+              size="compact"
+              bordered={false}
+              columns="grid-cols-3"
+              className="mt-4 rounded-md overflow-hidden"
+              cells={[
                 {
+                  key: "margin",
                   label: "Gross margin",
                   value: pct(statement.grossMargin),
                   sub: "kept per fee dollar",
                 },
                 {
-                  // Two words on purpose: a single long one cannot wrap, and
-                  // "Redistributed" overflows the cell on a narrow card.
+                  key: "paidOut",
+                  // Two short words on purpose: labels sit on one line, and
+                  // "Redistributed" truncates in a third of a narrow card.
                   label: "Paid out",
                   value: pct(
                     statement.grossMargin == null ? null : 1 - statement.grossMargin
@@ -146,6 +152,7 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
                   sub: "back to liquidity & flow",
                 },
                 {
+                  key: "perDay",
                   label: "Revenue / day",
                   value:
                     statement.revenuePerDay == null
@@ -153,18 +160,8 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
                       : compactUsd(statement.revenuePerDay),
                   sub: entry.period === "totalAllTime" ? "n/a since launch" : `avg over ${entry.copy}`,
                 },
-              ].map((cell) => (
-                <div key={cell.label} className="bg-surface px-3 py-2.5">
-                  <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-                    {cell.label}
-                  </div>
-                  <div className="text-[17px] font-semibold text-text-primary mono mt-1">
-                    {cell.value}
-                  </div>
-                  <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-                </div>
-              ))}
-            </div>
+              ]}
+            />
           </>
         )}
       </div>

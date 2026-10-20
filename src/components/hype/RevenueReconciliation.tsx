@@ -6,7 +6,7 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useRevenueBreakdown } from "@/services/market/revenue";
 import { toIncomeStatement, useProtocolFundamentals } from "@/services/market/fundamentals";
 import { SourceCoverageNote } from "./SourceCoverageNote";
-import { CardHead, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, KpiRibbon, SourceBadge, sourceStatus } from "@/components/common";
 
 /**
  * Why the two revenue figures on this page differ.
@@ -49,38 +49,35 @@ export const RevenueReconciliation = memo(function RevenueReconciliation() {
       />
 
       <div className="px-4 py-3.5">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border-subtle rounded-md overflow-hidden">
-          {[
+        <KpiRibbon
+          size="compact"
+          bordered={false}
+          columns="grid-cols-1 sm:grid-cols-3"
+          className="rounded-md overflow-hidden"
+          cells={[
             {
+              key: "llama",
               label: "DefiLlama",
               value: llama == null ? "—" : compactUsd(llama),
               sub: "used by the income statement",
             },
             {
+              key: "ours",
               label: "Liquid Terminal",
               value: ours == null ? "—" : compactUsd(ours),
               sub: "seven sources, used by the segments",
             },
             {
+              key: "gap",
               label: "Difference",
               value:
                 gap == null
                   ? "—"
                   : `${gap >= 0 ? "+" : "−"}${compactUsd(Math.abs(gap))}`,
-              sub: gapPct == null ? "" : `${(Math.abs(gapPct) * 100).toFixed(1)}% apart`,
+              sub: gapPct == null ? undefined : `${(Math.abs(gapPct) * 100).toFixed(1)}% apart`,
             },
-          ].map((cell) => (
-            <div key={cell.label} className="bg-surface px-3 py-2.5">
-              <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-                {cell.label}
-              </div>
-              <div className="text-[17px] font-semibold text-text-primary mono mt-1">
-                {cell.value}
-              </div>
-              <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-            </div>
-          ))}
-        </div>
+          ]}
+        />
 
         <p className="text-[11.5px] text-text-secondary leading-relaxed mt-3">
           Both are protocol revenue over the same 30 days, counted differently. Ours doubles spot

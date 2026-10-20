@@ -2,7 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, ChartError, KpiRibbon, ChartLoading, SourceBadge, sourceStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useHypeOverview } from "@/services/market/hype";
 import { toValuationMultiples, useFeeRevenueHistory } from "@/services/market/fundamentals";
@@ -72,8 +72,11 @@ export const ValuationMultiplesCard = memo(function ValuationMultiplesCard() {
         actions={<SourceBadge source="defillama" status={sourceStatus(error, loadingFees, isStale)} />}
       />
 
-      <div className="grid grid-cols-2 gap-px bg-border-subtle">
-        {[
+      <KpiRibbon
+        size="compact"
+        bordered={false}
+        columns="grid-cols-2"
+        cells={[
           {
             label: "TTM fees",
             value: compactUsd(multiples.ttmFees),
@@ -84,16 +87,8 @@ export const ValuationMultiplesCard = memo(function ValuationMultiplesCard() {
             value: compactUsd(multiples.ttmRevenue),
             sub: "what the protocol kept",
           },
-        ].map((cell) => (
-          <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {cell.label}
-            </div>
-            <div className="text-[16px] font-semibold text-text-primary mono mt-1">{cell.value}</div>
-            <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-          </div>
-        ))}
-      </div>
+        ]}
+      />
 
       <div className="flex-1 px-4 py-3">
         {error ? (
@@ -133,24 +128,16 @@ export const ValuationMultiplesCard = memo(function ValuationMultiplesCard() {
               diluted={pct(multiples.earningsYieldFd)}
             />
 
-            <div className="grid grid-cols-2 gap-px bg-border-subtle mt-3 rounded-md overflow-hidden">
-              <div className="bg-surface px-3 py-2">
-                <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-                  Market cap
-                </div>
-                <div className="text-[14px] font-semibold text-text-primary mono mt-0.5">
-                  {compactUsd(multiples.marketCap)}
-                </div>
-              </div>
-              <div className="bg-surface px-3 py-2">
-                <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-                  Fully diluted
-                </div>
-                <div className="text-[14px] font-semibold text-text-secondary mono mt-0.5">
-                  {compactUsd(multiples.fdv)}
-                </div>
-              </div>
-            </div>
+            <KpiRibbon
+              size="compact"
+              bordered={false}
+              columns="grid-cols-2"
+              className="mt-3 rounded-md overflow-hidden"
+              cells={[
+                { label: "Market cap", value: compactUsd(multiples.marketCap) },
+                { label: "Fully diluted", value: compactUsd(multiples.fdv), tone: "muted" },
+              ]}
+            />
           </>
         )}
       </div>

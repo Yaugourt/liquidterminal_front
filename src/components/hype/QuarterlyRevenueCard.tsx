@@ -3,7 +3,7 @@
 import { memo, useId, useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, SourceBadge, sourceStatus, chartPalette , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, KpiRibbon, SourceBadge, sourceStatus, chartPalette , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { toQuarters, useFeeRevenueHistory, type RevenueQuarter } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
@@ -135,42 +135,35 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
         actions={<SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />}
       />
 
-      <div className="grid grid-cols-3 gap-px bg-border-subtle">
-        {[
+      <KpiRibbon
+        size="compact"
+        bordered={false}
+        columns="grid-cols-3"
+        cells={[
           {
+            key: "revenue",
             // Fixed label with the quarter in the sub line: "Q2 26 revenue"
             // does not fit a third of a 375px card and truncates to "Q2 26 REVE…".
             label: "Revenue",
             value: summary.last ? compactUsd(summary.last.revenue) : "—",
             sub: summary.last ? `${summary.last.label} · last complete` : "no closed quarter",
-            tone: "" as const,
           },
           {
+            key: "qoq",
             label: "QoQ",
             value: summary.qoq == null ? "—" : signedPct(summary.qoq),
             sub: summary.priorLabel ? `vs ${summary.priorLabel}` : "needs two quarters",
-            tone: summary.qoq == null ? "" : summary.qoq >= 0 ? "text-success" : "text-danger",
+            tone: summary.qoq == null ? "default" : summary.qoq >= 0 ? "success" : "danger",
           },
           {
+            key: "yoy",
             label: "YoY",
             value: summary.yoy == null ? "—" : signedPct(summary.yoy),
             sub: summary.yoy == null ? "needs five quarters" : "same quarter last year",
-            tone: summary.yoy == null ? "" : summary.yoy >= 0 ? "text-success" : "text-danger",
+            tone: summary.yoy == null ? "default" : summary.yoy >= 0 ? "success" : "danger",
           },
-        ].map((cell) => (
-          <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {cell.label}
-            </div>
-            <div
-              className={`text-[16px] font-semibold mono mt-1 ${cell.tone || "text-text-primary"}`}
-            >
-              {cell.value}
-            </div>
-            <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-          </div>
-        ))}
-      </div>
+        ]}
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {error ? (

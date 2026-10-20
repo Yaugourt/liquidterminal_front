@@ -12,7 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, KpiRibbon, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { HYPE_MAX_SUPPLY, HYPE_SPOT_COIN } from "@/services/market/hype";
 import { useTokenCandles } from "@/services/market/token";
@@ -56,6 +56,9 @@ const formatFullDay = (ms: number): string =>
     day: "numeric",
     timeZone: "UTC",
   });
+
+const multiple = (value: number | null): string =>
+  value == null ? "—" : `${Math.round(value)}×`;
 
 const MultipleTooltip = ({
   active,
@@ -153,26 +156,19 @@ export const MultipleHistoryCard = memo(function MultipleHistoryCard() {
         }
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
-        {[
+      <KpiRibbon
+        size="compact"
+        bordered={false}
+        columns="grid-cols-2 sm:grid-cols-4"
+        cells={[
           // "at the last close" rather than "now": the series ends on the last
           // completed day, so this sits a price move away from the live card above.
-          { label: "Latest", value: stats.current, sub: "at the last close" },
-          { label: "Average", value: stats.average, sub: "over the series" },
-          { label: "Low", value: stats.min, sub: "cheapest close" },
-          { label: "High", value: stats.max, sub: "richest close" },
-        ].map((cell) => (
-          <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {cell.label}
-            </div>
-            <div className="text-[16px] font-semibold text-text-primary mono mt-1">
-              {cell.value == null ? "—" : `${Math.round(cell.value)}×`}
-            </div>
-            <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-          </div>
-        ))}
-      </div>
+          { label: "Latest", value: multiple(stats.current), sub: "at the last close" },
+          { label: "Average", value: multiple(stats.average), sub: "over the series" },
+          { label: "Low", value: multiple(stats.min), sub: "cheapest close" },
+          { label: "High", value: multiple(stats.max), sub: "richest close" },
+        ]}
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {error ? (

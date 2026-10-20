@@ -3,7 +3,7 @@
 import { memo, useId, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, KpiRibbon, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useTvlHistory } from "@/services/ecosystem/project/hooks";
 
@@ -119,9 +119,12 @@ export const TvlHistoryCard = memo(function TvlHistoryCard() {
         }
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
-        {[
-          { label: "Now", value: compactUsd(stats.current), sub: "capital on the venue", tone: "" },
+      <KpiRibbon
+        size="compact"
+        bordered={false}
+        columns="grid-cols-2 sm:grid-cols-4"
+        cells={[
+          { label: "Now", value: compactUsd(stats.current), sub: "capital on the venue" },
           {
             label: "Change",
             value:
@@ -129,24 +132,12 @@ export const TvlHistoryCard = memo(function TvlHistoryCard() {
                 ? "—"
                 : `${stats.change >= 0 ? "+" : ""}${(stats.change * 100).toFixed(0)}%`,
             sub: "over the window",
-            tone: stats.change == null ? "" : stats.change >= 0 ? "text-success" : "text-danger",
+            tone: stats.change == null ? "default" : stats.change >= 0 ? "success" : "danger",
           },
-          { label: "Peak", value: compactUsd(stats.peak), sub: "highest in window", tone: "" },
-          { label: "Trough", value: compactUsd(stats.low), sub: "lowest in window", tone: "" },
-        ].map((cell) => (
-          <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {cell.label}
-            </div>
-            <div
-              className={`text-[16px] font-semibold mono mt-1 ${cell.tone || "text-text-primary"}`}
-            >
-              {cell.value}
-            </div>
-            <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-          </div>
-        ))}
-      </div>
+          { label: "Peak", value: compactUsd(stats.peak), sub: "highest in window" },
+          { label: "Trough", value: compactUsd(stats.low), sub: "lowest in window" },
+        ]}
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {error ? (

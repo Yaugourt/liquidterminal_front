@@ -15,7 +15,7 @@ import {
   YAxis,
 } from "recharts";
 import { Card } from "@/components/ui/card";
-import { CardHead, ChartError, ChartLoading, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
+import { CardHead, ChartError, ChartLoading, KpiRibbon, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { movingAverage, useFeeRevenueHistory, type FeeRevenueDay } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
@@ -45,7 +45,8 @@ const WINDOW_DAYS: Record<Window, number | null> = {
   All: null,
 };
 
-type View = "split" | "margin";
+const VIEWS = ["split", "margin"] as const;
+type View = (typeof VIEWS)[number];
 
 /** 7 days: a full week of venue mix, the shortest span that is not noise. */
 const MARGIN_SMOOTHING = 7;
@@ -203,20 +204,14 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
           <>
             <SourceBadge source="defillama" status={sourceStatus(error, isLoading, isStale)} />
             <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-0.5 rounded-lg border border-border-subtle bg-black/30 p-0.5">
-                <ViewButton
-                  active={view === "split"}
-                  onClick={() => setView("split")}
-                  Icon={AreaChartIcon}
-                  label="Split"
-                />
-                <ViewButton
-                  active={view === "margin"}
-                  onClick={() => setView("margin")}
-                  Icon={Percent}
-                  label="Margin"
-                />
-              </div>
+              <PeriodSelector
+                variant="aurora"
+                options={VIEWS}
+                selected={view}
+                onChange={setView}
+                labels={{ split: <AreaChartIcon size={12} />, margin: <Percent size={12} /> }}
+                ariaLabels={{ split: "Split", margin: "Margin" }}
+              />
               <PeriodSelector
                 selected={window}
                 onChange={setWindow}
@@ -228,28 +223,22 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
         }
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border-subtle">
-        {[
-          { label: "Gross fees", value: compactUsd(totals.fees), sub: "what users paid" },
-          { label: "Protocol revenue", value: compactUsd(totals.revenue), sub: "what was kept" },
-          { label: "Gross margin", value: pct(totals.margin), sub: "over the window" },
+      <KpiRibbon
+        size="compact"
+        bordered={false}
+        columns="grid-cols-2 sm:grid-cols-4"
+        cells={[
+          { key: "fees", label: "Gross fees", value: compactUsd(totals.fees), sub: "what users paid" },
+          { key: "revenue", label: "Protocol revenue", value: compactUsd(totals.revenue), sub: "what was kept" },
+          { key: "margin", label: "Gross margin", value: pct(totals.margin), sub: "over the window" },
           {
+            key: "perDay",
             label: "Revenue / day",
             value: totals.perDay == null ? "—" : compactUsd(totals.perDay),
             sub: `${days.length} completed days`,
           },
-        ].map((cell) => (
-          <div key={cell.label} className="bg-surface px-3 py-2.5">
-            <div className="text-[10px] uppercase tracking-[0.08em] text-text-tertiary">
-              {cell.label}
-            </div>
-            <div className="text-[16px] font-semibold text-text-primary mono mt-1">
-              {cell.value}
-            </div>
-            <div className="text-[10.5px] text-text-tertiary/80 mt-0.5">{cell.sub}</div>
-          </div>
-        ))}
-      </div>
+        ]}
+      />
 
       <div className="flex-1 px-2 pt-3 pb-2">
         {error ? (
@@ -394,28 +383,3 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
     </Card>
   );
 });
-
-function ViewButton({
-  active,
-  onClick,
-  Icon,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  Icon: typeof AreaChartIcon;
-  label: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      aria-pressed={active}
-      className={`px-1.5 py-1 rounded-md transition-colors ${
-        active ? "bg-white/[0.06] text-brand" : "text-text-tertiary hover:text-text-secondary"
-      }`}
-    >
-      <Icon size={12} />
-    </button>
-  );
-}
