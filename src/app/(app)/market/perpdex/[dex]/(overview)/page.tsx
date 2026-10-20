@@ -1,21 +1,15 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Database,
-  TrendingUp,
-  Scale,
-  Activity,
-  Zap,
-  Wallet,
-  Wifi,
-  WifiOff
-} from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { EmptyState } from "@/components/ui/empty-state";
+import { CardHead, DataStatus, KpiRibbon, PageHeader } from "@/components/common";
 import { usePerpDexWithMarketData } from "@/services/market/perpDex/hooks";
 import { formatNumber, truncateAddress, formatFunding } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -35,7 +29,6 @@ function formatFeeScale(range: { min: number; max: number } | null): string {
 
 export default function PerpDexDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const dexName = typeof params.dex === 'string' ? decodeURIComponent(params.dex) : '';
   const { format } = useNumberFormat();
 
@@ -82,65 +75,51 @@ export default function PerpDexDetailPage() {
   // "not found" only when the list loaded and has no such DEX, a load failure
   // otherwise.
   if (!dex) {
-    return (
-      <div className="p-8 bg-surface border border-border-subtle rounded-lg shadow-xl shadow-black/20">
-        <div className="flex flex-col items-center justify-center text-center">
-          <Database className="w-12 h-12 mb-4 text-text-tertiary" />
-          <h2 className="text-xl font-medium text-text-primary mb-2">
-            {error ? "DEX data unavailable" : "DEX Not Found"}
-          </h2>
-          <p className="text-text-secondary mb-4">
-            {error
-              ? <>Couldn&apos;t load the PerpDex &quot;{dexName}&quot;. Retrying shortly.</>
-              : <>The PerpDex &quot;{dexName}&quot; was not found.</>}
-          </p>
-          <Button onClick={() => router.push('/market/perpdex')} className="bg-brand hover:bg-brand/90 text-brand-text-on">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to PerpDexs
-          </Button>
-        </div>
+    const backAction = (
+      <Button asChild variant="outline" size="sm">
+        <Link href="/market/perpdex">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to PerpDexs
+        </Link>
+      </Button>
+    );
+    return error ? (
+      <div className="space-y-3">
+        <ErrorState
+          title="DEX data unavailable"
+          message={`Couldn't load the PerpDex "${dexName}". Retrying shortly.`}
+        />
+        <div className="flex justify-center">{backAction}</div>
       </div>
+    ) : (
+      <EmptyState
+        title="DEX Not Found"
+        description={`The PerpDex "${dexName}" was not found.`}
+        action={backAction}
+      />
     );
   }
 
+  const labelClass =
+    "text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold";
+
+
+  const usd = (value: number) =>
+    formatNumber(value, format, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+      currency: '$',
+      showCurrency: true
+    });
+
   return (
     <>
-      {/* Back button and title */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/market/perpdex')}
-            className="text-brand hover:text-text-primary hover:bg-surface-2"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-lg font-bold text-brand">
-              {dex.name.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-text-primary">{dex.fullName}</h1>
-              <span className="text-brand text-sm">{dex.name}</span>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {wsConnected ? (
-            <div className="flex items-center gap-1 px-2 py-1 bg-success/10 rounded-full">
-              <Wifi className="h-3 w-3 text-success" />
-              <span className="text-success text-xs font-medium">LIVE</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1 px-2 py-1 bg-danger/10 rounded-full">
-              <WifiOff className="h-3 w-3 text-danger" />
-              <span className="text-danger text-xs font-medium">OFFLINE</span>
-            </div>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        back={{ href: "/market/perpdex", label: "PerpDexs" }}
+        title={dex.fullName}
+        titleQualifier={dex.name}
+        actions={<DataStatus variant="live" connected={wsConnected} />}
+      />
 
       {error && (
         <div className="flex items-center gap-2 rounded-lg border border-warning/25 bg-warning/10 px-3 py-2 text-[12px] text-warning">
@@ -149,192 +128,96 @@ export default function PerpDexDetailPage() {
         </div>
       )}
 
-      {/* Stats cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
-        {/* 24h Volume */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Activity className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">24h Volume</span>
-          </div>
-          <span className="text-text-primary font-bold text-lg">
-            {dex.totalVolume24h > 0
-              ? formatNumber(dex.totalVolume24h, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                currency: '$',
-                showCurrency: true
-              })
-              : '-'}
-          </span>
-        </div>
-
-        {/* Open Interest */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <TrendingUp className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">Open Interest</span>
-          </div>
-          <span className="text-text-primary font-bold text-lg">
-            {dex.totalOpenInterest > 0
-              ? formatNumber(dex.totalOpenInterest, format, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-                currency: '$',
-                showCurrency: true
-              })
-              : '-'}
-          </span>
-        </div>
-
-        {/* Avg Funding */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Zap className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">Avg Funding</span>
-          </div>
-          <span className={`font-bold text-lg ${dex.avgFunding >= 0 ? 'text-success' : 'text-danger'}`}>
-            {formatFunding(dex.avgFunding)}
-          </span>
-        </div>
-
-        {/* Active Markets */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Scale className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">Active Markets</span>
-          </div>
-          <span className="text-text-primary font-bold text-lg">
-            {dex.activeAssets}
-            {dex.activeAssets !== dex.totalAssets && (
-              <span className="text-text-tertiary text-sm font-normal ml-1">
-                / {dex.totalAssets}
-              </span>
-            )}
-          </span>
-        </div>
-
-        {/* OI Cap */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <TrendingUp className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">OI Cap</span>
-          </div>
-          <span className="text-text-primary font-bold text-lg">
-            {formatNumber(dex.totalOiCap, format, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-              currency: '$',
-              showCurrency: true
-            })}
-          </span>
-        </div>
-
-        {/* Fee Scale */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Wallet className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">Fee Scale</span>
-          </div>
-          <span className="text-text-primary font-bold text-lg">
-            {formatFeeScale(dex.feeScaleRange)}
-          </span>
-        </div>
-      </div>
+      <KpiRibbon
+        cells={[
+          { key: "volume", label: "24h Volume", value: dex.totalVolume24h > 0 ? usd(dex.totalVolume24h) : '-' },
+          { key: "oi", label: "Open Interest", value: dex.totalOpenInterest > 0 ? usd(dex.totalOpenInterest) : '-' },
+          {
+            key: "funding",
+            label: "Avg Funding",
+            value: formatFunding(dex.avgFunding),
+            tone: dex.avgFunding >= 0 ? "success" : "danger",
+          },
+          {
+            key: "markets",
+            label: "Active Markets",
+            value: dex.activeAssets,
+            sub: dex.activeAssets !== dex.totalAssets ? `of ${dex.totalAssets}` : undefined,
+          },
+          { key: "oicap", label: "OI Cap", value: usd(dex.totalOiCap) },
+          { key: "fee", label: "Fee Scale", value: formatFeeScale(dex.feeScaleRange) },
+        ]}
+      />
 
       {/* Addresses */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Deployer Card */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Database className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">DEPLOYER</span>
+      <Card>
+        <CardHead title="Addresses" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
+          <div className="min-w-0 space-y-1.5">
+            <div className={labelClass}>Deployer</div>
+            <AddressDisplay
+              address={dex.deployer}
+              showExternalLink={true}
+              externalLinkHref={`/explorer/address/${dex.deployer}`}
+              copyMessage="Deployer address copied"
+              className="text-brand text-sm"
+            />
           </div>
-          <AddressDisplay
-            address={dex.deployer}
-            showExternalLink={true}
-            externalLinkHref={`/explorer/address/${dex.deployer}`}
-            copyMessage="Deployer address copied"
-            className="text-brand text-sm"
-          />
-        </div>
 
-        {/* Fee Recipient Card */}
-        <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20 group">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center transition-transform group-hover:scale-110">
-              <Wallet className="h-3 w-3 text-brand" />
-            </div>
-            <span className="text-stat-label">FEE RECIPIENT</span>
+          <div className="min-w-0 space-y-1.5">
+            <div className={labelClass}>Fee Recipient</div>
+            <AddressDisplay
+              address={dex.feeRecipient}
+              showExternalLink={true}
+              externalLinkHref={`/explorer/address/${dex.feeRecipient}`}
+              copyMessage="Fee recipient address copied"
+              className="text-brand text-sm"
+            />
           </div>
-          <AddressDisplay
-            address={dex.feeRecipient}
-            showExternalLink={true}
-            externalLinkHref={`/explorer/address/${dex.feeRecipient}`}
-            copyMessage="Fee recipient address copied"
-            className="text-brand text-sm"
-          />
-        </div>
 
-        {/* Oracle Updater or Sub Deployers */}
-        {dex.oracleUpdater ? (
-          <AddressDisplay
-            address={dex.oracleUpdater!}
-            label="Oracle Updater"
-            copyMessage="Oracle updater address copied"
-            className="text-text-secondary text-sm"
-          />
-        ) : dex.subDeployers.length > 0 ? (
-          <div className="p-4 bg-surface border border-border-subtle rounded-lg hover:border-border-default transition-all shadow-xl shadow-black/20">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-6 h-6 rounded-lg bg-brand/10 flex items-center justify-center">
-                <Wallet className="h-3 w-3 text-brand" />
-              </div>
-              <span className="text-stat-label">Sub-Deployers ({dex.subDeployers.length})</span>
+          {/* Oracle Updater or Sub Deployers */}
+          {dex.oracleUpdater ? (
+            <div className="min-w-0 space-y-1.5">
+              <div className={labelClass}>Oracle Updater</div>
+              <AddressDisplay
+                address={dex.oracleUpdater}
+                copyMessage="Oracle updater address copied"
+                className="text-text-secondary text-sm"
+              />
             </div>
-            <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-brand">
-              {dex.subDeployers.slice(0, 4).map((sub, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs">
-                  <span className="text-brand shrink-0">{sub.permission}</span>
-                  <div className="flex items-center gap-1 flex-wrap">
-                    {sub.addresses.slice(0, 2).map((addr, addrIdx) => (
-                      <div
-                        key={addrIdx}
-                        className="cursor-pointer"
-                        onClick={() => copyToClipboard(addr, "Sub-deployer address")}
-                      >
-                        <span className="text-text-secondary text-label hover:text-brand transition-colors bg-surface-2 px-1.5 py-0.5 rounded">
-                          {truncateAddress(addr)}
-                        </span>
-                      </div>
-                    ))}
-                    {sub.addresses.length > 2 && (
-                      <span className="text-text-tertiary text-label">+{sub.addresses.length - 2}</span>
-                    )}
+          ) : dex.subDeployers.length > 0 ? (
+            <div className="min-w-0 space-y-1.5">
+              <div className={labelClass}>Sub-Deployers ({dex.subDeployers.length})</div>
+              <div className="space-y-1.5 max-h-32 overflow-y-auto scrollbar-brand">
+                {dex.subDeployers.slice(0, 4).map((sub, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-xs">
+                    <span className="text-brand shrink-0">{sub.permission}</span>
+                    <div className="flex items-center gap-1 flex-wrap">
+                      {sub.addresses.slice(0, 2).map((addr, addrIdx) => (
+                        <div
+                          key={addrIdx}
+                          className="cursor-pointer"
+                          onClick={() => copyToClipboard(addr, "Sub-deployer address")}
+                        >
+                          <span className="mono text-text-secondary text-label hover:text-brand transition-colors bg-surface-2 px-1.5 py-0.5 rounded-md">
+                            {truncateAddress(addr)}
+                          </span>
+                        </div>
+                      ))}
+                      {sub.addresses.length > 2 && (
+                        <span className="text-text-tertiary text-label">+{sub.addresses.length - 2}</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-              {dex.subDeployers.length > 4 && (
-                <span className="text-text-tertiary text-xs">+{dex.subDeployers.length - 4} more permissions</span>
-              )}
+                ))}
+                {dex.subDeployers.length > 4 && (
+                  <span className="text-text-tertiary text-xs">+{dex.subDeployers.length - 4} more permissions</span>
+                )}
+              </div>
             </div>
-          </div>
-        ) : null}
-      </div>
+          ) : null}
+        </div>
+      </Card>
 
       {/* Markets table with live data */}
       <PerpDexMarketsTable
