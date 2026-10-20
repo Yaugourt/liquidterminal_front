@@ -117,6 +117,58 @@ const CARD_TITLE_RULES = [
   },
 ];
 
+/** StatsCard is retired: a key figure is a KpiRibbon cell (DESIGN_SYSTEM §7.b). */
+const STATS_CARD_RULES = [
+  {
+    selector: "JSXOpeningElement[name.name='StatsCard']",
+    message:
+      "StatsCard est retiré. Un chiffre clé passe par <KpiRibbon> de '@/components/common' (size=\"compact\" dans une carte). Voir DESIGN_SYSTEM §7.b.",
+  },
+];
+
+/**
+ * The active-tab look lives in <TabsList size> / <TabsTrigger size> (Radix
+ * panels) or PillTabs (selection); a consumer never pastes the recipe.
+ */
+const TAB_RECIPE_MESSAGE =
+  "Recette d'onglet actif (data-[state=active]:) sur un consommateur. Le style vient de <TabsList size> / <TabsTrigger size> ou de <PillTabs>. Voir DESIGN_SYSTEM.";
+const TAB_RECIPE_RULES = [
+  {
+    selector: "JSXAttribute[name.name='className'] Literal[value=/data-\\[state=active\\]:/]",
+    message: TAB_RECIPE_MESSAGE,
+  },
+  {
+    selector: "JSXAttribute[name.name='className'] TemplateElement[value.raw=/data-\\[state=active\\]:/]",
+    message: TAB_RECIPE_MESSAGE,
+  },
+];
+
+/** Tables go through ModuleTable (in a card) or TypedDataTable (a page), §5. */
+const RAW_TABLE_RULES = [
+  {
+    selector: "JSXOpeningElement[name.name='table']",
+    message:
+      "Table brute. Utilise <ModuleTable> (dans une carte) ou <TypedDataTable> (page) de '@/components/common'. Voir DESIGN_SYSTEM §5.",
+  },
+];
+
+/**
+ * Migration locks: each one was switched on once every occurrence of its
+ * pattern was migrated. `lockRules(...exempt)` returns all of them except the
+ * named ones, for the few files that legitimately keep a pattern.
+ */
+const MIGRATION_LOCKS = {
+  kpiStrip: KPI_STRIP_RULES,
+  cardTitle: CARD_TITLE_RULES,
+  statsCard: STATS_CARD_RULES,
+  tabRecipe: TAB_RECIPE_RULES,
+  rawTable: RAW_TABLE_RULES,
+};
+const lockRules = (...exempt) =>
+  Object.entries(MIGRATION_LOCKS)
+    .filter(([name]) => !exempt.includes(name))
+    .flatMap(([, rules]) => rules);
+
 const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
@@ -152,7 +204,7 @@ const eslintConfig = [
   {
     files: ["src/components/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"],
     rules: {
-      "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...KPI_STRIP_RULES, ...CARD_TITLE_RULES],
+      "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...lockRules()],
       "no-restricted-imports": [
         "error",
         {
@@ -204,19 +256,29 @@ const eslintConfig = [
     },
   },
   /**
-   * Exceptions to the migration locks (KPI strip, shadcn card title): the
-   * primitive that owns the strip recipe and the labs mockups (isolated
-   * showcases). Every other DS rule still applies.
+   * Exceptions to the migration locks. Each block lifts only the lock its files
+   * legitimately break; the shared DS bans and the other locks still apply.
    */
   {
-    files: [
-      "src/components/common/KpiRibbon.tsx",
-      "src/app/(app)/labs/**/*.{ts,tsx}",
-      "src/components/labs/**/*.{ts,tsx}",
-    ],
-    rules: {
-      "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES],
-    },
+    // The primitive that owns the hairline strip recipe.
+    files: ["src/components/common/KpiRibbon.tsx"],
+    rules: { "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...lockRules("kpiStrip")] },
+  },
+  {
+    // HIP-4 static doc chapters keep their own tab look (DESIGN_SYSTEM exception).
+    files: ["src/components/hip4/**/*.{ts,tsx}"],
+    rules: { "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...lockRules("tabRecipe")] },
+  },
+  {
+    // ui/table is the table primitive; Elysium's tables are Yaugourt's migration
+    // (handoff doc "Elysium : migration des tables au DS V4"): drop this glob once done.
+    files: ["src/components/ui/**/*.{ts,tsx}", "src/components/elysium/**/*.{ts,tsx}"],
+    rules: { "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...lockRules("rawTable")] },
+  },
+  {
+    // Labs mockups are isolated showcases: no migration lock.
+    files: ["src/app/(app)/labs/**/*.{ts,tsx}", "src/components/labs/**/*.{ts,tsx}"],
+    rules: { "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES] },
   },
   /**
    * SSOT overrides — files where the banned patterns are intentional (canonical implementations).
