@@ -240,7 +240,10 @@ export function ModuleTable({
   const colClasses = columns.map((c) => c.className);
   return (
     <ModuleTableContext.Provider value={{ density, alignments, colClasses }}>
-      <div className="overflow-x-auto scrollbar-brand">
+      {/* scrollbar-brand reserves a vertical scrollbar gutter, but this wrapper
+          only ever scrolls sideways: the ~10px it kept sat empty right of every
+          table (Chrome on Windows/Linux), off-centre against the card padding. */}
+      <div className="overflow-x-auto scrollbar-brand" style={{ scrollbarGutter: "auto" }}>
       <table
         className={`w-full border-collapse ${hasWidths ? "table-fixed" : "table-auto"}`}
       >
