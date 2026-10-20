@@ -71,7 +71,9 @@ export function PageHeader({
           )}
         </div>
         {actions && (
-          <div className="flex items-center gap-2 sm:shrink-0">{actions}</div>
+          // flex-wrap: on a phone the actions take the full row and wrap
+          // instead of pushing past the page (status + two buttons > 343px).
+          <div className="flex flex-wrap items-center gap-2 sm:shrink-0">{actions}</div>
         )}
       </div>
       {children}
