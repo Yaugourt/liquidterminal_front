@@ -609,6 +609,7 @@ Token-icon helpers in `@/lib/tokenIconUrl.ts`:
 - `no-restricted-syntax` — **forbids hand-rolled table grid layouts** (`className="… grid-cols-[Npx_…_…_…]"` with 3+ tracks and a `px` width). Use `<ModuleTable>` (§5.b) — its `columns` prop owns widths once and propagates them to both header and rows via `<colgroup>`. 2-col page-shell layouts (`grid-cols-[1fr_2fr]`, `grid-cols-[280px_1fr]`) stay allowed.
 - `no-restricted-imports` — **forbids `@/components/ui/table` outside `common/`**. Forces `TypedDataTable`.
 - `no-restricted-syntax` — **forbids the hand-rolled KPI strip** (a `className` carrying both `gap-px` and `bg-border-*`). Use `<KpiRibbon>` (§7.b), `size="compact"` inside a card. Exempt: `KpiRibbon.tsx` itself and the labs showcases.
+- `no-restricted-syntax` — **forbids the shadcn `<CardTitle>` / `<CardDescription>`**: card heads go through `<CardHead>` (§4). `CardHeader` / `CardContent` / `CardFooter` stay allowed (density wrappers). Exempt: the labs showcases.
 
 ## 11. Honest constraints (learned during the refactor)
 

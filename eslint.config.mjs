@@ -104,6 +104,19 @@ const KPI_STRIP_RULES = [
   },
 ];
 
+/**
+ * Card heads go through <CardHead> (DESIGN_SYSTEM §4). The shadcn title and
+ * description parts only survive in the labs density demo; CardHeader /
+ * CardContent / CardFooter stay allowed (they are the Card's density wrappers).
+ */
+const CARD_TITLE_RULES = [
+  {
+    selector: "JSXOpeningElement[name.name=/^Card(Title|Description)$/]",
+    message:
+      "Titre de carte shadcn (CardTitle / CardDescription). Utilise <CardHead> de '@/components/common' (DESIGN_SYSTEM §4).",
+  },
+];
+
 const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
@@ -139,7 +152,7 @@ const eslintConfig = [
   {
     files: ["src/components/**/*.{ts,tsx}", "src/app/**/*.{ts,tsx}"],
     rules: {
-      "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...KPI_STRIP_RULES],
+      "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...KPI_STRIP_RULES, ...CARD_TITLE_RULES],
       "no-restricted-imports": [
         "error",
         {
@@ -191,8 +204,9 @@ const eslintConfig = [
     },
   },
   /**
-   * The KPI strip ban's own exceptions: the primitive that owns the recipe and
-   * the labs mockups (isolated showcases). Every other DS rule still applies.
+   * Exceptions to the migration locks (KPI strip, shadcn card title): the
+   * primitive that owns the strip recipe and the labs mockups (isolated
+   * showcases). Every other DS rule still applies.
    */
   {
     files: [
