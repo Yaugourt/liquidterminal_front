@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo } from "react";
-import { ModuleTable, ModuleTableRow, TokenAvatar } from "@/components/common";
+import { CardHead, ModuleTable, ModuleTableRow, TokenAvatar } from "@/components/common";
 import { compactUsd, formatPrice } from "@/lib/formatters/numberFormatting";
 import { SpotToken, SpotGlobalStats } from "@/services/market/spot/types";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -64,15 +63,7 @@ function VenueShell({
 }) {
   return (
     <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
-      <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle">
-        <div className="flex items-baseline gap-2 min-w-0">
-          <h3 className="text-[13px] font-semibold text-text-primary">{title}</h3>
-          <span className="text-[11px] text-text-tertiary truncate">{subtitle}</span>
-        </div>
-        <Link href={openHref} className="text-[11.5px] text-brand hover:text-brand-hover shrink-0">
-          {openLabel} →
-        </Link>
-      </div>
+      <CardHead title={title} subtitle={subtitle} href={openHref} viewAllLabel={openLabel} />
       <div className="grid grid-cols-3 divide-x divide-border-subtle border-b border-border-subtle">
         {stats.map((s) => (
           <div key={s.label} className="px-3.5 py-2.5">

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShareTile, SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, ShareTile, SourceBadge, sourceStatus } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useBiggestTrades } from "@/services/market/biggest-trades";
 
@@ -44,15 +44,19 @@ export function BiggestTradesCard() {
 
   return (
     <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle flex flex-wrap items-center gap-x-3 gap-y-1.5">
-        <h3 className="text-[13px] font-medium text-text-primary">Biggest trades</h3>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
-        <div className="ml-auto flex items-center gap-1">
-          {pill("wins", "Wins")}
-          {pill("losses", "Losses")}
-          <ShareTile src="/api/tile/biggest-trade" filename="biggest-trades" />
-        </div>
-      </div>
+      <CardHead
+        title="Biggest trades"
+        actions={
+          <>
+            <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />
+            <div className="flex items-center gap-1">
+              {pill("wins", "Wins")}
+              {pill("losses", "Losses")}
+              <ShareTile src="/api/tile/biggest-trade" filename="biggest-trades" />
+            </div>
+          </>
+        }
+      />
       <div className="px-4 py-3 space-y-3">
         {isLoading && trades.length === 0 && (
           <p className="text-[11.5px] text-text-tertiary">Loading trades…</p>

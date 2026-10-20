@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo } from "react";
 import { useTopTraders } from "@/services/market/toptraders/hooks/useTopTraders";
 import { PerpMarketData } from "@/services/market/perp/types";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { CardHead } from "@/components/common";
 
 function truncateAddress(addr: string): string {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -16,12 +16,7 @@ export function TopTradersCard() {
 
   return (
     <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
-        <h3 className="text-[13px] font-medium text-text-primary">Top traders · 24h</h3>
-        <Link href="/market/tracker" className="text-[11px] text-brand hover:text-brand-hover">
-          Tracker →
-        </Link>
-      </div>
+      <CardHead title="Top traders · 24h" href="/market/tracker" viewAllLabel="Tracker" />
       <div className="px-4 py-3 space-y-3">
         {isLoading && (traders?.length ?? 0) === 0 && (
           <p className="text-[11.5px] text-text-tertiary">Loading traders…</p>
@@ -70,10 +65,7 @@ export function FundingWatchCard({ markets }: { markets: PerpMarketData[] }) {
 
   return (
     <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
-        <h3 className="text-[13px] font-medium text-text-primary">Funding · hourly</h3>
-        <span className="text-[10px] text-text-tertiary">core perps · top volume</span>
-      </div>
+      <CardHead title="Funding · hourly" subtitle="core perps · top volume" />
       <div className="px-4 py-3 space-y-2.5">
         {rows.map((r) => (
           <div key={r.name} className="flex items-center justify-between gap-2 text-[12px]">

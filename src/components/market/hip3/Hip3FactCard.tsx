@@ -2,6 +2,7 @@
 
 import { Children, ReactNode } from "react";
 import { Card } from "@/components/ui/card";
+import { CardHead } from "@/components/common";
 
 /**
  * The HIP-3 facts, as one block of aligned rows.
@@ -30,14 +31,7 @@ export function Hip3FactList({ children }: { children: ReactNode }) {
 
   return (
     <Card className="overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-1.5 border-b border-border-subtle">
-        <h3 className="text-[13px] leading-[18px] font-medium text-text-primary">
-          What to check on this market
-        </h3>
-        <span className="inline-flex items-center h-[16px] text-[10px] leading-none font-medium px-1.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          HIP-3
-        </span>
-      </div>
+      <CardHead title="What to check on this market" tag="HIP-3" />
       <div className="divide-y divide-border-subtle">{rows}</div>
     </Card>
   );

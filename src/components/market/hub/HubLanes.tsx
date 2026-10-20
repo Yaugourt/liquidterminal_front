@@ -8,7 +8,7 @@ import { useHip4QuestionsWithOutcomes } from "@/services/indexer/hip4/hooks/useH
 import { useBuildersTop, useBuildersStatsAllTimeframes } from "@/services/indexer/builders";
 import { BuilderAvatar, resolveBuilderLabel } from "@/components/market/builders";
 import { AuctionStrip } from "./AuctionStrip";
-import { SourceBadge, sourceStatus, combinedSourceStatus, RowFillList, type SourceBadgeStatus } from "@/components/common";
+import { CardHead, SourceBadge, sourceStatus, combinedSourceStatus, RowFillList, type SourceBadgeStatus } from "@/components/common";
 
 function LaneShell({
   title,
@@ -30,18 +30,7 @@ function LaneShell({
 }) {
   return (
     <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden flex flex-col">
-      <div className="flex items-center justify-between px-3.5 py-3 border-b border-border-subtle">
-        <div className="flex items-baseline gap-2 min-w-0">
-          <h3 className="text-[13px] font-semibold text-text-primary truncate">{title}</h3>
-          {tag && <span className="text-[11px] text-text-tertiary truncate">{tag}</span>}
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          {actions}
-          <Link href={href} className="text-[11.5px] text-brand hover:text-brand-hover">
-            {hrefLabel} →
-          </Link>
-        </div>
-      </div>
+      <CardHead title={title} subtitle={tag} actions={actions} href={href} viewAllLabel={hrefLabel} />
       <div className="flex-1 flex flex-col">{children}</div>
       {footer}
     </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { useTwapFlow } from "@/services/market/twap-flow";
-import { SourceBadge, sourceStatus } from "@/components/common";
+import { CardHead, SourceBadge, sourceStatus } from "@/components/common";
 
 function truncateAddress(addr: string): string {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -22,11 +22,11 @@ export function TwapFlowCard() {
 
   return (
     <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle flex items-center gap-2">
-        <h3 className="text-[13px] font-medium text-text-primary">TWAP flow</h3>
-        <SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} className="ml-auto" />
-        <span className="text-[10px] text-text-tertiary">biggest · 24h</span>
-      </div>
+      <CardHead
+        title="TWAP flow"
+        subtitle="biggest · 24h"
+        actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
+      />
       <div className="px-4 py-3 space-y-3">
         {isLoading && twaps.length === 0 && (
           <p className="text-[11.5px] text-text-tertiary">Loading TWAPs…</p>
