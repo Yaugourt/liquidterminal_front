@@ -5,6 +5,7 @@ import {
   KpiRibbon,
   SectionHead,
   OverviewModule,
+  CardHead,
   ModuleTable,
   ModuleTableRow,
   DonutTopN,
@@ -472,14 +473,7 @@ export function CapitalLens() {
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {/* LEFT — stake composition donut */}
               <div className="flex flex-col overflow-hidden rounded-lg border border-border-subtle bg-surface">
-                <div className="flex items-baseline gap-2 border-b border-border-subtle px-4 py-3">
-                  <h3 className="text-[13px] font-medium text-text-primary">
-                    Stake composition
-                  </h3>
-                  <span className="mono ml-auto text-[11px] text-text-tertiary">
-                    of {compactHype(activeDenominator)} HYPE
-                  </span>
-                </div>
+                <CardHead title="Stake composition" tag={`of ${compactHype(activeDenominator)} HYPE`} />
                 <div className="flex flex-1 flex-col items-center gap-5 p-4 sm:flex-row">
                   <DonutTopN
                     data={donutSlices}
@@ -531,14 +525,7 @@ export function CapitalLens() {
 
               {/* RIGHT — top validators by stake (flow ranking) */}
               <div className="flex flex-col overflow-hidden rounded-lg border border-border-subtle bg-surface">
-                <div className="flex items-baseline gap-2 border-b border-border-subtle px-4 py-3">
-                  <h3 className="text-[13px] font-medium text-text-primary">
-                    Top validators by stake
-                  </h3>
-                  <span className="mono ml-auto text-[11px] text-text-tertiary">
-                    {flowCaption}
-                  </span>
-                </div>
+                <CardHead title="Top validators by stake" tag={flowCaption} />
                 <div className="flex-1 p-4">
                   <FlowGrid<FlowRow>
                     rows={flowRows}
@@ -569,14 +556,7 @@ export function CapitalLens() {
         <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
           {/* LEFT — stakers-by-size histogram */}
           <div className="overflow-hidden rounded-lg border border-border-subtle bg-surface">
-            <div className="flex items-baseline gap-2 border-b border-border-subtle px-4 py-3">
-              <h3 className="text-[13px] font-medium text-text-primary">
-                Stakers by size
-              </h3>
-              <span className="mono ml-auto text-[11px] text-text-tertiary">
-                {compactCount(totalHolders)} wallets
-              </span>
-            </div>
+            <CardHead title="Stakers by size" tag={`${compactCount(totalHolders)} wallets`} />
             <div className="p-4">
               {holdersError ? (
                 <ErrorState
@@ -680,14 +660,7 @@ export function CapitalLens() {
 
         {/* Daily unstaking volume — single cyan series, full daily history. */}
         <div className="overflow-hidden rounded-lg border border-border-subtle bg-surface">
-          <div className="flex items-baseline gap-2 border-b border-border-subtle px-4 py-3">
-            <h3 className="text-[13px] font-medium text-text-primary">
-              Daily unstaking volume
-            </h3>
-            <span className="mono ml-auto text-[11px] text-text-tertiary">
-              HYPE · daily
-            </span>
-          </div>
+          <CardHead title="Daily unstaking volume" tag="HYPE · daily" />
           <div className="p-4">
             {unstakingChartError ? (
               <ErrorState

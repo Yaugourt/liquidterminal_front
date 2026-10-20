@@ -64,7 +64,7 @@ export function VaultDetailHeader({
     >
       <div className="flex flex-col lg:flex-row lg:items-center gap-4">
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-brand/10 border border-brand/20 flex items-center justify-center flex-shrink-0">
             <Vault className="w-5 h-5 text-brand" />
           </div>
 
@@ -76,7 +76,7 @@ export function VaultDetailHeader({
           ) : (
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <h1 className="text-lg font-bold text-text-primary truncate">{name}</h1>
+                <h1 className="text-lg font-semibold text-text-primary truncate">{name}</h1>
                 <StatusBadge variant={isClosed ? "inactive" : "success"}>
                   {isClosed ? "Closed" : "Open"}
                 </StatusBadge>

@@ -91,10 +91,10 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
               />
             ) : (
               <div
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-brand/20 shadow-inner shadow-black/30"
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-brand/20"
                 style={{ background: gradient }}
               >
-                <span className="text-[11px] font-bold uppercase tracking-wider text-text-secondary">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-text-secondary">
                   {address.slice(2, 4)}
                 </span>
               </div>

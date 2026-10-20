@@ -44,7 +44,7 @@ export function VaultSubVaults({ childAddresses }: VaultSubVaultsProps) {
               <Link
                 key={addr}
                 href={`/explorer/vaults/${addr}`}
-                className="flex items-center justify-between px-3 py-2 rounded-md bg-surface-2 border border-border-subtle hover:border-border-default hover:bg-white/[0.04] transition-all group"
+                className="flex items-center justify-between px-3 py-2 rounded-md bg-surface-2 border border-border-subtle hover:border-border-default hover:bg-surface-3 transition-all group"
               >
                 <div className="min-w-0">
                   <p className="text-xs font-medium text-text-primary truncate" title={summary?.name ?? addr}>
