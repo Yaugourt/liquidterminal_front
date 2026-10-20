@@ -4,7 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, BellRing, Check } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHead, KpiRibbon, ShareTile } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, ShareTile } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useAfBuybacks } from "@/services/market/hype";
 import type { ReserveYieldInterval, ReserveYieldSnapshot } from "@/services/market/reserve-yield";
@@ -19,10 +19,11 @@ const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 const tiny = (a: string) => `${a.slice(0, 4)}…${a.slice(-2)}`;
 const day = (t: number) =>
   new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
-const dayTime = (t: number) =>
+const dayClock = (t: number) =>
   `${new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}, ${new Date(t)
     .toISOString()
-    .slice(11, 16)} UTC`;
+    .slice(11, 16)}`;
+const dayTime = (t: number) => `${dayClock(t)} UTC`;
 const usdc = (n: number) =>
   `${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USDC`;
 
@@ -115,8 +116,10 @@ export function ReserveYieldOverviewCard({ data }: { data: ReserveYieldSnapshot 
         <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-6" />
       </div>
 
-      {/* where the money is: treasury -> interest address -> fund */}
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-2 p-3.5">
+      {/* where the money is: treasury -> interest address -> fund. In a row from
+          xl only: at 1024 a node is ~165px wide and its address and full-dollar
+          value spill out of the card, so it stacks like on a phone until then. */}
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch gap-2 p-3.5">
         <FlowNode
           title="Treasury"
           where="HyperEVM"
@@ -194,9 +197,9 @@ function FlowNode({
 
 function FlowArrow({ label }: { label: string }) {
   return (
-    <div className="flex md:flex-col items-center justify-center gap-1 px-1 text-text-tertiary">
-      <ArrowRight size={16} className="rotate-90 md:rotate-0 shrink-0" />
-      <span className="text-[10px] text-center leading-tight md:max-w-[96px]">{label}</span>
+    <div className="flex xl:flex-col items-center justify-center gap-1 px-1 text-text-tertiary">
+      <ArrowRight size={16} className="rotate-90 xl:rotate-0 shrink-0" />
+      <span className="text-[10px] text-center leading-tight xl:max-w-[96px]">{label}</span>
     </div>
   );
 }
@@ -337,45 +340,55 @@ export function ReserveYieldLedgerCard({ data }: { data: ReserveYieldSnapshot })
         tag={short(data.addresses.interest)}
         subtitle="USDC in and out of the system interest address"
       />
-      <div className="overflow-x-auto">
-        <table className="w-full text-[11.5px]">
-          <thead>
-            <tr className="text-left text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-              <th className="px-3.5 py-2 font-semibold">Time (UTC)</th>
-              <th className="px-2 py-2 font-semibold">Type</th>
-              <th className="px-2 py-2 font-semibold">From → to</th>
-              <th className="px-3.5 py-2 font-semibold text-right">Amount</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border-subtle">
-            {data.flows.map((f) => {
-              const k = KIND[f.kind];
-              const zeroHash = /^0x0+$/.test(f.hash);
-              return (
-                <tr key={`${f.hash}-${f.time}`}>
-                  <td className="px-3.5 py-2 mono text-text-tertiary whitespace-nowrap">
-                    {zeroHash ? (
-                      dayTime(f.time)
-                    ) : (
-                      <Link href={`/explorer/transaction/${f.hash}`} className="hover:text-brand">
-                        {dayTime(f.time)}
-                      </Link>
-                    )}
-                  </td>
-                  <td className={cn("px-2 py-2 font-semibold whitespace-nowrap", k.cls)}>{k.label}</td>
-                  <td className="px-2 py-2 whitespace-nowrap">
-                    <AddressLink address={f.from} /> <span className="text-text-tertiary">→</span>{" "}
+      {/* No column widths on purpose: the table stays table-auto and scrolls
+          sideways inside the card on a phone instead of clipping. */}
+      <ModuleTable
+        density="compact"
+        columns={[
+          { header: "Time (UTC)" },
+          { header: "Type", align: "left" },
+          { header: "From → to", align: "left" },
+          { header: "Amount", align: "right" },
+        ]}
+      >
+        {data.flows.map((f) => {
+          const k = KIND[f.kind];
+          const zeroHash = /^0x0+$/.test(f.hash);
+          return (
+            <ModuleTableRow
+              key={`${f.hash}-${f.time}`}
+              cells={[
+                // The column header says "Time (UTC)": the cells skip the suffix.
+                <span key="time" className="mono text-text-tertiary whitespace-nowrap">
+                  {zeroHash ? (
+                    dayClock(f.time)
+                  ) : (
+                    <Link href={`/explorer/transaction/${f.hash}`} className="hover:text-brand">
+                      {dayClock(f.time)}
+                    </Link>
+                  )}
+                </span>,
+                <span key="kind" className={`font-semibold whitespace-nowrap ${k.cls}`}>
+                  {k.label}
+                </span>,
+                // Breaks between the two addresses when the card narrows, instead
+                // of scrolling; never inside one (a break may follow the "…").
+                <span key="route">
+                  <span className="whitespace-nowrap">
+                    <AddressLink address={f.from} /> <span className="text-text-tertiary">→</span>
+                  </span>{" "}
+                  <span className="whitespace-nowrap">
                     <AddressLink address={f.to} />
-                  </td>
-                  <td className="px-3.5 py-2 mono text-right text-text-primary whitespace-nowrap">
-                    {f.amount.toLocaleString("en-US", { maximumFractionDigits: 2 })}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+                  </span>
+                </span>,
+                <span key="amount" className="mono text-text-primary whitespace-nowrap">
+                  {f.amount.toLocaleString("en-US", { maximumFractionDigits: 2 })}
+                </span>,
+              ]}
+            />
+          );
+        })}
+      </ModuleTable>
       <div className="px-3.5 py-2 border-t border-border-subtle text-[10.5px] text-text-tertiary">
         Transfers under 1,000 USDC are not interval payments; the first one, on 27 Aug, marks the activation. The
         protocol&apos;s own transfers to the fund carry no transaction hash.
