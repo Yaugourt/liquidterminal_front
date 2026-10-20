@@ -2,7 +2,8 @@
 
 import { memo, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ModuleTable, ModuleTableRow, SearchBar } from "@/components/common";
+import { CardHead, ModuleTable, ModuleTableRow, SearchBar } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { ErrorState } from "@/components/ui/error-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ProjectModal } from "./ProjectModal";
@@ -248,17 +249,18 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
       {/* Category rail — the filter that never clips; it stays in view while
           the directory scrolls. */}
       <div className="space-y-4 xl:sticky xl:top-20">
-        <div className="bg-surface border border-border-subtle rounded-lg">
-          <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
-            <h3 className="text-[13px] font-medium text-text-primary">Categories</h3>
-            {categoryFilter ? (
-              <button onClick={() => setCategoryFilter(null)} className="text-[11px] text-brand hover:text-brand-hover">
-                Clear
-              </button>
-            ) : (
-              <span className="text-[11px] text-text-tertiary mono">{projects.length}</span>
-            )}
-          </div>
+        <Card interactive={false}>
+          <CardHead
+            title="Categories"
+            tag={categoryFilter ? undefined : <span className="mono">{projects.length}</span>}
+            actions={
+              categoryFilter ? (
+                <button onClick={() => setCategoryFilter(null)} className="text-[11px] text-brand hover:text-brand-hover">
+                  Clear
+                </button>
+              ) : undefined
+            }
+          />
           <div className="px-4 py-3 space-y-2.5">
             {categoryCounts
               .slice(0, categoriesExpanded ? undefined : CATEGORIES_COLLAPSED)
@@ -293,14 +295,11 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
               </button>
             )}
           </div>
-        </div>
+        </Card>
 
         {recentlyAdded.length > 0 && (
-          <div className="bg-surface border border-border-subtle rounded-lg">
-            <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
-              <h3 className="text-[13px] font-medium text-text-primary">Recently added</h3>
-              <span className="text-[11px] text-text-tertiary mono">{recentlyAdded.length}</span>
-            </div>
+          <Card interactive={false}>
+            <CardHead title="Recently added" tag={<span className="mono">{recentlyAdded.length}</span>} />
             <div className="px-2 py-2 text-[12px]">
               {recentlyAdded.map((p) => (
                 <button
@@ -316,7 +315,7 @@ export const ProjectsDirectory = memo(function ProjectsDirectory() {
                 </button>
               ))}
             </div>
-          </div>
+          </Card>
         )}
       </div>
     </div>

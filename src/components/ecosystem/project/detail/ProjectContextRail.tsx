@@ -1,6 +1,8 @@
 "use client";
 
 import { Info } from "lucide-react";
+import { CardHead } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { DefiLlamaChainStats, Project, ProjectPosition } from "@/services/ecosystem/project/types";
 
@@ -37,11 +39,8 @@ function ShareBar({ label, pct, strong }: { label: string; pct: number; strong?:
 export function PositionRailCard({ position }: { position: ProjectPosition }) {
   if (position.categoryRank == null || position.categorySize == null || !position.category) return null;
   return (
-    <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
-        <h3 className="text-[13px] font-medium text-text-primary">Position</h3>
-        <span className="text-[11px] text-text-tertiary">via DefiLlama</span>
-      </div>
+    <Card interactive={false}>
+      <CardHead title="Position" tag="via DefiLlama" />
       <div className="px-4 py-3.5 space-y-3">
         <div className="flex items-baseline gap-2">
           <span className={`mono text-[26px] font-semibold leading-none ${position.categoryRank === 1 ? "text-gold" : "text-text-primary"}`}>
@@ -60,7 +59,7 @@ export function PositionRailCard({ position }: { position: ProjectPosition }) {
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -131,13 +130,10 @@ export function OnHyperliquidCard({ chain, position }: { chain: DefiLlamaChainSt
   if (rows.length === 0) return null;
 
   return (
-    <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle flex items-baseline justify-between">
-        <h3 className="text-[13px] font-medium text-text-secondary">Hyperliquid L1</h3>
-        <span className="text-[10px] text-text-tertiary">chain context</span>
-      </div>
+    <Card interactive={false}>
+      <CardHead title="Hyperliquid L1" tag="chain context" />
       <div className="px-4 py-3 space-y-1.5">{rows}</div>
-    </div>
+    </Card>
   );
 }
 

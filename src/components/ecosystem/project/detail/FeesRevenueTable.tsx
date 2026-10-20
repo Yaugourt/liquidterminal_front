@@ -1,6 +1,7 @@
 "use client";
 
-import { ModuleTable, ModuleTableRow, SourceBadge, type SourceBadgeStatus } from "@/components/common";
+import { CardHead, ModuleTable, ModuleTableRow, SourceBadge, type SourceBadgeStatus } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import { DefiLlamaMoneyBlock } from "@/services/ecosystem/project/types";
 
@@ -53,11 +54,8 @@ export function FeesRevenueTable({ fees, revenue, sourceStatus = "ok" }: FeesRev
   ];
 
   return (
-    <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border-subtle">
-        <h3 className="text-[13px] font-semibold text-text-primary">Fees &amp; revenue</h3>
-        <SourceBadge source="defillama" status={sourceStatus} />
-      </div>
+    <Card interactive={false}>
+      <CardHead title="Fees & revenue" actions={<SourceBadge source="defillama" status={sourceStatus} />} />
       <div className="overflow-x-auto">
         <div className="min-w-[520px]">
           <ModuleTable columns={columns}>
@@ -86,6 +84,6 @@ export function FeesRevenueTable({ fees, revenue, sourceStatus = "ok" }: FeesRev
           </ModuleTable>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

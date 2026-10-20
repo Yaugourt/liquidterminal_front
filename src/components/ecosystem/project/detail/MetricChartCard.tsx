@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import { AuroraAreaChart } from "@/components/common";
+import { AuroraAreaChart, CardHead } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { PillTabs, TabOption } from "@/components/ui/pill-tabs";
 import { SeriesPoint } from "@/services/ecosystem/project/types";
 
@@ -58,18 +59,20 @@ export function MetricChartCard({
   }, [series, timeframe]);
 
   return (
-    <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-border-subtle">
-        <h3 className="text-[13px] font-medium text-text-primary">{title}</h3>
-        {currentValue && <span className="mono text-[11px] text-text-tertiary">{currentValue}</span>}
-        <div className="ml-auto flex items-center gap-3">
-          {actions}
-          <PillTabs tabs={TAB_OPTIONS} activeTab={timeframe} onTabChange={setTimeframe} variant="text" />
-        </div>
-      </div>
+    <Card interactive={false}>
+      <CardHead
+        title={title}
+        tag={currentValue ? <span className="mono">{currentValue}</span> : undefined}
+        actions={
+          <span className="flex items-center gap-3">
+            {actions}
+            <PillTabs tabs={TAB_OPTIONS} activeTab={timeframe} onTabChange={setTimeframe} variant="text" />
+          </span>
+        }
+      />
       <div className="px-1 pt-3 pb-1">
         <AuroraAreaChart data={data} height={height} lineColor={color} formatValue={formatValue} />
       </div>
-    </div>
+    </Card>
   );
 }
