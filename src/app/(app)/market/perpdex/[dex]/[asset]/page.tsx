@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingState } from "@/components/ui/loading-state";
 import { ChartSkeleton } from "@/components/common";
 import { TradingLayout } from "@/layouts/TradingLayout";
@@ -64,16 +64,15 @@ export default function Hip3AssetPage() {
   if (error || notFound) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <Card className="p-6 flex flex-col items-center justify-center gap-4">
-          <div className="text-xl font-bold text-text-primary">Market not found</div>
-          <p className="text-sm text-text-secondary text-center max-w-sm">
-            {coin} is not listed on Hyperliquid. It may have been delisted, or the venue id may be
-            wrong.
-          </p>
-          <Button asChild className="bg-brand hover:bg-brand/90 text-brand-text-on font-bold">
-            <Link href={`/market/perpdex/${dexId}`}>Back to venue</Link>
-          </Button>
-        </Card>
+        <EmptyState
+          title="Market not found"
+          description={`${coin} is not listed on Hyperliquid. It may have been delisted, or the venue id may be wrong.`}
+          action={
+            <Button asChild>
+              <Link href={`/market/perpdex/${dexId}`}>Back to venue</Link>
+            </Button>
+          }
+        />
       </div>
     );
   }
@@ -131,14 +130,11 @@ export default function Hip3AssetPage() {
     return (
       <div className="space-y-4">
         {headerBlock}
-        <Card className="px-4 py-10 grid place-items-center">
-          <div className="text-center space-y-1.5">
-            <div className="text-[13px] text-text-secondary">Chart unavailable</div>
-            <div className="text-[11.5px] text-text-tertiary">
-              No candle history for a market that is no longer trading.
-            </div>
-          </div>
-        </Card>
+        <EmptyState
+          title="Chart unavailable"
+          description="No candle history for a market that is no longer trading."
+          minHeight="min-h-[160px]"
+        />
         {trustRow}
         {/* A halted market still has a tape and trader history worth reading —
             that is what turns this from an empty page into an archive. */}

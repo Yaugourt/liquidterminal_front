@@ -504,7 +504,7 @@ export function TradingViewChart({
       />
 
       {/* TOOLBAR — wraps on narrow screens so no info is ever hidden */}
-      <div className="relative z-20 flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 border-b border-border-subtle bg-gradient-to-b from-surface-2 to-transparent">
+      <div className="relative z-20 flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2.5 border-b border-border-subtle">
         {/* LIVE badge — always visible */}
         <span
           className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em] ${isConnected
