@@ -10,8 +10,9 @@ import { authService } from "@/services/auth/api";
 import { ReferralStats } from "@/services/auth/types";
 import { useXp } from "@/services/xp";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Card } from "@/components/ui/card";
-import { CardHead, StatsCard } from "@/components/common";
+import { CardHead, KpiRibbon } from "@/components/common";
 import { usePageTitle } from "@/store/use-page-title";
 import { XpBadge, XpHistoryList, XpLeaderboard, DailyTasksWidget, WeeklyChallengesCard, XpEarnGuide } from "@/components/xp";
 import { Shield, Users, Wallet, BookOpen, Copy, List, Flame, Send } from "lucide-react";
@@ -175,14 +176,14 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                 unoptimized
                             />
                         ) : (
-                            <AvatarFallback className="bg-base text-gold text-3xl font-bold">
+                            <AvatarFallback className="bg-base text-gold text-3xl font-semibold">
                                 {currentUser.name?.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         )}
                     </Avatar>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h1 className="text-2xl font-bold text-text-primary">{currentUser.name}</h1>
+                            <h1 className="text-2xl font-semibold tracking-tight text-text-primary">{currentUser.name}</h1>
                             {currentUser.verified && <Shield className="h-5 w-5 text-gold" />}
                         </div>
                         <p className="text-text-secondary capitalize">{currentUser.role.toLowerCase()} Member</p>
@@ -191,17 +192,13 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                                 <InlineSpinner className="text-brand" />
                             ) : xpStats ? (
                                 <>
-                                    <span className="px-2 py-0.5 bg-gold/10 text-gold text-xs rounded-md border border-gold/20 font-medium">
-                                        Lvl {xpStats.level}
-                                    </span>
-                                    <span className="px-2 py-0.5 bg-brand/10 text-brand text-xs rounded-md border border-brand/20 font-medium">
-                                        {getRank(xpStats.level)}
-                                    </span>
+                                    <StatusBadge variant="gold">Lvl {xpStats.level}</StatusBadge>
+                                    <StatusBadge variant="info">{getRank(xpStats.level)}</StatusBadge>
                                     {xpStats.loginStreak > 0 && (
-                                        <span className="px-2 py-0.5 bg-gold/10 text-gold text-xs rounded-md border border-gold/20 font-medium flex items-center gap-1">
+                                        <StatusBadge variant="gold">
                                             <Flame className="h-3 w-3" />
                                             {xpStats.loginStreak}d
-                                        </span>
+                                        </StatusBadge>
                                     )}
                                 </>
                             ) : null}
@@ -228,11 +225,16 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                     <XpBadge showStreak className="w-full" />
                 </div>
                 <div className="space-y-4">
-                    <StatsCard
-                        title="Referrals"
-                        value={referralStats?.referralCount ?? 0}
-                        icon={<Users className="h-5 w-5 text-brand" />}
-                        subValue={<span className="text-brand">+200 XP each</span>}
+                    <KpiRibbon
+                        columns="grid-cols-1"
+                        cells={[
+                            {
+                                key: "referrals",
+                                label: "Referrals",
+                                value: referralStats?.referralCount ?? 0,
+                                sub: <span className="text-brand">+200 XP each</span>,
+                            },
+                        ]}
                     />
                     <TelegramLinkCard
                         initialTelegramUsername={currentUser?.telegramUsername}
@@ -243,18 +245,15 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
 
             {/* Tabs for different sections */}
             <Tabs defaultValue={initialTab} className="space-y-6">
-                <TabsList className="bg-surface-2 border border-border-subtle rounded-lg p-1">
+                {/* sm: the four default-size triggers (~368px) overflow a 375px phone. */}
+                <TabsList size="sm">
                     {[
                         { value: "activity", label: "Activity" },
                         { value: "xp-history", label: "XP History" },
                         { value: "leaderboard", label: "Leaderboard" },
                         { value: "missions", label: "Missions" },
                     ].map((tab) => (
-                        <TabsTrigger
-                            key={tab.value}
-                            value={tab.value}
-                            className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
-                        >
+                        <TabsTrigger key={tab.value} size="sm" value={tab.value}>
                             {tab.label}
                         </TabsTrigger>
                     ))}
@@ -373,18 +372,12 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                         <div className="bg-surface border border-border-subtle rounded-lg overflow-hidden">
                             <CardHead title="Knowledge Base" />
                             <Tabs defaultValue="readlists" className="w-full">
-                                <TabsList className="w-full grid grid-cols-2 bg-base/50 rounded-none border-b border-border-subtle p-1">
-                                    <TabsTrigger
-                                        value="readlists"
-                                        className="text-text-secondary data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:font-semibold rounded-md text-xs transition-all"
-                                    >
+                                <TabsList size="sm" className="w-full grid grid-cols-2 rounded-none border-b border-border-subtle">
+                                    <TabsTrigger size="sm" value="readlists">
                                         <BookOpen className="w-3 h-3 mr-1" />
                                         Read Lists
                                     </TabsTrigger>
-                                    <TabsTrigger
-                                        value="submissions"
-                                        className="text-text-secondary data-[state=active]:bg-brand/10 data-[state=active]:text-brand data-[state=active]:font-semibold rounded-md text-xs transition-all"
-                                    >
+                                    <TabsTrigger size="sm" value="submissions">
                                         <Send className="w-3 h-3 mr-1" />
                                         My Submissions
                                     </TabsTrigger>
