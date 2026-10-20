@@ -109,7 +109,7 @@ export const UnifiedWalletSelector = memo(function UnifiedWalletSelector({
         <>
             <div className="flex flex-col gap-3">
                 {/* Main Controls Row */}
-                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 items-start sm:items-center">
                     {/* Select Wallet Dropdown */}
                     <div className="flex items-center gap-3 flex-1 w-full sm:w-auto">
                         <div className="flex items-center gap-2 text-xs text-text-secondary">
