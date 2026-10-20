@@ -478,8 +478,18 @@ The primitive locks the look (the recipe below); callers pass data only.
 
 - Container: `grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-N gap-px bg-border-subtle border border-border-default rounded-lg overflow-hidden`.
 - Cell: `bg-surface hover:bg-surface-2 px-4 py-3 flex flex-col` — uppercase label `text-[10.5px]` + value `.mono text-[20px] font-semibold`.
-- `tone`: `default | gold | success | danger` (semantic token, never raw hex).
+- `tone`: `default | gold | success | danger | muted` (semantic token, never raw hex; `muted` = `text-text-secondary`, for a figure read second to its neighbour, e.g. fully diluted next to market cap).
 - Optional sparkline at the bottom of the cell via `mt-auto pt-2` (only if the API exposes a real series).
+- **Inside a card**, use `size="compact"`: cells `px-3 py-2.5`, label `text-[10px]`, value `.mono text-[16px] font-semibold`, sans-serif `sub` caption. Under a `<CardHead>` pass `bordered={false}` (the card is the frame); in a card body, `bordered={false} className="mt-3 rounded-md overflow-hidden"` keeps the hairlines without a second border.
+
+```tsx
+<KpiRibbon
+  size="compact"
+  bordered={false}
+  columns="grid-cols-2 sm:grid-cols-4"
+  cells={[{ label: "Gross fees", value: compactUsd(fees), sub: "what users paid" }, …]}
+/>
+```
 
 ### 7.c — Card grids (equal height)
 
@@ -632,7 +642,7 @@ Documenting these limits to avoid running into them again:
 - `AuroraAreaChart` — standard single-series chart.
 - `MultiSeriesAreaChart` — dual-axis multi-series chart (lives in `@/components/dashboard/chart`, but usable outside the dashboard).
 - `chartPalette` — chart palette (cyan, gold, violet, down, multiSeries[0–7]).
-- `PeriodSelector`, `useChartPeriod` — period selector.
+- `PeriodSelector`, `useChartPeriod` — period selector, and the chart-toolbar view toggle: `variant="aurora"` next to the period one, with icon `labels` and an `ariaLabels` map (accessible name + tooltip). Never hand-roll the segmented track.
 - `PageHeader`, `PageSection` — page header.
 - `TimeframeTabs`, `PillTabs` — tabs.
 - `LoadingState`, `ErrorState`, `EmptyState`, `ChartLoading`, `ChartEmpty`, `ChartError`.

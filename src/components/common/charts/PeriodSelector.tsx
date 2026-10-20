@@ -1,13 +1,17 @@
 "use client";
 
-import { memo, useId } from "react";
+import { memo, useId, type ReactNode } from "react";
 import { motion } from "framer-motion";
 
 interface PeriodSelectorProps<T extends string> {
   selected: T;
   onChange: (value: T) => void;
   options: readonly T[];
-  labels?: Partial<Record<T, string>>;
+  /** Visible label per option; an icon works too (pair it with `ariaLabels`). */
+  labels?: Partial<Record<T, ReactNode>>;
+  /** Accessible name per option, required when its label is an icon only.
+   *  Also shown as the hover tooltip. */
+  ariaLabels?: Partial<Record<T, string>>;
   variant?: "accent" | "aurora";
   size?: "sm" | "md";
   className?: string;
@@ -18,6 +22,7 @@ function PeriodSelectorInner<T extends string>({
   onChange,
   options,
   labels,
+  ariaLabels,
   variant = "accent",
   size = "sm",
   className = "",
@@ -39,7 +44,10 @@ function PeriodSelectorInner<T extends string>({
             <button
               key={option}
               onClick={() => onChange(option)}
-              className={`relative rounded-lg ${pad} text-[11px] font-semibold tabular-nums whitespace-nowrap min-w-[32px] min-h-[24px]`}
+              aria-pressed={isActive}
+              aria-label={ariaLabels?.[option]}
+              title={ariaLabels?.[option]}
+              className={`focus-ring relative rounded-lg ${pad} text-[11px] font-semibold tabular-nums whitespace-nowrap min-w-[32px] min-h-[24px]`}
             >
               {isActive && (
                 <motion.span
@@ -48,8 +56,9 @@ function PeriodSelectorInner<T extends string>({
                   transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                 />
               )}
+              {/* inline-flex: an icon label (block svg) stays centred like text. */}
               <span
-                className={`relative z-10 ${
+                className={`relative z-10 inline-flex items-center justify-center ${
                   isActive
                     ? "text-text-primary"
                     : "text-text-secondary hover:text-text-primary"
@@ -77,7 +86,10 @@ function PeriodSelectorInner<T extends string>({
         <button
           key={option}
           onClick={() => onChange(option)}
-          className={`${pad} rounded-md text-xs font-medium transition-all whitespace-nowrap min-w-[32px] min-h-[28px] ${
+          aria-pressed={selected === option}
+          aria-label={ariaLabels?.[option]}
+          title={ariaLabels?.[option]}
+          className={`focus-ring ${pad} rounded-md text-xs font-medium transition-all whitespace-nowrap min-w-[32px] min-h-[28px] ${
             selected === option ? activeClass : "tab-inactive"
           }`}
         >

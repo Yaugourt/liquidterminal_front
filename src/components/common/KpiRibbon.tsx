@@ -10,14 +10,16 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useLiquidSurface } from "./LiquidSurface";
 
-/** Value color, mapped to a semantic token — never a raw hex. */
-export type KpiTone = "default" | "gold" | "success" | "danger";
+/** Value color, mapped to a semantic token — never a raw hex. `muted` is a
+ *  figure read second to its neighbour (fully diluted next to market cap). */
+export type KpiTone = "default" | "gold" | "success" | "danger" | "muted";
 
 const TONE_CLASS: Record<KpiTone, string> = {
   default: "text-text-primary",
   gold: "text-gold",
   success: "text-success",
   danger: "text-danger",
+  muted: "text-text-secondary",
 };
 
 /**
@@ -73,6 +75,9 @@ export interface KpiRibbonProps {
   /** Visual treatment. "boxed" (default): gap-px surface strip, 20px/600 value.
    *  "plain" (minimal DS): hairline dividers, no fill, 22px/medium value, 10px label. */
   variant?: "boxed" | "plain";
+  /** Density. "compact" is the stat row inside a card, under its head or in its
+   *  body: 16px values, `px-3 py-2.5` cells, sans-serif captions under the value. */
+  size?: "default" | "compact";
   className?: string;
 }
 
@@ -103,10 +108,12 @@ export function KpiRibbon({
   header,
   bordered = true,
   variant = "boxed",
+  size = "default",
   className,
 }: KpiRibbonProps) {
   const cols = columns ?? DEFAULT_COLUMNS[cells.length] ?? "grid-cols-2 sm:grid-cols-3";
   const plain = variant === "plain";
+  const compact = size === "compact";
 
   /*
    * The liquid layer is allowed to pass BEHIND a ribbon (the landing hero does
@@ -130,18 +137,25 @@ export function KpiRibbon({
     : `grid ${cols} gap-px bg-border-subtle`;
   // min-w-0 : sans lui, le label `truncate` (nowrap) impose sa largeur
   // min-content à la colonne et le ribbon déborde au lieu de tronquer.
+  const cellPad = compact ? "px-3 py-2.5" : plain ? "px-5 py-4" : "px-4 py-3";
   const cellClass = plain
-    ? "px-5 py-4 flex flex-col min-w-0"
-    : "bg-surface hover:bg-surface-2 transition-colors px-4 py-3 flex flex-col min-w-0";
-  const labelClass = plain
-    ? "text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate"
-    : "text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate";
-  const valueBase = plain
-    ? "mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2"
-    : "mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5";
-  const subClass = plain
-    ? "text-[10.5px] text-text-tertiary mt-1.5"
-    : "mono text-[10px] text-text-tertiary mt-1.5";
+    ? `${cellPad} flex flex-col min-w-0`
+    : `bg-surface hover:bg-surface-2 transition-colors ${cellPad} flex flex-col min-w-0`;
+  const labelClass =
+    plain || compact
+      ? `text-[10px] uppercase tracking-[0.08em] text-text-tertiary truncate${plain ? "" : " font-semibold"}`
+      : "text-[10.5px] uppercase tracking-[0.06em] text-text-tertiary font-semibold truncate";
+  const valueBase = compact
+    ? `mono text-[16px] ${plain ? "font-medium" : "font-semibold"} tracking-[-0.01em] leading-none mt-1.5`
+    : plain
+      ? "mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2"
+      : "mono text-[20px] font-semibold tracking-[-0.02em] leading-none mt-1.5";
+  // Compact captions are prose ("what users paid"), so they stay sans-serif.
+  const subClass = compact
+    ? "text-[10.5px] text-text-tertiary mt-1"
+    : plain
+      ? "text-[10.5px] text-text-tertiary mt-1.5"
+      : "mono text-[10px] text-text-tertiary mt-1.5";
   const outerBorder = plain ? "border-border-subtle" : "border-border-default";
 
   const grid = (
