@@ -128,11 +128,7 @@ const GROUPS: TileGroup[] = [
 
 export default function ElysiumSharePage() {
   return (
-    <ShareStudio
-      groups={GROUPS}
-      heading="Share studio"
-      subheading="Turn Elysium testnet data into a branded, post-ready image. Simulator runs and address pages have their own image button."
-      filenamePrefix="liquid-terminal-elysium"
-    />
+    // No heading: the Elysium layout's PageHeader is this page's h1.
+    <ShareStudio groups={GROUPS} filenamePrefix="liquid-terminal-elysium" />
   );
 }
