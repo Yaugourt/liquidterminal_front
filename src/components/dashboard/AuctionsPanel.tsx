@@ -38,7 +38,7 @@ const price2 = {
 } as const;
 
 /**
- * AuctionLiveBlock — bloc "auction-live" de la maquette : fond dégradé léger,
+ * AuctionLiveBlock — bloc "auction-live" de la maquette : fond plat (surface-2),
  * auc-top (logo + nom + timer), auc-price, barre de progression.
  */
 function AuctionLiveBlock({
@@ -51,7 +51,7 @@ function AuctionLiveBlock({
   const { format } = useNumberFormat();
 
   return (
-    <div className="px-3 py-3 bg-gradient-to-b from-brand/5 to-transparent">
+    <div className="px-3 py-3 bg-surface-2/40">
       {/* auc-top */}
       <div className="flex items-center gap-2.5 mb-2.5">
         <span className="w-6 h-6 rounded-md bg-brand/10 grid place-items-center shrink-0 text-[9px] font-semibold text-brand">
@@ -92,7 +92,7 @@ function AuctionLiveBlock({
       {/* progress */}
       <div className="h-1.5 rounded bg-base border border-border-default overflow-hidden">
         <i
-          className="block h-full rounded bg-gradient-to-r from-brand-deep to-brand"
+          className="block h-full rounded bg-brand"
           style={{ width: `${auctionState.progressPercentage}%` }}
         />
       </div>

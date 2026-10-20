@@ -2,7 +2,8 @@
 
 import { memo, useMemo, useState } from "react";
 import Link from "next/link";
-import { KpiRibbon, OverviewModule, ModuleTable, ModuleTableRow, RowFillList, SourceBadge, sourceStatus, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, OverviewModule, ModuleTable, ModuleTableRow, RowFillList, SourceBadge, sourceStatus, type KpiCell } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { ProjectLogo } from "@/components/ecosystem/project/ProjectLogo";
 import { useRankedProjects, useChainStats, type RankedProject } from "@/services/ecosystem/project";
@@ -159,11 +160,8 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
         </OverviewModule>
 
         {/* Category split — DefiLlama categories, summed over tracked projects */}
-        <div className="bg-surface border border-border-subtle rounded-lg flex flex-col overflow-hidden">
-          <div className="flex items-baseline gap-2 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-            <h3 className="text-[13px] font-semibold text-text-primary truncate">Categories</h3>
-            <span className="ml-auto shrink-0 text-[11px] text-text-tertiary">by TVL</span>
-          </div>
+        <Card className="flex flex-col">
+          <CardHead title="Categories" tag="by TVL" />
           {/* Every category, filling the height of the projects table beside it. */}
           <RowFillList minHeight="lg:min-h-[300px]" className="px-3.5 py-3 space-y-3">
             {categoriesByTvl.length === 0 && (
@@ -194,7 +192,7 @@ export const ProjectsRecap = memo(function ProjectsRecap() {
               Browse all categories →
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

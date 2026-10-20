@@ -1,6 +1,5 @@
 "use client";
 
-import { Activity, Users, Receipt } from "lucide-react";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { useMetricHistory } from "@/services/market/metrics";
 import { SectionHead } from "@/components/dashboard/SectionHead";
@@ -37,7 +36,6 @@ export function NetworkGrowthSection() {
           <MetricHistoryCard
             title="Open interest"
             subtitle="Total perp OI across all markets"
-            icon={<Activity size={15} className="text-brand" />}
             format={usd}
             latestLabel="Current OI"
             history={oi}
@@ -49,7 +47,6 @@ export function NetworkGrowthSection() {
           <MetricHistoryCard
             title="Active users"
             subtitle="Unique traders over the last 24h"
-            icon={<Users size={15} className="text-brand" />}
             format={compactCount}
             latestLabel="Active (24h)"
             history={users}
@@ -61,7 +58,6 @@ export function NetworkGrowthSection() {
           <MetricHistoryCard
             title="Protocol fees"
             subtitle="Total fees earned over the last 24h"
-            icon={<Receipt size={15} className="text-brand" />}
             format={usd}
             latestLabel="Fees (24h)"
             history={fees}

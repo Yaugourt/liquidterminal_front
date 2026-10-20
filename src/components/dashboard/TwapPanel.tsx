@@ -196,7 +196,7 @@ export const TwapPanel = memo(function TwapPanel() {
               {hasHypeData ? compactUsd(totalBuyValue) : pressureLoading ? "…" : "—"}
             </div>
           </div>
-          <div className="flex-1 px-3 py-2.5 border-r border-border-subtle bg-gradient-to-b from-brand/[0.04] to-transparent">
+          <div className="flex-1 px-3 py-2.5 border-r border-border-subtle bg-surface-2/40">
             <div className="text-[9px] uppercase tracking-[0.06em] text-text-tertiary font-semibold text-center">
               Net Pressure
             </div>

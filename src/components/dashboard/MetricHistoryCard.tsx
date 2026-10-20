@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, type ReactNode } from "react";
+import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import {
+  CardHead,
   KpiRibbon,
   AuroraAreaChart,
   ShareTile,
@@ -14,7 +15,6 @@ import type { MetricHistoryPoint } from "@/services/market/metrics";
 interface MetricHistoryCardProps {
   title: string;
   subtitle: string;
-  icon: ReactNode;
   /** Formats a value for the KPI and the y-axis (e.g. compactUsd, compactCount). */
   format: (v: number) => string;
   /** Label for the latest-value KPI cell. */
@@ -36,7 +36,6 @@ interface MetricHistoryCardProps {
 export function MetricHistoryCard({
   title,
   subtitle,
-  icon,
   format,
   latestLabel,
   history,
@@ -71,19 +70,16 @@ export function MetricHistoryCard({
 
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-border-subtle min-h-[44px]">
-        {icon}
-        <div className="flex flex-col leading-tight">
-          <h3 className="text-[13px] font-semibold text-text-primary">{title}</h3>
-          <span className="text-[10px] text-text-tertiary">{subtitle}</span>
-        </div>
-        <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded bg-surface-2 text-text-tertiary border border-border-subtle">
-          7d · hourly
-        </span>
-        {shareSrc && (
-          <ShareTile src={shareSrc} filename={shareFilename ?? "metric"} />
-        )}
-      </div>
+      <CardHead
+        title={title}
+        subtitle={subtitle}
+        tag="7d · hourly"
+        actions={
+          shareSrc ? (
+            <ShareTile src={shareSrc} filename={shareFilename ?? "metric"} />
+          ) : undefined
+        }
+      />
       <div className="p-3 space-y-3">
         <KpiRibbon cells={cells} />
         <div className="h-[160px]">
