@@ -74,7 +74,7 @@ Format: route · key components · data sources · gotchas. Components live in `
 ### Ecosystem / Wiki / User
 - `/ecosystem/project` (+`[id]`) — ProjectsDirectory + EcosystemBanner · backend `/project` + `useChainStats` · public (the older ProjectsGrid/ProjectCard/CategoryTabs are rewrite leftovers, now dead).
 - `/ecosystem/publicgoods` (+`[id]`, `my-submissions`, `pending`) — grids + lazy modals · backend `/publicgoods*` (multipart uploads) · review = MODERATOR+, pending page MODERATOR-gated.
-- `/wiki` — EducationContent + category sidebar + resources · backend `/educational/*`, static JSON via `useStaticJson` · submit = USER (rate-limited), moderate = MODERATOR.
+- `/wiki` — `wiki/atlas/ChapterView` (introduction chapter) + EducationModal / UserSubmissionModal actions + resources · backend `/educational/*`, static JSON via `useStaticJson` · submit = USER (rate-limited), moderate = MODERATOR.
 - `/wiki/readlist` (+`public-readlists`), `/wiki/readlists` (+`[slug]`) — readlist CRUD + atlas index · `use-readlists` store + backend `/readlists/*`.
 - `/wiki/topics`, `/wiki/c/[slug]`, `/wiki/learn/[chapter]/[[...sub]]` — atlas surfaces (`components/wiki/atlas/`: TopicsIndex, CommunityView, ChapterView).
 - `/wiki/contributions` — ContributionsPanel + UserSubmissionModal · backend `/educational/*`, USER-gated.
