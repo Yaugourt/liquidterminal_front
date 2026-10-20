@@ -63,7 +63,7 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto bg-surface backdrop-blur-md border border-border-subtle rounded-2xl shadow-xl shadow-black/20">
         <DialogHeader>
-          <DialogTitle className="text-text-primary text-xl font-bold">Review: {project.name}</DialogTitle>
+          <DialogTitle className="text-text-primary text-xl font-semibold">Review: {project.name}</DialogTitle>
           <DialogDescription className="text-text-tertiary">
             {project.category}
           </DialogDescription>
@@ -130,9 +130,9 @@ export function ReviewModal({ isOpen, onClose, onSuccess, project }: ReviewModal
               onClick={handleSubmit}
               disabled={isSubmitting || !status}
               className={`rounded-lg font-semibold ${status === 'APPROVED'
-                  ? "bg-success text-white hover:bg-success/90"
+                  ? "bg-success text-text-primary hover:bg-success/90"
                   : status === 'REJECTED'
-                    ? "bg-danger text-white hover:bg-danger/90"
+                    ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     : "bg-brand text-brand-text-on hover:bg-brand/90"
                 }`}
             >

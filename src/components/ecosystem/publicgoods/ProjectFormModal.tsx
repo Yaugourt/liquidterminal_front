@@ -366,27 +366,27 @@ export function ProjectFormModal({
                 style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.1) transparent' }}
             >
                 <DialogHeader>
-                    <DialogTitle className="text-text-primary text-xl font-bold">{title}</DialogTitle>
+                    <DialogTitle className="text-text-primary text-xl font-semibold">{title}</DialogTitle>
                     {subtitle && (
                         <p className="text-text-secondary text-sm">{subtitle}</p>
                     )}
                 </DialogHeader>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-1 flex flex-col min-h-0">
-                    <TabsList className="grid w-full grid-cols-5 bg-base border border-border-subtle rounded-lg p-1">
-                        <TabsTrigger value="project" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
+                    <TabsList size="sm" className="grid w-full grid-cols-5">
+                        <TabsTrigger size="sm" value="project">
                             1. Project
                         </TabsTrigger>
-                        <TabsTrigger value="impact" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger size="sm" value="impact">
                             2. Impact
                         </TabsTrigger>
-                        <TabsTrigger value="team" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger size="sm" value="team">
                             3. Team
                         </TabsTrigger>
-                        <TabsTrigger value="support" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger size="sm" value="support">
                             4. Support
                         </TabsTrigger>
-                        <TabsTrigger value="preview" className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all">
+                        <TabsTrigger size="sm" value="preview">
                             5. Preview
                         </TabsTrigger>
                     </TabsList>

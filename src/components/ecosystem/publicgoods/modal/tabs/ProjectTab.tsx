@@ -177,7 +177,7 @@ export function ProjectTab({
                 onClick={removeLogo}
                 className="absolute top-1 right-1 p-1 bg-danger rounded-full hover:bg-danger/90"
               >
-                <X className="h-3 w-3 text-white" />
+                <X className="h-3 w-3 text-text-primary" />
               </button>
             </div>
           )}
@@ -205,7 +205,7 @@ export function ProjectTab({
                 onClick={removeBanner}
                 className="absolute top-2 right-2 p-1 bg-danger rounded-full hover:bg-danger/90"
               >
-                <X className="h-3 w-3 text-white" />
+                <X className="h-3 w-3 text-text-primary" />
               </button>
             </div>
           )}
@@ -236,7 +236,7 @@ export function ProjectTab({
                     onClick={() => removeScreenshot(index)}
                     className="absolute top-1 right-1 p-1 bg-danger rounded-full hover:bg-danger/90"
                   >
-                    <X className="h-3 w-3 text-white" />
+                    <X className="h-3 w-3 text-text-primary" />
                   </button>
                 </div>
               ))}

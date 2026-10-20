@@ -33,7 +33,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                                 />
                             ) : (
                                 <div className="w-full h-full rounded-lg bg-brand/10 flex items-center justify-center">
-                                    <span className="text-brand text-2xl font-bold">
+                                    <span className="text-brand text-2xl font-semibold">
                                         {project.name.charAt(0).toUpperCase()}
                                     </span>
                                 </div>
@@ -43,7 +43,7 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                         {/* Title and status */}
                         <div className="flex-1">
                             <div className="flex items-center gap-3 mb-2">
-                                <h1 className="text-3xl font-bold text-text-primary">{project.name}</h1>
+                                <h1 className="text-3xl font-semibold text-text-primary">{project.name}</h1>
                                 <ProjectStatusBadge status={project.status} />
                             </div>
                             <p className="text-lg text-text-secondary">{project.description}</p>
@@ -114,7 +114,6 @@ export function ProjectHeader({ project }: ProjectHeaderProps) {
                         priority
                         onError={() => setBannerError(true)}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-base/60 to-transparent" />
                 </div>
             )}
         </div>
