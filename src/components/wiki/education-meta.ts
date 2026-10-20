@@ -34,9 +34,9 @@ import {
  * Per-chapter visual metadata: icon, editorial tagline and key facts.
  *
  * Keyed by chapter title (must match `public/hyperliquid-education.json`).
- * `EducationContent` falls back to `DEFAULT_META` / `DEFAULT_SUB_META` when a
- * title is not found, so adding a new chapter to the JSON renders cleanly
- * without requiring a code change here.
+ * The hub (`hub/topics.ts`, `hub/PrimerBand.tsx`) falls back to `DEFAULT_META` /
+ * `DEFAULT_SUB_META` when a title is not found, so adding a new chapter to the
+ * JSON renders cleanly without requiring a code change here.
  */
 
 export interface StatItem {
