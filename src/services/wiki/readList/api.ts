@@ -14,6 +14,15 @@ import {
 } from './types';
 import { decodeLinkPreview } from '../api';
 
+/**
+ * A list keeps its items when their resource is deleted: the backend then sends
+ * `resource: null`. Such a row has nothing to show (no URL, no title), and
+ * reading it crashed the decoder below, which turned the whole public list into
+ * a 404. The fetchers drop those rows so every item they return has a resource.
+ */
+type RawReadListItem = Omit<ReadListItem, "resource"> & { resource: ReadListItem["resource"] | null };
+const hasResource = (item: RawReadListItem): item is ReadListItem => item.resource != null;
+
 /** Resource link-preview text arrives HTML-encoded; decode it for display. */
 const decodeItemPreview = (item: ReadListItem): ReadListItem => ({
   ...item,
@@ -65,13 +74,13 @@ export const getReadListItems = async (
 ): Promise<{success: boolean, data: ReadListItem[], message?: string, pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }}> => {
   return withErrorHandling(async () => {
     // Optional auth: a private list's items are readable by its owner only.
-    const response = await get<{success: boolean, data: ReadListItem[], message?: string, pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }}>(
+    const response = await get<{success: boolean, data: RawReadListItem[], message?: string, pagination?: { total: number; page: number; limit: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }}>(
       `/readlists/${listId}/items`,
       params as Record<string, unknown>,
       { awaitAuth: true }
     );
     if (!response) return {success: true, data: []};
-    return { ...response, data: (response.data || []).map(decodeItemPreview) };
+    return { ...response, data: (response.data || []).filter(hasResource).map(decodeItemPreview) };
   }, 'fetching read list items');
 };
 
@@ -131,11 +140,14 @@ export const getPublicReadListWithItems = async (
   id: number
 ): Promise<{ success: boolean; data: PublicReadListWithItems }> => {
   return withErrorHandling(async () => {
-    const response = await get<{ success: boolean; data: PublicReadListWithItems }>(`/readlists/${id}`);
+    const response = await get<{
+      success: boolean;
+      data: Omit<PublicReadListWithItems, "items"> & { items?: RawReadListItem[] };
+    }>(`/readlists/${id}`);
     if (!response) throw new Error("Read list not found");
     return {
       ...response,
-      data: { ...response.data, items: (response.data.items || []).map(decodeItemPreview) },
+      data: { ...response.data, items: (response.data.items || []).filter(hasResource).map(decodeItemPreview) },
     };
   }, "fetching public read list");
 };
