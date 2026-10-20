@@ -2,7 +2,7 @@ import { Plus, BookOpen, Trash2, GripVertical, Globe, ArrowRight } from "lucide-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/common";
+import { CardHead, Skeleton } from "@/components/common";
 import type { ReadList } from "@/services/wiki";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -190,21 +190,11 @@ export function ReadListSidebar({
   return (
     <Card>
       {/* Header */}
-      <div className="px-4 py-3.5 border-b border-border-subtle bg-gradient-to-r from-brand/5 to-transparent">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-text-primary font-semibold text-sm">Read Lists</h2>
-              {readLists && readLists.length > 0 && (
-                <span className="text-label bg-brand/10 text-brand px-1.5 py-0.5 rounded-md">
-                  {readLists.length}
-                </span>
-              )}
-            </div>
-            {totalItems > 0 && (
-              <p className="text-xs text-text-tertiary mt-0.5">{totalItems} total resources</p>
-            )}
-          </div>
+      <CardHead
+        title="Read Lists"
+        subtitle={totalItems > 0 ? `${totalItems} total resources` : undefined}
+        tag={readLists && readLists.length > 0 ? readLists.length : undefined}
+        actions={
           <Button
             onClick={onCreateList}
             size="sm"
@@ -214,12 +204,12 @@ export function ReadListSidebar({
           >
             <Plus className="w-4 h-4" />
           </Button>
-        </div>
-        <p className="flex items-center gap-1 text-label text-text-tertiary mt-2">
-          <GripVertical className="w-3 h-3" />
-          Drag to reorder
-        </p>
-      </div>
+        }
+      />
+      <p className="flex items-center gap-1 px-4 pt-2 text-label text-text-tertiary">
+        <GripVertical className="w-3 h-3" />
+        Drag to reorder
+      </p>
 
       {/* List */}
       <div className="p-2 space-y-0.5 max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-border-subtle">

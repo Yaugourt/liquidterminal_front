@@ -49,14 +49,14 @@ export function CreateListModal({ isOpen, onClose, onSubmit, isLoading, error }:
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="bg-surface border-border-default sm:max-w-md p-0 overflow-hidden">
         {/* Header */}
-        <div className="px-6 pt-6 pb-4 border-b border-border-subtle bg-gradient-to-r from-brand/5 to-transparent">
+        <div className="px-6 pt-6 pb-4 border-b border-border-subtle">
           <DialogHeader>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
                 <BookOpen className="w-5 h-5 text-brand" />
               </div>
               <div>
-                <DialogTitle className="text-text-primary font-bold">Create Read List</DialogTitle>
+                <DialogTitle className="text-text-primary font-semibold">Create Read List</DialogTitle>
                 <p className="text-xs text-text-tertiary mt-0.5">Organize your reading with a curated list</p>
               </div>
             </div>

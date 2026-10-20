@@ -60,14 +60,14 @@ export function AddToReadListModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm bg-surface border-border-default p-0 z-[9999] overflow-hidden">
         {/* Header */}
-        <div className="px-5 pt-5 pb-4 border-b border-border-subtle bg-gradient-to-r from-brand/5 to-transparent">
+        <div className="px-5 pt-5 pb-4 border-b border-border-subtle">
           <DialogHeader>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
                 <ListPlus className="w-4 h-4 text-brand" />
               </div>
               <div className="min-w-0">
-                <DialogTitle className="text-sm font-bold text-text-primary">
+                <DialogTitle className="text-sm font-semibold text-text-primary">
                   Add to Read List
                 </DialogTitle>
                 <p className="text-xs text-text-tertiary mt-0.5 truncate">{resourceLabel}</p>

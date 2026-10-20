@@ -201,7 +201,7 @@ export const ArticleCard = memo(function ArticleCard({
                   unoptimized
                 />
               ) : (
-                <span className="flex h-full w-full items-center justify-center text-sm font-bold uppercase text-brand/40">
+                <span className="flex h-full w-full items-center justify-center text-sm font-semibold uppercase text-brand/40">
                   {hostname.charAt(0)}
                 </span>
               )}
@@ -253,7 +253,7 @@ export const ArticleCard = memo(function ArticleCard({
           className="flex min-w-0 flex-1 gap-3"
         >
           {/* Thumb: preview image, or favicon / domain-initial tile */}
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-border-subtle bg-gradient-to-br from-surface-2 to-base">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-border-subtle bg-surface-2">
             {showHeroImage ? (
               <Image
                 src={preview!.image!}
@@ -276,7 +276,7 @@ export const ArticleCard = memo(function ArticleCard({
                     unoptimized
                   />
                 ) : (
-                  <span className="select-none text-xl font-bold uppercase text-brand/30">
+                  <span className="select-none text-xl font-semibold uppercase text-brand/30">
                     {hostname.charAt(0)}
                   </span>
                 )}
@@ -333,7 +333,7 @@ export const ArticleCard = memo(function ArticleCard({
             resources go text-forward instead of showing a void. */}
         {showHeroImage && (
           <div
-            className="relative w-full shrink-0 overflow-hidden border-b border-border-subtle bg-gradient-to-br from-surface-2 to-base"
+            className="relative w-full shrink-0 overflow-hidden border-b border-border-subtle bg-surface-2"
             style={{ aspectRatio: "16/9" }}
           >
             <Image
@@ -362,7 +362,7 @@ export const ArticleCard = memo(function ArticleCard({
                   unoptimized
                 />
               ) : (
-                <span className="select-none text-[11px] font-bold uppercase text-brand/50">
+                <span className="select-none text-[11px] font-semibold uppercase text-brand/50">
                   {hostname.charAt(0)}
                 </span>
               )}

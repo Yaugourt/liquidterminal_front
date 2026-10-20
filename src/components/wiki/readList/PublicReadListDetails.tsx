@@ -114,7 +114,6 @@ export function PublicReadListDetails({
 
       {/* Info card */}
       <Card>
-        <div className="h-1 bg-gradient-to-r from-brand/60 to-brand/20" />
         <div className="p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4 flex-1 min-w-0">
@@ -123,7 +122,7 @@ export function PublicReadListDetails({
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-xl font-bold text-text-primary">{readList.name}</h2>
+                  <h2 className="text-xl font-semibold text-text-primary">{readList.name}</h2>
                   <span className="flex items-center gap-1 text-label bg-brand/10 text-brand px-2 py-0.5 rounded-md border border-brand/20">
                     <Globe className="w-3 h-3" />
                     Public
@@ -138,7 +137,7 @@ export function PublicReadListDetails({
 
           <div className="flex items-center gap-5 mt-5 pt-4 border-t border-border-subtle flex-wrap">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-brand/20 flex items-center justify-center text-brand font-bold text-xs">
+              <div className="w-7 h-7 rounded-full bg-brand/20 flex items-center justify-center text-brand font-semibold text-xs">
                 {initial}
               </div>
               <div>

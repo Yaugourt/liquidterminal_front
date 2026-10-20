@@ -52,7 +52,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
       onClick={handleCardClick}
     >
       {/* Image section */}
-      <div className="relative w-full overflow-hidden bg-gradient-to-br from-base to-surface flex-shrink-0" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full overflow-hidden bg-surface-2 flex-shrink-0" style={{ aspectRatio: '16/9' }}>
         {hasImage ? (
           <Image
             src={preview!.image!}
@@ -62,7 +62,7 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
             onError={() => setImageError(true)}
           />
         ) : !imageError ? (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-base to-surface">
+          <div className="w-full h-full flex items-center justify-center bg-surface-2">
             <BookOpen className="w-10 h-10 text-brand/20" />
           </div>
         ) : (

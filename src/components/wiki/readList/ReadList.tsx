@@ -9,6 +9,7 @@ import { ReadListSidebar } from "./ReadListSidebar";
 import { ReadListContent } from "./ReadListContent";
 import { CreateListModal } from "./CreateListModal";
 import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/common";
 import { readListMessages, handleReadListApiError } from "@/lib/toast-messages";
 import { showXpGainToast } from "@/components/xp";
 
@@ -62,9 +63,9 @@ const useReadListInitialization = () => {
 // Simple state components
 const AuthRequired = ({ onLogin }: { onLogin: () => void }) => (
   <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
-    <Card padding="lg" className="backdrop-blur-md border-border-default shadow-xl shadow-black/20 max-w-md w-full mx-4">
+    <Card padding="lg" className="backdrop-blur-md border-border-default shadow-xl max-w-md w-full mx-4">
       <div className="text-center mb-6">
-        <h2 className="text-lg font-bold text-text-primary mb-2">Authentication Required</h2>
+        <h2 className="text-lg font-semibold text-text-primary mb-2">Authentication Required</h2>
         <p className="text-text-secondary text-sm">You need to login to access your read lists</p>
       </div>
       <button
@@ -162,40 +163,46 @@ export function ReadList() {
   if (error) return <Error error={error} />;
 
   return (
-    <div className="flex h-full min-h-screen max-[699px]:flex-col">
-      {!authenticated && <AuthRequired onLogin={login} />}
-
-      <div className={`w-80 flex-shrink-0 max-[699px]:w-full ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
-        <ReadListSidebar
-          readLists={readLists}
-          activeReadListId={activeReadListId}
-          onSelectList={handleSelectList}
-          onCreateList={handleOpenCreateModal}
-          onDeleteList={handleDeleteList}
-          onReorderLists={handleReorderLists}
-          loading={isInitializing}
-        />
-      </div>
-      <div className={`flex-1 overflow-auto ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
-        <ReadListContent
-          activeList={activeList}
-          items={activeReadListItems}
-          itemsLoading={storeLoading}
-          itemsPagination={itemsPagination}
-          onRemoveItem={handleRemoveItem}
-          onToggleRead={handleToggleRead}
-          onCreateList={handleOpenCreateModal}
-          onLoadMore={activeReadListId ? () => loadMoreItems(activeReadListId) : undefined}
-          isMounted={isMounted}
-        />
-      </div>
-      <CreateListModal
-        isOpen={isCreateModalOpen}
-        onClose={handleCloseCreateModal}
-        onSubmit={handleCreateList}
-        isLoading={storeLoading}
-        error={storeError}
+    <div className="space-y-6">
+      <PageHeader
+        title="Read List"
+        description="Save wiki resources into lists and track what you have read."
       />
+      <div className="flex h-full min-h-screen max-[699px]:flex-col">
+        {!authenticated && <AuthRequired onLogin={login} />}
+
+        <div className={`w-80 flex-shrink-0 max-[699px]:w-full ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
+          <ReadListSidebar
+            readLists={readLists}
+            activeReadListId={activeReadListId}
+            onSelectList={handleSelectList}
+            onCreateList={handleOpenCreateModal}
+            onDeleteList={handleDeleteList}
+            onReorderLists={handleReorderLists}
+            loading={isInitializing}
+          />
+        </div>
+        <div className={`flex-1 overflow-auto ${!authenticated ? "blur-sm pointer-events-none" : ""}`}>
+          <ReadListContent
+            activeList={activeList}
+            items={activeReadListItems}
+            itemsLoading={storeLoading}
+            itemsPagination={itemsPagination}
+            onRemoveItem={handleRemoveItem}
+            onToggleRead={handleToggleRead}
+            onCreateList={handleOpenCreateModal}
+            onLoadMore={activeReadListId ? () => loadMoreItems(activeReadListId) : undefined}
+            isMounted={isMounted}
+          />
+        </div>
+        <CreateListModal
+          isOpen={isCreateModalOpen}
+          onClose={handleCloseCreateModal}
+          onSubmit={handleCreateList}
+          isLoading={storeLoading}
+          error={storeError}
+        />
+      </div>
     </div>
   );
 } 

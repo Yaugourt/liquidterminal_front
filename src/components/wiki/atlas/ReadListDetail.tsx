@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { notFound } from "next/navigation";
 import { CheckCircle2, Circle } from "lucide-react";
-import { KpiRibbon, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, type KpiCell } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { safeHref } from "@/lib/safeUrl";
 import { timeAgo } from "@/lib/formatters/dateFormatting";
@@ -133,11 +134,8 @@ export function ReadListDetail({ slug }: ReadListDetailProps) {
           </div>
 
           {/* Reading order */}
-          <div className="overflow-hidden rounded-lg border border-border-subtle bg-surface">
-            <div className="flex items-baseline justify-between border-b border-border-subtle px-4 py-3">
-              <h2 className="text-[13px] font-medium text-text-primary">Reading order</h2>
-              <span className="mono text-[11px] text-text-tertiary">{ordered.length} items</span>
-            </div>
+          <Card interactive={false} className="overflow-hidden">
+            <CardHead title="Reading order" tag={<span className="mono">{ordered.length} items</span>} />
             {ordered.length === 0 ? (
               <p className="px-4 py-8 text-center text-[12px] text-text-tertiary">This list has no items yet.</p>
             ) : (
@@ -188,7 +186,7 @@ export function ReadListDetail({ slug }: ReadListDetailProps) {
                 );
               })
             )}
-          </div>
+          </Card>
         </div>
 
         {/* Curator rail */}

@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { DataStatus } from "@/components/common";
+import { CardHead, DataStatus, PageHeader } from "@/components/common";
+import { Card } from "@/components/ui/card";
 import { Breadcrumb, RailSearch } from "../primitives";
 import { chapterHref, categoryHref } from "../hub/topics";
 import { useWikiTopics } from "./useWikiTopics";
@@ -28,23 +29,20 @@ export function TopicsIndex() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumb items={[{ label: "Wiki", href: "/wiki" }, { label: "Topics" }]} />
-
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-1">
-          <h1 className="font-inter text-2xl font-semibold tracking-tight text-text-primary">Topics</h1>
-          <p className="text-sm text-text-secondary">
-            Every Learn chapter and community category in one place.
-          </p>
-        </div>
-        <DataStatus
-          variant="polled"
-          updatedAt={dataUpdatedAt}
-          isRefreshing={isRefreshing}
-          onRefresh={refetch}
-          className="mt-1 shrink-0"
-        />
-      </div>
+      <PageHeader
+        breadcrumb={<Breadcrumb items={[{ label: "Wiki", href: "/wiki" }, { label: "Topics" }]} />}
+        title="Topics"
+        description="Every Learn chapter and community category in one place."
+        actions={
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+            className="shrink-0"
+          />
+        }
+      />
 
       <RailSearch
         value={q}
@@ -59,11 +57,8 @@ export function TopicsIndex() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {/* Fundamentals */}
-          <section className="overflow-hidden rounded-lg border border-border-subtle bg-surface">
-            <div className="flex items-baseline justify-between border-b border-border-subtle px-4 py-3">
-              <h2 className="text-[13px] font-semibold text-text-primary">Fundamentals</h2>
-              <span className="mono text-[11px] text-text-tertiary">{chapters.length}</span>
-            </div>
+          <Card interactive={false} className="overflow-hidden">
+            <CardHead title="Fundamentals" tag={<span className="mono">{chapters.length}</span>} />
             {chapters.length === 0 ? (
               <p className="px-4 py-6 text-[12px] text-text-tertiary">No chapter matches.</p>
             ) : (
@@ -87,14 +82,11 @@ export function TopicsIndex() {
                 );
               })
             )}
-          </section>
+          </Card>
 
           {/* Community categories */}
-          <section className="overflow-hidden rounded-lg border border-border-subtle bg-surface">
-            <div className="flex items-baseline justify-between border-b border-border-subtle px-4 py-3">
-              <h2 className="text-[13px] font-semibold text-text-primary">Community categories</h2>
-              <span className="mono text-[11px] text-text-tertiary">{communities.length}</span>
-            </div>
+          <Card interactive={false} className="overflow-hidden">
+            <CardHead title="Community categories" tag={<span className="mono">{communities.length}</span>} />
             <div className="max-h-[560px] overflow-y-auto">
               {communities.length === 0 ? (
                 <p className="px-4 py-6 text-[12px] text-text-tertiary">No category matches.</p>
@@ -111,7 +103,7 @@ export function TopicsIndex() {
                 ))
               )}
             </div>
-          </section>
+          </Card>
         </div>
       )}
     </div>

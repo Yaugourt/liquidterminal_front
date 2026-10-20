@@ -114,11 +114,11 @@ export function ReadListContent({
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="p-5 border-b border-border-subtle space-y-4 bg-gradient-to-r from-brand/3 to-transparent">
+      <div className="p-5 border-b border-border-subtle space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-text-primary text-xl font-bold truncate">{activeList.name}</h1>
+              <h2 className="text-text-primary text-xl font-semibold truncate">{activeList.name}</h2>
               {activeList.isPublic ? (
                 <span className="flex items-center gap-1 text-label bg-brand/10 text-brand px-2 py-0.5 rounded-md border border-brand/20">
                   <Globe className="w-3 h-3" />
@@ -139,17 +139,17 @@ export function ReadListContent({
           {/* Stats */}
           <div className="flex items-center gap-3 flex-shrink-0">
             <div className="text-center">
-              <div className="text-text-primary font-bold text-lg leading-none">{totalItems}</div>
+              <div className="mono text-text-primary font-semibold text-lg leading-none">{totalItems}</div>
               <div className="text-text-tertiary text-xs mt-0.5">total</div>
             </div>
             <div className="w-px h-8 bg-border-subtle" />
             <div className="text-center">
-              <div className="text-success font-bold text-lg leading-none">{readItems}</div>
+              <div className="mono text-success font-semibold text-lg leading-none">{readItems}</div>
               <div className="text-text-tertiary text-xs mt-0.5">read</div>
             </div>
             <div className="w-px h-8 bg-border-subtle" />
             <div className="text-center">
-              <div className="text-gold font-bold text-lg leading-none">{unreadItems}</div>
+              <div className="mono text-gold font-semibold text-lg leading-none">{unreadItems}</div>
               <div className="text-text-tertiary text-xs mt-0.5">unread</div>
             </div>
           </div>
@@ -167,7 +167,7 @@ export function ReadListContent({
             </div>
             <div className="h-1.5 bg-surface-2 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-success to-brand rounded-full"
+                className="h-full bg-brand rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${readProgress}%` }}
                 transition={{ duration: 0.7, ease: "easeOut" }}

@@ -60,23 +60,14 @@ export function EducationModal({ onSuccess }: EducationModalProps) {
           <DialogTitle className="sr-only">Add Educational Content</DialogTitle>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-base rounded-lg p-1 border border-border-subtle">
-              <TabsTrigger
-                value="category"
-                className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
-              >
+            <TabsList size="sm" className="grid w-full grid-cols-3">
+              <TabsTrigger size="sm" value="category">
                 Add Category
               </TabsTrigger>
-              <TabsTrigger
-                value="resource"
-                className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
-              >
+              <TabsTrigger size="sm" value="resource">
                 Add Resource
               </TabsTrigger>
-              <TabsTrigger
-                value="csv"
-                className="text-text-secondary data-[state=active]:bg-brand data-[state=active]:text-brand-text-on data-[state=active]:font-bold rounded-md text-xs transition-all"
-              >
+              <TabsTrigger size="sm" value="csv">
                 Upload CSV
               </TabsTrigger>
             </TabsList>

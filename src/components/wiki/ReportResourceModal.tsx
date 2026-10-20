@@ -60,7 +60,7 @@ export function ReportResourceModal({
                         <Flag className="w-5 h-5 text-danger" />
                     </div>
                     <div>
-                        <DialogTitle className="text-lg font-bold">Report Resource</DialogTitle>
+                        <DialogTitle className="text-lg font-semibold">Report Resource</DialogTitle>
                         <DialogDescription className="text-text-secondary text-sm">
                             Report inappropriate or broken content
                         </DialogDescription>
@@ -108,7 +108,8 @@ export function ReportResourceModal({
                         <Button
                             type="submit"
                             disabled={isLoading || reason.length < 10}
-                            className="bg-danger hover:bg-danger/90 text-white font-semibold rounded-lg"
+                            variant="destructive"
+                            className="font-semibold rounded-lg"
                         >
                             {isLoading ? (
                                 <>
