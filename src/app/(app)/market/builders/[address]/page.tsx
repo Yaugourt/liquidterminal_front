@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ArrowLeft } from "lucide-react";
 import { usePageTitle } from "@/store/use-page-title";
 import { AddressDisplay } from "@/components/ui/address-display";
@@ -17,10 +18,9 @@ import {
   BuilderAvatar,
   BuilderDetailStatsGrid,
   BuilderUsersTable,
-  isBuilderWindowEmpty,
   resolveBuilderLabel,
 } from "@/components/market/builders";
-import { KpiRibbon, Skeleton, TimeframeTabs, DataStatus, SourceBadge, combinedSourceStatus } from "@/components/common";
+import { KpiRibbon, PageHeader, Skeleton, TimeframeTabs, DataStatus, SourceBadge, combinedSourceStatus } from "@/components/common";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 
@@ -29,7 +29,6 @@ const ETH = /^0x[a-fA-F0-9]{40}$/i;
 
 export default function BuilderDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const { setTitle } = usePageTitle();
   const { format } = useNumberFormat();
   const raw = typeof params.address === "string" ? decodeURIComponent(params.address) : "";
@@ -53,112 +52,75 @@ export default function BuilderDetailPage() {
     else setTitle("Builder");
   }, [setTitle, displayName, address, valid]);
 
+
   if (!valid) {
     return (
-      <Card className="p-8 text-center max-w-lg mx-auto">
-        <h2 className="text-lg font-medium text-text-primary mb-2">Invalid address</h2>
-        <p className="text-text-secondary text-sm mb-4">Use a checksummed 0x address (40 hex chars).</p>
-        <Button variant="ghost" className="text-brand" onClick={() => router.push("/market/builders")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />Back to Builders
-        </Button>
-      </Card>
+      <EmptyState
+        title="Invalid address"
+        description="Use a checksummed 0x address (40 hex chars)."
+        action={
+          <Link
+            href="/market/builders"
+            className="inline-flex items-center gap-1.5 text-sm text-brand hover:text-text-primary"
+          >
+            <ArrowLeft size={14} /> Back to Builders
+          </Link>
+        }
+      />
     );
   }
 
   const isFirstLoad = stats.isLoading && !stats.stats;
-  // All-zero window (frequent upstream on 1h/24h): hide the $0 header stats,
-  // the stats grid below renders the explicit empty state.
-  const windowEmpty = stats.stats != null && isBuilderWindowEmpty(stats.stats);
 
   return (
     <motion.div className="space-y-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      {/* Nav */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <Button
-          variant="ghost" size="sm"
-          onClick={() => router.push("/market/builders")}
-          className="text-text-secondary hover:text-text-primary hover:bg-surface-2"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />Back
-        </Button>
-        <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
-          <SourceBadge source="hypedexer" status={combinedSourceStatus(stats, users)} />
-          <DataStatus
-            variant="polled"
-            updatedAt={stats.dataUpdatedAt}
-            isRefreshing={stats.isRefreshing}
-            onRefresh={stats.refetch}
-          />
-          <TimeframeTabs
-            options={TIMEFRAMES}
-            value={tf}
-            onChange={(v) => setTf(v as BuildersTimeframe)}
-          />
-        </div>
-      </div>
-
       {/* Builder header */}
-      {isFirstLoad ? (
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            <Skeleton className="w-16 h-16 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-32" />
-              <Skeleton className="h-4 w-48" />
-            </div>
+      <PageHeader
+        back={{ href: "/market/builders", label: "Builders" }}
+        title={displayName && displayName !== "—" ? displayName : "Builder"}
+        actions={
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+            <SourceBadge source="hypedexer" status={combinedSourceStatus(stats, users)} />
+            <DataStatus
+              variant="polled"
+              updatedAt={stats.dataUpdatedAt}
+              isRefreshing={stats.isRefreshing}
+              onRefresh={stats.refetch}
+            />
+            <TimeframeTabs
+              options={TIMEFRAMES}
+              value={tf}
+              onChange={(v) => setTf(v as BuildersTimeframe)}
+            />
           </div>
-        </Card>
-      ) : (
-        <Card className="p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        }
+      >
+        {isFirstLoad ? (
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-10 h-10 rounded-md" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 flex-wrap">
             <BuilderAvatar
               address={address}
               label={displayName ?? "—"}
-              size={64}
-              className="rounded-lg"
+              size={40}
+              className="rounded-md"
             />
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-xl font-bold text-text-primary">
-                  {displayName && displayName !== "—" ? displayName : "Builder"}
-                </h1>
-                {/* On-chain builder code, kept visible next to the brand name. */}
-                {builderCode && (
-                  <span className="mono text-[10px] px-2 py-0.5 rounded bg-surface-2 text-text-tertiary">
-                    {builderCode}
-                  </span>
-                )}
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-brand/10 text-brand border border-brand/20">
-                  {tf}
-                </span>
-              </div>
-              <AddressDisplay address={address} truncate showExternalLink={false} className="text-sm mt-1" />
-            </div>
-            {stats.stats && !windowEmpty && (
-              <div className="flex gap-6 shrink-0">
-                <div className="text-center">
-                  <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Volume</p>
-                  <p className="text-text-primary font-bold text-sm tabular-nums">
-                    {formatNumber(stats.stats.current.totalVolume, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true })}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Builder fees</p>
-                  <p className="text-gold font-bold text-sm tabular-nums">
-                    {formatNumber(stats.stats.current.totalBuilderFees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true })}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-text-tertiary text-[10px] uppercase tracking-wider">Users</p>
-                  <p className="text-text-primary font-bold text-sm tabular-nums">
-                    {formatNumber(stats.stats.current.uniqueUsers, format, { maximumFractionDigits: 0 })}
-                  </p>
-                </div>
-              </div>
+            {/* On-chain builder code, kept visible next to the brand name. */}
+            {builderCode && (
+              <span className="mono text-[10px] px-2 py-0.5 rounded-md bg-surface-2 text-text-tertiary">
+                {builderCode}
+              </span>
             )}
+            <span className="mono text-[10px] px-2 py-0.5 rounded-md bg-surface-2 text-text-secondary">
+              {tf}
+            </span>
+            <AddressDisplay address={address} truncate showExternalLink={false} className="text-sm" />
           </div>
-        </Card>
-      )}
+        )}
+      </PageHeader>
 
       {/* Stats détaillées */}
       <section className="space-y-3">

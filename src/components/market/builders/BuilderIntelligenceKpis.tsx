@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { TrendingUp, Users, BarChart3, Coins } from "lucide-react";
-import { StatsCard, Skeleton } from "@/components/common";
+import { KpiRibbon, Skeleton } from "@/components/common";
+import type { KpiCell } from "@/components/common";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
@@ -11,6 +10,18 @@ import { isBuilderWindowEmpty } from "./builderStatsWindow";
 interface BuilderIntelligenceKpisProps {
   stats: BuilderDetailStatsPayload | null;
   isLoading: boolean;
+}
+
+function deltaSub(change: number | null | undefined) {
+  if (change === undefined || change === null || !Number.isFinite(change)) return undefined;
+  const rounded = Number(change.toFixed(1));
+  const positive = rounded >= 0;
+  return (
+    <span className={`mono text-[11px] font-medium ${positive ? "text-success" : "text-danger"}`}>
+      {positive ? "+" : ""}
+      {rounded}%
+    </span>
+  );
 }
 
 export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenceKpisProps) {
@@ -44,55 +55,31 @@ export function BuilderIntelligenceKpis({ stats, isLoading }: BuilderIntelligenc
   const avgFeesPerUser = c.uniqueUsers > 0 ? c.totalBuilderFees / c.uniqueUsers : 0;
   const avgVolumePerUser = c.uniqueUsers > 0 ? c.totalVolume / c.uniqueUsers : 0;
 
-  const items = [
+  const cells: KpiCell[] = [
     {
+      key: "Builder revenue",
       label: "Builder revenue",
       value: formatNumber(c.totalBuilderFees, format, { maximumFractionDigits: 2, currency: "$", showCurrency: true }),
-      icon: <TrendingUp className="w-4 h-4 text-gold" />,
-      pct: stats.variations?.totalBuilderFeesPct,
-      valueClassName: "text-lg font-bold tabular-nums text-gold",
+      sub: deltaSub(stats.variations?.totalBuilderFeesPct),
+      tone: "gold",
     },
     {
+      key: "Active users",
       label: "Active users",
       value: formatNumber(c.uniqueUsers, format, { maximumFractionDigits: 0 }),
-      icon: <Users className="w-4 h-4 text-brand" />,
-      pct: stats.variations?.uniqueUsersPct,
-      valueClassName: "text-lg font-bold tabular-nums text-brand",
+      sub: deltaSub(stats.variations?.uniqueUsersPct),
     },
     {
+      key: "Avg rev / user",
       label: "Avg rev / user",
       value: formatNumber(avgFeesPerUser, format, { maximumFractionDigits: 4, currency: "$", showCurrency: true }),
-      icon: <BarChart3 className="w-4 h-4 text-brand" />,
-      pct: null,
-      valueClassName: "text-lg font-bold tabular-nums text-brand",
     },
     {
+      key: "Avg volume / user",
       label: "Avg volume / user",
       value: formatNumber(avgVolumePerUser, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true }),
-      icon: <Coins className="w-4 h-4 text-text-secondary" />,
-      pct: null,
-      valueClassName: "text-lg font-bold tabular-nums text-text-primary",
     },
   ];
 
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {items.map((item, i) => (
-        <motion.div
-          key={item.label}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.07 }}
-        >
-          <StatsCard
-            title={item.label}
-            value={item.value}
-            icon={item.icon}
-            change={typeof item.pct === "number" && Number.isFinite(item.pct) ? item.pct : undefined}
-            valueClassName={item.valueClassName}
-          />
-        </motion.div>
-      ))}
-    </div>
-  );
+  return <KpiRibbon cells={cells} />;
 }

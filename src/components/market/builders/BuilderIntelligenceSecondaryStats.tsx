@@ -3,7 +3,8 @@
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { StatsCard } from "@/components/common";
+import { KpiRibbon } from "@/components/common";
+import type { KpiCell } from "@/components/common";
 
 interface BuilderIntelligenceSecondaryStatsProps {
   stats: BuilderDetailStatsPayload;
@@ -14,38 +15,28 @@ export function BuilderIntelligenceSecondaryStats({ stats }: BuilderIntelligence
   const c = stats.current;
   const avgFillsPerUser = c.uniqueUsers > 0 ? c.fillCount / c.uniqueUsers : 0;
 
-  const items = [
+  const cells: KpiCell[] = [
     {
+      key: "Total fills",
       label: "Total fills",
       value: formatNumber(c.fillCount, format, { maximumFractionDigits: 0 }),
     },
     {
+      key: "Avg fills / user",
       label: "Avg fills / user",
       value: formatNumber(avgFillsPerUser, format, { maximumFractionDigits: 1 }),
     },
     {
+      key: "Coins traded",
       label: "Coins traded",
       value: formatNumber(c.uniqueCoins, format, { maximumFractionDigits: 0 }),
     },
     {
+      key: "Total volume",
       label: "Total volume",
       value: formatNumber(c.totalVolume, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true }),
     },
   ];
 
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      {items.map((item) => (
-        <StatsCard
-          key={item.label}
-          title={item.label}
-          value={item.value}
-          density="compact"
-          withCard={false}
-          className="stat-card"
-          valueClassName="text-text-primary text-base font-semibold tabular-nums"
-        />
-      ))}
-    </div>
-  );
+  return <KpiRibbon cells={cells} />;
 }

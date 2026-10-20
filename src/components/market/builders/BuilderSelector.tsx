@@ -43,7 +43,7 @@ export function BuilderSelector({ builders, selectedAddress, onSelect }: Builder
             className="rounded-full"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand/20 to-gold/20 flex items-center justify-center text-xs font-bold text-brand shrink-0">
+          <div className="w-8 h-8 rounded-md bg-surface-2 flex items-center justify-center text-xs font-semibold text-text-tertiary shrink-0">
             ?
           </div>
         )}

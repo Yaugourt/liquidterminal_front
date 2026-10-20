@@ -1,10 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { BuilderDetailStatsPayload } from "@/services/indexer/builders/types";
 import { formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { StatsCard, Skeleton } from "@/components/common";
+import { KpiRibbon, Skeleton } from "@/components/common";
+import type { KpiCell } from "@/components/common";
 import { ErrorState } from "@/components/ui/error-state";
 import { isBuilderWindowEmpty } from "./builderStatsWindow";
 
@@ -16,10 +16,17 @@ interface BuilderDetailStatsGridProps {
   onRetry?: () => void;
 }
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.3 } }),
-};
+function deltaSub(change: number | null | undefined) {
+  if (change === undefined || change === null || !Number.isFinite(change)) return undefined;
+  const rounded = Number(change.toFixed(1));
+  const positive = rounded >= 0;
+  return (
+    <span className={`mono text-[11px] font-medium ${positive ? "text-success" : "text-danger"}`}>
+      {positive ? "+" : ""}
+      {rounded}%
+    </span>
+  );
+}
 
 export function BuilderDetailStatsGrid({ stats, isLoading, error, onRetry }: BuilderDetailStatsGridProps) {
   const { format } = useNumberFormat();
@@ -62,50 +69,33 @@ export function BuilderDetailStatsGrid({ stats, isLoading, error, onRetry }: Bui
 
   const { current, variations } = stats;
 
-  const items = [
+  const cells: KpiCell[] = [
     {
+      key: "Volume",
       label: "Volume",
       value: formatNumber(current.totalVolume, format, { maximumFractionDigits: 0, currency: "$", showCurrency: true }),
-      pct: variations?.totalVolumePct,
+      sub: deltaSub(variations?.totalVolumePct),
     },
     {
+      key: "Builder fees",
       label: "Builder fees",
       value: formatNumber(current.totalBuilderFees, format, { maximumFractionDigits: 4, currency: "$", showCurrency: true }),
-      pct: variations?.totalBuilderFeesPct,
+      sub: deltaSub(variations?.totalBuilderFeesPct),
+      tone: "gold",
     },
     {
+      key: "Fills",
       label: "Fills",
       value: formatNumber(current.fillCount, format, { maximumFractionDigits: 0 }),
-      pct: variations?.fillCountPct,
+      sub: deltaSub(variations?.fillCountPct),
     },
     {
+      key: "Unique users",
       label: "Unique users",
       value: formatNumber(current.uniqueUsers, format, { maximumFractionDigits: 0 }),
-      pct: variations?.uniqueUsersPct,
+      sub: deltaSub(variations?.uniqueUsersPct),
     },
   ];
 
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {items.map((item, i) => (
-        <motion.div
-          key={item.label}
-          custom={i}
-          variants={cardVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <StatsCard
-            title={item.label}
-            value={item.value}
-            change={typeof item.pct === "number" && Number.isFinite(item.pct) ? item.pct : undefined}
-            density="compact"
-            withCard={false}
-            className="stat-card"
-            valueClassName="text-text-primary text-lg font-semibold tabular-nums"
-          />
-        </motion.div>
-      ))}
-    </div>
-  );
+  return <KpiRibbon cells={cells} />;
 }
