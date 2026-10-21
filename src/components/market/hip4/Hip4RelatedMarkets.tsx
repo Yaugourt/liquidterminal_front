@@ -29,6 +29,7 @@ function categoryOf(q: Hip4QuestionWithOutcomesRow) {
 const STATUS_RANK: Record<Hip4EffectiveStatus, number> = {
   live: 0,
   expired_unresolved: 1,
+  closed: 2,
   settled: 2,
 };
 

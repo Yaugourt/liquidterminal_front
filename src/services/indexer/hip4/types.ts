@@ -66,9 +66,11 @@ export interface Hip4QuestionWithOutcomesRow {
   /**
    * live              — open for trading, before expiry
    * expired_unresolved — past expiry but no on-chain settlement yet
+   * closed            — no longer listed by Hyperliquid, no settlement on
+   *                     record (set by the front's question merge)
    * settled           — resolved on-chain (winner determined)
    */
-  status: "live" | "expired_unresolved" | "settled";
+  status: "live" | "expired_unresolved" | "closed" | "settled";
   singleton_outcome_id: number | null;
   expiry: string | null;
   period: string | null;

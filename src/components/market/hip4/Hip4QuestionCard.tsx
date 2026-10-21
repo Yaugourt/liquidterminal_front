@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Clock } from "lucide-react";
+import { CheckCircle2, Clock, Lock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
 import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
@@ -68,6 +68,7 @@ function ProbRow({ label, pct, variant, volume }: ProbRowProps) {
 export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
   const eff = effectiveStatus(question);
   const settled = eff === "settled";
+  const closed = eff === "closed";
   const expiredUnresolved = eff === "expired_unresolved";
   // Never render the upstream placeholder name; fall back to an id/ticker label.
   const title = question.title && !isPlaceholderMarketName(question.title)
@@ -87,7 +88,7 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
     question.primary_coin ?? (primaryOutcome != null ? `#${primaryOutcome.outcome_id}` : null);
   const href = primaryCoin ? `/market/hip4/${encodeURIComponent(primaryCoin)}` : null;
 
-  const countdown = !settled ? formatExpiryCountdown(question.expiry ?? null) : null;
+  const countdown = !settled && !closed ? formatExpiryCountdown(question.expiry ?? null) : null;
 
   const inner = (
     <Card className="h-full flex flex-col p-3.5 gap-3 hover:border-border-default transition-colors cursor-pointer">
@@ -99,6 +100,11 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
           <span className="shrink-0 inline-flex items-center gap-1 rounded bg-surface-2 border border-border-subtle px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
             <CheckCircle2 size={10} />
             Settled
+          </span>
+        ) : closed ? (
+          <span className="shrink-0 inline-flex items-center gap-1 rounded bg-surface-2 border border-border-subtle px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">
+            <Lock size={10} />
+            Closed
           </span>
         ) : expiredUnresolved ? (
           <span className="shrink-0 inline-flex items-center gap-1 rounded bg-gold/10 border border-gold/25 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold">

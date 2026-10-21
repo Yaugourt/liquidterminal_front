@@ -33,6 +33,11 @@ const STATUS_BADGE: Record<
     className: "bg-gold/10 border-gold/25 text-gold",
     pulse: false,
   },
+  closed: {
+    label: "Closed",
+    className: "bg-surface-2 border-border-subtle text-text-tertiary",
+    pulse: false,
+  },
   settled: {
     label: "Settled",
     className: "bg-surface-2 border-border-subtle text-text-tertiary",

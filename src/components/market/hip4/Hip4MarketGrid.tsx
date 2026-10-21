@@ -11,6 +11,7 @@ import {
   type Hip4Category,
 } from "@/lib/hip4-category";
 import {
+  countsAsClosed,
   effectiveStatus,
   hip4QuestionKey,
   type Hip4EffectiveStatus,
@@ -19,7 +20,7 @@ import { Hip4QuestionCard } from "./Hip4QuestionCard";
 import { Hip4MarketCategoryTabs } from "./Hip4MarketCategoryTabs";
 
 type SortKey = "volume" | "newest" | "outcomes";
-type StatusKey = "live" | "pending" | "settled" | "all";
+type StatusKey = "live" | "closed" | "settled" | "all";
 
 interface Hip4MarketGridProps {
   questions: Hip4QuestionWithOutcomesRow[];
@@ -62,13 +63,13 @@ export function Hip4MarketGrid({ questions, isLoading, settlementsCount = 0 }: H
   }, [augmented]);
 
   const statusCounts = useMemo(() => {
-    let live = 0, pending = 0, settled = 0;
+    let live = 0, closed = 0, settled = 0;
     for (const a of augmented) {
       if (a.eff === "settled") settled++;
-      else if (a.eff === "expired_unresolved") pending++;
+      else if (countsAsClosed(a.eff)) closed++;
       else live++;
     }
-    return { live, pending, settled, all: augmented.length };
+    return { live, closed, settled, all: augmented.length };
   }, [augmented]);
 
   const filtered = useMemo(() => {
@@ -76,7 +77,7 @@ export function Hip4MarketGrid({ questions, isLoading, settlementsCount = 0 }: H
     const byCategory = category === "all" ? augmented : augmented.filter((a) => a.category === category);
     const statusMatch = (s: typeof statusFilter, eff: Hip4EffectiveStatus) => {
       if (s === "all") return true;
-      if (s === "pending") return eff === "expired_unresolved";
+      if (s === "closed") return countsAsClosed(eff);
       return eff === s;
     };
     const byStatus = byCategory.filter((a) => statusMatch(statusFilter, a.eff));
@@ -100,7 +101,7 @@ export function Hip4MarketGrid({ questions, isLoading, settlementsCount = 0 }: H
       sorted.sort((a, b) => (b.q.total_volume ?? 0) - (a.q.total_volume ?? 0));
     } else if (sort === "newest") {
       // "Recent" means freshest event: settled markets sort by resolved_at,
-      // live/pending markets sort by upcoming expiry (closest first). The
+      // live/closed markets sort by upcoming expiry (closest first). The
       // previous version only looked at resolved_at, which is always null for
       // live markets — so sorting was a silent no-op.
       const eventTime = (q: Hip4QuestionWithOutcomesRow): number => {
@@ -139,11 +140,11 @@ export function Hip4MarketGrid({ questions, isLoading, settlementsCount = 0 }: H
       {/* Status filter + category in one row */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-0.5 rounded-md border border-border-subtle bg-surface-2 p-0.5">
-          {(["live", "pending", "settled", "all"] as const)
+          {(["live", "closed", "settled", "all"] as const)
             .filter((s) => s !== "settled" || statusCounts.settled > 0 || settlementsCount === 0)
             .map((s) => {
             const isActive = statusFilter === s;
-            const label = s === "live" ? "Live" : s === "pending" ? "Pending" : s === "settled" ? "Settled" : "All";
+            const label = s === "live" ? "Live" : s === "closed" ? "Closed" : s === "settled" ? "Settled" : "All";
             return (
               <button
                 key={s}

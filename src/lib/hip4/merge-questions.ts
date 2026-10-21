@@ -103,7 +103,7 @@ export function buildMergedQuestions(
     // The indexer keeps old recurring price buckets "live" with a placeholder
     // title ("Recurring") and an empty or stale expiry. Their own description
     // carries the real expiry and thresholds: use them, so a bucket that
-    // expired months ago reads as awaiting resolution, not live.
+    // expired months ago no longer reads as live.
     const descExpiry = descriptionFields(q.description).expiry;
     const title = isPlaceholderMarketName(q.title)
       ? formatPriceBucketTitle(q.description) ?? q.title
@@ -111,8 +111,9 @@ export function buildMergedQuestions(
 
     // Hyperliquid's outcomeMeta lists every registered outcome. A question the
     // indexer still calls live, with none of its outcomes registered there and
-    // no price on any of them, has closed: show it as awaiting resolution.
-    // Only when outcomeMeta actually loaded (an empty set proves nothing).
+    // no price on any of them, no longer trades: it reads closed, since the
+    // indexer has no settlement on record for it. Only when outcomeMeta
+    // actually loaded (an empty set proves nothing).
     const delisted =
       q.status === "live" &&
       liveRawIds.size > 0 &&
@@ -121,7 +122,7 @@ export function buildMergedQuestions(
 
     enrichedHd.push({
       ...q,
-      status: delisted ? "expired_unresolved" : q.status,
+      status: delisted ? "closed" : q.status,
       title,
       expiry: descExpiry || q.expiry,
       outcomes,

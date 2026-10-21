@@ -161,10 +161,11 @@ export default function Hip4MarketDetailPage() {
   // The parent question of the active coin (CPI/buckets group several outcomes;
   // NBA/Fed are a single two-sided outcome). Drives the outcomes list + chart.
   // A looked-up market brings its own (indexer question, or its two sides).
-  const parentQuestion = useMemo(
-    () => findMergedQuestionByCoin(mergedQuestions, coin) ?? lookup.question,
-    [mergedQuestions, coin, lookup.question]
+  const mergedParent = useMemo(
+    () => findMergedQuestionByCoin(mergedQuestions, coin),
+    [mergedQuestions, coin]
   );
+  const parentQuestion = mergedParent ?? lookup.question;
 
   // The single source for "how does this market type render".
   const layout = useMemo(
@@ -202,18 +203,28 @@ export default function Hip4MarketDetailPage() {
     [showUnderlyingChart, seriesDefs]
   );
 
-  const detailStatus = useMemo(
-    () =>
-      parentQuestion
-        ? effectiveStatus(parentQuestion)
-        : market
-        ? effectiveStatus({
-            status: market.is_settled ? "settled" : "live",
-            expiry: market.expiry,
-          })
-        : "live",
-    [parentQuestion, market]
-  );
+  // A looked-up question is one the merge doesn't list. Once outcomeMeta has
+  // loaded, one with none of its outcomes listed no longer trades: it reads
+  // settled when the indexer has the question's or this market's settlement,
+  // closed otherwise, like the merge's delisted questions.
+  const lookupDelisted =
+    mergedParent == null &&
+    lookup.question != null &&
+    live.dataUpdatedAt !== null &&
+    !lookup.question.outcomes.some((o) => o.coin != null && live.liveMarketsByCoin[o.coin] != null);
+
+  const detailStatus = useMemo(() => {
+    const status = parentQuestion
+      ? effectiveStatus(parentQuestion)
+      : market
+      ? effectiveStatus({
+          status: market.is_settled ? "settled" : "live",
+          expiry: market.expiry,
+        })
+      : "live";
+    if (!lookupDelisted || status === "settled") return status;
+    return market?.is_settled ? "settled" : "closed";
+  }, [parentQuestion, market, lookupDelisted]);
 
   // LIVE coins → clean candle source; EXPIRED coins → fills reconstruction. The
   // two are mutually exclusive so the same series is never double-fetched.

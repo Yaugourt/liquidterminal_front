@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { effectiveStatus } from "@/lib/hip4/market-formatter";
+import { countsAsClosed, effectiveStatus } from "@/lib/hip4/market-formatter";
 import { KpiRibbon, type KpiCell } from "@/components/common";
 import type {
   Hip4QuestionWithOutcomesRow,
@@ -28,7 +28,7 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading, volume
     // "0 live / $0" next to populated lists below would contradict the page.
     const hasQuestions = questions.length > 0;
     const liveCount = questions.filter((q) => effectiveStatus(q) === "live").length;
-    const pendingCount = questions.filter((q) => effectiveStatus(q) === "expired_unresolved").length;
+    const closedCount = questions.filter((q) => countsAsClosed(effectiveStatus(q))).length;
     const settledCount = questions.filter((q) => effectiveStatus(q) === "settled").length;
     const totalVolume = questions.reduce((s, q) => s + (q.total_volume ?? 0), 0);
 
@@ -38,8 +38,8 @@ export function Hip4GlobalStatsStrip({ questions, settlements, isLoading, volume
         value: hasQuestions ? String(liveCount) : placeholder,
       },
       {
-        label: "Pending",
-        value: hasQuestions ? String(pendingCount) : placeholder,
+        label: "Closed",
+        value: hasQuestions ? String(closedCount) : placeholder,
       },
       {
         label: "Total Volume",

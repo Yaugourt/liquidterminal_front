@@ -73,7 +73,7 @@ export function hip4QuestionKey(q: Hip4QuestionWithOutcomesRow): string {
   return `o${q.outcomes.map((o) => o.outcome_id).join("-")}`;
 }
 
-export type Hip4EffectiveStatus = "live" | "expired_unresolved" | "settled";
+export type Hip4EffectiveStatus = "live" | "expired_unresolved" | "closed" | "settled";
 
 /**
  * Display status that corrects the indexer's stale "live" classification.
@@ -83,20 +83,30 @@ export type Hip4EffectiveStatus = "live" | "expired_unresolved" | "settled";
  * time of writing), which renders a wall of expired markets badged green "Live"
  * with empty 0% probability bars. We re-derive: a past-expiry "live" market is
  * actually awaiting resolution. No-expiry / future-expiry live markets stay
- * live, and `settled` / `expired_unresolved` are passed through untouched.
+ * live, and `settled` / `closed` / `expired_unresolved` are passed through
+ * untouched (`closed` is set by the question merge).
  *
- * Pure display logic — never mutate `question.status`. This becomes a no-op
- * fallback once the backend exposes `is_expired_unresolved` on this endpoint
- * (it already ships it on `markets-enriched`).
+ * Pure display logic — never mutate `question.status`.
  */
 export function effectiveStatus(
   q: Pick<Hip4QuestionWithOutcomesRow, "status" | "expiry">
 ): Hip4EffectiveStatus {
   if (q.status === "settled") return "settled";
+  if (q.status === "closed") return "closed";
   if (q.status === "expired_unresolved") return "expired_unresolved";
   const d = q.expiry ? parseExpiry(q.expiry) : null;
   if (d && d.getTime() <= Date.now()) return "expired_unresolved";
   return "live";
+}
+
+/**
+ * The list page's Closed filter: markets whose trading time is over with no
+ * settlement on record, either no longer listed (`closed`) or past their
+ * expiry and still listed (`expired_unresolved`). Their card badges tell the
+ * two apart.
+ */
+export function countsAsClosed(status: Hip4EffectiveStatus): boolean {
+  return status === "closed" || status === "expired_unresolved";
 }
 
 /**
