@@ -70,7 +70,7 @@ export function Hip4OutcomeList({
             : chartPalette.multiSeries[i % chartPalette.multiSeries.length];
           return (
             <OutcomeRow
-              // Both sides of an ungrouped HypeDexer binary share one outcome_id.
+              // A standalone market's two sides share its raw outcome_id.
               key={`${o.outcome_id}-${i}`}
               label={o.display_name || `Outcome ${i + 1}`}
               pct={pctOf(o)}

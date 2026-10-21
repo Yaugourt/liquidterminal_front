@@ -55,7 +55,7 @@ export async function fetchHip4MarketsEnriched(
   }, "fetching HIP-4 markets-enriched");
 }
 
-/** Questions with nested outcomes (singleton markets surfaced as 1-outcome questions). */
+/** Questions with nested outcomes (a market with no question comes as a question of its own, with its two sides). */
 export async function fetchHip4QuestionsWithOutcomes(
   params?: Hip4QuestionsWithOutcomesQuery
 ): Promise<Hip4QuestionWithOutcomesRow[]> {

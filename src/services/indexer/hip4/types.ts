@@ -45,9 +45,10 @@ export interface Hip4QuestionOutcome {
   is_settled: boolean;
   settled_at: string | null;
   /**
-   * Encoded, *tradeable* coin for this outcome's series (`#<10*outcome+side>`),
-   * resolved against allMids during the merge. Drives the probability-history
-   * chart + deep links; absent on un-merged rows.
+   * Encoded, *tradeable* coin for this outcome's series (`#<10*outcome+side>`).
+   * The backend sends it for the two sides of a standalone market (both on
+   * its raw `outcome_id`); the merge derives the rest (a grouped outcome's Yes
+   * coin). Drives the probability-history chart, prices + deep links.
    */
   coin?: string | null;
 }

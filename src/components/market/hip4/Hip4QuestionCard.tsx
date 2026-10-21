@@ -126,8 +126,8 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
 
       <div className="flex flex-col gap-2.5 mt-1 flex-1">
         {binary ? (
-          // Keyed with the index too: HypeDexer lists both sides of an ungrouped
-          // binary under one outcome_id (e.g. [141 Yes, 141 No]).
+          // Keyed with the index too: a standalone market's two sides share its
+          // raw outcome_id (their coins differ).
           question.outcomes.map((o, i) => {
             const isYes = o.display_name === "Yes";
             const isNo = o.display_name === "No";

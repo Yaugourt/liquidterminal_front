@@ -347,6 +347,11 @@ export function liveMidForOutcomeId(
   return toNum(mids[`#${outcomeId}`]) ?? toNum(mids[`#${outcomeId * 10}`]);
 }
 
+/** Live mid of one side coin (`#<10*outcome+side>`); null when it isn't quoted. */
+export function liveMidForCoin(coin: string, mids: Record<string, string>): number | null {
+  return toNum(mids[coin]);
+}
+
 /** Raw outcome id behind a synthetic question's encoded outcome id. */
 export function rawOutcomeId(encoding: number): number {
   return Math.floor(encoding / 10);

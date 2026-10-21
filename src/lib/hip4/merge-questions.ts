@@ -28,7 +28,7 @@ import {
   isPlaceholderMarketName,
   isResidualOutcome,
 } from "./market-formatter";
-import { liveMidForOutcomeId, rawOutcomeId } from "./outcome-meta";
+import { liveMidForCoin, liveMidForOutcomeId, rawOutcomeId } from "./outcome-meta";
 
 interface LiveMarketsLike {
   liveQuestions: Hip4QuestionWithOutcomesRow[];
@@ -85,11 +85,16 @@ export function buildMergedQuestions(
       .map((o) => {
         const isDuplicated = (labelCounts.get(o.display_name) ?? 0) > 1;
         const metaName = live.liveMarketsByCoin[`#${o.outcome_id * 10}`]?.name;
+        // A standalone market's two sides share its raw outcome id and come
+        // with their own coins (`#<10N>`, `#<10N+1>`); a grouped question's
+        // outcomes trade on their Yes coin.
         return {
           ...o,
           display_name: isDuplicated && metaName ? metaName : o.display_name,
-          mid_price: o.mid_price ?? liveMidForOutcomeId(o.outcome_id, mids),
-          coin: yesCoinOf(o.outcome_id),
+          mid_price:
+            o.mid_price ??
+            (o.coin ? liveMidForCoin(o.coin, mids) : liveMidForOutcomeId(o.outcome_id, mids)),
+          coin: o.coin ?? yesCoinOf(o.outcome_id),
         };
       });
 
@@ -218,7 +223,7 @@ export function sideCoinsQuestion(market: Hip4MarketEnrichedRow): Hip4QuestionWi
 export function withYesCoins(question: Hip4QuestionWithOutcomesRow): Hip4QuestionWithOutcomesRow {
   const outcomes = question.outcomes
     .filter((o) => !isResidualOutcome(o.display_name))
-    .map((o) => ({ ...o, coin: yesCoinOf(o.outcome_id) }));
+    .map((o) => ({ ...o, coin: o.coin ?? yesCoinOf(o.outcome_id) }));
   return {
     ...question,
     outcomes,
