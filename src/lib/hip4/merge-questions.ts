@@ -21,7 +21,13 @@ import type {
   Hip4QuestionWithOutcomesRow,
   Hip4MarketEnrichedRow,
 } from "@/services/indexer/hip4";
-import { descriptionFields, formatPriceBucketTitle, isPlaceholderMarketName, isResidualOutcome } from "./market-formatter";
+import {
+  descriptionFields,
+  effectiveStatus,
+  formatPriceBucketTitle,
+  isPlaceholderMarketName,
+  isResidualOutcome,
+} from "./market-formatter";
 import { liveMidForOutcomeId, rawOutcomeId } from "./outcome-meta";
 
 interface LiveMarketsLike {
@@ -128,6 +134,19 @@ export function buildMergedQuestions(
     .filter((q) => !isResidualOutcome(q.title));
 
   return [...extra, ...enrichedHd];
+}
+
+/**
+ * The merged questions the list page's Live pill counts, biggest volume first.
+ * Filtering on the effective status, not the indexer's own, keeps the markets
+ * it still calls live months after they closed out of every "live" surface.
+ */
+export function liveQuestionsByVolume(
+  merged: Hip4QuestionWithOutcomesRow[]
+): Hip4QuestionWithOutcomesRow[] {
+  return merged
+    .filter((q) => effectiveStatus(q) === "live")
+    .sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0));
 }
 
 /**

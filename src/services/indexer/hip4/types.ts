@@ -235,7 +235,15 @@ export interface UseHip4LiveMarketsResult {
   /** Some live volumes are missing (an analytics batch failed or was cut by
    * the row limit), so volume totals are understated. */
   volumesPartial: boolean;
+  /** The first volumes read has answered or failed: a list ranked by volume
+   * no longer reorders when they arrive. */
+  volumesSettled: boolean;
+  /** The first volumes read failed and none are known: every volume reads 0,
+   * which is unknown, not zero. */
+  volumesMissing: boolean;
   isLoading: boolean;
+  /** The last refresh failed; the markets shown are the previous load. */
+  isStale?: boolean;
   error: Error | null;
   /** `error` is final: no retry is pending. */
   failed: boolean;

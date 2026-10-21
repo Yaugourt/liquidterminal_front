@@ -1,4 +1,8 @@
-import type { Hip4MarketEnrichedRow, Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
+import type {
+  Hip4MarketEnrichedRow,
+  Hip4QuestionOutcome,
+  Hip4QuestionWithOutcomesRow,
+} from "@/services/indexer/hip4";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -128,6 +132,32 @@ export function isYesNoSides(names: Array<string | null | undefined>): boolean {
  * don't apply. */
 export function isBinaryQuestion(question: Hip4QuestionWithOutcomesRow): boolean {
   return isYesNoSides(question.outcomes.map((o) => o.display_name));
+}
+
+/**
+ * The outcomes a one-line summary shows, first one leading: a Yes/No market's
+ * Yes then No; any other question's priciest outcomes (its favourites), the
+ * unpriced ones last in their own order. Shared by the dashboard card and the
+ * market hub lane.
+ */
+export function headlineOutcomes(
+  question: Hip4QuestionWithOutcomesRow,
+  max: number
+): Hip4QuestionOutcome[] {
+  if (isBinaryQuestion(question)) {
+    const side = (name: string) =>
+      question.outcomes.find((o) => (o.display_name ?? "").toLowerCase() === name);
+    return [side("yes"), side("no")]
+      .filter((o): o is Hip4QuestionOutcome => o != null)
+      .slice(0, max);
+  }
+  const price = (o: Hip4QuestionOutcome) =>
+    o.mid_price != null && Number.isFinite(o.mid_price) ? o.mid_price : -1;
+  return question.outcomes
+    .map((o, i) => ({ o, i }))
+    .sort((a, b) => price(b.o) - price(a.o) || a.i - b.i)
+    .slice(0, max)
+    .map(({ o }) => o);
 }
 
 export function formatExpiryCountdown(expiry: string | null): string | null {

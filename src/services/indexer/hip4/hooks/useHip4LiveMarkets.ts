@@ -119,7 +119,7 @@ async function fetchLiveMarketsSnapshot(): Promise<LiveMarketsSnapshot> {
 }
 
 export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
-  const { data, isLoading, error, dataUpdatedAt, refetch } =
+  const { data, isLoading, error, isStale, dataUpdatedAt, refetch } =
     useDataFetching<LiveMarketsSnapshot>({
       fetchFn: fetchLiveMarketsSnapshot,
       refreshInterval: 15000, // prices are real-time; metadata changes slowly
@@ -151,7 +151,10 @@ export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
     // No volumes at all (the first read failed): don't present bare zeros as
     // authoritative. Kept volumes after a failed poll stay as they were.
     volumesPartial: volumes ? volumes.partial : volumesError != null,
+    volumesSettled: volumes != null || volumesError != null,
+    volumesMissing: volumes == null && volumesError != null,
     isLoading,
+    isStale,
     error,
     failed: isFinalError(error),
     dataUpdatedAt,

@@ -4,30 +4,29 @@ import { memo } from "react";
 import { Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useHip4ActiveMarkets } from "@/services/indexer/hip4";
-import type {
-  Hip4QuestionOutcome,
-  Hip4QuestionWithOutcomesRow,
-} from "@/services/indexer/hip4";
+import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import { CardHead, SourceBadge, sourceStatus } from "@/components/common";
-import { formatExpiryCountdown } from "@/lib/hip4/market-formatter";
+import { CardHead, SourceBadge, chartPalette, sourceStatus } from "@/components/common";
+import {
+  formatExpiryCountdown,
+  headlineOutcomes,
+  hip4QuestionKey,
+  isBinaryQuestion,
+} from "@/lib/hip4/market-formatter";
 
 /**
- * Hip4OutcomesCard — top open HIP-4 markets by volume.
+ * Hip4OutcomesCard — top live HIP-4 markets by volume, the list page's Live
+ * pill (`useHip4ActiveMarkets`).
  *
  * Card-head V4 purple (to distinguish from HIP-3 cyan). Each row:
- * truncated title, Yes/No pair (or top 2 outcomes) with mid_price in cents,
- * cumulative volume, and countdown to expiry.
+ * truncated title, Yes/No pair (or the two favourites) with mid_price in
+ * cents, cumulative volume, and countdown to expiry.
  */
 
 const TOP_N = 5;
 
-/** Color for an outcome — green/red for binary Yes/No, brand cyan otherwise. */
-function outcomeColor(name: string | null, index: number): string {
-  if (name === "Yes") return "text-success";
-  if (name === "No") return "text-danger";
-  return index === 0 ? "text-success" : "text-danger";
-}
+/** Multi-outcome colors: the list page's, for the same outcome (`Hip4OutcomeBar`). */
+const PALETTE = chartPalette.multiSeries;
 
 /** mid_price (0-1) → cents arrondis (ex. 0.682 → "68¢"). */
 function priceToCents(mid: number | null | undefined): string {
@@ -35,49 +34,54 @@ function priceToCents(mid: number | null | undefined): string {
   return `${Math.round(mid * 100)}¢`;
 }
 
-function OutcomeRow({ question }: { question: Hip4QuestionWithOutcomesRow }) {
+function OutcomeRow({
+  question,
+  showVolume,
+}: {
+  question: Hip4QuestionWithOutcomesRow;
+  /** False when no volume is known: an unknown volume is not $0. */
+  showVolume: boolean;
+}) {
   const title = question.title ?? "Untitled market";
   const countdown = formatExpiryCountdown(question.expiry ?? null);
-
-  // Trie pour avoir Yes / outcome principal en premier dans la liste binaire
-  const outcomes: Hip4QuestionOutcome[] = (() => {
-    const names = question.outcomes.map((o) => o.display_name);
-    if (names.includes("Yes") && names.includes("No")) {
-      const yes = question.outcomes.find((o) => o.display_name === "Yes");
-      const no = question.outcomes.find((o) => o.display_name === "No");
-      return [yes!, no!];
-    }
-    return question.outcomes.slice(0, 2);
-  })();
+  const binary = isBinaryQuestion(question);
+  // Yes then No, or the two favourites.
+  const outcomes = headlineOutcomes(question, 2);
 
   return (
     <div className="px-3.5 py-2.5 border-b border-border-subtle last:border-b-0">
       <div className="text-[12px] font-semibold text-text-primary line-clamp-2 mb-1.5">
         {title}
       </div>
-      <div className="flex items-center gap-3 text-[11px]">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
         {outcomes.map((o, i) => {
-          const isYesLike = o.display_name === "Yes" || (o.display_name !== "No" && i === 0);
+          // Green/red only on a Yes/No market (Yes first). Team names, buckets
+          // and "Change"/"No change" keep their palette color.
+          const yesNo = binary ? (i === 0 ? "success" : "danger") : null;
+          const color = yesNo ? undefined : PALETTE[question.outcomes.indexOf(o) % PALETTE.length];
           return (
-            <span key={`${o.outcome_id}-${i}`} className="flex items-center gap-1">
+            <span
+              key={`${o.outcome_id}-${i}`}
+              className={`flex items-center gap-1 min-w-0 mono font-semibold ${
+                yesNo === "success" ? "text-success" : yesNo === "danger" ? "text-danger" : ""
+              }`}
+              style={color ? { color } : undefined}
+            >
               <span
-                className={`w-1.5 h-1.5 rounded-full inline-block ${
-                  isYesLike ? "bg-success" : "bg-danger"
+                className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                  yesNo === "success" ? "bg-success" : yesNo === "danger" ? "bg-danger" : "bg-current"
                 }`}
               />
-              <span
-                className={`mono font-semibold ${outcomeColor(o.display_name, i)}`}
-              >
-                {o.display_name} {priceToCents(o.mid_price)}
-              </span>
+              <span className="truncate" title={o.display_name}>{o.display_name}</span>
+              <span className="shrink-0">{priceToCents(o.mid_price)}</span>
             </span>
           );
         })}
-        <span className="text-text-tertiary mono ml-auto">
-          {compactUsd(question.total_volume)} vol
+        <span className="text-text-tertiary mono ml-auto shrink-0 whitespace-nowrap">
+          {showVolume ? `${compactUsd(question.total_volume)} vol` : null}
         </span>
         {countdown && (
-          <span className="text-text-tertiary mono text-[10px] whitespace-nowrap inline-flex items-center gap-1">
+          <span className="text-text-tertiary mono text-[10px] whitespace-nowrap shrink-0 inline-flex items-center gap-1">
             <Clock size={10} />
             {countdown.replace("Expires in ", "")}
           </span>
@@ -88,7 +92,7 @@ function OutcomeRow({ question }: { question: Hip4QuestionWithOutcomesRow }) {
 }
 
 export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
-  const { questions, totalVolume, activeCount, isLoading, error, isStale } =
+  const { questions, totalVolume, activeCount, volumesMissing, isLoading, error, isStale } =
     useHip4ActiveMarkets(TOP_N);
 
   return (
@@ -96,9 +100,18 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
       <CardHead
         title="HIP-4 Outcomes"
         tag={
-          <>
-            {activeCount} live · <span className="mono">{compactUsd(totalVolume)} vol</span>
-          </>
+          // No count while loading or failed: "0 live · $0 vol" would read as a fact.
+          isLoading || error ? undefined : (
+            <>
+              {activeCount} live
+              {!volumesMissing && (
+                <>
+                  {" · "}
+                  <span className="mono">{compactUsd(totalVolume)} vol</span>
+                </>
+              )}
+            </>
+          )
         }
         actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
         href="/market/hip4"
@@ -118,8 +131,8 @@ export const Hip4OutcomesCard = memo(function Hip4OutcomesCard() {
             No active outcome markets
           </div>
         ) : (
-          questions.map((q, i) => (
-            <OutcomeRow key={`${q.question_id ?? q.title}-${i}`} question={q} />
+          questions.map((q) => (
+            <OutcomeRow key={hip4QuestionKey(q)} question={q} showVolume={!volumesMissing} />
           ))
         )}
       </div>

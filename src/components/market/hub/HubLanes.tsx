@@ -4,11 +4,12 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { Hip3Overview } from "@/services/indexer/hip3";
-import { useHip4QuestionsWithOutcomes } from "@/services/indexer/hip4/hooks/useHip4QuestionsWithOutcomes";
+import { useHip4ActiveMarkets } from "@/services/indexer/hip4/hooks/useHip4ActiveMarkets";
+import { headlineOutcomes, hip4QuestionKey, isBinaryQuestion } from "@/lib/hip4/market-formatter";
 import { useBuildersTop, useBuildersStatsAllTimeframes } from "@/services/indexer/builders";
 import { BuilderAvatar, resolveBuilderLabel } from "@/components/market/builders";
 import { AuctionStrip } from "./AuctionStrip";
-import { CardHead, SourceBadge, sourceStatus, combinedSourceStatus, RowFillList, type SourceBadgeStatus } from "@/components/common";
+import { CardHead, SourceBadge, sourceStatus, combinedSourceStatus, RowFillList, chartPalette, type SourceBadgeStatus } from "@/components/common";
 
 function LaneShell({
   title,
@@ -69,41 +70,52 @@ export function PerpDexsLane({
   );
 }
 
+/** Multi-outcome colors: the list page's, for the same outcome (`Hip4OutcomeBar`). */
+const HIP4_PALETTE = chartPalette.multiSeries;
+
 /** HIP-4 predictions lane: the biggest live questions with their probability, filling the lane height. */
 export function Hip4Lane() {
-  // Same params as the HIP-4 pages and the dashboard card: one backend entry.
-  const { questions, isLoading: questionsLoading, error: questionsError, isStale: questionsStale } = useHip4QuestionsWithOutcomes({ limit: 200 });
+  // The list page's live markets (indexer questions merged with Hyperliquid's
+  // live markets), biggest volume first; the same hook as the dashboard card.
+  const { questions, activeCount, volumesMissing, isLoading, error, isStale } = useHip4ActiveMarkets(12);
 
-  const top = useMemo(() => {
-    const rows = (questions ?? [])
-      .filter((q) => q.status === "live" && q.title)
-      .sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0))
-      .slice(0, 12);
-    return rows.map((q) => {
-      const lead = [...q.outcomes].sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0))[0];
-      const prob = lead?.mid_price != null ? Math.max(0, Math.min(1, lead.mid_price)) : null;
-      return {
-        id: q.question_id ?? q.title,
-        title: q.title as string,
-        volume: q.total_volume,
-        outcomeName: lead?.display_name ?? null,
-        prob,
-      };
-    });
-  }, [questions]);
-
-  const liveCount = useMemo(() => (questions ?? []).filter((q) => q.status === "live").length, [questions]);
+  const top = useMemo(
+    () =>
+      questions.map((q) => {
+        const binary = isBinaryQuestion(q);
+        // A Yes/No market shows its chance of Yes; any other question its
+        // favourite, named, in that outcome's palette color.
+        const [lead] = headlineOutcomes(q, 1);
+        const prob =
+          lead?.mid_price != null && Number.isFinite(lead.mid_price)
+            ? Math.max(0, Math.min(1, lead.mid_price))
+            : null;
+        return {
+          id: hip4QuestionKey(q),
+          title: q.title ?? "Untitled market",
+          volume: q.total_volume,
+          outcomeName: binary ? null : (lead?.display_name ?? null),
+          color: binary || !lead ? null : HIP4_PALETTE[q.outcomes.indexOf(lead) % HIP4_PALETTE.length],
+          prob,
+        };
+      }),
+    [questions]
+  );
 
   return (
     <LaneShell
       title="Predictions"
       tag="HIP-4"
       href="/market/hip4"
-      hrefLabel={liveCount > 0 ? `${liveCount} live` : "All"}
-      actions={<SourceBadge source="hypedexer" status={sourceStatus(questionsError, questionsLoading, questionsStale)} />}
+      hrefLabel={activeCount > 0 ? `${activeCount} live` : "All"}
+      actions={<SourceBadge source="hypedexer" status={sourceStatus(error, isLoading, isStale)} />}
     >
       <RowFillList mobileHeight="h-[320px]" className="px-3.5 py-3 space-y-3">
-        {top.length === 0 && <p className="text-[11.5px] text-text-tertiary">Loading live questions…</p>}
+        {top.length === 0 && (
+          <p className="text-[11.5px] text-text-tertiary">
+            {isLoading ? "Loading live questions…" : error ? "Live markets unavailable" : "No live markets"}
+          </p>
+        )}
         {top.map((q) => (
           <Link key={q.id} href="/market/hip4" className="block group">
             <div className="flex items-baseline justify-between gap-2">
@@ -111,18 +123,35 @@ export function Hip4Lane() {
                 {q.title}
               </span>
               {q.prob != null && (
-                <span className="mono text-[12px] text-success shrink-0">{(q.prob * 100).toFixed(1)}%</span>
+                <span className="flex items-baseline gap-1 min-w-0 max-w-[45%] shrink-0">
+                  {q.outcomeName && (
+                    <span className="text-[11px] text-text-secondary truncate" title={q.outcomeName}>
+                      {q.outcomeName}
+                    </span>
+                  )}
+                  <span
+                    className={`mono text-[12px] shrink-0 ${q.color ? "" : "text-success"}`}
+                    style={q.color ? { color: q.color } : undefined}
+                  >
+                    {(q.prob * 100).toFixed(1)}%
+                  </span>
+                </span>
               )}
             </div>
             <div className="flex items-center justify-between gap-2 mt-1">
               {q.prob != null ? (
                 <span className="flex-1 h-1 rounded-full bg-surface-2 overflow-hidden">
-                  <span className="block h-full bg-success/70" style={{ width: `${q.prob * 100}%` }} />
+                  <span
+                    className={`block h-full ${q.color ? "opacity-70" : "bg-success/70"}`}
+                    style={{ width: `${q.prob * 100}%`, ...(q.color ? { background: q.color } : {}) }}
+                  />
                 </span>
               ) : (
                 <span className="flex-1" />
               )}
-              <span className="mono text-[10px] text-text-tertiary shrink-0">{compactUsd(q.volume)} vol</span>
+              {!volumesMissing && (
+                <span className="mono text-[10px] text-text-tertiary shrink-0">{compactUsd(q.volume)} vol</span>
+              )}
             </div>
           </Link>
         ))}
