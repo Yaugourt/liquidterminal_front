@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { BarChart3 } from "lucide-react";
 import { SearchBar } from "@/components/common";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -124,7 +124,12 @@ export function Hip4MarketGrid({ questions, isLoading, settlementsCount = 0 }: H
 
   const resetPage = () => setVisibleCount(PAGE_SIZE);
   const handleCategory = (c: Hip4Category) => { setCategory(c); resetPage(); };
-  const handleSearch = (q: string) => { setSearch(q); resetPage(); };
+  // Stable: SearchBar searches again whenever `onSearch` changes, and a search
+  // resets the page, so a new handler per render undid every "Load more".
+  const handleSearch = useCallback((q: string) => {
+    setSearch(q);
+    setVisibleCount(PAGE_SIZE);
+  }, []);
   const handleSort = (s: SortKey) => { setSort(s); resetPage(); };
   const handleStatus = (s: StatusKey) => { setStatusFilter(s); resetPage(); };
 
