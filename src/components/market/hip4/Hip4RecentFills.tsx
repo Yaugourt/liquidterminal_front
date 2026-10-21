@@ -11,21 +11,13 @@ import { AddressDisplay } from "@/components/ui/address-display";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import type { Hip4FillRow } from "@/services/indexer/hip4";
-
-/** Per-coin metadata used to label fills. `sideName` is only set when the
- * market is provably binary (parsed_sides length === 2). Multi-outcome markets
- * leave it null so we don't fabricate a Yes/No chip. */
-interface Hip4FillMarketMeta {
-  name: string;
-  sideName?: string | null;
-  isBinary?: boolean;
-}
+import type { Hip4FillLabel } from "@/lib/hip4/fill-labels";
 
 interface Hip4RecentFillsProps {
   fills: Hip4FillRow[];
   isLoading: boolean;
-  /** Map of `coin` → market metadata (derived from markets-enriched). */
-  marketIndex?: Record<string, Hip4FillMarketMeta>;
+  /** Map of `coin` → market metadata, built by the page from the live markets. */
+  marketIndex?: Record<string, Hip4FillLabel>;
 }
 
 function outcomeVariant(outcomeName: string): "success" | "error" | "info" {

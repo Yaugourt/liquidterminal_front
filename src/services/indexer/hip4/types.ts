@@ -293,17 +293,6 @@ export interface Hip4SettlementsQuery {
 
 // ─── Hook result interfaces ──────────────────────────────────────────────────
 
-export interface UseHip4MarketsEnrichedResult {
-  markets: Hip4MarketEnrichedRow[];
-  isLoading: boolean;
-  error: Error | null;
-  /** The last refresh failed; the data shown is the previous load. */
-  isStale?: boolean;
-  /** Epoch ms of the last successful fetch — null until first success. */
-  dataUpdatedAt: number | null;
-  refetch: () => void;
-}
-
 export interface UseHip4QuestionsWithOutcomesResult {
   questions: Hip4QuestionWithOutcomesRow[];
   isLoading: boolean;

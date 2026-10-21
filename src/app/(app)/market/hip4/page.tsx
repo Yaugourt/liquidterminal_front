@@ -4,7 +4,6 @@ import { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { usePageTitle } from "@/store/use-page-title";
 import {
-  useHip4MarketsEnriched,
   useHip4QuestionsWithOutcomes,
   useHip4Fills,
   useHip4Settlements,
@@ -20,13 +19,12 @@ import {
 } from "@/components/market/hip4";
 import { PageHeader, PageFaq, SourceBadge, combinedSourceStatus } from "@/components/common";
 import { buildMergedQuestions } from "@/lib/hip4/merge-questions";
-import { isPlaceholderMarketName } from "@/lib/hip4/market-formatter";
+import { rememberFillLabels } from "@/lib/hip4/fill-labels";
 import { HIP4_FAQ } from "@/lib/page-faqs";
 
 export default function MarketHip4Page() {
   const { setTitle } = usePageTitle();
 
-  const enriched = useHip4MarketsEnriched({ limit: 500 });
   const questions = useHip4QuestionsWithOutcomes({ limit: 200 });
   const fills = useHip4Fills({ limit: 50 });
   const settlements = useHip4Settlements({ limit: 50 });
@@ -38,26 +36,12 @@ export default function MarketHip4Page() {
     setTitle("HIP-4 - Market");
   }, [setTitle]);
 
-  const marketIndex = useMemo(() => {
-    const idx: Record<string, { name: string; sideName: string | null; isBinary: boolean }> = {};
-    const add = (m: { coin: string | null; short_name: string; display_name: string; side_name: string | null; side: number | null; parsed_sides: { name: string }[] | null }) => {
-      if (!m.coin || idx[m.coin]) return;
-      const isBinary = (m.parsed_sides?.length ?? 0) === 2;
-      // Skip upstream placeholder names ("Recurring Named Outcome"); the coin
-      // ticker is a more honest label.
-      const name =
-        [m.short_name, m.display_name].find((n) => !isPlaceholderMarketName(n)) ?? m.coin;
-      idx[m.coin] = {
-        name,
-        sideName: m.side_name ?? (isBinary && m.side != null ? m.parsed_sides?.[m.side]?.name ?? null : null),
-        isBinary,
-      };
-    };
-    for (const m of enriched.markets) add(m);
-    // Label fills for the live coins too (they're absent from enriched).
-    for (const m of Object.values(live.liveMarketsByCoin)) add(m);
-    return idx;
-  }, [enriched.markets, live.liveMarketsByCoin]);
+  // The tape trades the live markets: they name its fills, and keep naming a
+  // market's last fills once Hyperliquid delists it.
+  const marketIndex = useMemo(
+    () => rememberFillLabels(live.liveMarketsByCoin),
+    [live.liveMarketsByCoin]
+  );
 
   // Merge HypeDexer's questions with the canonical Hyperliquid live markets
   // (drop ghosts, enrich prices, hide the residual outcome, tag tradeable
@@ -71,22 +55,6 @@ export default function MarketHip4Page() {
       }),
     [questions.questions, live.liveQuestions, live.mids, live.liveMarketsByCoin]
   );
-
-  // Settlements come back with `question_name`/`coin` null on the freshest rows,
-  // so they'd render as a bare `#136`. Resolve a readable title from the enriched
-  // markets (keyed by outcome_id) as a fallback. Endpoint-provided names still
-  // win so the already-correct rows never regress.
-  const settlementTitleIndex = useMemo(() => {
-    const idx: Record<number, string> = {};
-    for (const m of enriched.markets) {
-      if (m.outcome_id == null) continue;
-      idx[m.outcome_id] =
-        [m.display_name, m.short_name].find((n) => !isPlaceholderMarketName(n)) ??
-        m.coin ??
-        `#${m.outcome_id}`;
-    }
-    return idx;
-  }, [enriched.markets]);
 
   return (
     <motion.div
@@ -103,7 +71,7 @@ export default function MarketHip4Page() {
           <div className="flex items-center gap-2">
             <SourceBadge
               source="hypedexer"
-              status={combinedSourceStatus(enriched, questions, fills, settlements)}
+              status={combinedSourceStatus(questions, fills, settlements)}
             />
             <Hip4StalenessChip updatedAt={questions.dataUpdatedAt} />
             <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand bg-brand/10 border border-brand/20 px-2.5 py-1 rounded-lg">
@@ -117,7 +85,7 @@ export default function MarketHip4Page() {
       <Hip4GlobalStatsStrip
         questions={mergedQuestions}
         settlements={settlements.settlements}
-        isLoading={(enriched.isLoading || questions.isLoading) && live.isLoading}
+        isLoading={questions.isLoading && live.isLoading}
         volumesPartial={live.volumesPartial}
       />
 
@@ -138,7 +106,6 @@ export default function MarketHip4Page() {
         <Hip4SettlementsTable
           settlements={settlements.settlements}
           isLoading={settlements.isLoading}
-          titleIndex={settlementTitleIndex}
         />
       </div>
       <PageFaq items={HIP4_FAQ} />

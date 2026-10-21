@@ -8,9 +8,6 @@ import type { Hip4SettlementRow } from "@/services/indexer/hip4";
 interface Hip4SettlementsTableProps {
   settlements: Hip4SettlementRow[];
   isLoading: boolean;
-  /** Fallback `outcome_id` → readable title (from markets-enriched), used when
-   * the settlement row's own `question_name`/`coin` come back null. */
-  titleIndex?: Record<number, string>;
 }
 
 function formatSettledPrice(px: number | null | undefined): string {
@@ -34,14 +31,14 @@ function formatSettledAt(iso: string): string {
   }) + " UTC";
 }
 
-export function Hip4SettlementsTable({ settlements, isLoading, titleIndex }: Hip4SettlementsTableProps) {
+export function Hip4SettlementsTable({ settlements, isLoading }: Hip4SettlementsTableProps) {
   const columns: Column<Hip4SettlementRow>[] = [
     {
       key: "market",
       header: "Market",
       accessor: (row) => (
         <ModuleAsset
-          name={row.question_name ?? row.coin ?? titleIndex?.[row.outcome_id] ?? `#${row.outcome_id}`}
+          name={row.question_name ?? row.coin ?? `#${row.outcome_id}`}
         />
       ),
     },
