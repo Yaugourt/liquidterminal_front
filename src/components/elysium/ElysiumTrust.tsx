@@ -4,7 +4,7 @@ import Link from "next/link";
 import { formatUnits } from "viem";
 import { Card } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
-import { CardHead, KpiRibbon, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, type KpiCell } from "@/components/common";
 import { compactCount } from "@/lib/formatters/numberFormatting";
 import { ELYSIUM_ANNOUNCED, ELYSIUM_CHAIN, ELYSIUM_TRUST_CONTRACTS as T } from "@/lib/elysium-chain";
 import { useElysiumTrust, type ChainChange, type ElysiumTrust as Trust } from "@/services/elysium/trust";
@@ -342,7 +342,7 @@ export function ElysiumTrust() {
         )}
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-4 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-[3fr_2fr] gap-4 items-start">
         <Card className="overflow-hidden flex flex-col">
           <CardHead
             title="Chain parameter changes"
@@ -353,28 +353,32 @@ export function ElysiumTrust() {
           ) : t.changes.length === 0 ? (
             <Empty>No change since genesis.</Empty>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-[12px]">
-                <tbody>
-                  {t.changes.map((c) => (
-                    <tr key={`${c.txHash}-${c.fn}`} className="border-t border-border-subtle first:border-t-0 align-top">
-                      <td className="px-3.5 py-2 whitespace-nowrap text-text-tertiary mono">{day(c.time)}</td>
-                      <td className="px-2 py-2">
-                        <div className="text-text-primary">{describeChange(c)}</div>
-                        <div className="text-[10.5px] text-text-tertiary mono break-all">
-                          {c.fn}({c.args.map((x) => (x.length > 20 ? short(x) : x)).join(", ")})
-                        </div>
-                      </td>
-                      <td className="px-3.5 py-2 whitespace-nowrap text-right hidden sm:table-cell">
-                        <Link href={`/elysium/tx/${c.txHash}`} className="text-text-secondary hover:text-brand mono">
-                          {short(c.txHash)}
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <ModuleTable
+              columns={[
+                { header: "Date", width: 132 },
+                { header: "Change", align: "left" },
+                { header: "Transaction", align: "right", width: 116, className: "hidden sm:table-cell" },
+              ]}
+            >
+              {t.changes.map((c) => (
+                <ModuleTableRow
+                  key={`${c.txHash}-${c.fn}`}
+                  className="align-top"
+                  cells={[
+                    <span key="day" className="mono whitespace-nowrap text-text-tertiary">{day(c.time)}</span>,
+                    <div key="chg">
+                      <div className="text-text-primary">{describeChange(c)}</div>
+                      <div className="text-[10.5px] text-text-tertiary mono break-all">
+                        {c.fn}({c.args.map((x) => (x.length > 20 ? short(x) : x)).join(", ")})
+                      </div>
+                    </div>,
+                    <Link key="tx" href={`/elysium/tx/${c.txHash}`} className="text-text-secondary hover:text-brand mono whitespace-nowrap">
+                      {short(c.txHash)}
+                    </Link>,
+                  ]}
+                />
+              ))}
+            </ModuleTable>
           )}
           <p className="px-3.5 py-2 text-[11px] text-text-tertiary border-t border-border-subtle">
             TargetCallExecuted events of the Elysium UpgradeExecutor, decoded against the ArbOwner interface. Times in UTC.
@@ -383,28 +387,30 @@ export function ElysiumTrust() {
 
         <Card className="overflow-hidden flex flex-col">
           <CardHead title="Announced vs on chain" />
-          <div className="px-3.5 py-1.5 text-[12px] overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                  <th className="py-1.5 text-left font-normal">Metric</th>
-                  <th className="py-1.5 text-right font-normal">Announced</th>
-                  <th className="py-1.5 text-right font-normal">On chain</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-t border-border-subtle">
-                  <td className="py-1.5 text-text-secondary">Block time</td>
-                  <td className="py-1.5 text-right mono text-text-tertiary">{`${announcedMs[0]} to ${announcedMs[1]} ms`}</td>
-                  <td className="py-1.5 text-right mono text-text-primary">{t ? `${Math.round(t.child.blockTimeS * 1000)} ms` : "…"}</td>
-                </tr>
-                <tr className="border-t border-border-subtle">
-                  <td className="py-1.5 text-text-secondary">Gas throughput</td>
-                  <td className="py-1.5 text-right mono text-text-tertiary">{gasRate(ELYSIUM_ANNOUNCED.gasPerS)}</td>
-                  <td className="py-1.5 text-right mono text-text-primary">{t ? gasRate(t.child.speedLimitGasPerS) : "…"}</td>
-                </tr>
-              </tbody>
-            </table>
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Metric", width: 91 },
+              { header: "Announced", width: 128 },
+              { header: "On chain", width: 106 },
+            ]}
+          >
+            <ModuleTableRow
+              cells={[
+                <span key="m" className="text-text-secondary">Block time</span>,
+                <span key="a" className="mono text-text-tertiary">{`${announcedMs[0]} to ${announcedMs[1]} ms`}</span>,
+                <span key="c" className="mono text-text-primary">{t ? `${Math.round(t.child.blockTimeS * 1000)} ms` : "…"}</span>,
+              ]}
+            />
+            <ModuleTableRow
+              cells={[
+                <span key="m" className="text-text-secondary">Gas throughput</span>,
+                <span key="a" className="mono text-text-tertiary">{gasRate(ELYSIUM_ANNOUNCED.gasPerS)}</span>,
+                <span key="c" className="mono text-text-primary">{t ? gasRate(t.child.speedLimitGasPerS) : "…"}</span>,
+              ]}
+            />
+          </ModuleTable>
+          <div className="px-3.5 py-1.5 text-[12px]">
             <p className="text-[11px] text-text-tertiary py-2">
               Block time is the mean over the last 500 Elysium blocks. Gas throughput on chain is the speed limit the chain
               owner sets (ArbGasInfo), the rate above which gas prices start rising. Targets from the{" "}

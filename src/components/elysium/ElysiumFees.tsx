@@ -4,7 +4,7 @@ import { memo, useState } from "react";
 import { Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CardHead, KpiRibbon, ShareTile, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, ShareTile, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useHypePrice } from "@/services/market/hype";
 import { useElysiumFees, type ElysiumContractKind, type ElysiumFeesAnalytics, type ElysiumFeesWindow } from "@/services/elysium";
@@ -50,63 +50,65 @@ const ByContract = memo(function ByContract({ data }: { data: ElysiumFeesAnalyti
         {data.contracts.length === 0 ? (
           <Empty>No fees indexed in this window.</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <thead>
-              <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                <th className="text-left font-semibold px-3.5 py-2">Contract</th>
-                <th className="text-left font-semibold px-2 py-2 hidden sm:table-cell">Kind</th>
-                <th className="text-right font-semibold px-2 py-2">Fees</th>
-                <th className="text-right font-semibold px-2 py-2">Share</th>
-                <th className="text-right font-semibold px-2 py-2 whitespace-nowrap hidden sm:table-cell">vs prev.</th>
-                <th className="text-right font-semibold px-2 py-2 hidden md:table-cell">Txs</th>
-                <th className="text-right font-semibold px-2 py-2 hidden md:table-cell">Callers</th>
-                <th className="text-right font-semibold px-2 py-2 whitespace-nowrap hidden lg:table-cell">Avg fee</th>
-                <th className="text-right font-semibold px-2 py-2 whitespace-nowrap hidden lg:table-cell" title="If 25% of fees went to apps, split by fees paid">
-                  25% pool est.
-                </th>
-                <th className="text-left font-semibold px-3.5 py-2 hidden xl:table-cell">Deployed by</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.contracts.map((r) => {
-                const d = delta(r.feesHype, r.feesHypePrev);
-                const isApp = r.kind !== "precompile";
-                const poolEst = isApp && appTotal > 0 ? (r.feesHype / appTotal) * APP_POOL_SHARE * data.totals.feesHype : null;
-                return (
-                  <tr key={r.address} className="border-t border-border-subtle">
-                    <td className="px-3.5 py-1.5 whitespace-nowrap">
+          <ModuleTable
+            columns={[
+              // No width on Contract: it takes the room left and truncates (its title has the name).
+              // Share keeps its 64 px bar, so it shows from sm; the two estimates wait for xl.
+              { header: "Contract" },
+              { header: "Kind", width: 84, align: "left", className: "hidden sm:table-cell" },
+              { header: "Fees", width: 76 },
+              { header: "Share", width: 136, className: "hidden sm:table-cell" },
+              { header: "vs prev.", width: 80, className: "hidden sm:table-cell" },
+              { header: "Txs", width: 76, className: "hidden md:table-cell" },
+              { header: "Callers", width: 76, className: "hidden md:table-cell" },
+              { header: "Avg fee", width: 76, className: "hidden xl:table-cell" },
+              {
+                header: <span title="If 25% of fees went to apps, split by fees paid">25% pool est.</span>,
+                width: 116,
+                className: "hidden xl:table-cell",
+              },
+              { header: "Deployed by", width: 126, align: "left", className: "hidden xl:table-cell" },
+            ]}
+          >
+            {data.contracts.map((r) => {
+              const d = delta(r.feesHype, r.feesHypePrev);
+              const isApp = r.kind !== "precompile";
+              const poolEst = isApp && appTotal > 0 ? (r.feesHype / appTotal) * APP_POOL_SHARE * data.totals.feesHype : null;
+              return (
+                <ModuleTableRow
+                  key={r.address}
+                  cells={[
+                    <span key="c" className="mono block whitespace-nowrap" title={r.label || r.symbol || r.address}>
                       <AddrLink address={r.address} className="text-text-primary">
                         {r.label || r.symbol || short(r.address)}
                       </AddrLink>
-                    </td>
-                    <td className="px-2 py-1.5 hidden sm:table-cell">
-                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${KIND_TONE[r.kind]}`}>
-                        {r.kind === "precompile" ? "system" : r.kind}
-                      </span>
-                    </td>
-                    <td className="px-2 py-1.5 text-right text-gold">{fmtHypeFee(r.feesHype)}</td>
-                    <td className="px-2 py-1.5 text-right text-text-secondary">
+                    </span>,
+                    <span key="k" className={`mono text-[10px] font-semibold px-1.5 py-0.5 rounded ${KIND_TONE[r.kind]}`}>
+                      {r.kind === "precompile" ? "system" : r.kind}
+                    </span>,
+                    <span key="f" className="mono text-gold">{fmtHypeFee(r.feesHype)}</span>,
+                    <div key="s" className="mono text-text-secondary">
                       <ShareBar share={r.share} />
-                    </td>
-                    <td className={`px-2 py-1.5 text-right hidden sm:table-cell ${d ? (d.up ? "text-success" : "text-danger") : "text-text-tertiary"}`}>
+                    </div>,
+                    <span key="d" className={`mono ${d ? (d.up ? "text-success" : "text-danger") : "text-text-tertiary"}`}>
                       {r.feesHypePrev > 0 ? d?.text ?? EMPTY : "new"}
-                    </td>
-                    <td className="px-2 py-1.5 text-right text-text-primary hidden md:table-cell">{compactCount(r.txs)}</td>
-                    <td className="px-2 py-1.5 text-right text-text-secondary hidden md:table-cell">{compactCount(r.callers)}</td>
-                    <td className="px-2 py-1.5 text-right text-text-tertiary hidden lg:table-cell">{fmtHypeFee(r.avgFeeHype)}</td>
-                    <td className="px-2 py-1.5 text-right text-text-secondary hidden lg:table-cell">{poolEst != null ? fmtHypeFee(poolEst) : EMPTY}</td>
-                    <td className="px-3.5 py-1.5 whitespace-nowrap hidden xl:table-cell">
+                    </span>,
+                    <span key="t" className="mono text-text-primary">{compactCount(r.txs)}</span>,
+                    <span key="cl" className="mono text-text-secondary">{compactCount(r.callers)}</span>,
+                    <span key="a" className="mono text-text-tertiary">{fmtHypeFee(r.avgFeeHype)}</span>,
+                    <span key="p" className="mono text-text-secondary">{poolEst != null ? fmtHypeFee(poolEst) : EMPTY}</span>,
+                    <span key="dep" className="mono whitespace-nowrap">
                       {r.deployer ? (
                         <AddrLink address={r.deployer} className="text-text-tertiary" />
                       ) : (
                         <span className="text-text-tertiary">{r.kind === "precompile" ? "system" : EMPTY}</span>
                       )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </span>,
+                  ]}
+                />
+              );
+            })}
+          </ModuleTable>
         )}
       </div>
     </Card>
@@ -124,32 +126,33 @@ const ByDeployer = memo(function ByDeployer({ data }: { data: ElysiumFeesAnalyti
         {data.deployers.length === 0 ? (
           <Empty>No deployer has fees in this window.</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <thead>
-              <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                <th className="text-left font-semibold px-3.5 py-2">Deployer</th>
-                <th className="text-right font-semibold px-2 py-2">Contracts</th>
-                <th className="text-right font-semibold px-2 py-2">Fees</th>
-                <th className="text-right font-semibold px-2 py-2">Share</th>
-                <th className="text-right font-semibold px-3.5 py-2 hidden sm:table-cell">Txs</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.deployers.map((r) => (
-                <tr key={r.deployer} className="border-t border-border-subtle">
-                  <td className="px-3.5 py-1.5 whitespace-nowrap">
+          <ModuleTable
+            columns={[
+              // Share keeps its 64 px bar, so it shows from sm.
+              { header: "Deployer", width: 130 },
+              { header: "Contracts", width: 92 },
+              { header: "Fees", width: 76 },
+              { header: "Share", width: 136, className: "hidden sm:table-cell" },
+              { header: "Txs", width: 76, className: "hidden sm:table-cell" },
+            ]}
+          >
+            {data.deployers.map((r) => (
+              <ModuleTableRow
+                key={r.deployer}
+                cells={[
+                  <span key="d" className="mono whitespace-nowrap">
                     <AddrLink address={r.deployer} className="text-text-primary" />
-                  </td>
-                  <td className="px-2 py-1.5 text-right text-text-secondary">{compactCount(r.contracts)}</td>
-                  <td className="px-2 py-1.5 text-right text-gold">{fmtHypeFee(r.feesHype)}</td>
-                  <td className="px-2 py-1.5 text-right text-text-secondary">
+                  </span>,
+                  <span key="c" className="mono text-text-secondary">{compactCount(r.contracts)}</span>,
+                  <span key="f" className="mono text-gold">{fmtHypeFee(r.feesHype)}</span>,
+                  <div key="s" className="mono text-text-secondary">
                     <ShareBar share={r.share} />
-                  </td>
-                  <td className="px-3.5 py-1.5 text-right text-text-primary hidden sm:table-cell">{compactCount(r.txs)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>,
+                  <span key="t" className="mono text-text-primary">{compactCount(r.txs)}</span>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
     </Card>

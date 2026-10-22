@@ -2,7 +2,7 @@
 
 import { Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHead, KpiRibbon, RowFillList, chartPalette, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, RowFillList, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumBridgeAnalytics } from "@/services/elysium";
@@ -60,52 +60,64 @@ export function ElysiumBridgeAnalyticsView() {
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : (
-              <table className="w-full mono text-[12px]">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                    <th className="text-left font-semibold px-3.5 py-2">Token</th>
-                    <th className="text-right font-semibold px-2 py-2">In</th>
-                    <th className="text-right font-semibold px-2 py-2">Out</th>
-                    <th className="text-right font-semibold px-3.5 py-2">Transfers</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Rows without a symbol carry raw, unscaled amounts upstream: not comparable, left out. */}
-                  {data.tokens.filter((t) => t.symbol).map((t) => (
-                    <tr key={`${t.route}-${t.symbol}`} className="border-t border-border-subtle">
-                      <td className="px-3.5 py-1.5 whitespace-nowrap">
+              <ModuleTable
+                density="compact"
+                columns={[
+                  // Transfers needs room that phones and lg's half-width cards do not have.
+                  { header: "Token" },
+                  { header: "In", width: 99 },
+                  { header: "Out", width: 99 },
+                  { header: "Transfers", width: 92, className: "hidden sm:table-cell lg:hidden xl:table-cell" },
+                ]}
+              >
+                {/* Rows without a symbol carry raw, unscaled amounts upstream: not comparable, left out. */}
+                {data.tokens.filter((t) => t.symbol).map((t) => (
+                  <ModuleTableRow
+                    key={`${t.route}-${t.symbol}`}
+                    cells={[
+                      <span key="t" className="mono block truncate" title={`${t.symbol} ${t.route}`}>
                         <span className="text-text-primary">{t.symbol || EMPTY}</span> <span className="text-[10px] text-text-tertiary hidden sm:inline">{t.route}</span>
-                      </td>
-                      <td className="px-2 py-1.5 text-right text-success">{compactCount(t.amountIn)}</td>
-                      <td className="px-2 py-1.5 text-right text-danger">{compactCount(t.amountOut)}</td>
-                      <td className="px-3.5 py-1.5 text-right text-text-secondary">{compactCount(t.deposits + t.withdrawals)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>,
+                      <span key="in" className="mono text-success">{compactCount(t.amountIn)}</span>,
+                      <span key="out" className="mono text-danger">{compactCount(t.amountOut)}</span>,
+                      <span key="tr" className="mono text-text-secondary">{compactCount(t.deposits + t.withdrawals)}</span>,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </div>
         </Card>
         <Card className="h-full overflow-hidden flex flex-col">
           <CardHead title="Most active bridgers" tag="last 14 days, by transfers, HYPE amounts" />
-          <RowFillList className="px-3.5 py-1" mobileHeight="h-[360px]">
+          <RowFillList mobileHeight="h-[360px]">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : (
-              <table className="w-full mono text-[12px]">
-                <tbody>
-                  {data.topBridgers.map((b) => (
-                    <tr key={b.address} className="border-t border-border-subtle first:border-t-0">
-                      <td className="py-1.5 pr-2 whitespace-nowrap">
+              <ModuleTable
+                density="compact"
+                columns={[
+                  // Transfers needs room that phones and lg's half-width cards do not have.
+                  { header: "Address", width: 130 },
+                  { header: "In", width: 91 },
+                  { header: "Out", width: 91 },
+                  { header: "Transfers", width: 92, className: "hidden sm:table-cell lg:hidden xl:table-cell" },
+                ]}
+              >
+                {data.topBridgers.map((b) => (
+                  <ModuleTableRow
+                    key={b.address}
+                    cells={[
+                      <span key="a" className="mono whitespace-nowrap">
                         <AddrLink address={b.address} className="text-text-secondary" />
-                      </td>
-                      <td className="py-1.5 pr-2 text-right text-success whitespace-nowrap">+{n(b.hypeIn)}</td>
-                      <td className="py-1.5 pr-2 text-right text-danger whitespace-nowrap">-{n(b.hypeOut)}</td>
-                      <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap">{compactCount(b.transfers)} transfers</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>,
+                      <span key="in" className="mono whitespace-nowrap text-success">+{n(b.hypeIn)}</span>,
+                      <span key="out" className="mono whitespace-nowrap text-danger">-{n(b.hypeOut)}</span>,
+                      <span key="tr" className="mono whitespace-nowrap text-text-tertiary">{compactCount(b.transfers)}</span>,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </RowFillList>
         </Card>
