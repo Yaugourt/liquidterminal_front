@@ -4,7 +4,7 @@ import { memo, useState } from "react";
 import { Boxes } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CardHead, KpiRibbon, chartPalette, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { elysiumTimeMs, useElysiumContracts, useElysiumDeployments, useElysiumMethods, type ElysiumContractKind } from "@/services/elysium";
@@ -39,59 +39,60 @@ const TopContracts = memo(function TopContracts() {
         ) : rows.length === 0 ? (
           <Empty>No contract activity indexed yet.</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <thead>
-              <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                <th className="text-left font-semibold px-3.5 py-2">Contract</th>
-                <th className="text-left font-semibold px-2 py-2 hidden sm:table-cell">Kind</th>
-                <th className="text-right font-semibold px-2 py-2">Txs</th>
-                <th className="text-right font-semibold px-2 py-2 whitespace-nowrap hidden sm:table-cell">vs prev.</th>
-                <th className="text-right font-semibold px-2 py-2">Callers</th>
-                <th className="text-left font-semibold px-2 py-2 hidden md:table-cell">Top methods</th>
-                <th className="text-left font-semibold px-3.5 py-2 hidden xl:table-cell">Deployed by</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => {
-                const d = delta(r.txs, r.txsPrev);
-                return (
-                  <tr key={r.address} className="border-t border-border-subtle">
-                    <td className="px-3.5 py-1.5 whitespace-nowrap">
+          <ModuleTable
+            columns={[
+              // No width on Contract and Top methods: they share the room left and truncate (titles carry the text).
+              { header: "Contract" },
+              { header: "Kind", width: 100, align: "left", className: "hidden sm:table-cell" },
+              { header: "Txs", width: 80 },
+              { header: "vs prev.", width: 84, className: "hidden sm:table-cell" },
+              { header: "Callers", width: 80 },
+              { header: "Top methods", align: "left", className: "hidden md:table-cell" },
+              { header: "Deployed by", width: 132, align: "left", className: "hidden xl:table-cell" },
+            ]}
+          >
+            {rows.map((r) => {
+              const d = delta(r.txs, r.txsPrev);
+              return (
+                <ModuleTableRow
+                  key={r.address}
+                  cells={[
+                    <span key="c" className="mono block truncate" title={r.label || r.symbol ? `${r.label || r.symbol} ${r.address}` : r.address}>
                       <AddrLink address={r.address} className="text-text-primary">
                         {r.label || r.symbol || short(r.address)}
                       </AddrLink>
                       {(r.label || r.symbol) && <span className="text-text-tertiary hidden sm:inline"> {short(r.address)}</span>}
-                    </td>
-                    <td className="px-2 py-1.5 hidden sm:table-cell">
-                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${KIND_TONE[r.kind]}`}>{r.kind}</span>
-                    </td>
-                    <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(r.txs)}</td>
-                    <td className={`px-2 py-1.5 text-right hidden sm:table-cell ${d ? (d.up ? "text-success" : "text-danger") : "text-text-tertiary"}`}>{d?.text ?? EMPTY}</td>
-                    <td className="px-2 py-1.5 text-right text-text-secondary">{compactCount(r.callers)}</td>
-                    <td className="px-2 py-1.5 hidden md:table-cell max-w-[220px]">
-                      <div className="truncate text-text-secondary">
-                        {(r.topMethods ?? []).length === 0
-                          ? EMPTY
-                          : (r.topMethods ?? []).map((m, i) => (
-                              <span key={`${m.methodId}-${i}`} title={m.signature ?? m.methodId}>
-                                {i > 0 && <span className="text-text-tertiary">, </span>}
-                                <span className={m.name ? "" : "text-text-tertiary"}>{m.name ?? (m.methodId || "transfer")}</span>
-                              </span>
-                            ))}
-                      </div>
-                    </td>
-                    <td className="px-3.5 py-1.5 whitespace-nowrap hidden xl:table-cell">
+                    </span>,
+                    <span key="k" className={`mono text-[10px] font-semibold px-1.5 py-0.5 rounded ${KIND_TONE[r.kind]}`}>{r.kind}</span>,
+                    <span key="t" className="mono text-text-primary">{compactCount(r.txs)}</span>,
+                    <span key="d" className={`mono ${d ? (d.up ? "text-success" : "text-danger") : "text-text-tertiary"}`}>{d?.text ?? EMPTY}</span>,
+                    <span key="cl" className="mono text-text-secondary">{compactCount(r.callers)}</span>,
+                    <div
+                      key="m"
+                      className="mono truncate text-text-secondary"
+                      title={(r.topMethods ?? []).map((m) => m.name ?? (m.methodId || "transfer")).join(", ") || undefined}
+                    >
+                      {(r.topMethods ?? []).length === 0
+                        ? EMPTY
+                        : (r.topMethods ?? []).map((m, i) => (
+                            <span key={`${m.methodId}-${i}`} title={m.signature ?? m.methodId}>
+                              {i > 0 && <span className="text-text-tertiary">, </span>}
+                              <span className={m.name ? "" : "text-text-tertiary"}>{m.name ?? (m.methodId || "transfer")}</span>
+                            </span>
+                          ))}
+                    </div>,
+                    <span key="dep" className="mono whitespace-nowrap">
                       {r.deployer ? (
                         <AddrLink address={r.deployer} className="text-text-tertiary" />
                       ) : (
                         <span className="text-text-tertiary">{r.kind === "precompile" ? "system" : EMPTY}</span>
                       )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </span>,
+                  ]}
+                />
+              );
+            })}
+          </ModuleTable>
         )}
       </div>
     </Card>
@@ -121,33 +122,31 @@ const TopMethods = memo(function TopMethods() {
           <Empty>No contract call indexed yet.</Empty>
         ) : (
           <>
-            <table className="w-full mono text-[12px]">
-              <thead>
-                <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                  <th className="text-left font-semibold px-3.5 py-2">Method</th>
-                  <th className="text-right font-semibold px-2 py-2">Calls</th>
-                  <th className="text-right font-semibold px-2 py-2">Share</th>
-                  <th className="text-right font-semibold px-2 py-2 hidden sm:table-cell">Senders</th>
-                  <th className="text-right font-semibold px-3.5 py-2 hidden sm:table-cell">Contracts</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.rows.map((m) => (
-                  <tr key={m.methodId} className="border-t border-border-subtle">
-                    <td className="px-3.5 py-1.5 max-w-[320px]">
-                      <div className="truncate" title={m.signature ?? undefined}>
-                        {m.name ? <span className="text-text-primary">{m.name}</span> : <span className="text-text-tertiary">unknown</span>}
-                        <span className="text-text-tertiary hidden sm:inline"> {m.methodId}</span>
-                      </div>
-                    </td>
-                    <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(m.txs)}</td>
-                    <td className="px-2 py-1.5 text-right text-text-secondary">{pct(m.share, 1)}</td>
-                    <td className="px-2 py-1.5 text-right text-text-secondary hidden sm:table-cell">{compactCount(m.senders)}</td>
-                    <td className="px-3.5 py-1.5 text-right text-text-tertiary hidden sm:table-cell">{compactCount(m.contracts)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ModuleTable
+              columns={[
+                { header: "Method" },
+                { header: "Calls", width: 76 },
+                { header: "Share", width: 76 },
+                { header: "Senders", width: 78, className: "hidden sm:table-cell" },
+                { header: "Contracts", width: 92, className: "hidden sm:table-cell" },
+              ]}
+            >
+              {data.rows.map((m) => (
+                <ModuleTableRow
+                  key={m.methodId}
+                  cells={[
+                    <div key="m" className="mono truncate" title={m.signature ?? `${m.name ?? "unknown"} ${m.methodId}`}>
+                      {m.name ? <span className="text-text-primary">{m.name}</span> : <span className="text-text-tertiary">unknown</span>}
+                      <span className="text-text-tertiary hidden sm:inline"> {m.methodId}</span>
+                    </div>,
+                    <span key="c" className="mono text-text-primary">{compactCount(m.txs)}</span>,
+                    <span key="s" className="mono text-text-secondary">{pct(m.share, 1)}</span>,
+                    <span key="se" className="mono text-text-secondary">{compactCount(m.senders)}</span>,
+                    <span key="co" className="mono text-text-tertiary">{compactCount(m.contracts)}</span>,
+                  ]}
+                />
+              ))}
+            </ModuleTable>
             <div className="px-3.5 py-2 text-[11px] text-text-tertiary border-t border-border-subtle">
               Share of {compactCount(data.totals.calls)} contract calls. Not counted above: {compactCount(data.totals.plainTransfers)} plain HYPE
               transfers and {compactCount(data.totals.contractCreations)} contract creations.
@@ -202,48 +201,66 @@ export function ElysiumContracts() {
             title="New contracts gaining users"
             tag="deployed in the last 24h"
           />
-          <div className="px-3.5 py-1">
+          <div>
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : data.trending.length === 0 ? (
               <Empty>No new contract has callers yet.</Empty>
             ) : (
-              <table className="w-full mono text-[12px]">
-                <tbody>
-                  {data.trending.map((c) => (
-                    <tr key={c.address} className="border-t border-border-subtle first:border-t-0">
-                      <td className="py-1.5 pr-2 whitespace-nowrap">
+              <ModuleTable
+                density="compact"
+                columns={[
+                  // Counts up to "123.4K" / "12.35M"; Age stays under "24h" (deployed in the last 24h).
+                  { header: "Contract" },
+                  { header: "Callers", width: 72 },
+                  { header: "Txs", width: 72 },
+                  { header: "Age", width: 52 },
+                ]}
+              >
+                {data.trending.map((c) => (
+                  <ModuleTableRow
+                    key={c.address}
+                    cells={[
+                      <span key="c" className="mono block truncate" title={c.symbol ? `${c.symbol} ${c.address}` : c.address}>
                         <AddrLink address={c.address} className="text-text-primary">{c.symbol || short(c.address)}</AddrLink>
-                      </td>
-                      <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactCount(c.callers24h)} callers</td>
-                      <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap">{compactCount(c.txs24h)} tx</td>
-                      <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap">{ago(elysiumTimeMs(c.deployedAt), now)} old</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>,
+                      <span key="ca" className="mono whitespace-nowrap text-text-primary">{compactCount(c.callers24h)}</span>,
+                      <span key="tx" className="mono whitespace-nowrap text-text-tertiary">{compactCount(c.txs24h)}</span>,
+                      <span key="age" className="mono whitespace-nowrap text-text-tertiary">{ago(elysiumTimeMs(c.deployedAt), now)}</span>,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </div>
         </Card>
         <Card className="overflow-hidden flex flex-col">
           <CardHead title="Top deployers" tag="last 7 days" />
-          <div className="px-3.5 py-1">
+          <div>
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : (
-              <table className="w-full mono text-[12px]">
-                <tbody>
-                  {data.topDeployers.map((d) => (
-                    <tr key={d.address} className="border-t border-border-subtle first:border-t-0">
-                      <td className="py-1.5 pr-2 whitespace-nowrap">
+              <ModuleTable
+                density="compact"
+                columns={[
+                  { header: "Deployer" },
+                  { header: "Contracts", width: 89 },
+                  { header: "Last deploy", width: 103 },
+                ]}
+              >
+                {data.topDeployers.map((d) => (
+                  <ModuleTableRow
+                    key={d.address}
+                    cells={[
+                      <span key="a" className="mono whitespace-nowrap">
                         <AddrLink address={d.address} className="text-text-secondary" />
-                      </td>
-                      <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactCount(d.deployments)} contracts</td>
-                      <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap">last {ago(elysiumTimeMs(d.lastDeploy), now)} ago</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>,
+                      <span key="n" className="mono whitespace-nowrap text-text-primary">{compactCount(d.deployments)}</span>,
+                      <span key="l" className="mono whitespace-nowrap text-text-tertiary">{ago(elysiumTimeMs(d.lastDeploy), now)} ago</span>,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </div>
         </Card>

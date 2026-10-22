@@ -3,50 +3,56 @@
 import { memo } from "react";
 import { Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { CardHead, KpiRibbon, chartPalette, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleAsset, ModuleTable, ModuleTableRow, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { elysiumTimeMs, useElysiumTokenLaunches, type ElysiumTokenLaunch } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
 import { AddrLink, EMPTY, Empty, ago, completeDays, short, useNow } from "./shared";
 
-const TH = "text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold py-2";
-
 function TokenTable({ rows, now, empty }: { rows: ElysiumTokenLaunch[]; now: number; empty: string }) {
   if (rows.length === 0) return <Empty>{empty}</Empty>;
   return (
-    <table className="w-full mono text-[12px] table-fixed">
-      <thead>
-        <tr>
-          <th className={`${TH} text-left px-3.5`}>Token</th>
-          <th className={`${TH} text-right px-2 w-[72px]`}>Transfers</th>
-          <th className={`${TH} text-right px-2 w-[64px]`}>Holders</th>
-          <th className={`${TH} text-right px-3.5 w-[64px]`}>Age</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((t) => (
-          <tr key={t.address} className="border-t border-border-subtle">
-            <td className="px-3.5 py-1.5 min-w-0">
-              <div className="flex items-baseline gap-1.5 min-w-0" title={t.symbol}>
-                <AddrLink address={t.address} className="text-text-primary">{t.symbol}</AddrLink>
-                {t.origin === "canonical" && (
-                  <span className="text-[9px] font-semibold px-1 rounded bg-brand/10 text-brand shrink-0">bridged</span>
-                )}
-              </div>
-              {/* Many test tokens share a symbol: the short address tells the contracts apart, and every row keeps the same height. */}
-              <div className="text-[10px] text-text-tertiary truncate" title={t.name && t.name !== t.symbol ? `${t.name} · ${t.address}` : t.address}>
-                {short(t.address)}
-                {t.name && t.name !== t.symbol ? ` · ${t.name}` : ""}
-              </div>
-            </td>
-            <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(t.transfers)}</td>
-            <td className="px-2 py-1.5 text-right text-text-secondary">{t.holders == null ? EMPTY : compactCount(t.holders)}</td>
-            <td className="px-3.5 py-1.5 text-right text-text-tertiary whitespace-nowrap">{t.firstSeen ? ago(elysiumTimeMs(t.firstSeen), now) : EMPTY}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <ModuleTable
+      density="compact"
+      columns={[
+        // Holders needs room that phones and lg's half-width cards do not have.
+        { header: "Token" },
+        { header: "Transfers", width: 92 },
+        { header: "Holders", width: 80, className: "hidden sm:table-cell lg:hidden xl:table-cell" },
+        { header: "Age", width: 60 },
+      ]}
+    >
+      {rows.map((t) => (
+        <ModuleTableRow
+          key={t.address}
+          cells={[
+            <ModuleAsset
+              key="token"
+              logo={t.symbol.slice(0, 2)}
+              name={
+                <span className="flex items-baseline gap-1.5 min-w-0" title={t.symbol}>
+                  <AddrLink address={t.address} className="text-text-primary">{t.symbol}</AddrLink>
+                  {t.origin === "canonical" && (
+                    <span className="text-[9px] font-semibold px-1 rounded bg-brand/10 text-brand shrink-0">bridged</span>
+                  )}
+                </span>
+              }
+              // Many test tokens share a symbol: the short address tells the contracts apart, and every row keeps the same height.
+              sub={
+                <span title={t.name && t.name !== t.symbol ? `${t.name} · ${t.address}` : t.address}>
+                  {short(t.address)}
+                  {t.name && t.name !== t.symbol ? ` · ${t.name}` : ""}
+                </span>
+              }
+            />,
+            <span key="tr" className="mono text-text-primary">{compactCount(t.transfers)}</span>,
+            <span key="h" className="mono text-text-secondary">{t.holders == null ? EMPTY : compactCount(t.holders)}</span>,
+            <span key="age" className="mono text-text-tertiary whitespace-nowrap">{t.firstSeen ? ago(elysiumTimeMs(t.firstSeen), now) : EMPTY}</span>,
+          ]}
+        />
+      ))}
+    </ModuleTable>
   );
 }
 

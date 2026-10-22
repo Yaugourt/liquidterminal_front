@@ -1,7 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { CardHead, KpiRibbon, RowFillList, chartPalette, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, RowFillList, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumUsers } from "@/services/elysium";
@@ -10,9 +10,9 @@ import { AddrLink, EMPTY, Empty, completeDays, pct } from "./shared";
 
 /** Retention cell tinted by strength so the cohort table reads at a glance. */
 function RetentionCell({ v }: { v: number | null }) {
-  if (v == null) return <td className="px-2 py-1.5 text-right text-text-tertiary">{EMPTY}</td>;
+  if (v == null) return <span className="mono text-text-tertiary">{EMPTY}</span>;
   const tone = v >= 0.3 ? "text-success" : v >= 0.1 ? "text-text-primary" : "text-text-tertiary";
-  return <td className={`px-2 py-1.5 text-right ${tone}`}>{pct(v)}</td>;
+  return <span className={`mono ${tone}`}>{pct(v)}</span>;
 }
 
 /**
@@ -64,27 +64,28 @@ export function ElysiumUsers() {
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : (
-              <table className="w-full mono text-[12px]">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                    <th className="text-left font-semibold px-3.5 py-2">Cohort</th>
-                    <th className="text-right font-semibold px-2 py-2">New</th>
-                    <th className="text-right font-semibold px-2 py-2">D+1</th>
-                    <th className="text-right font-semibold px-3.5 py-2">D+7</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Newest cohorts first; empty cohorts (early days) carry no signal. */}
-                  {[...data.retention].filter((r) => r.size > 0).sort((a, b) => b.cohortDay.localeCompare(a.cohortDay)).map((r) => (
-                    <tr key={r.cohortDay} className="border-t border-border-subtle">
-                      <td className="px-3.5 py-1.5 text-text-secondary">{r.cohortDay}</td>
-                      <td className="px-2 py-1.5 text-right text-text-primary">{compactCount(r.size)}</td>
-                      <RetentionCell v={r.d1} />
-                      <RetentionCell v={r.d7} />
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <ModuleTable
+                density="compact"
+                columns={[
+                  { header: "Cohort", width: 108 },
+                  { header: "New", width: 76 },
+                  { header: "D+1", width: 60 },
+                  { header: "D+7", width: 60 },
+                ]}
+              >
+                {/* Newest cohorts first; empty cohorts (early days) carry no signal. */}
+                {[...data.retention].filter((r) => r.size > 0).sort((a, b) => b.cohortDay.localeCompare(a.cohortDay)).map((r) => (
+                  <ModuleTableRow
+                    key={r.cohortDay}
+                    cells={[
+                      <span key="c" className="mono text-text-secondary">{r.cohortDay}</span>,
+                      <span key="n" className="mono text-text-primary">{compactCount(r.size)}</span>,
+                      <RetentionCell key="d1" v={r.d1} />,
+                      <RetentionCell key="d7" v={r.d7} />,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </div>
         </Card>
@@ -93,26 +94,36 @@ export function ElysiumUsers() {
             title="Busiest senders"
             tag="last 24h, likely bots on top"
           />
-          <RowFillList className="px-3.5 py-1" mobileHeight="h-[360px]">
+          <RowFillList mobileHeight="h-[360px]">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
             ) : (
-              <table className="w-full mono text-[12px]">
-                <tbody>
-                  {data.topSenders24h.map((s) => (
-                    <tr key={s.address} className="border-t border-border-subtle first:border-t-0">
-                      <td className="py-1.5 pr-2 whitespace-nowrap">
+              <ModuleTable
+                density="compact"
+                columns={[
+                  // Targets needs room that phones and lg's half-width cards do not have.
+                  { header: "Address", width: 130 },
+                  { header: "Txs", width: 76 },
+                  { header: "Share", width: 76 },
+                  { header: "Targets", width: 80, className: "hidden sm:table-cell lg:hidden xl:table-cell" },
+                ]}
+              >
+                {data.topSenders24h.map((s) => (
+                  <ModuleTableRow
+                    key={s.address}
+                    cells={[
+                      <span key="a" className="mono whitespace-nowrap">
                         <AddrLink address={s.address} className="text-text-secondary" />
-                      </td>
-                      <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap">{compactCount(s.txs)} tx</td>
-                      <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap">{pct(s.share, 1)}</td>
-                      <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap" title="Distinct contracts or addresses it sent to">
-                        {compactCount(s.distinctTargets)} target{s.distinctTargets === 1 ? "" : "s"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>,
+                      <span key="tx" className="mono whitespace-nowrap text-text-primary">{compactCount(s.txs)}</span>,
+                      <span key="sh" className="mono whitespace-nowrap text-text-tertiary">{pct(s.share, 1)}</span>,
+                      <span key="tg" className="mono whitespace-nowrap text-text-tertiary" title="Distinct contracts or addresses it sent to">
+                        {compactCount(s.distinctTargets)}
+                      </span>,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </RowFillList>
         </Card>
