@@ -4,7 +4,7 @@ import Link from "next/link";
 import { memo } from "react";
 import { ArrowDownLeft, ArrowUpRight, Code2, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { AddressIdenticon, CardHead, KpiRibbon, ShareTile, type KpiCell } from "@/components/common";
+import { AddressIdenticon, CardHead, KpiRibbon, ModuleTable, ModuleTableRow, ShareTile, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import {
@@ -26,8 +26,6 @@ const TAG_TONE: Record<ElysiumAddressTag["id"], string> = {
   "bot-like": "bg-warning/10 text-warning",
 };
 
-const TH = "text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold py-2";
-
 /** Token amounts: compact above 1M, up to 4 decimals below. */
 function amount(v: number): string {
   if (!Number.isFinite(v)) return EMPTY;
@@ -41,26 +39,35 @@ const Balances = memo(function Balances({ address }: { address: string }) {
   return (
     <Card className="overflow-hidden flex flex-col">
       <CardHead title="Balances" tag={data ? `${data.tokens.length} tokens` : undefined} />
-      <div className="px-3.5 py-1 max-h-[320px] overflow-y-auto scrollbar-brand">
+      <div className="max-h-[320px] overflow-y-auto scrollbar-brand">
         {!data ? (
           <Empty>{error ? "Balances are unavailable right now." : "Loading balances…"}</Empty>
         ) : (
-          <table className="w-full mono text-[12px] table-fixed">
-            <tbody>
-              <tr className="border-b border-border-subtle">
-                <td className="py-1.5 pr-2 text-text-primary">HYPE <span className="text-text-tertiary text-[10px]">native gas</span></td>
-                <td className="py-1.5 text-right text-text-primary">{amount(data.native_balance)}</td>
-              </tr>
-              {tokens.map((t) => (
-                <tr key={t.token} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 min-w-0">
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Token" },
+              { header: "Balance", width: 130 },
+            ]}
+          >
+            <ModuleTableRow
+              cells={[
+                <span key="t" className="mono text-text-primary">HYPE <span className="text-text-tertiary text-[10px]">native gas</span></span>,
+                <span key="b" className="mono text-text-primary">{amount(data.native_balance)}</span>,
+              ]}
+            />
+            {tokens.map((t) => (
+              <ModuleTableRow
+                key={t.token}
+                cells={[
+                  <span key="t" className="mono" title={t.symbol || t.token}>
                     <AddrLink address={t.token} className="text-text-secondary">{t.symbol || short(t.token)}</AddrLink>
-                  </td>
-                  <td className="py-1.5 text-right text-text-secondary">{amount(t.balance)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>,
+                  <span key="b" className="mono text-text-secondary">{amount(t.balance)}</span>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
     </Card>
@@ -112,18 +119,25 @@ const Profile = memo(function Profile({ address }: { address: string }) {
             {data.topMethods.length === 0 ? (
               <div className="text-text-tertiary">No user transaction indexed.</div>
             ) : (
-              <table className="w-full mono text-[12px] table-fixed">
-                <tbody>
-                  {data.topMethods.map((m, i) => (
-                    <tr key={`${m.methodId}-${i}`} className="border-t border-border-subtle first:border-t-0">
-                      <td className="py-1 pr-2 truncate" title={m.signature ?? m.methodId}>
+              <ModuleTable
+                density="compact"
+                columns={[
+                  { header: "Method" },
+                  { header: "Txs", width: 84 },
+                ]}
+              >
+                {data.topMethods.map((m, i) => (
+                  <ModuleTableRow
+                    key={`${m.methodId}-${i}`}
+                    cells={[
+                      <span key="m" className="mono block truncate" title={m.signature ?? m.methodId}>
                         <span className={m.name ? "text-text-primary" : "text-text-tertiary"}>{m.name ?? (m.methodId || "transfer")}</span>
-                      </td>
-                      <td className="py-1 text-right text-text-secondary w-[80px]">{compactCount(m.txs)} txs</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>,
+                      <span key="n" className="mono text-text-secondary">{compactCount(m.txs)}</span>,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </div>
           <p className="text-[11px] text-text-tertiary">
@@ -149,34 +163,33 @@ const Activity = memo(function Activity({ address }: { address: string }) {
         ) : data.length === 0 ? (
           <Empty>No activity on Elysium.</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <thead>
-              <tr>
-                <th className={`${TH} text-left px-3.5`}>Age</th>
-                <th className={`${TH} text-left px-2`}>Kind</th>
-                <th className={`${TH} text-left px-2`}>Counterparty</th>
-                <th className={`${TH} text-right px-2`}>Amount</th>
-                <th className={`${TH} text-left px-3.5 hidden md:table-cell`}>Detail</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((a, i) => {
-                const inbound = a.direction === "in";
-                return (
-                  <tr key={`${a.tx_hash}-${a.kind}-${i}`} className="border-t border-border-subtle">
-                    <td className="px-3.5 py-1.5 whitespace-nowrap">
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Age", width: 60 },
+              { header: "Kind", width: 176, align: "left", className: "hidden sm:table-cell" },
+              { header: "Counterparty", width: 116, align: "left" },
+              { header: "Amount", width: 136 },
+              { header: "Detail", width: 190, align: "left", className: "hidden md:table-cell" },
+            ]}
+          >
+            {data.map((a, i) => {
+              const inbound = a.direction === "in";
+              return (
+                <ModuleTableRow
+                  key={`${a.tx_hash}-${a.kind}-${i}`}
+                  cells={[
+                    <span key="age" className="mono whitespace-nowrap">
                       <Link href={`/elysium/tx/${a.tx_hash}`} className="text-text-tertiary hover:text-brand">{ago(elysiumTimeMs(a.time), now)}</Link>
-                    </td>
-                    <td className="px-2 py-1.5 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-0.5 ${inbound ? "text-success" : "text-text-secondary"}`} title={a.kind.replace(/_/g, " ")}>
-                        {inbound ? <ArrowDownLeft size={11} /> : <ArrowUpRight size={11} />}
-                        <span className="hidden sm:inline">{a.kind.replace(/_/g, " ")}</span>
-                      </span>
-                    </td>
-                    <td className="px-2 py-1.5 whitespace-nowrap">
+                    </span>,
+                    <span key="kind" className={`mono inline-flex items-center gap-0.5 whitespace-nowrap ${inbound ? "text-success" : "text-text-secondary"}`} title={a.kind.replace(/_/g, " ")}>
+                      {inbound ? <ArrowDownLeft size={11} /> : <ArrowUpRight size={11} />}
+                      <span className="hidden sm:inline">{a.kind.replace(/_/g, " ")}</span>
+                    </span>,
+                    <span key="cp" className="mono whitespace-nowrap">
                       {a.counterparty ? <AddrLink address={a.counterparty} className="text-text-secondary" explorer={false} /> : EMPTY}
-                    </td>
-                    <td className="px-2 py-1.5 text-right whitespace-nowrap text-text-primary">
+                    </span>,
+                    <span key="amt" className="mono text-text-primary">
                       {a.kind === "token_transfer" && !a.symbol ? (
                         <span className="text-text-tertiary">raw {compactCount(Number(a.amount_raw))}</span>
                       ) : (
@@ -184,13 +197,13 @@ const Activity = memo(function Activity({ address }: { address: string }) {
                           {amount(a.amount)} <span className="text-text-tertiary">{a.symbol || (a.token ? short(a.token) : "")}</span>
                         </>
                       )}
-                    </td>
-                    <td className="px-3.5 py-1.5 text-text-tertiary whitespace-nowrap hidden md:table-cell">{a.detail ? detail(a.detail) : EMPTY}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </span>,
+                    <span key="detail" className="mono block truncate text-text-tertiary" title={a.detail ? detail(a.detail) : undefined}>{a.detail ? detail(a.detail) : EMPTY}</span>,
+                  ]}
+                />
+              );
+            })}
+          </ModuleTable>
         )}
       </div>
     </Card>
@@ -208,28 +221,31 @@ const Bridge = memo(function Bridge({ address }: { address: string }) {
         ) : data.length === 0 ? (
           <Empty>No bridge transfer for this address.</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <thead>
-              <tr>
-                <th className={`${TH} text-left px-3.5`}>Initiated</th>
-                <th className={`${TH} text-left px-2`}>Direction</th>
-                <th className={`${TH} text-right px-2`}>Amount</th>
-                <th className={`${TH} text-left px-3.5`}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((b) => (
-                <tr key={b.transfer_id} className="border-t border-border-subtle">
-                  <td className="px-3.5 py-1.5 whitespace-nowrap text-text-tertiary">{b.initiated_time ? `${elysiumTimeLabel(b.initiated_time)} UTC` : EMPTY}</td>
-                  <td className={`px-2 py-1.5 whitespace-nowrap ${b.direction === "deposit" ? "text-success" : "text-text-secondary"}`}>{b.direction}</td>
-                  <td className="px-2 py-1.5 text-right whitespace-nowrap text-text-primary">
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Initiated (UTC)", width: 130 },
+              { header: "Direction", width: 106, align: "left", className: "hidden sm:table-cell" },
+              // No width: Amount takes the room left; a long symbol wraps under the figure.
+              { header: "Amount" },
+              { header: "Status", width: 136, align: "left", className: "hidden sm:table-cell" },
+            ]}
+          >
+            {data.map((b) => (
+              <ModuleTableRow
+                key={b.transfer_id}
+                cells={[
+                  // The column header says "Initiated (UTC)": the cells skip the suffix.
+                  <span key="t" className="mono whitespace-nowrap text-text-tertiary">{b.initiated_time ? elysiumTimeLabel(b.initiated_time) : EMPTY}</span>,
+                  <span key="d" className={`mono whitespace-nowrap ${b.direction === "deposit" ? "text-success" : "text-text-secondary"}`}>{b.direction}</span>,
+                  <span key="a" className="mono text-text-primary">
                     {amount(b.amount)} <span className="text-text-tertiary">{b.symbol}</span>
-                  </td>
-                  <td className="px-3.5 py-1.5 whitespace-nowrap text-text-secondary">{b.status.replace(/_/g, " ")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>,
+                  <span key="s" className="mono whitespace-nowrap text-text-secondary">{b.status.replace(/_/g, " ")}</span>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
     </Card>
@@ -280,7 +296,7 @@ export function ElysiumAddress({ address }: { address: string }) {
       <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-4" />
       <ElysiumContractDecoder address={address} hideWhenEoa />
       {/* Profile on the left; balances and bridge history stack on the right, so neither side leaves a hole. */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
         <Profile address={address} />
         <div className="space-y-4 min-w-0">
           <Balances address={address} />
