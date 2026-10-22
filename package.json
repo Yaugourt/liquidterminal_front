@@ -2,6 +2,9 @@
   "name": "liquidterminal_front",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "sideEffects": [
     "*.css"
   ],
@@ -40,7 +43,7 @@
     "@usdh-kit/widget": "0.1.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "axios": "^1.17.0",
+    "axios": "^1.20.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -48,7 +51,7 @@
     "framer-motion": "^12.12.1",
     "lightweight-charts": "^5.0.8",
     "lucide-react": "^0.554.0",
-    "next": "^16.2.12",
+    "next": "16.3.8",
     "next-themes": "^0.4.6",
     "papaparse": "^5.5.3",
     "react": "^19.2.0",
@@ -62,13 +65,13 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "16.2.9",
+    "@next/bundle-analyzer": "16.3.8",
     "@types/node": "^24.12.2",
     "@types/papaparse": "^5.5.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
-    "eslint-config-next": "16.2.9",
+    "eslint-config-next": "16.3.8",
     "postcss": "^8",
     "tailwindcss": "^3.4.18",
     "typescript": "^5"
@@ -85,7 +88,8 @@
       "workerd"
     ],
     "overrides": {
-      "shell-quote": "^1.8.4",
+      "shell-quote": "^1.11.0",
+      "follow-redirects": "^1.16.1",
       "socket.io-parser": "^4.2.6",
       "defu": "^6.1.5",
       "js-cookie": "^3.0.8",

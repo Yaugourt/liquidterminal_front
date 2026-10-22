@@ -34,18 +34,19 @@ export const useTokenCandles = ({
   refreshInterval = 0
 }: UseTokenCandlesParams) => {
 
-  // Calculate dynamic start time if not provided (default to ~1000 candles back or appropriate history)
-  const calculatedStartTime = useMemo(() => {
-    if (startTime) return startTime;
+  // One window per mount and per interval, start and end from the same "now".
+  // The end used to be fixed at mount only, so switching interval on a tab
+  // left open paired a fresh start with an old end: an inverted window (an
+  // empty chart, and a 400 from the backend's candle route, which checks it).
+  const { calculatedStartTime, fixedEndTime } = useMemo(() => {
     const now = Date.now();
+    const end = endTime || now;
+    if (startTime) return { calculatedStartTime: startTime, fixedEndTime: end };
     const intervalMs = getIntervalInMs(interval);
     // Load 1000 candles by default for good history. Not before 1970: 1,000
     // months is, and HL answers a negative startTime with a 422.
-    return Math.max(0, now - (1000 * intervalMs));
-  }, [startTime, interval]);
-
-  // Set endTime only once using useMemo or update when it changes effectively
-  const fixedEndTime = useMemo(() => endTime || Date.now(), [endTime]);
+    return { calculatedStartTime: Math.max(0, now - (1000 * intervalMs)), fixedEndTime: end };
+  }, [startTime, endTime, interval]);
 
   const {
     data,

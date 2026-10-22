@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import Image from "next/image";
 import { Globe, MessageCircle, Send } from "lucide-react";
 import { Project } from "@/services/ecosystem/project/types";
+import { safeHref } from "@/lib/safeUrl";
 
 const XIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
@@ -23,11 +24,14 @@ interface ProjectDetailHeaderProps {
 export function ProjectDetailHeader({ project, updatedAt, badge, metaSuffix }: ProjectDetailHeaderProps) {
   const [imageError, setImageError] = useState(false);
 
+  // Stored links come from moderators and CSV imports: safeHref drops any
+  // scheme other than http(s)/mailto (javascript:, data:…).
   const socialLinks = [
-    { url: project.twitter, IconComponent: XIcon, label: "X / Twitter" },
-    { url: project.discord, IconComponent: MessageCircle, label: "Discord" },
-    { url: project.telegram, IconComponent: Send, label: "Telegram" },
+    { url: safeHref(project.twitter), IconComponent: XIcon, label: "X / Twitter" },
+    { url: safeHref(project.discord), IconComponent: MessageCircle, label: "Discord" },
+    { url: safeHref(project.telegram), IconComponent: Send, label: "Telegram" },
   ].filter((link) => link.url);
+  const websiteHref = safeHref(project.website);
 
   const updatedLabel =
     updatedAt != null
@@ -92,9 +96,9 @@ export function ProjectDetailHeader({ project, updatedAt, badge, metaSuffix }: P
             <link.IconComponent />
           </a>
         ))}
-        {project.website && (
+        {websiteHref && (
           <a
-            href={project.website}
+            href={websiteHref}
             target="_blank"
             rel="noopener noreferrer"
             className="h-8 gap-1.5 text-xs font-semibold inline-flex items-center px-3 rounded-md bg-brand text-brand-text-on hover:bg-brand/90 transition-colors"
