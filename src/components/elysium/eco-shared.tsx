@@ -5,8 +5,6 @@ import { Info } from "lucide-react";
 import type { EcoProjectStatus } from "@/services/elysium";
 import { EMPTY } from "./shared";
 
-export const TH = "text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold py-2 whitespace-nowrap";
-
 /** Project logos ship in /public; `unoptimized` keeps the small files as they are. */
 export function EcoLogo({ src, label, size = 22 }: { src: string | null; label: string; size?: number }) {
   if (!src) {

@@ -4,11 +4,11 @@ import { memo, useMemo, useState } from "react";
 import { ArrowDown, ArrowUpRight, BadgeCheck, Boxes } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CardHead, KpiRibbon, SearchBar, Sparkline, TimeframeTabs, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, Sparkline, TimeframeTabs, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useElysiumProjects, type EcoProject } from "@/services/elysium";
 import { EMPTY, Empty } from "./shared";
-import { EcoLogo, EcoSource, StatusTag, TH, signedPct } from "./eco-shared";
+import { EcoLogo, EcoSource, StatusTag, signedPct } from "./eco-shared";
 
 type Window = "24h" | "7d";
 type ValueKey = "users24h" | "wallets7d" | "txs7d" | "volume7d" | "launches7d" | "txsAll" | "walletsAll";
@@ -19,30 +19,37 @@ interface MetricCol {
   label: string;
   hint: string;
   money?: boolean;
+  /** Column width: the header or the longest figure, whichever is wider, plus the cell padding. */
+  width: number;
+  /** Secondary figures only show once the card has room for every column. */
+  className?: string;
 }
+
+const FROM_1440 = "hidden min-[1440px]:table-cell";
+const FROM_XL = "hidden xl:table-cell";
 
 /** Active users = distinct wallets that sent a non-spam tx to one of the project's known contracts. */
 const COLUMNS: Record<string, MetricCol[]> = {
   All: [
-    { key: "users24h", label: "Users 24h", hint: "Active users over the last 24 hours" },
-    { key: "chg24h", label: "Δ 24h", hint: "Change against the 24 hours before" },
-    { key: "wallets7d", label: "Users 7d", hint: "Active users over the last 7 days" },
-    { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before" },
-    { key: "txs7d", label: "Txs 7d", hint: "Transactions sent to the project's contracts over 7 days" },
-    { key: "txsAll", label: "Txs total", hint: "Transactions sent to the project's contracts since its first one" },
+    { key: "users24h", label: "Users 24h", hint: "Active users over the last 24 hours", width: 91, className: FROM_1440 },
+    { key: "chg24h", label: "Δ 24h", hint: "Change against the 24 hours before", width: 80, className: FROM_1440 },
+    { key: "wallets7d", label: "Users 7d", hint: "Active users over the last 7 days", width: 84 },
+    { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before", width: 80 },
+    { key: "txs7d", label: "Txs 7d", hint: "Transactions sent to the project's contracts over 7 days", width: 72 },
+    { key: "txsAll", label: "Txs total", hint: "Transactions sent to the project's contracts since its first one", width: 91, className: FROM_XL },
   ],
   Games: [
-    { key: "wallets7d", label: "Wallets 7d", hint: "Wallets that sent a transaction to the game's contracts over 7 days (a game that relays plays shows fewer wallets than players)" },
-    { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before" },
-    { key: "txs7d", label: "Txs 7d", hint: "Transactions sent to the game's contracts over 7 days" },
-    { key: "walletsAll", label: "Wallets total", hint: "Wallets that ever sent a transaction to the game's contracts" },
-    { key: "txsAll", label: "Txs total", hint: "Transactions sent to the game's contracts since its first one" },
+    { key: "wallets7d", label: "Wallets 7d", hint: "Wallets that sent a transaction to the game's contracts over 7 days (a game that relays plays shows fewer wallets than players)", width: 98 },
+    { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before", width: 80 },
+    { key: "txs7d", label: "Txs 7d", hint: "Transactions sent to the game's contracts over 7 days", width: 72 },
+    { key: "walletsAll", label: "Wallets total", hint: "Wallets that ever sent a transaction to the game's contracts", width: 119, className: FROM_1440 },
+    { key: "txsAll", label: "Txs total", hint: "Transactions sent to the game's contracts since its first one", width: 91, className: FROM_XL },
   ],
   Launchpad: [
-    { key: "volume7d", label: "Volume 7d", hint: "Traded volume over 7 days", money: true },
-    { key: "launches7d", label: "Launches 7d", hint: "Tokens launched over 7 days" },
-    { key: "wallets7d", label: "Users 7d", hint: "Active users over the last 7 days" },
-    { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before" },
+    { key: "volume7d", label: "Volume 7d", hint: "Traded volume over 7 days", money: true, width: 91 },
+    { key: "launches7d", label: "Launches 7d", hint: "Tokens launched over 7 days", width: 105, className: FROM_1440 },
+    { key: "wallets7d", label: "Users 7d", hint: "Active users over the last 7 days", width: 84 },
+    { key: "chg7d", label: "Δ 7d", hint: "Change against the 7 days before", width: 80 },
   ],
 };
 
@@ -282,84 +289,89 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
           ) : rows.length === 0 ? (
             <Empty>No project matches.</Empty>
           ) : (
-            <table className="w-full text-[12px] min-w-[920px]">
-              <thead>
-                <tr>
-                  <th className={`${TH} text-left px-3.5`}>Project</th>
-                  <th className={`${TH} text-left px-2`}>Category</th>
-                  <th className={`${TH} text-left px-2`}>Status</th>
-                  {cols.map((c) => (
-                    <th key={c.key} className={`${TH} text-right px-2`} title={c.hint} aria-sort={sortKey === c.key ? "descending" : undefined}>
+            // Wide table: every column has a px width, so it scrolls sideways inside ModuleTable's wrapper.
+            // Project's name and tagline truncate; the row's title carries them.
+            <ModuleTable
+              columns={[
+                { header: "Project", width: 206, align: "left" },
+                { header: "Category", width: 140, align: "left" },
+                { header: "Status", width: 120, align: "left" },
+                ...cols.map((c) => ({
+                  header: (
+                    <span className="whitespace-nowrap" title={c.hint}>
                       <button
                         type="button"
                         onClick={() => setSort(sortKey === c.key ? null : c.key)}
-                        className={`focus-ring inline-flex items-center gap-0.5 uppercase ${sortKey === c.key ? "text-text-primary" : "hover:text-text-secondary"}`}
+                        className={`focus-ring relative inline-flex items-center uppercase ${sortKey === c.key ? "text-text-primary" : "hover:text-text-secondary"}`}
                       >
                         {c.label}
-                        {sortKey === c.key && <ArrowDown size={10} />}
+                        {/* Sits in the cell's left padding, so a sorted header needs no extra width. */}
+                        {sortKey === c.key && <ArrowDown size={10} className="absolute -left-3 top-1/2 -translate-y-1/2" />}
                       </button>
-                    </th>
-                  ))}
-                  <th className={`${TH} text-right px-2`} title="Active users per day over the last 14 days">Users 14d</th>
-                  <th className={`${TH} text-right px-3.5`}>Links</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((p) => (
-                  <tr key={p.slug} className="border-t border-border-subtle align-middle">
-                    <td className="px-3.5 py-2">
-                      <div className="flex items-center gap-2.5 min-w-0" title={p.description || undefined}>
-                        <EcoLogo src={p.logo} label={p.name} />
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="text-text-primary font-medium truncate">{p.name}</span>
-                            {p.verifiedContracts != null && p.verifiedContracts > 0 && <VerifiedTag p={p} />}
-                          </div>
-                          <div className="text-[10px] text-text-tertiary truncate max-w-[260px]">
-                            {[p.tagline, since(p)].filter(Boolean).join(" · ")}
-                          </div>
+                    </span>
+                  ),
+                  width: c.width,
+                  className: c.className,
+                  ariaSort: sortKey === c.key ? ("descending" as const) : undefined,
+                })),
+                { header: <span className="whitespace-nowrap" title="Active users per day over the last 14 days">Users 14d</span>, width: 91 },
+                { header: "Links", width: 96 },
+              ]}
+            >
+              {rows.map((p) => {
+                const sub = [p.tagline, since(p)].filter(Boolean).join(" · ");
+                return (
+                <ModuleTableRow
+                  key={p.slug}
+                  cells={[
+                    <div key="project" className="flex items-center gap-2.5 min-w-0" title={p.description || [p.name, sub].filter(Boolean).join(" · ") || undefined}>
+                      <EcoLogo src={p.logo} label={p.name} />
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="text-text-primary font-medium truncate">{p.name}</span>
+                          {p.verifiedContracts != null && p.verifiedContracts > 0 && <VerifiedTag p={p} />}
+                        </div>
+                        <div className="text-[10px] text-text-tertiary truncate max-w-[260px]">
+                          {sub}
                         </div>
                       </div>
-                    </td>
-                    <td className="px-2 py-2 text-text-secondary whitespace-nowrap">{p.category}</td>
-                    <td className="px-2 py-2"><StatusTag status={p.status} label={p.statusLabel} /></td>
-                    {cols.map((c) =>
+                    </div>,
+                    <span key="category" className="block truncate text-text-secondary whitespace-nowrap" title={p.category}>{p.category}</span>,
+                    <StatusTag key="status" status={p.status} label={p.statusLabel} />,
+                    ...cols.map((c) =>
                       c.key === "chg24h" || c.key === "chg7d" ? (
-                        <td key={c.key} className="px-2 py-2 text-right mono whitespace-nowrap">
+                        <span key={c.key} className="mono whitespace-nowrap">
                           <ChangeCell p={p} w={c.key === "chg24h" ? "24h" : "7d"} />
-                        </td>
+                        </span>
                       ) : (
-                        <td key={c.key} className={`px-2 py-2 text-right mono ${p[c.key] == null ? "text-text-tertiary" : "text-text-primary"}`}>
+                        <span key={c.key} className={`mono ${p[c.key] == null ? "text-text-tertiary" : "text-text-primary"}`}>
                           {fmt(p[c.key as ValueKey], c.money)}
-                        </td>
+                        </span>
                       ),
-                    )}
-                    <td className="px-2 py-2 w-[96px]">
-                      {p.usersDaily?.some((n) => n > 0) ? (
-                        <Sparkline data={p.usersDaily} height={22} />
-                      ) : (
-                        <div className="text-right text-text-tertiary mono">{EMPTY}</div>
+                    ),
+                    p.usersDaily?.some((n) => n > 0) ? (
+                      <Sparkline key="users14" data={p.usersDaily} height={22} />
+                    ) : (
+                      <div key="users14" className="text-right text-text-tertiary mono">{EMPTY}</div>
+                    ),
+                    <div key="links" className="flex items-center justify-end gap-2.5 whitespace-nowrap">
+                      {p.x && (
+                        <a href={p.x} target="_blank" rel="noopener" className="text-text-tertiary hover:text-brand text-[11px]">
+                          X
+                        </a>
                       )}
-                    </td>
-                    <td className="px-3.5 py-2">
-                      <div className="flex items-center justify-end gap-2.5 whitespace-nowrap">
-                        {p.x && (
-                          <a href={p.x} target="_blank" rel="noopener" className="text-text-tertiary hover:text-brand text-[11px]">
-                            X
-                          </a>
-                        )}
-                        {p.url && (
-                          <a href={p.url} target="_blank" rel="noopener" className="inline-flex items-center gap-0.5 text-brand hover:underline text-[11px]">
-                            {p.urlLabel ?? "Open"}
-                            <ArrowUpRight size={11} />
-                          </a>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      {p.url && (
+                        <a href={p.url} target="_blank" rel="noopener" className="inline-flex items-center gap-0.5 text-brand hover:underline text-[11px]">
+                          {p.urlLabel ?? "Open"}
+                          <ArrowUpRight size={11} />
+                        </a>
+                      )}
+                    </div>,
+                  ]}
+                />
+                );
+              })}
+            </ModuleTable>
           )}
         </div>
       </Card>

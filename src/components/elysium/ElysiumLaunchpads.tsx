@@ -3,11 +3,11 @@
 import { memo, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CardHead, KpiRibbon, SearchBar, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useElysiumLaunchpads, type EcoToken } from "@/services/elysium";
 import { AddrLink, EMPTY, Empty, ago, useNow } from "./shared";
-import { EcoLogo, EcoSource, TH, signedPct, tinyUsd } from "./eco-shared";
+import { EcoLogo, EcoSource, signedPct, tinyUsd } from "./eco-shared";
 
 type Sort = "hot" | "new" | "gainers" | "mcap";
 const SORTS: { value: Sort; label: string }[] = [
@@ -38,7 +38,8 @@ function TokenCell({ t }: { t: EcoToken }) {
     <div className="flex items-center gap-2.5 min-w-0">
       <EcoLogo src={null} label={t.symbol} />
       <div className="min-w-0">
-        <div className="flex items-baseline gap-1.5 min-w-0">
+        {/* Symbol and name can truncate: the title carries both. */}
+        <div className="flex items-baseline gap-1.5 min-w-0" title={`${t.symbol} ${t.name}`}>
           <AddrLink address={t.address} explorer={false} className="text-text-primary font-medium">{t.symbol}</AddrLink>
           <span className="text-[10px] text-text-tertiary truncate max-w-[140px]">{t.name}</span>
         </div>
@@ -55,7 +56,7 @@ function Curve({ t }: { t: EcoToken }) {
   const pct = Math.max(0, Math.min(100, t.curvePct));
   return (
     <div className="flex items-center justify-end gap-1.5">
-      <div className="h-1 w-12 rounded-full bg-surface-2 overflow-hidden" aria-hidden>
+      <div className="h-1 w-8 rounded-full bg-surface-2 overflow-hidden" aria-hidden>
         <div className="h-full bg-brand" style={{ width: `${pct}%` }} />
       </div>
       <span className="mono text-text-secondary w-9 text-right">{pct.toFixed(pct < 10 ? 1 : 0)}%</span>
@@ -158,7 +159,9 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
           actions={<SearchBar onSearch={(q) => { setQuery(q); setShown(PAGE); }} placeholder="Symbol, name or address" className="w-full sm:w-56" debounceMs={150} />}
         />
         <div className="px-3.5 pt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <PillTabs tabs={padTabs} activeTab={pad} onTabChange={(p) => { setPad(p); setShown(PAGE); }} variant="text" />
+          <div className="min-w-0 max-w-full overflow-x-auto">
+            <PillTabs tabs={padTabs} activeTab={pad} onTabChange={(p) => { setPad(p); setShown(PAGE); }} variant="text" />
+          </div>
           <div className="sm:ml-auto">
             <PillTabs tabs={SORTS} activeTab={sort} onTabChange={(s) => setSort(s as Sort)} />
           </div>
@@ -169,41 +172,43 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
           ) : rows.length === 0 ? (
             <Empty>No token matches.</Empty>
           ) : (
-            <table className="w-full text-[12px] min-w-[900px]">
-              <thead>
-                <tr>
-                  <th className={`${TH} text-left px-3.5`}>Token</th>
-                  <th className={`${TH} text-right px-2`}>Price</th>
-                  <th className={`${TH} text-right px-2`}>24h</th>
-                  <th className={`${TH} text-right px-2`}>Vol 24h</th>
-                  <th className={`${TH} text-right px-2`} title="Price x 1B tokens (every launch mints 1B)">MCap</th>
-                  <th className={`${TH} text-right px-2`}>Holders</th>
-                  <th className={`${TH} text-right px-2`} title="Share of supply held by the 10 largest wallets, the token's own pool or curve left out">Top 10</th>
-                  <th className={`${TH} text-right px-2`} title="Share of supply held by the creator wallet">Dev</th>
-                  <th className={`${TH} text-right px-2`}>Bonding</th>
-                  <th className={`${TH} text-right px-3.5`}>Age</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.slice(0, shown).map((t) => {
-                  const ch = signedPct(t.change24h);
-                  return (
-                    <tr key={t.address} className="border-t border-border-subtle">
-                      <td className="px-3.5 py-2"><TokenCell t={t} /></td>
-                      <td className="px-2 py-2 text-right mono text-text-primary whitespace-nowrap">{tinyUsd(t.priceUsd)}</td>
-                      <td className={`px-2 py-2 text-right mono ${ch.tone}`}>{ch.text}</td>
-                      <td className="px-2 py-2 text-right mono text-text-primary">{t.volume24h == null ? EMPTY : compactUsd(t.volume24h)}</td>
-                      <td className="px-2 py-2 text-right mono text-text-secondary">{t.marketCap == null ? EMPTY : compactUsd(t.marketCap)}</td>
-                      <td className="px-2 py-2 text-right mono text-text-secondary">{t.holders == null ? EMPTY : compactCount(t.holders)}</td>
-                      <td className="px-2 py-2 text-right mono text-text-secondary">{t.top10Pct == null ? EMPTY : `${t.top10Pct.toFixed(1)}%`}</td>
-                      <td className="px-2 py-2 text-right mono text-text-secondary">{t.devPct == null ? EMPTY : `${t.devPct.toFixed(1)}%`}</td>
-                      <td className="px-2 py-2 text-right"><Curve t={t} /></td>
-                      <td className="px-3.5 py-2 text-right mono text-text-tertiary whitespace-nowrap">{ago(t.bornAt * 1000, now)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            // Wide table: every column has a px width, so it scrolls sideways inside ModuleTable's wrapper.
+            // Holders shows from xl, where the whole table fits the card.
+            <ModuleTable
+              columns={[
+                { header: "Token", width: 200, align: "left" },
+                { header: "Price", width: 142 },
+                { header: "24h", width: 75 },
+                { header: "Vol 24h", width: 83 },
+                { header: <span title="Price x 1B tokens (every launch mints 1B)">MCap</span>, width: 83 },
+                { header: "Holders", width: 75, className: "hidden xl:table-cell" },
+                { header: <span title="Share of supply held by the 10 largest wallets, the token's own pool or curve left out">Top 10</span>, width: 75 },
+                { header: <span title="Share of supply held by the creator wallet">Dev</span>, width: 75 },
+                { header: "Bonding", width: 102 },
+                { header: "Age", width: 60 },
+              ]}
+            >
+              {rows.slice(0, shown).map((t) => {
+                const ch = signedPct(t.change24h);
+                return (
+                  <ModuleTableRow
+                    key={t.address}
+                    cells={[
+                      <TokenCell key="token" t={t} />,
+                      <span key="price" className="mono text-text-primary whitespace-nowrap">{tinyUsd(t.priceUsd)}</span>,
+                      <span key="ch" className={`mono ${ch.tone}`}>{ch.text}</span>,
+                      <span key="vol" className="mono text-text-primary">{t.volume24h == null ? EMPTY : compactUsd(t.volume24h)}</span>,
+                      <span key="mcap" className="mono text-text-secondary">{t.marketCap == null ? EMPTY : compactUsd(t.marketCap)}</span>,
+                      <span key="holders" className="mono text-text-secondary">{t.holders == null ? EMPTY : compactCount(t.holders)}</span>,
+                      <span key="top10" className="mono text-text-secondary">{t.top10Pct == null ? EMPTY : `${t.top10Pct.toFixed(1)}%`}</span>,
+                      <span key="dev" className="mono text-text-secondary">{t.devPct == null ? EMPTY : `${t.devPct.toFixed(1)}%`}</span>,
+                      <Curve key="curve" t={t} />,
+                      <span key="age" className="mono text-text-tertiary whitespace-nowrap">{ago(t.bornAt * 1000, now)}</span>,
+                    ]}
+                  />
+                );
+              })}
+            </ModuleTable>
           )}
         </div>
         {data && rows.length > shown && (
