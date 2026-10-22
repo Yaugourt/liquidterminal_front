@@ -59,6 +59,8 @@ export function ElysiumBridgeAnalyticsView() {
           <div className="overflow-x-auto">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
+            ) : !data.tokens.some((t) => t.symbol) ? (
+              <Empty>No bridge transfer indexed in the last 14 days.</Empty>
             ) : (
               <ModuleTable
                 density="compact"
@@ -93,6 +95,8 @@ export function ElysiumBridgeAnalyticsView() {
           <RowFillList mobileHeight="h-[360px]">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
+            ) : data.topBridgers.length === 0 ? (
+              <Empty>No bridger indexed in the last 14 days.</Empty>
             ) : (
               <ModuleTable
                 density="compact"

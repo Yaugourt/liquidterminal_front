@@ -239,6 +239,8 @@ export function ElysiumContracts() {
           <div>
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
+            ) : data.topDeployers.length === 0 ? (
+              <Empty>No deployment indexed in the last 7 days.</Empty>
             ) : (
               <ModuleTable
                 density="compact"

@@ -158,6 +158,8 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
       <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom">
         {!txs ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading transactions…"}</Empty>
+        ) : txs.length === 0 ? (
+          <Empty>No transaction indexed yet.</Empty>
         ) : (
           <ModuleTable
             density="compact"
@@ -224,6 +226,8 @@ const ElysiumBlocks = memo(function ElysiumBlocks() {
       <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom">
         {!blocks ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading blocks…"}</Empty>
+        ) : blocks.length === 0 ? (
+          <Empty>No block indexed yet.</Empty>
         ) : (
           <ModuleTable
             density="compact"
@@ -280,6 +284,8 @@ const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
       <RowFillList>
         {!transfers ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading bridge transfers…"}</Empty>
+        ) : transfers.length === 0 ? (
+          <Empty>No bridge transfer indexed yet.</Empty>
         ) : (
           <ModuleTable
             density="compact"
@@ -411,6 +417,8 @@ const ElysiumSettlement = memo(function ElysiumSettlement() {
       <RowFillList minHeight="lg:min-h-[200px]">
         {!batches ? (
           <Empty>Loading batches…</Empty>
+        ) : batches.length === 0 ? (
+          <Empty>No batch posted yet.</Empty>
         ) : (
           <ModuleTable
             density="compact"
@@ -455,6 +463,8 @@ const ElysiumTokens = memo(function ElysiumTokens() {
       <div>
         {!tokens ? (
           <Empty>Loading tokens…</Empty>
+        ) : tokens.length === 0 ? (
+          <Empty>No token indexed yet.</Empty>
         ) : (
           <ModuleTable
             density="compact"

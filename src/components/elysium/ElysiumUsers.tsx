@@ -63,6 +63,8 @@ export function ElysiumUsers() {
           <div className="overflow-x-auto">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
+            ) : !data.retention.some((r) => r.size > 0) ? (
+              <Empty>No new address indexed in the last 14 days.</Empty>
             ) : (
               <ModuleTable
                 density="compact"
@@ -97,6 +99,8 @@ export function ElysiumUsers() {
           <RowFillList mobileHeight="h-[360px]">
             {!data ? (
               <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
+            ) : data.topSenders24h.length === 0 ? (
+              <Empty>No transaction indexed in the last 24h.</Empty>
             ) : (
               <ModuleTable
                 density="compact"

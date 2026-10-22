@@ -106,6 +106,8 @@ export function ElysiumNode() {
           <div className="overflow-x-auto">
             {!data ? (
               <Empty>Loading…</Empty>
+            ) : data.files.length === 0 ? (
+              <Empty>No archive published yet.</Empty>
             ) : (
               <ModuleTable
                 density="compact"
