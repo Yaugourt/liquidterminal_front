@@ -7,7 +7,7 @@ import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, Sparkline, TimeframeTabs, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useElysiumProjects, type EcoProject } from "@/services/elysium";
-import { EMPTY, Empty } from "./shared";
+import { EMPTY, Empty, elysiumTimeLabel } from "./shared";
 import { EcoLogo, EcoSource, StatusTag, signedPct } from "./eco-shared";
 
 type Window = "24h" | "7d";
@@ -243,6 +243,13 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
 
   return (
     <div className="space-y-4">
+      {data?.activityGap && (
+        <div className="rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-[12px] text-warning">
+          {data.activityGap.to
+            ? `No activity data from ${elysiumTimeLabel(data.activityGap.from)} to ${elysiumTimeLabel(data.activityGap.to)} UTC: the indexer paused, so users and txs in that window are missing. Activity since then is read live from the chain.`
+            : `Activity is indexed up to ${elysiumTimeLabel(data.activityGap.from)} UTC: the indexer paused, so later users and txs are not counted yet.`}
+        </div>
+      )}
       <KpiRibbon cells={cells} columns="grid-cols-2 lg:grid-cols-4" />
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
         <TopList

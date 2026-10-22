@@ -72,8 +72,19 @@ export interface EcoToken {
   graduated: boolean;
 }
 
+/**
+ * Activity the indexer has not reached: from its last indexed tx to where the live RPC fallback
+ * picks up (null while it has not). Calls in between are missing from every activity figure.
+ */
+export interface EcoActivityGap {
+  from: string;
+  to: string | null;
+}
+
 export interface EcoProjectsSnapshot {
   projects: EcoProject[];
+  /** Optional: older backends do not send it. */
+  activityGap?: EcoActivityGap | null;
   computedAt: string;
 }
 
