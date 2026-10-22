@@ -188,6 +188,8 @@ export interface ModuleColumn {
    * e.g. `"hidden sm:table-cell"` to drop a secondary column on phones.
    */
   className?: string;
+  /** `aria-sort` of the header cell, for a column the reader can sort by. */
+  ariaSort?: React.AriaAttributes["aria-sort"];
 }
 
 export type ModuleTableDensity = "comfortable" | "compact";
@@ -256,6 +258,7 @@ export function ModuleTable({
                 // columns), so a header hidden per breakpoint drops its whole
                 // column; a hidden <col> would keep reserving its width.
                 style={hasWidths ? colStyle(c.width) : undefined}
+                aria-sort={c.ariaSort}
                 className={`${
                   density === "compact" ? "px-3 py-1.5" : "px-3 py-2"
                 } text-[10px] uppercase tracking-[0.08em] font-medium text-text-tertiary border-b border-border-subtle ${

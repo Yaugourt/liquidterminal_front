@@ -214,6 +214,7 @@ Number/date formatting always from `@/lib/formatters/*` (`compactUsd`, `signedCo
 - Column widths live **once** on `columns[].width` (`<colgroup>`). **Never** hand-roll `grid-cols-[Npx_…]` (ESLint).
 - **Never** put `TypedDataTable` inside a card — it has its own.
 - `ModuleTableRow` cells are the one place where `<span className="mono …">` figures are the documented idiom.
+- A column the reader can sort by puts its sort button in `header` and passes `ariaSort` (`"descending"`…): the `<th>` carries it.
 
 ### 5.c — Token avatars (HL CDN)
 
