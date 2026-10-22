@@ -212,6 +212,7 @@ Number/date formatting always from `@/lib/formatters/*` (`compactUsd`, `signedCo
 
 - Header without fill, `tracking-[0.08em] font-medium`; cells `px-3 py-2 text-[12.5px]` (`compact`: `py-1.5`); hover `bg-surface-2/60`.
 - Column widths live **once** on `columns[].width` (`<colgroup>`). **Never** hand-roll `grid-cols-[Npx_…]` (ESLint).
+- With a `width` the table is `table-fixed` and cells are `overflow-hidden`: a value wider than its column is **cut with no ellipsis**, and widths adding up to more than the card make it scroll sideways (`visual-check` does not flag that scroll). Size each column for the longest value its formatter can print, not today's data; leave free text (names, methods) without a `width` so it takes the room left and truncates with a `title`; check the sum against the card at every breakpoint and drop secondary columns with `columns[].className`.
 - **Never** put `TypedDataTable` inside a card — it has its own.
 - `ModuleTableRow` cells are the one place where `<span className="mono …">` figures are the documented idiom.
 - A column the reader can sort by puts its sort button in `header` and passes `ariaSort` (`"descending"`…): the `<th>` carries it.
