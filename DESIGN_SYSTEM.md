@@ -216,6 +216,7 @@ Number/date formatting always from `@/lib/formatters/*` (`compactUsd`, `signedCo
 - **Never** put `TypedDataTable` inside a card — it has its own.
 - `ModuleTableRow` cells are the one place where `<span className="mono …">` figures are the documented idiom.
 - A column the reader can sort by puts its sort button in `header` and passes `ariaSort` (`"descending"`…): the `<th>` carries it.
+- A label → value sheet (settings, decoded fields) is not a table: a `<dl>` of `flex` rows, `dt` in `text-text-tertiary`, `dd` holding the value (Elysium network and contract decoder).
 
 ### 5.c — Token avatars (HL CDN)
 

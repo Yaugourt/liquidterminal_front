@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
-import { CardHead, KpiRibbon, type KpiCell } from "@/components/common";
+import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumHead } from "@/services/elysium";
@@ -107,33 +107,34 @@ export function ElysiumNode() {
             {!data ? (
               <Empty>Loading…</Empty>
             ) : (
-              <table className="w-full mono text-[12px]">
-                <thead>
-                  <tr className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary">
-                    <th className="text-left font-semibold px-3.5 py-2">Block</th>
-                    <th className="text-right font-semibold px-2 py-2">Size</th>
-                    <th className="text-right font-semibold px-2 py-2 hidden sm:table-cell">Published</th>
-                    <th className="text-right font-semibold px-3.5 py-2">Files</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.files.map((f) => (
-                    <tr key={f.name} className="border-t border-border-subtle">
-                      <td className="px-3.5 py-1.5 text-text-primary whitespace-nowrap">
+              <ModuleTable
+                density="compact"
+                columns={[
+                  { header: "Block", width: 124 },
+                  { header: "Size", width: 100 },
+                  { header: "Published", width: 92, className: "hidden sm:table-cell" },
+                  { header: "Files" },
+                ]}
+              >
+                {data.files.map((f) => (
+                  <ModuleTableRow
+                    key={f.name}
+                    cells={[
+                      <span key="block" className="block mono whitespace-nowrap text-text-primary">
                         #{formatNumber(f.block, format, { maximumFractionDigits: 0 })}
-                        {f.name === latest?.name ? <span className="ml-2 text-[10px] text-success">latest</span> : null}
-                      </td>
-                      <td className="px-2 py-1.5 text-right text-text-secondary">{gb(f.sizeBytes)}</td>
-                      <td className="px-2 py-1.5 text-right text-text-tertiary whitespace-nowrap hidden sm:table-cell">{ago(f.publishedMs, now)} ago</td>
-                      <td className="px-3.5 py-1.5 text-right whitespace-nowrap">
+                        {f.name === latest?.name ? <span className="block text-[10px] text-success">latest</span> : null}
+                      </span>,
+                      <span key="size" className="mono whitespace-nowrap text-text-secondary">{gb(f.sizeBytes)}</span>,
+                      <span key="pub" className="mono whitespace-nowrap text-text-tertiary">{ago(f.publishedMs, now)} ago</span>,
+                      <span key="files" className="mono">
                         <ExtLink href={`${SNAPSHOT_BASE}/${f.name}`} className="text-text-secondary">.tar</ExtLink>
                         <span className="text-text-tertiary"> · </span>
                         <ExtLink href={`${SNAPSHOT_BASE}/${f.name}.sha256`} className="text-text-secondary">.sha256</ExtLink>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </span>,
+                    ]}
+                  />
+                ))}
+              </ModuleTable>
             )}
           </div>
         </Card>

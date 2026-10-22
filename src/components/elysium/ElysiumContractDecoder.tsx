@@ -61,16 +61,14 @@ function Identity({ d }: { d: Decoded }) {
   }
   rows.push(["Bytecode", `${compactCount(d.codeSize)} bytes${d.compiler ? `, solc ${d.compiler}` : ""}`]);
   return (
-    <table className="w-full text-[12px]">
-      <tbody>
-        {rows.map(([k, v]) => (
-          <tr key={k} className="border-t border-border-subtle first:border-t-0">
-            <td className="py-1.5 pr-3 text-text-tertiary whitespace-nowrap align-top">{k}</td>
-            <td className="py-1.5 mono text-text-primary break-all">{v}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <dl className="text-[12px]">
+      {rows.map(([k, v]) => (
+        <div key={k} className="flex gap-3 py-1.5 border-t border-border-subtle first:border-t-0">
+          <dt className="shrink-0 whitespace-nowrap text-text-tertiary">{k}</dt>
+          <dd className="min-w-0 flex-1 mono text-text-primary break-all">{v}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
