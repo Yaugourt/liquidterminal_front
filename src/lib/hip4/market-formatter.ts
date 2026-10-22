@@ -120,6 +120,24 @@ export function countsAsClosed(status: Hip4EffectiveStatus): boolean {
 }
 
 /**
+ * An outcome's price (0–1): its live mid, else the last traded price of a
+ * market that no longer trades. Null when neither is known.
+ */
+export function outcomePrice(o: Pick<Hip4QuestionOutcome, "mid_price" | "final_price">): number | null {
+  const px = o.mid_price ?? o.final_price ?? null;
+  return px != null && Number.isFinite(px) ? px : null;
+}
+
+/** A question's latest last trade (ISO) once it no longer trades; null before. */
+export function questionLastTradeAt(q: Pick<Hip4QuestionWithOutcomesRow, "outcomes">): string | null {
+  let latest: string | null = null;
+  for (const o of q.outcomes) {
+    if (o.final_trade_at && (!latest || o.final_trade_at > latest)) latest = o.final_trade_at;
+  }
+  return latest;
+}
+
+/**
  * True for the protocol's residual "none-of-the-above" outcome that every
  * grouped question carries (raw outcome 100/150, surfaced by HypeDexer as
  * "Other / Disputed" and by Hyperliquid's outcomeMeta as "Fallback"). It never

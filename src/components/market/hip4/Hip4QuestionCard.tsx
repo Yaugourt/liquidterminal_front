@@ -4,14 +4,17 @@ import Link from "next/link";
 import { CheckCircle2, Clock, Lock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
-import type { Hip4QuestionWithOutcomesRow } from "@/services/indexer/hip4";
+import type { Hip4QuestionWithOutcomesRow, Hip4WonBy } from "@/services/indexer/hip4";
 import { Hip4OutcomeBar } from "./Hip4OutcomeBar";
+import { Hip4WonMark } from "./Hip4WonMark";
 import {
   effectiveStatus,
   formatExpiryCountdown,
   hip4QuestionHref,
   isBinaryQuestion,
   isPlaceholderMarketName,
+  outcomePrice,
+  questionLastTradeAt,
 } from "@/lib/hip4/market-formatter";
 
 interface Hip4QuestionCardProps {
@@ -32,20 +35,24 @@ interface ProbRowProps {
   pct: number | null;
   variant: "success" | "danger" | "brand";
   volume?: number | null;
+  /** Once the market no longer trades: won, lost, or unknown. */
+  won?: boolean | null;
+  wonBy?: Hip4WonBy | null;
 }
 
-function ProbRow({ label, pct, variant, volume }: ProbRowProps) {
+function ProbRow({ label, pct, variant, volume, won, wonBy }: ProbRowProps) {
   const barColor = variant === "success" ? "bg-success" : variant === "danger" ? "bg-danger" : "bg-brand";
   const textColor = variant === "success" ? "text-success" : variant === "danger" ? "text-danger" : "text-brand";
   const dotColor = variant === "success" ? "bg-success" : variant === "danger" ? "bg-danger" : "bg-brand";
   const hasPrice = pct != null && Number.isFinite(pct);
   const safePct = hasPrice ? Math.max(0, Math.min(100, pct as number)) : 0;
   return (
-    <div className="space-y-1">
+    <div className={`space-y-1${won === false ? " opacity-50" : ""}`}>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <span className={`h-1.5 w-1.5 rounded-full ${dotColor}`} />
-          <span className="text-[12px] font-semibold text-text-primary truncate" title={label}>{label}</span>
+        <div className="flex min-w-0 items-center gap-1.5">
+          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotColor}`} />
+          <span className="min-w-0 text-[12px] font-semibold text-text-primary truncate" title={label}>{label}</span>
+          {won && <Hip4WonMark wonBy={wonBy} />}
         </div>
         <div className="flex items-center gap-2">
           {volume != null && volume > 0 && (
@@ -84,6 +91,8 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
   const href = hip4QuestionHref(question);
 
   const countdown = !settled && !closed ? formatExpiryCountdown(question.expiry ?? null) : null;
+  // A closed market's prices are its last trades: say when.
+  const lastTradeAt = closed ? questionLastTradeAt(question) : null;
 
   const inner = (
     <Card className="h-full flex flex-col p-3.5 gap-3 hover:border-border-default transition-colors cursor-pointer">
@@ -132,23 +141,23 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
           question.outcomes.map((o, i) => {
             const isYes = o.display_name === "Yes";
             const isNo = o.display_name === "No";
-            const pct = o.mid_price != null && Number.isFinite(o.mid_price)
-              ? o.mid_price * 100
-              : null;
+            const price = outcomePrice(o);
             const variant: "success" | "danger" | "brand" = isYes ? "success" : isNo ? "danger" : "brand";
             return (
               <ProbRow
                 key={`${o.outcome_id}-${i}`}
                 label={o.display_name}
-                pct={pct}
+                pct={price != null ? price * 100 : null}
                 variant={variant}
                 volume={o.total_volume}
+                won={o.won}
+                wonBy={question.won_by}
               />
             );
           })
         ) : (
           question.outcomes.map((o, i) => (
-            <Hip4OutcomeBar key={`${o.outcome_id}-${i}`} outcome={o} colorIndex={i} />
+            <Hip4OutcomeBar key={`${o.outcome_id}-${i}`} outcome={o} colorIndex={i} wonBy={question.won_by} />
           ))
         )}
       </div>
@@ -165,6 +174,11 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
           {question.resolved_at && settled && (
             <span className="mono">
               {new Date(question.resolved_at).toLocaleDateString()}
+            </span>
+          )}
+          {lastTradeAt && (
+            <span>
+              Last trade <span className="mono">{new Date(lastTradeAt).toLocaleDateString()}</span>
             </span>
           )}
         </div>

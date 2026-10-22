@@ -18,6 +18,7 @@ import type {
   Hip4Candle,
   Hip4CandleInterval,
   Hip4OutcomeVolumes,
+  Hip4Resolutions,
 } from "./types";
 
 const HIP4 = "/indexer/hip4";
@@ -150,6 +151,16 @@ export async function fetchHip4LiveVolumes(): Promise<Hip4OutcomeVolumes> {
     });
     return assertLtData<Hip4OutcomeVolumes>(raw);
   }, "fetching HIP-4 live volumes");
+}
+
+/** How the list's markets that no longer trade ended (last traded price and
+ * winner per coin), one entry shared by every visitor. A cold backend computes
+ * it once (~15 s), hence the longer timeout. */
+export async function fetchHip4Resolutions(): Promise<Hip4Resolutions> {
+  return withErrorHandling(async () => {
+    const raw = await get<unknown>(`${HIP4}/resolutions`, undefined, { timeoutMs: 20000 });
+    return assertLtData<Hip4Resolutions>(raw);
+  }, "fetching HIP-4 resolutions");
 }
 
 /** Live L2 order book for an outcome coin (`POST /info { type:"l2Book" }`).

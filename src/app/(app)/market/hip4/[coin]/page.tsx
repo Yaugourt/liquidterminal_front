@@ -11,6 +11,7 @@ import {
   useHip4LiveMarkets,
   useHip4MarketLookup,
   useHip4ProbabilityHistory,
+  useHip4Resolutions,
   useHip4OutcomeCandles,
   type Hip4MarketEnrichedRow,
 } from "@/services/indexer/hip4";
@@ -37,7 +38,7 @@ import {
   isYesNoSides,
 } from "@/lib/hip4/market-formatter";
 import { rawOutcomeId } from "@/lib/hip4/outcome-meta";
-import { buildMergedQuestions, findMergedQuestionByCoin, yesCoinOf } from "@/lib/hip4/merge-questions";
+import { buildMergedQuestions, findMergedQuestionByCoin, withResolutions, yesCoinOf } from "@/lib/hip4/merge-questions";
 import { resolveHip4Layout, type Hip4ChartMode } from "@/lib/hip4/detail-layout";
 import { buildTradeFlow } from "@/lib/hip4/trade-flow";
 import type { ProbSeriesDef } from "@/lib/hip4/probability-series";
@@ -107,6 +108,8 @@ export default function Hip4MarketDetailPage() {
   // Live markets resolve from Hyperliquid's outcomeMeta + allMids (the indexer
   // lists omit them).
   const live = useHip4LiveMarkets();
+  // How the markets that no longer trade ended (last trades, winners).
+  const resolutions = useHip4Resolutions();
   // Higher limit so the same feed powers recent fills AND the derived trade-flow
   // / top-traders aggregates (one fetch, three views — no extra network).
   const fillsResult = useHip4Fills({ coin: activeCoin, limit: 400 });
@@ -146,16 +149,20 @@ export default function Hip4MarketDetailPage() {
     return rows;
   }, [live.liveMarketsByCoin, lookup.market]);
 
-  // Merge HypeDexer questions with the canonical live markets once, then reuse
-  // the same list for the parent-question lookup AND the related-markets rail.
+  // Merge HypeDexer questions with the canonical live markets once (with how
+  // the closed and settled ones ended), then reuse the same list for the
+  // parent-question lookup AND the related-markets rail.
   const mergedQuestions = useMemo(
     () =>
-      buildMergedQuestions(questions.questions, {
-        liveQuestions: live.liveQuestions,
-        mids: live.mids,
-        liveMarketsByCoin: live.liveMarketsByCoin,
-      }),
-    [questions.questions, live.liveQuestions, live.mids, live.liveMarketsByCoin]
+      withResolutions(
+        buildMergedQuestions(questions.questions, {
+          liveQuestions: live.liveQuestions,
+          mids: live.mids,
+          liveMarketsByCoin: live.liveMarketsByCoin,
+        }),
+        resolutions.coins
+      ),
+    [questions.questions, live.liveQuestions, live.mids, live.liveMarketsByCoin, resolutions.coins]
   );
 
   // The parent question of the active coin (CPI/buckets group several outcomes;
@@ -344,6 +351,7 @@ export default function Hip4MarketDetailPage() {
           <Hip4DetailKpiRibbon
             question={parentQuestion}
             market={market}
+            status={detailStatus}
             layout={layout}
             activeOutcome={activeOutcome}
             activeIndex={activeIndex}

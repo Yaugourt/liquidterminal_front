@@ -2,12 +2,13 @@
 
 import { Card } from "@/components/ui/card";
 import { CardHead, OutcomeRow, chartPalette } from "@/components/common";
-import { isResidualOutcome } from "@/lib/hip4/market-formatter";
+import { isResidualOutcome, outcomePrice } from "@/lib/hip4/market-formatter";
 import type { Hip4DetailLayout } from "@/lib/hip4/detail-layout";
 import type {
   Hip4QuestionOutcome,
   Hip4QuestionWithOutcomesRow,
 } from "@/services/indexer/hip4";
+import { Hip4WonMark } from "./Hip4WonMark";
 
 interface Hip4OutcomeListProps {
   question: Hip4QuestionWithOutcomesRow | null;
@@ -22,7 +23,8 @@ function outcomeCoin(o: Hip4QuestionOutcome): string {
 }
 
 function pctOf(o: Hip4QuestionOutcome): number | null {
-  return o.mid_price != null && Number.isFinite(o.mid_price) ? o.mid_price * 100 : null;
+  const price = outcomePrice(o);
+  return price != null ? price * 100 : null;
 }
 
 /**
@@ -33,6 +35,7 @@ function pctOf(o: Hip4QuestionOutcome): number | null {
  *   • ladder  → N buckets/candidates, multi-series colors
  * Selecting a row points the order book + recent fills at that outcome's coin.
  * Colors mirror `Hip4ProbabilityChart` so the list and the odds curve agree.
+ * A market that no longer trades shows its last traded prices and its winner.
  */
 export function Hip4OutcomeList({
   question,
@@ -79,6 +82,9 @@ export function Hip4OutcomeList({
               volume={o.total_volume}
               selected={coin === activeCoin}
               onSelect={/^#\d+$/.test(coin) ? () => onSelectCoin(coin) : undefined}
+              trailing={o.won ? <Hip4WonMark wonBy={question?.won_by} /> : undefined}
+              // A losing side is dimmed, unless it is the one being inspected.
+              className={o.won === false && coin !== activeCoin ? "opacity-50" : undefined}
             />
           );
         })}

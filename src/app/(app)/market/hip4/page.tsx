@@ -8,6 +8,7 @@ import {
   useHip4Fills,
   useHip4Settlements,
   useHip4LiveMarkets,
+  useHip4Resolutions,
 } from "@/services/indexer/hip4";
 import {
   Hip4GlobalStatsStrip,
@@ -18,7 +19,7 @@ import {
   Hip4StalenessChip,
 } from "@/components/market/hip4";
 import { PageHeader, PageFaq, SourceBadge, combinedSourceStatus } from "@/components/common";
-import { buildMergedQuestions } from "@/lib/hip4/merge-questions";
+import { buildMergedQuestions, withResolutions } from "@/lib/hip4/merge-questions";
 import { rememberFillLabels } from "@/lib/hip4/fill-labels";
 import { HIP4_FAQ } from "@/lib/page-faqs";
 
@@ -31,6 +32,8 @@ export default function MarketHip4Page() {
   // Live markets HypeDexer's aggregation tables omit (Fed/NBA/CPI/recurring BTC),
   // sourced straight from Hyperliquid's outcomeMeta + allMids.
   const live = useHip4LiveMarkets();
+  // How the markets that no longer trade ended (last trades, winners).
+  const resolutions = useHip4Resolutions();
 
   useEffect(() => {
     setTitle("HIP-4 - Market");
@@ -45,15 +48,19 @@ export default function MarketHip4Page() {
 
   // Merge HypeDexer's questions with the canonical Hyperliquid live markets
   // (drop ghosts, enrich prices, hide the residual outcome, tag tradeable
-  // coins). Shared with the detail page — see merge-questions.ts.
+  // coins), then add how the closed and settled ones ended. Shared with the
+  // detail page — see merge-questions.ts.
   const mergedQuestions = useMemo(
     () =>
-      buildMergedQuestions(questions.questions, {
-        liveQuestions: live.liveQuestions,
-        mids: live.mids,
-        liveMarketsByCoin: live.liveMarketsByCoin,
-      }),
-    [questions.questions, live.liveQuestions, live.mids, live.liveMarketsByCoin]
+      withResolutions(
+        buildMergedQuestions(questions.questions, {
+          liveQuestions: live.liveQuestions,
+          mids: live.mids,
+          liveMarketsByCoin: live.liveMarketsByCoin,
+        }),
+        resolutions.coins
+      ),
+    [questions.questions, live.liveQuestions, live.mids, live.liveMarketsByCoin, resolutions.coins]
   );
 
   return (

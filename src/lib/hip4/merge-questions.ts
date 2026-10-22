@@ -18,6 +18,7 @@
  */
 
 import type {
+  Hip4CoinResolution,
   Hip4QuestionWithOutcomesRow,
   Hip4MarketEnrichedRow,
 } from "@/services/indexer/hip4";
@@ -140,6 +141,33 @@ export function buildMergedQuestions(
     .filter((q) => !isResidualOutcome(q.title));
 
   return [...extra, ...enrichedHd];
+}
+
+/**
+ * The merged questions with how the closed and settled ones ended: each
+ * outcome's last traded price and whether it won, from `/resolutions` (keyed
+ * by side or outcome coin). Other questions, and any the backend has no
+ * reading for, are returned as they are.
+ */
+export function withResolutions(
+  questions: Hip4QuestionWithOutcomesRow[],
+  coins: Record<string, Hip4CoinResolution>
+): Hip4QuestionWithOutcomesRow[] {
+  if (Object.keys(coins).length === 0) return questions;
+  return questions.map((q) => {
+    const status = effectiveStatus(q);
+    if (status !== "closed" && status !== "settled") return q;
+    const found = q.outcomes.map((o) => (o.coin ? coins[o.coin] : undefined));
+    if (found.every((r) => r == null)) return q;
+    return {
+      ...q,
+      won_by: found.find((r) => r?.won_by != null)?.won_by ?? null,
+      outcomes: q.outcomes.map((o, i) => {
+        const r = found[i];
+        return r ? { ...o, final_price: r.final_price, final_trade_at: r.final_trade_at, won: r.won } : o;
+      }),
+    };
+  });
 }
 
 /**

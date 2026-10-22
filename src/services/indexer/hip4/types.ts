@@ -51,6 +51,11 @@ export interface Hip4QuestionOutcome {
    * coin). Drives the probability-history chart, prices + deep links.
    */
   coin?: string | null;
+  /** A market that no longer trades: its last traded price (0–1) and when,
+   * and whether this outcome won (`withResolutions`, from `/resolutions`). */
+  final_price?: number | null;
+  final_trade_at?: string | null;
+  won?: boolean | null;
 }
 
 export interface Hip4QuestionWithOutcomesRow {
@@ -84,6 +89,30 @@ export interface Hip4QuestionWithOutcomesRow {
    * fall back to `#<outcomes[0].outcome_id>`.
    */
   primary_coin?: string | null;
+  /** How its outcomes' `won` is known, once the market no longer trades. */
+  won_by?: Hip4WonBy | null;
+}
+
+/** The on-chain settlement, or the last traded prices (every traded side or
+ * outcome at 95% or more, or 5% or less, one of them on top). */
+export type Hip4WonBy = "settlement" | "final_price";
+
+/** How a market that no longer trades ended, for one side or outcome coin. */
+export interface Hip4CoinResolution {
+  /** Last traded price (0–1); null when no trade was found. */
+  final_price: number | null;
+  /** That trade's time (ISO). */
+  final_trade_at: string | null;
+  /** Won, lost, or unknown (null). */
+  won: boolean | null;
+  won_by: Hip4WonBy | null;
+}
+
+/** `/indexer/hip4/resolutions`: the list's markets that no longer trade. */
+export interface Hip4Resolutions {
+  /** By side or outcome coin (`#<10*outcome+side>`). */
+  coins: Record<string, Hip4CoinResolution>;
+  computed_at: string;
 }
 
 export interface Hip4FillRow {
@@ -334,6 +363,13 @@ export interface UseHip4MarketLookupResult {
   /** `error` is final: no retry is pending. */
   failed: boolean;
   refetch: () => void;
+}
+
+export interface UseHip4ResolutionsResult {
+  /** By side or outcome coin; empty until the first answer (or when it fails). */
+  coins: Record<string, Hip4CoinResolution>;
+  isLoading: boolean;
+  error: Error | null;
 }
 
 export interface UseHip4SettlementsResult {

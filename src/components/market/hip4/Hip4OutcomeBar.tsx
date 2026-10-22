@@ -1,12 +1,16 @@
 "use client";
 
 import { chartPalette } from "@/components/common";
-import type { Hip4QuestionOutcome } from "@/services/indexer/hip4";
+import { outcomePrice } from "@/lib/hip4/market-formatter";
+import type { Hip4QuestionOutcome, Hip4WonBy } from "@/services/indexer/hip4";
+import { Hip4WonMark } from "./Hip4WonMark";
 
 interface Hip4OutcomeBarProps {
   outcome: Hip4QuestionOutcome;
   /** 0–9; for distinct colors when a question has multiple named outcomes. */
   colorIndex?: number;
+  /** How the question's winner is known, once it no longer trades. */
+  wonBy?: Hip4WonBy | null;
 }
 
 /**
@@ -22,16 +26,18 @@ function priceToCents(px: number | null): string {
   return `${pct.toFixed(0)}¢`;
 }
 
-export function Hip4OutcomeBar({ outcome, colorIndex = 0 }: Hip4OutcomeBarProps) {
+export function Hip4OutcomeBar({ outcome, colorIndex = 0, wonBy }: Hip4OutcomeBarProps) {
   const color = PALETTE[colorIndex % PALETTE.length] ?? chartPalette.accent;
-  const ratio = outcome.mid_price != null && Number.isFinite(outcome.mid_price)
-    ? Math.max(0, Math.min(1, outcome.mid_price))
-    : 0;
+  const price = outcomePrice(outcome);
+  const ratio = price != null ? Math.max(0, Math.min(1, price)) : 0;
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="flex-1 min-w-0 truncate text-[12px] font-semibold text-text-primary" title={outcome.display_name || `#${outcome.outcome_id}`}>
-        {outcome.display_name || `#${outcome.outcome_id}`}
+    <div className={`flex items-center gap-3${outcome.won === false ? " opacity-50" : ""}`}>
+      <span className="flex flex-1 min-w-0 items-center gap-1.5">
+        <span className="min-w-0 truncate text-[12px] font-semibold text-text-primary" title={outcome.display_name || `#${outcome.outcome_id}`}>
+          {outcome.display_name || `#${outcome.outcome_id}`}
+        </span>
+        {outcome.won && <Hip4WonMark wonBy={wonBy} />}
       </span>
       <div className="relative h-1 w-24 sm:w-32 rounded-full bg-surface-2 overflow-hidden">
         <div
@@ -43,7 +49,7 @@ export function Hip4OutcomeBar({ outcome, colorIndex = 0 }: Hip4OutcomeBarProps)
         className="mono shrink-0 text-[11px] font-semibold w-10 text-right"
         style={{ color }}
       >
-        {priceToCents(outcome.mid_price)}
+        {priceToCents(price)}
       </span>
     </div>
   );

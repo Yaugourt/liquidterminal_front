@@ -3,6 +3,7 @@ export * from "./api";
 export { useHip4QuestionsWithOutcomes } from "./hooks/useHip4QuestionsWithOutcomes";
 export { useHip4Fills } from "./hooks/useHip4Fills";
 export { useHip4Settlements } from "./hooks/useHip4Settlements";
+export { useHip4Resolutions } from "./hooks/useHip4Resolutions";
 export { useHip4Analytics } from "./hooks/useHip4Analytics";
 export { useHip4ActiveMarkets } from "./hooks/useHip4ActiveMarkets";
 export { useHip4LiveMarkets } from "./hooks/useHip4LiveMarkets";
