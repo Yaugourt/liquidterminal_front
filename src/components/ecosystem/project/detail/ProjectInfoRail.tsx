@@ -2,6 +2,7 @@
 
 import { Project, ProjectDataSourceType } from "@/services/ecosystem/project/types";
 import { groupCategories } from "@/lib/categoryLabels";
+import { safeHref } from "@/lib/safeUrl";
 
 const SOURCE_META: Record<ProjectDataSourceType, { label: string; className: string; detail: string }> = {
   DEFILLAMA: { label: "DeFiLlama", className: "bg-brand/10 border-brand/25 text-brand", detail: "TVL · fees · vol" },
@@ -19,11 +20,12 @@ interface ProjectInfoRailProps {
 
 export function ProjectInfoRail({ project, sources, updatedAt }: ProjectInfoRailProps) {
   const launched = new Date(project.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  // safeHref drops stored links whose scheme isn't http(s)/mailto.
   const links = [
-    { url: project.website, label: "Website" },
-    { url: project.twitter, label: "X / Twitter" },
-    { url: project.discord, label: "Discord" },
-    { url: project.telegram, label: "Telegram" },
+    { url: safeHref(project.website), label: "Website" },
+    { url: safeHref(project.twitter), label: "X / Twitter" },
+    { url: safeHref(project.discord), label: "Discord" },
+    { url: safeHref(project.telegram), label: "Telegram" },
   ].filter((l) => l.url);
 
   return (
