@@ -11,6 +11,8 @@ import {
   ElysiumMark,
   HypeMark,
   KpiRibbon,
+  ModuleTable,
+  ModuleTableRow,
   RowFillList,
   chartPalette,
   type KpiCell,
@@ -153,43 +155,56 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
         tag="spam and system hidden"
         actions={<DataStatus variant="live" connected={!error && !isStale} />}
       />
-      <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom pl-3.5 pr-2 py-1">
+      <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom">
         {!txs ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading transactions…"}</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <tbody>
-              {txs.map((t) => (
-                <tr key={t.tx_hash} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Age", width: 60, align: "left" },
+              { header: "From", width: 114, align: "left" },
+              { header: <span className="sr-only">To</span>, width: 36, align: "left", className: "hidden sm:table-cell" },
+              { header: "To", width: 124, align: "left" },
+              // No width: Method takes the room left and truncates (its title has the signature).
+              { header: "Method", align: "left", className: "hidden sm:table-cell" },
+              { header: "Status", width: 72, className: "hidden sm:table-cell" },
+            ]}
+          >
+            {txs.map((t) => (
+              <ModuleTableRow
+                key={t.tx_hash}
+                cells={[
+                  <span key="age" className="mono whitespace-nowrap">
                     <Link href={`/elysium/tx/${t.tx_hash}`} className="text-text-tertiary hover:text-brand">
                       {ago(elysiumTimeMs(t.block_time), now)}
                     </Link>
-                  </td>
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
+                  </span>,
+                  <span key="from" className="mono whitespace-nowrap">
                     <AddrLink address={t.from_addr} className="text-text-secondary" explorer={false} />
-                  </td>
-                  <td className="py-1.5 pr-2 text-text-tertiary">→</td>
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
+                  </span>,
+                  <span key="arrow" className="mono text-text-tertiary">→</span>,
+                  <span key="to" className="mono whitespace-nowrap">
                     {t.contract_address ? (
                       <AddrLink address={t.contract_address} className="text-gold" explorer={false}>new contract</AddrLink>
                     ) : (
                       <AddrLink address={t.to_addr} className="text-text-secondary" explorer={false} />
                     )}
-                  </td>
-                  <td
-                    className={`py-1.5 pr-2 whitespace-nowrap hidden sm:table-cell max-w-[140px] truncate ${
+                  </span>,
+                  <span
+                    key="method"
+                    className={`mono block truncate whitespace-nowrap ${
                       t.method_id && names?.[t.method_id] ? "text-text-secondary" : "text-text-tertiary"
                     }`}
                     title={(t.method_id && names?.[t.method_id]) || t.method_id || undefined}
                   >
                     {t.contract_address ? "deploy" : methodLabel(t.method_id, names)}
-                  </td>
-                  <td className={`py-1.5 text-right ${t.success ? "text-success" : "text-danger"}`}>{t.success ? "ok" : "fail"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>,
+                  <span key="status" className={`mono ${t.success ? "text-success" : "text-danger"}`}>{t.success ? "ok" : "fail"}</span>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
     </Card>
@@ -206,30 +221,38 @@ const ElysiumBlocks = memo(function ElysiumBlocks() {
         title="Blocks"
         actions={<DataStatus variant="live" connected={!error && !isStale} />}
       />
-      <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom pl-3.5 pr-2 py-1">
+      <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom">
         {!blocks ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading blocks…"}</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <tbody>
-              {blocks.map((b) => (
-                <tr key={b.block_number} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Block", width: 114 },
+              { header: "Txs", width: 100 },
+              { header: "Age", width: 60 },
+            ]}
+          >
+            {blocks.map((b) => (
+              <ModuleTableRow
+                key={b.block_number}
+                cells={[
+                  <span key="block" className="mono whitespace-nowrap">
                     <ExtLink href={`${EXPLORER}/block/${b.block_number}`} className="text-brand">
                       {formatNumber(b.block_number, format, { maximumFractionDigits: 0 })}
                     </ExtLink>
-                  </td>
-                  <td className="py-1.5 pr-2 text-right text-text-primary whitespace-nowrap" title="user transactions / all transactions">
+                  </span>,
+                  <span key="txs" className="mono whitespace-nowrap text-text-primary" title="user transactions / all transactions">
                     {b.user_tx_count}
-                    <span className="text-text-tertiary"> / {b.tx_count} tx</span>
-                  </td>
-                  <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap" title={`HyperEVM block ${b.l1_block_number}`}>
+                    <span className="text-text-tertiary"> / {b.tx_count}</span>
+                  </span>,
+                  <span key="age" className="mono whitespace-nowrap text-text-tertiary" title={`HyperEVM block ${b.l1_block_number}`}>
                     {ago(elysiumTimeMs(b.block_time), now)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
     </Card>
@@ -254,46 +277,57 @@ const ElysiumBridgeFeed = memo(function ElysiumBridgeFeed() {
             </span>
           ) : undefined}</>}
       />
-      <RowFillList className="pl-3.5 pr-2 py-1">
+      <RowFillList>
         {!transfers ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading bridge transfers…"}</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <tbody>
-              {transfers.map((t) => {
-                const hash = t.l2_tx_hash || t.l1_tx_hash;
-                const done = t.status === "completed" || t.status === "executed";
-                return (
-                  <tr key={t.transfer_id} className="border-t border-border-subtle first:border-t-0">
-                    <td className={`py-1.5 pr-2 font-semibold whitespace-nowrap ${t.direction === "deposit" ? "text-success" : "text-danger"}`}>
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Dir", width: 67, align: "left" },
+              { header: "Asset", width: 76, align: "left" },
+              { header: "Amount", width: 107 },
+              { header: "From", width: 114, align: "left", className: "hidden sm:table-cell lg:hidden xl:table-cell" },
+              { header: "Time", width: 76, className: "hidden sm:table-cell" },
+              { header: "Status", width: 138, className: "hidden sm:table-cell" },
+            ]}
+          >
+            {transfers.map((t) => {
+              const hash = t.l2_tx_hash || t.l1_tx_hash;
+              const done = t.status === "completed" || t.status === "executed";
+              return (
+                <ModuleTableRow
+                  key={t.transfer_id}
+                  cells={[
+                    <span key="dir" className={`mono font-semibold whitespace-nowrap ${t.direction === "deposit" ? "text-success" : "text-danger"}`}>
                       {t.direction === "deposit" ? (
                         <span className="inline-flex items-center gap-1"><ArrowDownLeft size={11} />IN</span>
                       ) : (
                         <span className="inline-flex items-center gap-1"><ArrowUpRight size={11} />OUT</span>
                       )}
-                    </td>
-                    <td className="py-1.5 pr-2 whitespace-nowrap text-text-primary">{t.symbol || t.asset}</td>
-                    <td className="py-1.5 pr-2 text-right whitespace-nowrap text-text-primary">
+                    </span>,
+                    <span key="asset" className="mono block truncate whitespace-nowrap text-text-primary" title={t.symbol || t.asset}>{t.symbol || t.asset}</span>,
+                    <span key="amt" className="mono whitespace-nowrap text-text-primary">
                       {t.amount > 0 ? formatNumber(t.amount, format, { maximumFractionDigits: t.amount < 1 ? 4 : 2 }) : EMPTY}
-                    </td>
-                    <td className="py-1.5 pr-2 whitespace-nowrap hidden sm:table-cell">
+                    </span>,
+                    <span key="from" className="mono whitespace-nowrap">
                       <AddrLink address={t.from_addr} className="text-text-tertiary" explorer={false} />
-                    </td>
-                    <td className="py-1.5 pr-2 text-right whitespace-nowrap text-text-tertiary" title="Time from initiation to completion">
+                    </span>,
+                    <span key="time" className="mono whitespace-nowrap text-text-tertiary" title="Time from initiation to completion">
                       {done ? duration(t.duration_s) : ago(elysiumTimeMs(t.initiated_time), now)}
-                    </td>
-                    <td className={`py-1.5 text-right whitespace-nowrap ${done ? "text-success" : "text-warning"}`}>
+                    </span>,
+                    <span key="status" className={`mono whitespace-nowrap ${done ? "text-success" : "text-warning"}`}>
                       {hash && t.l2_tx_hash ? (
                         <Link href={`/elysium/tx/${t.l2_tx_hash}`} className="hover:text-brand">{t.status}</Link>
                       ) : (
                         t.status
                       )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    </span>,
+                  ]}
+                />
+              );
+            })}
+          </ModuleTable>
         )}
       </RowFillList>
     </Card>
@@ -374,26 +408,35 @@ const ElysiumSettlement = memo(function ElysiumSettlement() {
           "…"
         )}
       </div>
-      <RowFillList className="px-3.5 pb-2 pt-1" minHeight="lg:min-h-[200px]">
+      <RowFillList minHeight="lg:min-h-[200px]">
         {!batches ? (
           <Empty>Loading batches…</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <tbody>
-              {batches.map((b) => (
-                <tr key={b.batch_number} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 text-brand">#{b.batch_number}</td>
-                  <td className="py-1.5 pr-2 text-text-secondary whitespace-nowrap">
-                    {formatNumber(b.block_count, format, { maximumFractionDigits: 0 })} blocks
-                  </td>
-                  <td className="py-1.5 pr-2 text-right text-text-tertiary whitespace-nowrap hidden xl:table-cell" title={`HyperEVM tx ${b.parent_tx_hash}`}>
-                    HyperEVM #{formatNumber(b.parent_block, format, { maximumFractionDigits: 0 })}
-                  </td>
-                  <td className="py-1.5 text-right text-text-tertiary whitespace-nowrap">{duration(b.posting_delay_s)} delay</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Batch", width: 76 },
+              { header: "Blocks", width: 84, align: "left" },
+              { header: "HyperEVM", width: 124, className: "hidden xl:table-cell" },
+              { header: "Delay", width: 76 },
+            ]}
+          >
+            {batches.map((b) => (
+              <ModuleTableRow
+                key={b.batch_number}
+                cells={[
+                  <span key="batch" className="mono text-brand">#{b.batch_number}</span>,
+                  <span key="blocks" className="mono whitespace-nowrap text-text-secondary">
+                    {formatNumber(b.block_count, format, { maximumFractionDigits: 0 })}
+                  </span>,
+                  <span key="parent" className="mono whitespace-nowrap text-text-tertiary" title={`HyperEVM tx ${b.parent_tx_hash}`}>
+                    #{formatNumber(b.parent_block, format, { maximumFractionDigits: 0 })}
+                  </span>,
+                  <span key="delay" className="mono whitespace-nowrap text-text-tertiary">{duration(b.posting_delay_s)}</span>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </RowFillList>
     </Card>
@@ -409,24 +452,34 @@ const ElysiumTokens = memo(function ElysiumTokens() {
         title="Tokens"
         tag="ERC-20s by transfer count"
       />
-      <div className="px-3.5 py-1">
+      <div>
         {!tokens ? (
           <Empty>Loading tokens…</Empty>
         ) : (
-          <table className="w-full mono text-[12px]">
-            <tbody>
-              {tokens.map((t) => (
-                <tr key={t.address} className="border-t border-border-subtle first:border-t-0">
-                  <td className="py-1.5 pr-2 whitespace-nowrap">
+          <ModuleTable
+            density="compact"
+            columns={[
+              { header: "Token", width: 114 },
+              // No width: Name takes the room left and truncates (its title has the full name).
+              { header: "Name", align: "left", className: "hidden xl:table-cell" },
+              { header: "Origin", width: 100, align: "left" },
+              { header: "Transfers", width: 92 },
+            ]}
+          >
+            {tokens.map((t) => (
+              <ModuleTableRow
+                key={t.address}
+                cells={[
+                  <span key="token" className="mono block truncate whitespace-nowrap" title={t.symbol || t.address}>
                     <AddrLink address={t.address} className="text-text-primary" explorer={false}>{t.symbol || short(t.address)}</AddrLink>
-                  </td>
-                  <td className="py-1.5 pr-2 text-text-tertiary whitespace-nowrap truncate max-w-[140px] hidden xl:table-cell">{t.name}</td>
-                  <td className="py-1.5 pr-2 text-text-tertiary">{t.origin}</td>
-                  <td className="py-1.5 text-right text-text-secondary whitespace-nowrap">{compactCount(t.transfer_count)}<span className="hidden sm:inline"> transfers</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </span>,
+                  <span key="name" className="mono block truncate whitespace-nowrap text-text-tertiary" title={t.name || undefined}>{t.name}</span>,
+                  <span key="origin" className="mono text-text-tertiary">{t.origin}</span>,
+                  <span key="tr" className="mono whitespace-nowrap text-text-secondary">{compactCount(t.transfer_count)}</span>,
+                ]}
+              />
+            ))}
+          </ModuleTable>
         )}
       </div>
       {bridged && bridged.length > 0 && (
@@ -458,7 +511,7 @@ export function ElysiumOverview() {
       </div>
       <Link
         href="/elysium/start"
-        className="flex flex-wrap items-center gap-3 rounded-xl border border-brand/30 bg-brand/5 px-4 py-3 hover:border-brand/60 transition-colors"
+        className="flex flex-wrap items-center gap-3 rounded-lg border border-brand/30 bg-brand/5 px-4 py-3 hover:border-brand/60 transition-colors"
       >
         <Rocket size={16} className="text-brand shrink-0" />
         <span className="min-w-0 flex-1">
@@ -471,8 +524,8 @@ export function ElysiumOverview() {
       </Link>
       <ElysiumKpis />
       <ElysiumActivity />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
-        <div className="lg:col-span-2 min-w-0">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 items-start">
+        <div className="xl:col-span-2 min-w-0">
           <ElysiumTransactions />
         </div>
         <ElysiumBlocks />
