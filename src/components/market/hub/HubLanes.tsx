@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { compactUsd, compactCount } from "@/lib/formatters/numberFormatting";
 import { Hip3Overview } from "@/services/indexer/hip3";
 import { useHip4ActiveMarkets } from "@/services/indexer/hip4/hooks/useHip4ActiveMarkets";
-import { headlineOutcomes, hip4QuestionKey, isBinaryQuestion } from "@/lib/hip4/market-formatter";
+import { headlineOutcomes, hip4QuestionHref, hip4QuestionKey, isBinaryQuestion } from "@/lib/hip4/market-formatter";
 import { useBuildersTop, useBuildersStatsAllTimeframes } from "@/services/indexer/builders";
 import { BuilderAvatar, resolveBuilderLabel } from "@/components/market/builders";
 import { AuctionStrip } from "./AuctionStrip";
@@ -92,6 +92,7 @@ export function Hip4Lane() {
             : null;
         return {
           id: hip4QuestionKey(q),
+          href: hip4QuestionHref(q) ?? "/market/hip4",
           title: q.title ?? "Untitled market",
           volume: q.total_volume,
           outcomeName: binary ? null : (lead?.display_name ?? null),
@@ -117,7 +118,7 @@ export function Hip4Lane() {
           </p>
         )}
         {top.map((q) => (
-          <Link key={q.id} href="/market/hip4" className="block group">
+          <Link key={q.id} href={q.href} className="block group">
             <div className="flex items-baseline justify-between gap-2">
               <span className="text-[12px] text-text-primary truncate group-hover:text-brand transition-colors" title={q.title}>
                 {q.title}

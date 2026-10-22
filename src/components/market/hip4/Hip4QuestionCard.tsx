@@ -9,6 +9,7 @@ import { Hip4OutcomeBar } from "./Hip4OutcomeBar";
 import {
   effectiveStatus,
   formatExpiryCountdown,
+  hip4QuestionHref,
   isBinaryQuestion,
   isPlaceholderMarketName,
 } from "@/lib/hip4/market-formatter";
@@ -80,13 +81,7 @@ export function Hip4QuestionCard({ question }: Hip4QuestionCardProps) {
         : "Untitled market";
   const badge = categoryBadge(question.class, question.underlying);
   const binary = isBinaryQuestion(question);
-
-  const primaryOutcome = question.outcomes[0];
-  // Prefer the merge-computed tradeable coin (encoded `#<10*outcome+side>`);
-  // fall back to the raw outcome coin for legacy callers.
-  const primaryCoin =
-    question.primary_coin ?? (primaryOutcome != null ? `#${primaryOutcome.outcome_id}` : null);
-  const href = primaryCoin ? `/market/hip4/${encodeURIComponent(primaryCoin)}` : null;
+  const href = hip4QuestionHref(question);
 
   const countdown = !settled && !closed ? formatExpiryCountdown(question.expiry ?? null) : null;
 

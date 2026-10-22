@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+import Link from "next/link";
 import { Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useHip4ActiveMarkets } from "@/services/indexer/hip4";
@@ -10,6 +11,7 @@ import { CardHead, SourceBadge, chartPalette, sourceStatus } from "@/components/
 import {
   formatExpiryCountdown,
   headlineOutcomes,
+  hip4QuestionHref,
   hip4QuestionKey,
   isBinaryQuestion,
 } from "@/lib/hip4/market-formatter";
@@ -18,9 +20,9 @@ import {
  * Hip4OutcomesCard — top live HIP-4 markets by volume, the list page's Live
  * pill (`useHip4ActiveMarkets`).
  *
- * Card-head V4 purple (to distinguish from HIP-3 cyan). Each row:
- * truncated title, Yes/No pair (or the two favourites) with mid_price in
- * cents, cumulative volume, and countdown to expiry.
+ * Card-head V4 purple (to distinguish from HIP-3 cyan). Each row links to its
+ * market: truncated title, Yes/No pair (or the two favourites) with mid_price
+ * in cents, cumulative volume, and countdown to expiry.
  */
 
 const TOP_N = 5;
@@ -49,8 +51,11 @@ function OutcomeRow({
   const outcomes = headlineOutcomes(question, 2);
 
   return (
-    <div className="px-3.5 py-2.5 border-b border-border-subtle last:border-b-0">
-      <div className="text-[12px] font-semibold text-text-primary line-clamp-2 mb-1.5">
+    <Link
+      href={hip4QuestionHref(question) ?? "/market/hip4"}
+      className="block group px-3.5 py-2.5 border-b border-border-subtle last:border-b-0"
+    >
+      <div className="text-[12px] font-semibold text-text-primary line-clamp-2 mb-1.5 group-hover:text-brand transition-colors">
         {title}
       </div>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
@@ -87,7 +92,7 @@ function OutcomeRow({
           </span>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
 

@@ -73,6 +73,16 @@ export function hip4QuestionKey(q: Hip4QuestionWithOutcomesRow): string {
   return `o${q.outcomes.map((o) => o.outcome_id).join("-")}`;
 }
 
+/**
+ * The detail page a question links to: its tradeable primary coin
+ * (`#<10*outcome+side>`, set by the live-market builder and the merge), or the
+ * raw outcome coin for legacy callers. Null without any outcome.
+ */
+export function hip4QuestionHref(q: Hip4QuestionWithOutcomesRow): string | null {
+  const coin = q.primary_coin ?? (q.outcomes[0] != null ? `#${q.outcomes[0].outcome_id}` : null);
+  return coin ? `/market/hip4/${encodeURIComponent(coin)}` : null;
+}
+
 export type Hip4EffectiveStatus = "live" | "expired_unresolved" | "closed" | "settled";
 
 /**
