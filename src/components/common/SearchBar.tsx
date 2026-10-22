@@ -23,6 +23,13 @@ export function SearchBar({
     const [query, setQuery] = useState(initialValue);
     const [isFocused, setIsFocused] = useState(false);
     const firstRender = useRef(true);
+    // Latest callback, read by the debounce timer: a parent passing a new
+    // inline `onSearch` each render must not re-run the search, which would
+    // undo the parent's own state (a "Show more" count) after every render.
+    const onSearchRef = useRef(onSearch);
+    useEffect(() => {
+        onSearchRef.current = onSearch;
+    });
 
     // Debounce search
     useEffect(() => {
@@ -33,11 +40,11 @@ export function SearchBar({
         }
 
         const timeoutId = setTimeout(() => {
-            onSearch(query);
+            onSearchRef.current(query);
         }, debounceMs);
 
         return () => clearTimeout(timeoutId);
-    }, [query, onSearch, debounceMs, initialValue]);
+    }, [query, debounceMs, initialValue]);
 
     const handleClear = () => {
         setQuery("");
