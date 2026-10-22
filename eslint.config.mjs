@@ -270,9 +270,8 @@ const eslintConfig = [
     rules: { "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...lockRules("tabRecipe")] },
   },
   {
-    // ui/table is the table primitive; Elysium's tables are Yaugourt's migration
-    // (handoff doc "Elysium : migration des tables au DS V4"): drop this glob once done.
-    files: ["src/components/ui/**/*.{ts,tsx}", "src/components/elysium/**/*.{ts,tsx}"],
+    // ui/table is the table primitive.
+    files: ["src/components/ui/**/*.{ts,tsx}"],
     rules: { "no-restricted-syntax": ["error", ...DS_SYNTAX_RULES, ...lockRules("rawTable")] },
   },
   {

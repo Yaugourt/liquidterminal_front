@@ -615,7 +615,7 @@ Token-icon helpers in `@/lib/tokenIconUrl.ts`:
 - `no-restricted-syntax` — **forbids the shadcn `<CardTitle>` / `<CardDescription>`**: card heads go through `<CardHead>` (§4). `CardHeader` / `CardContent` / `CardFooter` stay allowed (density wrappers). Exempt: the labs showcases.
 - `no-restricted-syntax` — **forbids `<StatsCard>`** (retired): a key figure is a `<KpiRibbon>` cell (§7.b). Exempt: the labs showcases.
 - `no-restricted-syntax` — **forbids a `data-[state=active]:` recipe in a consumer's `className`**: the active tab look comes from `<TabsList size>` / `<TabsTrigger size>` or `<PillTabs>`. Exempt: the HIP-4 static doc chapters (`components/hip4/**`) and the labs showcases.
-- `no-restricted-syntax` — **forbids a raw `<table>`**: use `<ModuleTable>` in a card or `<TypedDataTable>` for a page (§5). Exempt: `components/ui/**` (the table primitive), `components/elysium/**` until its tables are migrated (drop that glob then) and the labs showcases.
+- `no-restricted-syntax` — **forbids a raw `<table>`**: use `<ModuleTable>` in a card or `<TypedDataTable>` for a page (§5). Exempt: `components/ui/**` (the table primitive) and the labs showcases.
 - The migration locks live in `MIGRATION_LOCKS` in `eslint.config.mjs`; an exemption block lifts only the lock its files legitimately break (`lockRules("rawTable")`, …).
 
 ## 11. Honest constraints (learned during the refactor)
