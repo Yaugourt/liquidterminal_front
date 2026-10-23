@@ -89,10 +89,8 @@ export function ProjectLinksCard({ project }: { project: Project }) {
 
   if (links.length === 0) return null;
   return (
-    <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle">
-        <h3 className="text-[13px] font-medium text-text-primary">Links</h3>
-      </div>
+    <Card interactive={false}>
+      <CardHead title="Links" />
       <div className="px-2 py-2">
         {links.map((link) => (
           <a
@@ -107,7 +105,7 @@ export function ProjectLinksCard({ project }: { project: Project }) {
           </a>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -144,10 +142,8 @@ export function AboutMetaCard({ project }: { project: Project }) {
   const listed = new Date(project.createdAt).toLocaleDateString("en-US", { month: "short", year: "numeric" });
   const category = project.categories?.[0]?.name;
   return (
-    <div className="bg-surface border border-border-subtle rounded-lg">
-      <div className="px-4 py-3 border-b border-border-subtle">
-        <h3 className="text-[13px] font-medium text-text-primary">About</h3>
-      </div>
+    <Card interactive={false}>
+      <CardHead title="About" />
       <div className="px-4 py-3 space-y-2">
         <RailRow label="Listed" value={listed} />
         {category && (
@@ -167,7 +163,7 @@ export function AboutMetaCard({ project }: { project: Project }) {
           }
         />
       </div>
-    </div>
+    </Card>
   );
 }
 
