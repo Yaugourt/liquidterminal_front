@@ -1,4 +1,4 @@
-import { compactCount, compactUsd, signedCompactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, formatPct, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import { formatDuration, timeAgo } from "@/lib/formatters/dateFormatting";
 import type {
   CadenceProfile,
@@ -38,7 +38,6 @@ interface InsightInput {
   exposure: ExposureProfile;
 }
 
-const pct = (v: number, digits = 0) => `${(v * 100).toFixed(digits)}%`;
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 const perDay = (n: number) => (n >= 10 ? Math.round(n).toString() : n.toFixed(1));
 
@@ -60,14 +59,14 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       out.push({
         id: "cadence",
         tone: "warn",
-        text: `Scalper: median hold ${hold}, ~${perDay(cadence.tradesPerDay)} round-trips/day, ${pct(cadence.under5mShare)} closed under 5 min — not copyable by hand.`,
+        text: `Scalper: median hold ${hold}, ~${perDay(cadence.tradesPerDay)} round-trips/day, ${formatPct(cadence.under5mShare, { decimals: 0 })} closed under 5 min — not copyable by hand.`,
         source: `Last ${cadence.sample} closed round-trips (indexer)`,
       });
     } else {
       out.push({
         id: "cadence",
         tone: "neutral",
-        text: `${cadence.style} trader: median hold ${hold}, ~${perDay(cadence.tradesPerDay)} round-trips/day, ${pct(cadence.longShare)} opened long.`,
+        text: `${cadence.style} trader: median hold ${hold}, ~${perDay(cadence.tradesPerDay)} round-trips/day, ${formatPct(cadence.longShare, { decimals: 0 })} opened long.`,
         source: `Last ${cadence.sample} closed round-trips (indexer)`,
       });
     }
@@ -81,7 +80,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       out.push({
         id: "form",
         tone: hot ? "good" : "warn",
-        text: `${hot ? "Hot hand" : "Cooling off"}: ${pct(cadence.recentWinRate)} win rate on the last ${cadence.sample} trades vs ${pct(trading.winRate)} lifetime (${signedCompactUsd(cadence.recentPnl)} realized).`,
+        text: `${hot ? "Hot hand" : "Cooling off"}: ${formatPct(cadence.recentWinRate, { decimals: 0 })} win rate on the last ${cadence.sample} trades vs ${formatPct(trading.winRate, { decimals: 0 })} lifetime (${signedCompactUsd(cadence.recentPnl)} realized).`,
         source: "Round-trip sample vs lifetime overview (indexer)",
       });
     }
@@ -120,7 +119,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       out.push({
         id: "flows",
         tone: "warn",
-        text: `Has burnt ${pct(Math.min(1, Math.abs(pnl.allTime) / flows.netCapitalIn))} of the ${compactUsd(flows.netCapitalIn)} net it put in (${signedCompactUsd(pnl.allTime)} all-time)${partial}.`,
+        text: `Has burnt ${formatPct(Math.min(1, Math.abs(pnl.allTime) / flows.netCapitalIn), { decimals: 0 })} of the ${compactUsd(flows.netCapitalIn)} net it put in (${signedCompactUsd(pnl.allTime)} all-time)${partial}.`,
         source: "HL ledger deposits, withdrawals and transfers × exchange PnL",
       });
     } else if (parent && parent.netOut < 0 && Math.abs(parent.netOut) >= Math.max(10_000, flows.deposits * 0.25)) {
@@ -150,7 +149,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
     const times = count === 1 ? "once" : `${count}${fromDb && risk.liquidations.hasMore ? "+" : ""} times`;
     const winRateNote =
       trading && trading.winRate >= 0.5 && pnl.allTime != null && pnl.allTime < 0
-        ? ` — the ${pct(trading.winRate)} win rate leaves these out, all-time PnL is ${signedCompactUsd(pnl.allTime)}`
+        ? ` — the ${formatPct(trading.winRate, { decimals: 0 })} win rate leaves these out, all-time PnL is ${signedCompactUsd(pnl.allTime)}`
         : "";
     out.push({
       id: "liquidations",
@@ -188,7 +187,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       out.push({
         id: "smart-money",
         tone: "warn",
-        text: `Contrarian on ${a.coin}: ${a.side} ${compactUsd(a.notional)} while ${pct(cohortShare)} of smart-money notional is ${cohortSide} (${a.cohortTraders} traders)${
+        text: `Contrarian on ${a.coin}: ${a.side} ${compactUsd(a.notional)} while ${formatPct(cohortShare, { decimals: 0 })} of smart-money notional is ${cohortSide} (${a.cohortTraders} traders)${
           against.length > 1 ? `, and against the cohort on ${against.length - 1} more` : ""
         }.`,
         source: `Open positions × top-trader positioning (${smartMoney.cohortSize} wallets)`,
@@ -198,7 +197,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       out.push({
         id: "smart-money",
         tone: "good",
-        text: `With the crowd: ${biggest.side} ${biggest.coin} alongside ${pct(cohortShare)} of smart-money notional (${biggest.cohortTraders} traders).`,
+        text: `With the crowd: ${biggest.side} ${biggest.coin} alongside ${formatPct(cohortShare, { decimals: 0 })} of smart-money notional (${biggest.cohortTraders} traders).`,
         source: `Open positions × top-trader positioning (${smartMoney.cohortSize} wallets)`,
       });
     }
@@ -213,7 +212,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       id: "carry",
       tone: pays ? "warn" : "good",
       text: `${pays ? "Pays" : "Earns"} ~${compactUsd(Math.abs(carry.dailyUsd))}/day in funding at current rates${
-        perpValue != null && perpValue >= 0.02 ? ` (${pct(perpValue)} of net worth a year)` : ""
+        perpValue != null && perpValue >= 0.02 ? ` (${formatPct(perpValue, { decimals: 0 })} of net worth a year)` : ""
       }, mostly ${top.side} ${top.coin} at ${top.hlApr.toFixed(1)}% APR.`,
       source: "Open positions × HL predicted funding",
     });
@@ -225,8 +224,8 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
     out.push({
       id: "liq-distance",
       tone: "warn",
-      text: `${nearest.coin} ${nearest.side} ${nearest.leverage > 0 ? `${nearest.leverage}× ` : ""}is ${pct(Math.abs(nearest.distance), 1)} from liquidation${
-        risk.marginUtilisation != null ? ` with ${pct(risk.marginUtilisation)} of margin in use` : ""
+      text: `${nearest.coin} ${nearest.side} ${nearest.leverage > 0 ? `${nearest.leverage}× ` : ""}is ${formatPct(Math.abs(nearest.distance), { decimals: 1 })} from liquidation${
+        risk.marginUtilisation != null ? ` with ${formatPct(risk.marginUtilisation, { decimals: 0 })} of margin in use` : ""
       }.`,
       source: "HL clearinghouseState",
     });
@@ -235,7 +234,7 @@ export function deriveWalletInsights(input: InsightInput): WalletInsight[] {
       id: "leverage",
       tone: "warn",
       text: `Runs ${exposure.effectiveLeverage.toFixed(1)}× effective leverage: ${compactUsd(exposure.grossNotional)} open on the perp account${
-        risk.marginUtilisation != null ? `, ${pct(risk.marginUtilisation)} of margin used` : ""
+        risk.marginUtilisation != null ? `, ${formatPct(risk.marginUtilisation, { decimals: 0 })} of margin used` : ""
       }.`,
       source: "HL clearinghouseState",
     });

@@ -5,7 +5,7 @@ import { KpiRibbon, type KpiCell, type KpiTone } from "@/components/common";
 import { useVaultEquitySnapshots } from "@/services/explorer/vault/hooks/useVaultEquitySnapshots";
 import { useVaultIndexerDetails } from "@/services/explorer/vault/hooks/useVaultIndexerDetails";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 
 interface VaultDetailKpiRowProps {
   vaultAddress: string;
@@ -130,8 +130,6 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
   const ph = isLoading ? "…" : "—";
   const signedTone = (v: number | null | undefined): KpiTone =>
     v === null || v === undefined ? "default" : v >= 0 ? "success" : "danger";
-  const signedPct = (v: number | null) =>
-    v === null ? ph : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
 
   // Dense KPI ribbon (mockup B §detail). No icons, value + optional sub.
   // Commission is intentionally omitted — it already lives in the header meta
@@ -150,8 +148,8 @@ export function VaultDetailKpiRow({ vaultAddress, isLoading: parentLoading }: Va
       tone: signedTone(kpis.apr),
       sub: "annualized",
     },
-    { label: "24h Δ", value: signedPct(kpis.delta24h), tone: signedTone(kpis.delta24h) },
-    { label: "7d Δ", value: signedPct(kpis.delta7d), tone: signedTone(kpis.delta7d) },
+    { label: "24h Δ", value: formatPct(kpis.delta24h, { from: "percent", decimals: 2, signed: true, fallback: ph }), tone: signedTone(kpis.delta24h) },
+    { label: "7d Δ", value: formatPct(kpis.delta7d, { from: "percent", decimals: 2, signed: true, fallback: ph }), tone: signedTone(kpis.delta7d) },
     {
       label: "All-Time PnL",
       value: kpis.allTimePnl

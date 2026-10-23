@@ -49,7 +49,7 @@ const isSpotCoin = (coin: string) => coin.startsWith("@") || coin.includes("/");
 const isFillRow = (tx: FormattedUserTransaction) =>
   tx.isLong === true || tx.isShort === true || tx.isClose === true;
 
-const pct = (n: number, d: number) => (d > 0 ? Math.round((n / d) * 100) : 0);
+const percentOf = (n: number, d: number) => (d > 0 ? Math.round((n / d) * 100) : 0);
 
 /**
  * Heuristic "who is this wallet?" classifier — first matching rule wins, and
@@ -118,7 +118,7 @@ export function classifyWallet(input: WalletArchetypeInput): WalletArchetype | n
   const hyperactive = turnover != null && turnover >= 2_000;
   if (lifetimeFills >= 10_000 && (cancelHeavy || hyperactive)) {
     const facts = [
-      cancelHeavy ? `${pct(cancels, intents)}% of recent order intents are cancels` : null,
+      cancelHeavy ? `${percentOf(cancels, intents)}% of recent order intents are cancels` : null,
       hyperactive ? `${Math.round(turnover).toLocaleString("en-US")}× capital turnover` : null,
       `${lifetimeFills.toLocaleString("en-US")} lifetime fills`,
     ].filter(Boolean);
@@ -130,7 +130,7 @@ export function classifyWallet(input: WalletArchetypeInput): WalletArchetype | n
     return {
       id: "twap-executor",
       label: "TWAP executor",
-      reason: `${pct(twaps, intents)}% of recent order intents are TWAPs`,
+      reason: `${percentOf(twaps, intents)}% of recent order intents are TWAPs`,
     };
   }
 
@@ -139,7 +139,7 @@ export function classifyWallet(input: WalletArchetypeInput): WalletArchetype | n
     return {
       id: "transfer-hub",
       label: "Transfer hub",
-      reason: `${pct(transfers, actions)}% of recent actions are transfers · under 50 fills`,
+      reason: `${percentOf(transfers, actions)}% of recent actions are transfers · under 50 fills`,
     };
   }
 

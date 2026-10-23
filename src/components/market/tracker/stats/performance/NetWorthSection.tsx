@@ -10,6 +10,7 @@ import {
   AuroraAreaChart,
   chartColors,
 } from "@/components/common";
+import { formatPct } from "@/lib/formatters/numberFormatting";
 import type { PortfolioHistory } from "@/services/market/tracker/hyperfolio";
 
 const PERIOD_DAYS: Partial<Record<ChartPeriod, number>> = {
@@ -23,9 +24,6 @@ interface NetWorthSectionProps {
   history: PortfolioHistory | null;
   isLoading?: boolean;
 }
-
-const signedPct = (v: number | null): string =>
-  v === null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
 
 /**
  * Full net-worth history (HyperCore + HyperEVM tokens + DeFi + NFTs) from the
@@ -84,7 +82,7 @@ export function NetWorthSection({ history, isLoading = false }: NetWorthSectionP
               ).map(([label, pct]) => (
                 <span key={label} className="inline-flex items-center gap-1">
                   <span>{label}</span>
-                  <span className={pct === null ? "" : pct >= 0 ? "text-success" : "text-danger"}>{signedPct(pct)}</span>
+                  <span className={pct === null ? "" : pct >= 0 ? "text-success" : "text-danger"}>{formatPct(pct, { from: "percent", decimals: 2, signed: true })}</span>
                 </span>
               ))}
             </div>

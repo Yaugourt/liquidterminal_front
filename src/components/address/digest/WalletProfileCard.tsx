@@ -18,6 +18,7 @@ import {
 import {
   compactCount,
   compactUsd,
+  formatPct,
   formatPrice,
   signedCompactUsd,
 } from "@/lib/formatters/numberFormatting";
@@ -55,8 +56,6 @@ const BUCKET_FILL: Record<BalanceBucket["key"], string> = {
 const MARKET_FILL = ["bg-brand", "bg-brand/75", "bg-brand/55", "bg-brand/40", "bg-brand/28", "bg-brand/18"];
 const OTHERS_FILL = "bg-text-tertiary/25";
 
-const pct = (v: number, digits = 1) => `${(v * 100).toFixed(digits)}%`;
-const signedPct = (v: number) => `${v >= 0 ? "+" : "−"}${(Math.abs(v) * 100).toFixed(1)}%`;
 const shortAddr = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 function ColumnHead({ children }: { children: ReactNode }) {
@@ -173,7 +172,7 @@ function BalancesColumn({ model }: { model: AddressDigestModel }) {
             label={b.label}
             swatch={BUCKET_FILL[b.key]}
             value={isLoading ? "…" : b.evm ? evmValue(b) : compactUsd(b.value)}
-            sub={!isLoading && b.share > 0 ? pct(b.share, 0) : undefined}
+            sub={!isLoading && b.share > 0 ? formatPct(b.share, { decimals: 0 }) : undefined}
             muted={!isLoading && b.value === 0 && !(b.evm && evm.loading)}
           />
         ))}
@@ -274,7 +273,7 @@ function MarketsColumn({ model }: { model: AddressDigestModel }) {
             <>
               {" "}
               <span className="whitespace-nowrap">
-                · top 3 <span className="mono text-text-primary">{pct(markets.top3Share, 0)}</span>
+                · top 3 <span className="mono text-text-primary">{formatPct(markets.top3Share, { decimals: 0 })}</span>
               </span>
             </>
           )}
@@ -283,7 +282,7 @@ function MarketsColumn({ model }: { model: AddressDigestModel }) {
               {" "}
               <span className="whitespace-nowrap">
                 · top <span className="mono text-text-primary">{markets.top[0].coin}</span>{" "}
-                <span className="mono text-text-tertiary">{pct(markets.top[0].share)}</span>
+                <span className="mono text-text-tertiary">{formatPct(markets.top[0].share)}</span>
               </span>
             </>
           )}
@@ -304,7 +303,7 @@ function MarketsColumn({ model }: { model: AddressDigestModel }) {
         <StatRow label="Fills" value={compactCount(trading.fills)} sub={`${compactCount(trading.trades)} trades`} />
         <StatRow label="Fees" value={compactUsd(trading.fees)} />
         {trading.longPct != null && (
-          <StatRow label="Long bias" value={pct(trading.longPct, 0)} sub="of round-trips" />
+          <StatRow label="Long bias" value={formatPct(trading.longPct, { decimals: 0 })} sub="of round-trips" />
         )}
       </div>
     </ProfileCell>
@@ -383,7 +382,7 @@ function EdgeColumn({ model }: { model: AddressDigestModel }) {
             label="Max DD"
             value={compactUsd(trading.equityDrawdownUsd)}
             valueClassName="text-danger"
-            sub={trading.equityDrawdownPct != null ? `${pct(trading.equityDrawdownPct, 0)} of equity` : undefined}
+            sub={trading.equityDrawdownPct != null ? `${formatPct(trading.equityDrawdownPct, { decimals: 0 })} of equity` : undefined}
           />
         )}
         {cadence && (
@@ -396,7 +395,7 @@ function EdgeColumn({ model }: { model: AddressDigestModel }) {
             <StatRow
               label="Pace"
               value={`${cadence.tradesPerDay >= 10 ? Math.round(cadence.tradesPerDay) : cadence.tradesPerDay.toFixed(1)}/day`}
-              sub={`${pct(cadence.recentWinRate, 0)} recent WR`}
+              sub={`${formatPct(cadence.recentWinRate, { decimals: 0 })} recent WR`}
             />
           </>
         )}
@@ -419,7 +418,7 @@ function EdgeColumn({ model }: { model: AddressDigestModel }) {
             label="Realized"
             value={signedCompactUsd(trading.realizedPnl)}
             valueClassName={trading.realizedPnl >= 0 ? "text-success" : "text-danger"}
-            sub={coverage != null && coverage > 0 && coverage < 0.95 ? `${pct(coverage, 0)} of HL PnL` : `${compactCount(trading.trades)} round-trips`}
+            sub={coverage != null && coverage > 0 && coverage < 0.95 ? `${formatPct(coverage, { decimals: 0 })} of HL PnL` : `${compactCount(trading.trades)} round-trips`}
           />
         )}
       </div>
@@ -466,7 +465,7 @@ function RiskColumn({ model, onShowPositions }: { model: AddressDigestModel; onS
                   {p.leverage > 0 && <span className="mono text-text-tertiary">{p.leverage}×</span>}
                 </>
               }
-              value={p.distance != null ? signedPct(p.distance) : "—"}
+              value={formatPct(p.distance, { signed: true })}
               valueClassName={distanceClass(p)}
               sub={p.liquidationPx != null ? `liq ${formatPrice(p.liquidationPx, format)}` : compactUsd(p.notional)}
             />
@@ -495,7 +494,7 @@ function RiskColumn({ model, onShowPositions }: { model: AddressDigestModel; onS
         {marginUtilisation != null && (
           <StatRow
             label="Margin used"
-            value={pct(marginUtilisation, 0)}
+            value={formatPct(marginUtilisation, { decimals: 0 })}
             valueClassName={marginUtilisation >= 0.8 ? "text-danger" : marginUtilisation >= 0.5 ? "text-gold" : "text-text-primary"}
           />
         )}
@@ -641,7 +640,7 @@ export function WalletProfileCard({ model, onShowPositions }: WalletProfileCardP
                     }
                   />,
                   <span key="v" className="mono text-text-secondary">{compactUsd(r.volume)}</span>,
-                  <span key="s" className="mono text-text-tertiary">{r.share != null ? pct(r.share) : "—"}</span>,
+                  <span key="s" className="mono text-text-tertiary">{formatPct(r.share)}</span>,
                   <span
                     key="p"
                     className={cn("mono font-medium", r.pnl == null ? "text-text-tertiary" : r.pnl >= 0 ? "text-success" : "text-danger")}

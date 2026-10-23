@@ -11,7 +11,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { CardHead, DataStatus, KpiRibbon, PageHeader } from "@/components/common";
 import { usePerpDexWithMarketData } from "@/services/market/perpDex/hooks";
-import { formatNumber, truncateAddress, formatFunding } from "@/lib/formatters/numberFormatting";
+import { formatNumber, truncateAddress, formatFunding, formatPct } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { PerpDexMarketsTable } from "@/components/market/perpDex";
 import { AddressDisplay } from "@/components/ui/address-display";
@@ -23,8 +23,9 @@ import {
 
 function formatFeeScale(range: { min: number; max: number } | null): string {
   if (!range) return "—";
-  const pct = (v: number) => `${(v * 100).toFixed(0)}%`;
-  return range.min === range.max ? pct(range.min) : `${pct(range.min)}–${pct(range.max)}`;
+  return range.min === range.max
+    ? formatPct(range.min, { decimals: 0 })
+    : `${formatPct(range.min, { decimals: 0 })}–${formatPct(range.max, { decimals: 0 })}`;
 }
 
 export default function PerpDexDetailPage() {

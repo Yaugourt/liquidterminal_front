@@ -1,6 +1,7 @@
 import { TileFrame } from "@/lib/og/TileFrame";
 import { tileColors } from "@/lib/og/tileTheme";
 import { ELYSIUM_FOOTNOTE, ElysiumBadge, RankList, clip, elysiumTileResponse, loadElysium, shortAddr } from "@/lib/og/elysium";
+import { formatPct } from "@/lib/formatters/numberFormatting";
 import { fmtHypeFee } from "@/components/elysium/fee-format";
 import type { ElysiumFeesAnalytics } from "@/services/elysium/types";
 
@@ -20,7 +21,6 @@ export async function GET(req: Request) {
   const rows = (d?.contracts ?? []).slice(0, 6);
   if (!d || rows.length < 3) return new Response("elysium fees unavailable", { status: 503 });
   const t = d.totals;
-  const pct = (v: number) => `${(v * 100).toFixed(v >= 0.1 ? 0 : 1)}%`;
 
   return elysiumTileResponse(
     <TileFrame
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
       badge={<ElysiumBadge />}
       eyebrow={`Elysium testnet · gas fees, last ${window}`}
       hero={`${fmtHypeFee(t.feesHype)} HYPE`}
-      heroSub={`${pct(t.appShare)} paid calling apps · ${pct(t.systemShare)} system · ${t.txs.toLocaleString("en-US")} txs`}
+      heroSub={`${formatPct(t.appShare, { decimals: t.appShare >= 0.1 ? 0 : 1 })} paid calling apps · ${formatPct(t.systemShare, { decimals: t.systemShare >= 0.1 ? 0 : 1 })} system · ${t.txs.toLocaleString("en-US")} txs`}
       footLeft="Full fee of each non-spam tx, grouped by the contract it called"
       footNote={ELYSIUM_FOOTNOTE()}
     >
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
             r.label || r.symbol ? { text: clip(r.label ?? r.symbol, 22), sub: shortAddr(r.address) } : { text: shortAddr(r.address) },
             { text: r.kind === "precompile" ? "system" : r.deployer ? shortAddr(r.deployer) : "-", color: tileColors.textSecondary },
             { text: fmtHypeFee(r.feesHype), color: tileColors.warn },
-            { text: pct(r.share) },
+            { text: formatPct(r.share, { decimals: r.share >= 0.1 ? 0 : 1 }) },
             { text: r.txs.toLocaleString("en-US") },
           ],
         }))}

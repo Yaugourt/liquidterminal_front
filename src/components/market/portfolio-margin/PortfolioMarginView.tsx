@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { AuroraAreaChart, CardHead, DataStatus, KpiRibbon, PageHeader, TypedDataTable, chartPalette } from "@/components/common";
 import type { Column, KpiCell } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import {
   usePortfolioMargin,
   usePortfolioMarginHistory,
@@ -25,7 +25,6 @@ import {
  * would be wrong.
  */
 
-const pct = (v: number, d = 1) => `${(v * 100).toFixed(d)}%`;
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 const amount = (v: number) =>
   v.toLocaleString("en-US", { maximumFractionDigits: v >= 1000 ? 0 : v >= 1 ? 2 : 4 });
@@ -108,8 +107,8 @@ export function PortfolioMarginView() {
     return [
       { label: "Borrowed", value: compactUsd(borrowed), sub: "all reserves, at oracle price" },
       { label: "Collateral posted", value: compactUsd(collateral), sub: data.reserves.filter((r) => r.ltv > 0).map((r) => r.name).join(" · ") },
-      { label: "USDC utilization", value: usdc ? pct(usdc.utilization) : "—", sub: usdc ? `${compactUsd(usdc.suppliedUsd)} supplied` : undefined },
-      { label: "USDC borrow / supply APY", value: usdc ? `${pct(usdc.borrowApy, 2)} / ${pct(usdc.supplyApy, 2)}` : "—" },
+      { label: "USDC utilization", value: usdc ? formatPct(usdc.utilization) : "—", sub: usdc ? `${compactUsd(usdc.suppliedUsd)} supplied` : undefined },
+      { label: "USDC borrow / supply APY", value: usdc ? `${formatPct(usdc.borrowApy, { decimals: 2 })} / ${formatPct(usdc.supplyApy, { decimals: 2 })}` : "—" },
       { label: "Accounts found", value: data.scan.found.toLocaleString("en-US"), sub: `${data.scan.checked.toLocaleString("en-US")} of ${data.scan.candidates.toLocaleString("en-US")} eligible checked` },
       { label: "Not healthy", value: atRisk.toLocaleString("en-US"), tone: atRisk ? "gold" : undefined, sub: "Hyperliquid's own health label" },
     ];
@@ -121,8 +120,8 @@ export function PortfolioMarginView() {
       { key: "role", header: "Role", className: "hidden sm:table-cell", accessor: (r) => (r.ltv > 0 ? <span className="text-text-secondary">Collateral · LTV {r.ltv}</span> : <span className="text-text-secondary">Lent and borrowed</span>) },
       { key: "suppliedUsd", header: "Supplied", align: "right", accessor: (r) => <span className="mono">{compactUsd(r.suppliedUsd)}</span> },
       { key: "borrowedUsd", header: "Borrowed", align: "right", accessor: (r) => <span className="mono">{r.borrowedUsd > 0 ? compactUsd(r.borrowedUsd) : "—"}</span> },
-      { key: "utilization", header: "Utilization", align: "right", accessor: (r) => <span className="mono">{r.totalBorrowed > 0 ? pct(r.utilization) : "—"}</span> },
-      { key: "apy", header: "Borrow / supply APY", align: "right", className: "hidden md:table-cell", accessor: (r) => <span className="mono">{r.ltv > 0 ? "—" : `${pct(r.borrowApy, 2)} / ${pct(r.supplyApy, 2)}`}</span> },
+      { key: "utilization", header: "Utilization", align: "right", accessor: (r) => <span className="mono">{r.totalBorrowed > 0 ? formatPct(r.utilization) : "—"}</span> },
+      { key: "apy", header: "Borrow / supply APY", align: "right", className: "hidden md:table-cell", accessor: (r) => <span className="mono">{r.ltv > 0 ? "—" : `${formatPct(r.borrowApy, { decimals: 2 })} / ${formatPct(r.supplyApy, { decimals: 2 })}`}</span> },
       { key: "threshold", header: "Liquidation threshold", align: "right", className: "hidden lg:table-cell", accessor: (r) => <span className="mono">{r.liquidationThreshold != null ? r.liquidationThreshold.toFixed(3) : "—"}</span> },
     ],
     []

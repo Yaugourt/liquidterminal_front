@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { KpiRibbon, Skeleton, type KpiCell } from "@/components/common";
-import { compactCount, compactUsd, signedCompactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, formatPct, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import { formatDate, timeAgo } from "@/lib/formatters/dateFormatting";
 import { useDateFormat } from "@/store/date-format.store";
 import type { AddressDigestModel } from "./useAddressDigest";
@@ -12,7 +12,6 @@ interface AddressKpiRibbonProps {
 }
 
 const tone = (v: number): KpiCell["tone"] => (v >= 0 ? "success" : "danger");
-const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
 
 /**
  * The address page's headline strip: net worth, exchange-reported PnL, the
@@ -81,14 +80,14 @@ export function AddressKpiRibbon({ model }: AddressKpiRibbonProps) {
     if (trading) {
       const recent =
         isTracker && cadence && cadence.sample >= 20
-          ? `last ${cadence.sample}: ${pct(cadence.recentWinRate)}`
+          ? `last ${cadence.sample}: ${formatPct(cadence.recentWinRate)}`
           : trading.wins != null && trading.losses != null
             ? `${compactCount(trading.wins)}W / ${compactCount(trading.losses)}L`
             : `${compactCount(trading.trades)} trades`;
       out.push({
         key: "winrate",
         label: "Win rate",
-        value: pct(trading.winRate),
+        value: formatPct(trading.winRate),
         sub: recent,
       });
       if (trading.profitFactor != null) {

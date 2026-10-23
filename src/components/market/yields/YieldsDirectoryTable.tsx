@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { formatNumber } from "@/lib/formatters/numberFormatting";
+import { formatNumber, formatPct } from "@/lib/formatters/numberFormatting";
 import {
   TOP_YIELDS_MIN_TVL,
   YIELDS_MAX_PAGE,
@@ -55,24 +55,23 @@ const RISK_LABEL: Record<YieldRiskLevel, string> = {
 
 const initials = (name: string) => name.replace(/[^a-zA-Z0-9]/g, "").slice(0, 2).toUpperCase() || "?";
 
-const pct = (v: number) => `${v.toFixed(2)}%`;
 
 /** APY figure; the column types it (mono, tone). Adds the base/rewards split on hover. */
 function ApyCell({ y }: { y: YieldOpportunity }) {
   const hasSplit = y.apy.reward > 0 && y.apy.base !== y.apy.total;
-  if (!hasSplit) return <>{pct(y.apy.total)}</>;
+  if (!hasSplit) return <>{formatPct(y.apy.total, { from: "percent", decimals: 2 })}</>;
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <span className="cursor-help border-b border-dotted border-border-default">
-            {pct(y.apy.total)}
+            {formatPct(y.apy.total, { from: "percent", decimals: 2 })}
           </span>
         </TooltipTrigger>
         <TooltipContent>
           <div className="mono text-xs space-y-0.5">
-            <div>Base {pct(y.apy.base)}</div>
-            <div>Rewards {pct(y.apy.reward)}</div>
+            <div>Base {formatPct(y.apy.base, { from: "percent", decimals: 2 })}</div>
+            <div>Rewards {formatPct(y.apy.reward, { from: "percent", decimals: 2 })}</div>
           </div>
         </TooltipContent>
       </Tooltip>
@@ -141,13 +140,13 @@ function buildColumns(format: NumberFormatType): Column<YieldOpportunity>[] {
       key: "apy7d",
       header: "7d",
       type: "numeric",
-      accessor: (y) => (y.apy.apy7d !== null ? pct(y.apy.apy7d) : "—"),
+      accessor: (y) => (y.apy.apy7d !== null ? formatPct(y.apy.apy7d, { from: "percent", decimals: 2 }) : "—"),
     },
     {
       key: "apy30d",
       header: "30d",
       type: "numeric",
-      accessor: (y) => (y.apy.apy30d !== null ? pct(y.apy.apy30d) : "—"),
+      accessor: (y) => (y.apy.apy30d !== null ? formatPct(y.apy.apy30d, { from: "percent", decimals: 2 }) : "—"),
     },
     {
       key: "tvl",

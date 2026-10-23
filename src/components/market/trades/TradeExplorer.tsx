@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useDateFormat } from "@/store/date-format.store";
-import { compactUsd, compactCount, formatPrice, signedCompactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, compactCount, formatPct, formatPrice, signedCompactUsd } from "@/lib/formatters/numberFormatting";
 import { formatDateTime, formatDuration } from "@/lib/formatters/dateFormatting";
 import type { WalletRoundTrip } from "@/services/market/tracker/wallet-performance";
 import {
@@ -73,12 +73,11 @@ export function TradeExplorer() {
     const longs = summary.direction_breakdown.find((d) => d.direction === "long");
     const shorts = summary.direction_breakdown.find((d) => d.direction === "short");
     const total = (longs?.count ?? 0) + (shorts?.count ?? 0);
-    const pct = (n?: number) => (total > 0 ? `${(((n ?? 0) / total) * 100).toFixed(0)}%` : "—");
     return [
       { key: "trades", label: "Closed trades", value: compactCount(summary.total_trades), sub: "all-time" },
       { key: "vol", label: "Volume", value: compactUsd(summary.total_volume) },
-      { key: "long", label: "Longs", value: compactCount(longs?.count ?? 0), sub: pct(longs?.count), tone: "success" },
-      { key: "short", label: "Shorts", value: compactCount(shorts?.count ?? 0), sub: pct(shorts?.count), tone: "danger" },
+      { key: "long", label: "Longs", value: compactCount(longs?.count ?? 0), sub: total > 0 ? formatPct((longs?.count ?? 0) / total, { decimals: 0 }) : "—", tone: "success" },
+      { key: "short", label: "Shorts", value: compactCount(shorts?.count ?? 0), sub: total > 0 ? formatPct((shorts?.count ?? 0) / total, { decimals: 0 }) : "—", tone: "danger" },
     ];
   }, [summary]);
 

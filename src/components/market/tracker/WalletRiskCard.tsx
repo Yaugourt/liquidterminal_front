@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { CardHead, KpiRibbon, TokenAvatar, type KpiCell } from "@/components/common";
 import { useWalletsBalances } from "@/services/market/tracker/hooks/useWalletsBalances";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import { cn } from "@/lib/utils";
 
 interface WalletRiskCardProps {
@@ -26,9 +26,8 @@ interface LadderRow {
 /** Bars scale to this distance (moves past 50% read as "far"). */
 const LADDER_SCALE = 0.5;
 const usd = (v: number) => compactUsd(v, { fallback: "-" });
-const pct = (v: number) => `${(v * 100).toFixed(1)}%`;
 /** Distances past 100% (shorts whose liquidation is a multiple of the price away) read as "far". */
-const dist = (v: number) => (v >= 1 ? ">100%" : pct(v));
+const dist = (v: number) => (v >= 1 ? ">100%" : formatPct(v));
 const px = (v: number) => v.toLocaleString("en-US", { maximumSignificantDigits: 6 });
 
 /**
@@ -85,7 +84,7 @@ export function WalletRiskCard({ address }: WalletRiskCardProps) {
   if (!model) return null;
 
   const biasLabel =
-    Math.abs(model.bias) < 0.1 ? "Balanced" : model.bias > 0 ? `Net long ${pct(model.bias)}` : `Net short ${pct(-model.bias)}`;
+    Math.abs(model.bias) < 0.1 ? "Balanced" : model.bias > 0 ? `Net long ${formatPct(model.bias)}` : `Net short ${formatPct(-model.bias)}`;
   const closest = model.ladder[0];
 
   const cells: KpiCell[] = [
@@ -106,7 +105,7 @@ export function WalletRiskCard({ address }: WalletRiskCardProps) {
     {
       key: "mm",
       label: "Maintenance margin",
-      value: model.maintenanceRatio != null ? pct(model.maintenanceRatio) : "-",
+      value: model.maintenanceRatio != null ? formatPct(model.maintenanceRatio) : "-",
       sub: "of cross equity · liquidation at 100%",
       tone: model.maintenanceRatio != null && model.maintenanceRatio >= 0.5 ? "danger" : "default",
     },

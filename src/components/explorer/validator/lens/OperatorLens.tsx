@@ -128,7 +128,7 @@ export function OperatorLens() {
   // a long-tail segment. Surfaces stake centralization at a glance.
   const controlSegments = useMemo<DominanceSegment[]>(() => {
     if (!total) return [];
-    const pct = (x: number) => (x / total) * 100;
+    const percentOfTotal = (x: number) => (x / total) * 100;
 
     const foundationStake = validators
       .filter((v) => isFoundationName(v.name))
@@ -146,7 +146,7 @@ export function OperatorLens() {
       segments.push({
         key: "foundation",
         label: "Hyper Foundation",
-        pct: pct(foundationStake),
+        pct: percentOfTotal(foundationStake),
         fillClassName: "bg-surface-2",
       });
     }
@@ -154,7 +154,7 @@ export function OperatorLens() {
       segments.push({
         key: v.validator,
         label: v.name,
-        pct: pct(v.stake),
+        pct: percentOfTotal(v.stake),
         color: chartPalette.cyanRamp[i] ?? chartPalette.accent,
         labelClassName: "text-brand-text-on",
       });
@@ -163,7 +163,7 @@ export function OperatorLens() {
       segments.push({
         key: "tail",
         label: `Long tail · ${tail.length} validators`,
-        pct: pct(tailStake),
+        pct: percentOfTotal(tailStake),
         fillClassName: "bg-surface-3",
       });
     }
