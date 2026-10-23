@@ -8,7 +8,7 @@ import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, Sparkline,
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useElysiumProjects, type EcoProject } from "@/services/elysium";
 import { EMPTY, Empty } from "./shared";
-import { EcoLogo, EcoSource, StatusTag, signedPct } from "./eco-shared";
+import { EcoLogo, EcoSource, StatusTag, pctDelta } from "./eco-shared";
 
 type Window = "24h" | "7d";
 type ValueKey = "users24h" | "wallets7d" | "txs7d" | "volume7d" | "launches7d" | "txsAll" | "walletsAll";
@@ -108,7 +108,7 @@ function VerifiedTag({ p }: { p: EcoProject }) {
 
 function ChangeCell({ p, w }: { p: EcoProject; w: Window }) {
   if (isNew(p, w)) return <span className="text-[10px] font-semibold text-brand">New</span>;
-  const { text, tone } = signedPct(change(p, w));
+  const { text, tone } = pctDelta(change(p, w));
   return <span className={tone}>{text}</span>;
 }
 
@@ -175,7 +175,7 @@ function TopList({
 }
 
 function moverValue(p: EcoProject, w: Window) {
-  const { text, tone } = signedPct(change(p, w));
+  const { text, tone } = pctDelta(change(p, w));
   return <span className={tone}>{text}</span>;
 }
 

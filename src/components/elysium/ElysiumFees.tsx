@@ -5,7 +5,7 @@ import { Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, ShareTile, type KpiCell } from "@/components/common";
-import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import { useHypePrice } from "@/services/market/hype";
 import { useElysiumFees, type ElysiumContractKind, type ElysiumFeesAnalytics, type ElysiumFeesWindow } from "@/services/elysium";
 import { IngestNotice } from "./ElysiumCharts";
@@ -27,14 +27,12 @@ const WINDOWS: { value: ElysiumFeesWindow; label: string }[] = [
   { value: "30d", label: "30d" },
 ];
 
-const pct = (v: number) => `${(v * 100).toFixed(v >= 0.1 ? 0 : 1)}%`;
-
 const ShareBar = ({ share }: { share: number }) => (
   <div className="flex items-center gap-2 justify-end">
     <span className="h-1.5 w-16 rounded-full bg-surface-2 overflow-hidden hidden sm:block">
       <span className="block h-full bg-brand" style={{ width: `${Math.min(100, share * 100)}%` }} />
     </span>
-    <span className="w-10 text-right">{pct(share)}</span>
+    <span className="w-10 text-right">{formatPct(share, { decimals: share >= 0.1 ? 0 : 1 })}</span>
   </div>
 );
 
@@ -171,14 +169,16 @@ export function ElysiumFees() {
   const t = data?.totals;
   const usd = (h: number | undefined) => (price && h != null ? compactUsd(h * price) : undefined);
 
+  const plain = t ? Math.max(0, 1 - t.appShare - t.systemShare) : 0;
+
   const cells: KpiCell[] = [
     { key: "fees", label: "Fees paid", value: t ? `${fmtHypeFee(t.feesHype)} HYPE` : "…", sub: usd(t?.feesHype) ?? `last ${window}`, tone: "gold" },
-    { key: "apps", label: "Paid to apps", value: t ? pct(t.appShare) : "…", sub: t ? `${fmtHypeFee(t.appFeesHype)} HYPE, ${compactCount(t.apps)} contracts` : undefined },
-    { key: "system", label: "System calls", value: t ? pct(t.systemShare) : "…", sub: "bridge retryables, precompiles" },
+    { key: "apps", label: "Paid to apps", value: t ? formatPct(t.appShare, { decimals: t.appShare >= 0.1 ? 0 : 1 }) : "…", sub: t ? `${fmtHypeFee(t.appFeesHype)} HYPE, ${compactCount(t.apps)} contracts` : undefined },
+    { key: "system", label: "System calls", value: t ? formatPct(t.systemShare, { decimals: t.systemShare >= 0.1 ? 0 : 1 }) : "…", sub: "bridge retryables, precompiles" },
     {
       key: "transfers",
       label: "Plain transfers",
-      value: t ? pct(Math.max(0, 1 - t.appShare - t.systemShare)) : "…",
+      value: t ? formatPct(plain, { decimals: plain >= 0.1 ? 0 : 1 }) : "…",
       sub: "to wallets, not contracts",
     },
     {

@@ -5,7 +5,7 @@ import { memo } from "react";
 import { ArrowDownLeft, ArrowUpRight, Code2, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { AddressIdenticon, CardHead, KpiRibbon, ModuleTable, ModuleTableRow, ShareTile, type KpiCell } from "@/components/common";
-import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactCount, formatNumber, formatPct } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import {
   elysiumTimeMs,
@@ -16,7 +16,7 @@ import {
   useElysiumUserBridge,
   type ElysiumAddressTag,
 } from "@/services/elysium";
-import { AddrLink, EMPTY, EXPLORER, Empty, ExtLink, ago, elysiumTimeLabel, methodLabel, pct, short, useNow } from "./shared";
+import { AddrLink, EMPTY, EXPLORER, Empty, ExtLink, ago, elysiumTimeLabel, methodLabel, short, useNow } from "./shared";
 import { ElysiumContractDecoder } from "./ElysiumContractDecoder";
 
 const TAG_TONE: Record<ElysiumAddressTag["id"], string> = {
@@ -141,7 +141,7 @@ const Profile = memo(function Profile({ address }: { address: string }) {
             )}
           </div>
           <p className="text-[11px] text-text-tertiary">
-            Bot-like = {data.botRule.txs24h}+ user txs in the last 24h, or at least {pct(data.botRule.share24h)} of all of them.
+            Bot-like = {data.botRule.txs24h}+ user txs in the last 24h, or at least {formatPct(data.botRule.share24h, { decimals: 0, fallback: EMPTY })} of all of them.
           </p>
         </div>
       )}
@@ -269,7 +269,7 @@ export function ElysiumAddress({ address }: { address: string }) {
       key: "24h",
       label: "Txs, last 24h",
       value: n(profile?.activity.txs24h),
-      sub: profile ? `${pct(profile.activity.share24h, 2)} of the network` : undefined,
+      sub: profile ? `${formatPct(profile.activity.share24h, { decimals: 2, fallback: EMPTY })} of the network` : undefined,
     },
     { key: "first", label: "First seen", value: profile ? (profile.firstSeen ? elysiumTimeLabel(profile.firstSeen) : "never sent") : "…", sub: "UTC, as a sender" },
   ];

@@ -14,7 +14,7 @@ import { useAuctionTiming } from "@/services/market/auction/hooks/useAuctionTimi
 import { useBuildersGlobalStats } from "@/services/indexer/builders/hooks/useBuildersGlobalStats";
 import { useMetricHistory } from "@/services/market/metrics";
 import { useBiggestTrades } from "@/services/market/biggest-trades";
-import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatNumber, formatPct } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useHypePriceStore } from "@/services/market/hype/websocket.service";
 import { useVaults } from "@/services/explorer/vault/hooks/useVaults";
@@ -40,9 +40,9 @@ function Spark({ values }: { values: number[] }) {
   );
 }
 
-function signedPct(v: number | null | undefined): { text: string; up: boolean } {
+function pctDelta(v: number | null | undefined): { text: string; up: boolean } {
   if (v == null || !Number.isFinite(v)) return { text: EMPTY, up: true };
-  return { text: `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`, up: v >= 0 };
+  return { text: formatPct(v, { from: "percent", decimals: 2, signed: true }), up: v >= 0 };
 }
 
 /** A compact signal tile; with `href` the whole tile opens the page that goes deeper. */
@@ -113,8 +113,8 @@ export const SignalRow = memo(function SignalRow() {
 
   const perpMover = perpMovers?.[0];
   const spotMover = spotMovers?.[0];
-  const perpChange = signedPct(perpMover?.change24h);
-  const spotChange = signedPct(spotMover?.change24h);
+  const perpChange = pctDelta(perpMover?.change24h);
+  const spotChange = pctDelta(spotMover?.change24h);
   const auctionActive = auctionState?.isActive;
   const twapCount = twapMeta?.activeOrders ?? twapTotal;
   const buildersFees = builders?.current?.totalBuilderFees;

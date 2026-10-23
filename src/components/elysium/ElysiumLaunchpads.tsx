@@ -7,7 +7,7 @@ import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, type KpiCe
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useElysiumLaunchpads, type EcoToken } from "@/services/elysium";
 import { AddrLink, EMPTY, Empty, ago, useNow } from "./shared";
-import { EcoLogo, EcoSource, signedPct, tinyUsd } from "./eco-shared";
+import { EcoLogo, EcoSource, pctDelta, tinyUsd } from "./eco-shared";
 
 type Sort = "hot" | "new" | "gainers" | "mcap";
 const SORTS: { value: Sort; label: string }[] = [
@@ -142,7 +142,7 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
           meta="24h vol ≥ $100"
           rows={gainers}
           value={(t) => {
-            const c = signedPct(t.change24h);
+            const c = pctDelta(t.change24h);
             return <span className={c.tone}>{c.text}</span>;
           }}
         />
@@ -189,7 +189,7 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
               ]}
             >
               {rows.slice(0, shown).map((t) => {
-                const ch = signedPct(t.change24h);
+                const ch = pctDelta(t.change24h);
                 return (
                   <ModuleTableRow
                     key={t.address}

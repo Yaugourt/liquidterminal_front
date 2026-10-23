@@ -5,11 +5,11 @@ import { Boxes } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, chartPalette, type KpiCell } from "@/components/common";
-import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactCount, formatNumber, formatPct } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { elysiumTimeMs, useElysiumContracts, useElysiumDeployments, useElysiumMethods, type ElysiumContractKind } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
-import { AddrLink, EMPTY, Empty, ago, completeDays, delta, pct, short, useNow } from "./shared";
+import { AddrLink, EMPTY, Empty, ago, completeDays, delta, short, useNow } from "./shared";
 
 const KIND_TONE: Record<ElysiumContractKind, string> = {
   precompile: "bg-surface-2 text-text-tertiary",
@@ -140,7 +140,7 @@ const TopMethods = memo(function TopMethods() {
                       <span className="text-text-tertiary hidden sm:inline"> {m.methodId}</span>
                     </div>,
                     <span key="c" className="mono text-text-primary">{compactCount(m.txs)}</span>,
-                    <span key="s" className="mono text-text-secondary">{pct(m.share, 1)}</span>,
+                    <span key="s" className="mono text-text-secondary">{formatPct(m.share, { decimals: 1, fallback: EMPTY })}</span>,
                     <span key="se" className="mono text-text-secondary">{compactCount(m.senders)}</span>,
                     <span key="co" className="mono text-text-tertiary">{compactCount(m.contracts)}</span>,
                   ]}

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Info } from "lucide-react";
+import { formatPct } from "@/lib/formatters/numberFormatting";
 import type { EcoProjectStatus } from "@/services/elysium";
 import { EMPTY } from "./shared";
 
@@ -57,10 +58,9 @@ export function tinyUsd(v: number | null): string {
   return `$${v.toLocaleString("en-US", { maximumSignificantDigits: 3 })}`;
 }
 
-export function signedPct(v: number | null): { text: string; tone: string } {
+export function pctDelta(v: number | null): { text: string; tone: string } {
   if (v == null || !Number.isFinite(v)) return { text: EMPTY, tone: "text-text-tertiary" };
-  const digits = Math.abs(v) >= 100 ? 0 : 1;
-  const text = `${v > 0 ? "+" : ""}${v.toFixed(digits)}%`;
+  const text = formatPct(v, { from: "percent", decimals: Math.abs(v) >= 100 ? 0 : 1, signed: v > 0, fallback: EMPTY });
   return { text, tone: v > 0 ? "text-success" : v < 0 ? "text-danger" : "text-text-tertiary" };
 }
 

@@ -2,11 +2,11 @@
 
 import { Card } from "@/components/ui/card";
 import { CardHead, KpiRibbon, chartPalette, type KpiCell } from "@/components/common";
-import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactCount, formatNumber, formatPct } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumBatches, useElysiumEconomics } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
-import { Empty, completeDays, duration, pct } from "./shared";
+import { EMPTY, Empty, completeDays, duration } from "./shared";
 
 /**
  * Elysium · Economics: what users pay the sequencer (fees in HYPE, from
@@ -28,9 +28,9 @@ export function ElysiumEconomics() {
     { key: "fees", label: "Fees paid", value: last ? `${hype(last.feesHype)} HYPE` : "…", tone: "gold", sub: last?.day },
     { key: "avg", label: "Avg fee / tx", // 1 gwei = 1e-9 HYPE: testnet fees are far below a readable HYPE decimal.
       value: last ? `${formatNumber(last.avgFeeHype * 1e9, format, { maximumFractionDigits: 0 })} gwei` : "…", sub: last ? `${compactCount(last.txs)} non-spam txs` : undefined },
-    { key: "fail", label: "Failed", value: last ? pct(last.txs ? last.failedTxs / last.txs : null, 1) : "…", sub: last ? `${compactCount(last.failedTxs)} txs` : undefined },
+    { key: "fail", label: "Failed", value: last ? formatPct(last.txs ? last.failedTxs / last.txs : null, { decimals: 1, fallback: EMPTY }) : "…", sub: last ? `${compactCount(last.failedTxs)} txs` : undefined },
     // `txs` excludes spam, so the spam share is taken over txs + spam.
-    { key: "spam", label: "Spam", value: last ? pct(last.txs + last.spamTxs ? last.spamTxs / (last.txs + last.spamTxs) : null, 1) : "…", sub: "of non-system txs" },
+    { key: "spam", label: "Spam", value: last ? formatPct(last.txs + last.spamTxs ? last.spamTxs / (last.txs + last.spamTxs) : null, { decimals: 1, fallback: EMPTY }) : "…", sub: "of non-system txs" },
     { key: "settle", label: "Settlement delay", value: medianDelay != null ? duration(medianDelay) : "…", sub: `median, last ${delays.length} batches` },
   ];
 

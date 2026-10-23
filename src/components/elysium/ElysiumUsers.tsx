@@ -2,17 +2,17 @@
 
 import { Card } from "@/components/ui/card";
 import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, RowFillList, chartPalette, type KpiCell } from "@/components/common";
-import { compactCount, formatNumber } from "@/lib/formatters/numberFormatting";
+import { compactCount, formatNumber, formatPct } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { useElysiumUsers } from "@/services/elysium";
 import { DailyChartCard, IngestNotice } from "./ElysiumCharts";
-import { AddrLink, EMPTY, Empty, completeDays, pct } from "./shared";
+import { AddrLink, EMPTY, Empty, completeDays } from "./shared";
 
 /** Retention cell tinted by strength so the cohort table reads at a glance. */
 function RetentionCell({ v }: { v: number | null }) {
   if (v == null) return <span className="mono text-text-tertiary">{EMPTY}</span>;
   const tone = v >= 0.3 ? "text-success" : v >= 0.1 ? "text-text-primary" : "text-text-tertiary";
-  return <span className={`mono ${tone}`}>{pct(v)}</span>;
+  return <span className={`mono ${tone}`}>{formatPct(v, { decimals: 0, fallback: EMPTY })}</span>;
 }
 
 /**
@@ -29,12 +29,12 @@ export function ElysiumUsers() {
 
   const cells: KpiCell[] = [
     { key: "active", label: "Active addresses", value: last ? formatNumber(last.active, format, { maximumFractionDigits: 0 }) : "…", sub: last?.day },
-    { key: "new", label: "New addresses", value: last ? formatNumber(last.new, format, { maximumFractionDigits: 0 }) : "…", sub: last ? `${pct(last.active ? last.new / last.active : null)} of active` : undefined },
+    { key: "new", label: "New addresses", value: last ? formatNumber(last.new, format, { maximumFractionDigits: 0 }) : "…", sub: last ? `${formatPct(last.active ? last.new / last.active : null, { decimals: 0, fallback: EMPTY })} of active` : undefined },
     { key: "ret", label: "Returning", value: last ? formatNumber(last.returning, format, { maximumFractionDigits: 0 }) : "…", sub: last?.day },
     {
       key: "top10",
       label: "Top 10 senders",
-      value: c ? pct(c.top10Share) : "…",
+      value: c ? formatPct(c.top10Share, { decimals: 0, fallback: EMPTY }) : "…",
       tone: c && c.top10Share > 0.5 ? "danger" : undefined,
       sub: c ? `of ${compactCount(c.txs)} txs, 24h` : undefined,
     },
@@ -120,7 +120,7 @@ export function ElysiumUsers() {
                         <AddrLink address={s.address} className="text-text-secondary" />
                       </span>,
                       <span key="tx" className="mono whitespace-nowrap text-text-primary">{compactCount(s.txs)}</span>,
-                      <span key="sh" className="mono whitespace-nowrap text-text-tertiary">{pct(s.share, 1)}</span>,
+                      <span key="sh" className="mono whitespace-nowrap text-text-tertiary">{formatPct(s.share, { decimals: 1, fallback: EMPTY })}</span>,
                       <span key="tg" className="mono whitespace-nowrap text-text-tertiary" title="Distinct contracts or addresses it sent to">
                         {compactCount(s.distinctTargets)}
                       </span>,

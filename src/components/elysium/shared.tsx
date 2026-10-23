@@ -107,9 +107,6 @@ export function completeDays<T extends { day: string; partial?: boolean }>(rows:
 /** UTC midnight of a YYYY-MM-DD day, in ms. */
 export const dayMs = (day: string) => Date.parse(`${day}T00:00:00Z`);
 
-export const pct = (v: number | null | undefined, digits = 0) =>
-  v == null || !Number.isFinite(v) ? EMPTY : `${(v * 100).toFixed(digits)}%`;
-
 /** Signed change between two counts, as text + tone. */
 export function delta(now: number, prev: number): { text: string; up: boolean } | null {
   if (!prev) return now ? { text: "new", up: true } : null;
