@@ -25,7 +25,7 @@ import {
   ShareTile,
   rechartsGridDefaults,
 } from "@/components/common";
-import { compactCount, compactUsd, fullUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, formatPct, fullUsd } from "@/lib/formatters/numberFormatting";
 import type { StablecoinSupplyByCoinPoint } from "@/services/market/stablecoins";
 
 type ChartType = "area" | "bar";
@@ -199,7 +199,7 @@ export const StablecoinsCard = memo(function StablecoinsCard() {
             value:
               windowDelta === null
                 ? "—"
-                : `${deltaPositive ? "+" : "−"}${Math.abs(windowDelta).toFixed(2)}%`,
+                : formatPct(windowDelta, { from: "percent", decimals: 2, signed: true }),
             tone:
               windowDelta === null
                 ? "default"

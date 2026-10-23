@@ -20,7 +20,7 @@ import {
   type FlowGridColumn,
   rechartsGridDefaults,
 } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import type { RevenueDay } from "@/services/market/revenue";
 
 type ChartType = "area" | "bar";
@@ -550,7 +550,7 @@ const KpiStrip = memo(function KpiStrip({
                 ) : (
                   <TrendingDown size={10} />
                 )}
-                {`${deltaPositive ? "+" : "−"}${Math.abs(delta).toFixed(1)}%`}
+                {formatPct(delta, { from: "percent", signed: true })}
               </span>
             ),
         },
