@@ -153,6 +153,25 @@ const RAW_TABLE_RULES = [
 ];
 
 /**
+ * Percentages go through formatPct (@/lib/formatters/numberFormatting); a
+ * component never redeclares its own pct / fmtPct / signedPct helper. Plain
+ * numeric variables named `pct` stay allowed: only function values are banned.
+ */
+const LOCAL_PCT_NAMES = "/^(pct|fmtPct|fmtSignedPct|signedPct|formatPct|formatPercent)$/";
+const LOCAL_PCT_MESSAGE =
+  "Helper de pourcentage local. Utilise formatPct de '@/lib/formatters/numberFormatting' (ratio par défaut, from: 'percent' si la valeur est déjà en %, signed, decimals, fallback).";
+const LOCAL_PCT_RULES = [
+  {
+    selector: `VariableDeclarator[id.name=${LOCAL_PCT_NAMES}][init.type=/^(ArrowFunctionExpression|FunctionExpression)$/]`,
+    message: LOCAL_PCT_MESSAGE,
+  },
+  {
+    selector: `FunctionDeclaration[id.name=${LOCAL_PCT_NAMES}]`,
+    message: LOCAL_PCT_MESSAGE,
+  },
+];
+
+/**
  * Migration locks: each one was switched on once every occurrence of its
  * pattern was migrated. `lockRules(...exempt)` returns all of them except the
  * named ones, for the few files that legitimately keep a pattern.
@@ -163,6 +182,7 @@ const MIGRATION_LOCKS = {
   statsCard: STATS_CARD_RULES,
   tabRecipe: TAB_RECIPE_RULES,
   rawTable: RAW_TABLE_RULES,
+  localPct: LOCAL_PCT_RULES,
 };
 const lockRules = (...exempt) =>
   Object.entries(MIGRATION_LOCKS)

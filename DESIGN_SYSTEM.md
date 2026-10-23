@@ -617,6 +617,7 @@ Token-icon helpers in `@/lib/tokenIconUrl.ts`:
 - `no-restricted-syntax` — **forbids `<StatsCard>`** (retired): a key figure is a `<KpiRibbon>` cell (§7.b). Exempt: the labs showcases.
 - `no-restricted-syntax` — **forbids a `data-[state=active]:` recipe in a consumer's `className`**: the active tab look comes from `<TabsList size>` / `<TabsTrigger size>` or `<PillTabs>`. Exempt: the HIP-4 static doc chapters (`components/hip4/**`) and the labs showcases.
 - `no-restricted-syntax` — **forbids a raw `<table>`**: use `<ModuleTable>` in a card or `<TypedDataTable>` for a page (§5). Exempt: `components/ui/**` (the table primitive) and the labs showcases.
+- `no-restricted-syntax` — **forbids a local percent helper**: a function named `pct`, `fmtPct`, `fmtSignedPct`, `signedPct`, `formatPct` or `formatPercent` in `src/components` / `src/app`. Use `formatPct` (§9). Numeric variables named `pct` stay allowed. Exempt: the labs showcases.
 - The migration locks live in `MIGRATION_LOCKS` in `eslint.config.mjs`; an exemption block lifts only the lock its files legitimately break (`lockRules("rawTable")`, …).
 
 ## 11. Honest constraints (learned during the refactor)
