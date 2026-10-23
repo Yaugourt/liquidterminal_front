@@ -2,8 +2,8 @@
 
 /**
  * Shared mission list body — category groups + mission rows.
- * Consumed by <MissionsWidget /> (floating panel) and <MissionsCard />
- * (embeddable). Handles row affordances: deep link, client actions
+ * Consumed by <MissionsWidget /> (floating panel).
+ * Handles row affordances: deep link, client actions
  * (open Cmd+K palette, Privy login), locked and completed states.
  */
 import Link from "next/link";

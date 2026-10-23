@@ -61,12 +61,12 @@ Layer 4: components   → UI consuming hooks
 
 **Example service structure:**
 ```
-src/services/explorer/
-├── api.ts              # fetchLiquidations(), fetchVaults()...
-├── types.ts            # Liquidation, LiquidationParams, UseLiquidationsResult
+src/services/explorer/liquidation/
+├── api.ts              # fetchRecentLiquidations(), fetchLiquidationsData()...
+├── types.ts            # Liquidation, LiquidationsParams, LiquidationStats
 ├── hooks/
-│   ├── useLiquidations.ts
-│   └── useLiquidationsPaginated.ts
+│   ├── useLiquidationsData.ts
+│   └── useTopLiquidations.ts
 └── index.ts            # Re-exports
 ```
 

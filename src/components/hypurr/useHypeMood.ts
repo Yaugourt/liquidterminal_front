@@ -10,10 +10,10 @@ interface HypeMoodResult {
 }
 
 /**
- * HYPE 24h move as a Hypurr mood, shared by the landing ribbon and the
- * dashboard PulseBar. Read from the HYPE spot socket (last trade against the
- * previous-day price), the same live source as the sidebar badge: it moves with
- * the price shown elsewhere on the page and costs no request.
+ * HYPE 24h move as a Hypurr mood, shown by the landing ribbon. Read from the
+ * HYPE spot socket (last trade against the previous-day price), the same live
+ * source as the sidebar badge: it moves with the price shown elsewhere on the
+ * page and costs no request.
  */
 export function useHypeMood(): HypeMoodResult {
   const { change24hPct } = useHypeDayChange();

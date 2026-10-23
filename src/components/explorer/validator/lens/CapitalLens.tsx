@@ -116,7 +116,7 @@ export function CapitalLens() {
   // ── Foundation split ─────────────────────────────────────────────────────
   // Computed client-side from the validator set (same rule as OperatorLens).
   // The votes endpoint that used to single-source this split is disabled
-  // (see useValidatorVotes) and only ever returned zeros here.
+  // and only ever returned zeros here.
   const totalStake = useMemo(
     () => validators.reduce((sum, v) => sum + v.stake, 0),
     [validators],

@@ -45,6 +45,6 @@ export function VaultsKpiStrip({ directory }: VaultsKpiStripProps) {
   ];
 
   // Boxed variant (default) so the Overview cells carry the same bg-surface
-  // fill as the dashboard's Network Pulse ribbon (PulseBar) — visual parity.
+  // fill as the dashboard's live KPI strip (LiveStrip) — visual parity.
   return <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-4" />;
 }

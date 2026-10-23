@@ -470,8 +470,8 @@ html {
    sway, pop) driven by an `animation` prop. Transform-only and cheap per frame,
    but `infinite` means the page never reaches an idle state: the compositor
    keeps the surface live for as long as the tab is open, which is what memory
-   pays for. The peek resting pose now lives as a fixed offset at its two call
-   sites (landing LivePulse, dashboard PulseBar). */
+   pays for. The peek resting pose now lives as a fixed offset at its call
+   site (landing LivePulse). */
 
 /* Suppress sidebar collapse/expand transitions on the very first paint so a
    persisted collapsed state doesn't replay its animation on every page load. */

@@ -35,7 +35,7 @@ function WelcomeVisual() {
   );
 }
 
-/** Mini KPI tiles + a tiny histogram — echoes the dashboard PulseBar. */
+/** Mini KPI tiles + a tiny histogram — echoes the dashboard KPI strip. */
 function DashboardVisual() {
   const bars = [34, 58, 42, 72, 50, 88, 64, 46];
   return (
