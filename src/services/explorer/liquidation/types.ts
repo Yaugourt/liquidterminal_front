@@ -71,28 +71,6 @@ export interface LiquidationsParams {
 }
 
 /**
- * Options pour le hook useLiquidations
- */
-export interface UseLiquidationsOptions extends LiquidationsParams {
-  refreshInterval?: number;  // Intervalle de rafraîchissement en ms
-}
-
-/**
- * Résultat du hook useLiquidations
- */
-export interface UseLiquidationsResult {
-  liquidations: Liquidation[];
-  totalCount: number | null;
-  nextCursor: string | null;
-  hasMore: boolean;
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-  updateParams: (params: Partial<LiquidationsParams>) => void;
-  loadMore: () => void;
-}
-
-/**
  * Statistiques des liquidations pour une période
  */
 export interface LiquidationStats {

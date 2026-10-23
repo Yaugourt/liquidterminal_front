@@ -30,7 +30,7 @@ Format: route · key components · data sources · gotchas. Components live in `
 
 ### Dashboard & landing
 - `/` — static editorial landing (`LandingViewport`), no backend.
-- `/dashboard` — PulseBar + overview; the panels now live in three sub-tabs, so the root page is no longer the monolith it was.
+- `/dashboard` — LiveStrip (KpiRibbon) + overview; the panels now live in three sub-tabs, so the root page is no longer the monolith it was.
 - `/dashboard/market` — MoversCard, AuctionsPanel, LiquidationsPanel, TwapPanel, BuildersConcentrationCard, Hip3MarketsPanel, Hip4OutcomesCard, TraderPnlCard, MarketVolumeCard, NetworkGrowthSection · backend `/home/globalstats`, liquidations WS, `/market/auction/perp` (Hypurrscan's past perp auctions, one shared backend copy) · LiquidationsPanel reads only the local DB: `/liquidations/data` (24h stats + the 30 min buckets its cumulative chart sums) and `/liquidations/historical/top` (standouts ≥ $100K) — no HypeDexer page · heaviest page of the app.
 - `/dashboard/capital` — FeesRevenuePanel, StablecoinsCard, Vaults/ValidatorsModule · backend revenue breakdown + `/market/vaults` + `/staking/*` + `/market/stablecoins/history` (StablecoinsCard).
 - `/dashboard/ecosystem` — ProjectsRecap, WikiRecap · backend `/project` + `/educational/*`.
@@ -72,7 +72,7 @@ Format: route · key components · data sources · gotchas. Components live in `
 - `/share` — share studio: live preview + template gallery + custom tile composer (grid or chart), catalog in `lib/og/customCatalog.ts`. Consumes the tile routes below; `<ShareTile>` also drops a share button onto ~8 cards across dashboard/liquidations/perpDex/tracker.
 
 ### Ecosystem / Wiki / User
-- `/ecosystem/project` (+`[id]`) — ProjectsDirectory + EcosystemBanner · backend `/project` + `useChainStats` · public (the older ProjectsGrid/ProjectCard/CategoryTabs are rewrite leftovers, now dead).
+- `/ecosystem/project` (+`[id]`) — ProjectsDirectory + EcosystemBanner · backend `/project` + `useChainStats` · public.
 - `/ecosystem/publicgoods` (+`[id]`, `my-submissions`, `pending`) — grids + lazy modals · backend `/publicgoods*` (multipart uploads) · review = MODERATOR+, pending page MODERATOR-gated.
 - `/wiki` — `wiki/atlas/ChapterView` (introduction chapter) + EducationModal / UserSubmissionModal actions + resources · backend `/educational/*`, static JSON via `useStaticJson` · submit = USER (rate-limited), moderate = MODERATOR.
 - `/wiki/readlist` (+`public-readlists`), `/wiki/readlists` (+`[slug]`) — readlist CRUD + atlas index · `use-readlists` store + backend `/readlists/*`.

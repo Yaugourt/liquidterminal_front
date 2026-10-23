@@ -394,7 +394,7 @@ Don't stack more than 3 series of **different natures** (flow vs stock) on the s
 <Sparkline data={feeTrend} color={chartPalette.gold} height={20} className="mt-auto pt-2" />
 ```
 
-Used inside `StablecoinsCard`, `PulseBar`, `Hip4GlobalStatsStrip`, vault detail commission timeline. No axis, no tooltip — meant to be a glanceable micro-trend, never the primary chart. Lives in `common/` (shared primitive) and is re-exported from `dashboard/` for backwards compatibility.
+Used inside `StablecoinsCard`, `Hip4GlobalStatsStrip`, vault detail commission timeline. No axis, no tooltip — meant to be a glanceable micro-trend, never the primary chart. Lives in `common/` (shared primitive) and is re-exported from `dashboard/` for backwards compatibility.
 
 ### 6.9 `<StackedShareBar>` — proportional split bar
 
@@ -467,7 +467,7 @@ Building blocks:
 
 ### 7.b — KPI ribbon
 
-Horizontal strip of stat cells. **Consume the `<KpiRibbon>` primitive** (`@/components/common`) — do not hand-roll the strip. `PulseBar`, `VaultsKpiStrip`, `Hip4GlobalStatsStrip` and `NetworkPulse` all go through it.
+Horizontal strip of stat cells. **Consume the `<KpiRibbon>` primitive** (`@/components/common`) — do not hand-roll the strip. The dashboard `LiveStrip`, `VaultsKpiStrip`, `Hip4GlobalStatsStrip` and `NetworkPulse` all go through it.
 
 ```tsx
 <KpiRibbon
@@ -622,7 +622,7 @@ Token-icon helpers in `@/lib/tokenIconUrl.ts`:
 
 Documenting these limits to avoid running into them again:
 
-- **No per-KPI history** in the API for most metrics (global volume, OI, users, market cap…). So no sparkline / delta on the PulseBar — **value only, homogeneous**. The only exceptions are metrics that DO have a real time series (fees, stablecoins, bridge TVL, liquidations).
+- **No per-KPI history** in the API for most metrics (global volume, OI, users, market cap…). So no sparkline / delta on the dashboard's live KPI strip — **value only, homogeneous**. The only exceptions are metrics that DO have a real time series (fees, stablecoins, bridge TVL, liquidations).
 - **Hypedexer is unstable** — the `api.hypedexer.com` API can return **402 Payment Required** on all its endpoints (`/indexer/*`, `/liquidations/recent`, `/liquidations/analytics/stats`). Any component that depends on it must degrade gracefully.
 - **`/liquidations/recent` returns ~20% corrupted `time_ms`** (values around 3.5e12 = year 2082) while the ISO `time` field stays reliable. Always reparse via `Date.parse(time + "Z")` with a `time_ms` fallback; never sort or bucketize on `time_ms` directly (see `LiquidationsPanel.getLiqTimeMs`).
 - **Robust time-series sources** (don't depend on hypedexer):
@@ -662,7 +662,6 @@ Documenting these limits to avoid running into them again:
 ### Dashboard (`src/components/dashboard/`)
 - `SectionHead` — section title (`title` + `subtitle` + optional link).
 - `Sparkline` — inline SVG mini-curve (stat or hero cell).
-- `PulseBar` — 6-cell KPI ribbon.
 - `OverviewModule` (+ `ModuleTable`, `ModuleTableRow`, `ModuleAsset`, `ModuleRow`, `ModuleSubhead`) — **THE** leaderboard card primitive (see §7.a).
 - V4 dashboard cards:
   - `MoversCard` (spot/perp) — top tokens of a market.

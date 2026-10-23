@@ -128,24 +128,6 @@ export interface PortfolioPeriodData {
 
 export type PortfolioApiResponse = [string, PortfolioPeriodData][];
 
-// Update TransactionType to match the actual return type from useTransactions
-export interface TransactionType {
-  id: string;
-  hash: string;
-  method: string;
-  age: string;
-  from: string;
-  to: string;
-  amount: string;
-  token: string;
-  price?: string;
-  total?: string; // Make total optional
-  time: number;
-  isShort?: boolean;
-  isLong?: boolean;
-  [key: string]: unknown; // Add index signature for compatibility with TransactionData
-} 
-
 // Types pour les ordres ouverts
 export interface OpenOrder {
     coin: string;

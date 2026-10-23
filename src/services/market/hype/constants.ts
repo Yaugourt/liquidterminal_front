@@ -18,14 +18,6 @@ export const HYPE_SPOT_COIN = "@107";
 export const ASSISTANCE_FUND_ADDRESS =
   "0xfefefefefefefefefefefefefefefefefefefefe";
 
-/**
- * Share of net protocol trading fees (perp + spot) routed to the Assistance
- * Fund for HYPE buybacks. Per the Hyperliquid docs / DefiLlama, ~99% of fees
- * flow to the AF (only ~1% to HLP suppliers, cut from 3% on 2025-08-30). Used
- * to translate observed protocol revenue into an approximate buyback rate.
- */
-export const AF_FEE_SHARE = 0.99;
-
 /** Genesis token-generation event. */
 export const HYPE_GENESIS_DATE = "2024-11-29";
 

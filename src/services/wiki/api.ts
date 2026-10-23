@@ -1,4 +1,4 @@
-import { get, post, del, patch } from '../api/axios-config';
+import { get, post, patch } from '../api/axios-config';
 import { withErrorHandling } from '../api/error-handler';
 import {
   CategoriesResponse,
@@ -147,15 +147,6 @@ export const createEducationalResource = async (data: CreateResourceInput): Prom
   return withErrorHandling(async () => {
     return await post<ResourceResponse>('/educational/resources', data);
   }, 'creating educational resource');
-};
-
-/**
- * Supprime une ressource éducative
- */
-export const deleteEducationalResource = async (id: number): Promise<{ success: boolean; message: string }> => {
-  return withErrorHandling(async () => {
-    return await del<{ success: boolean; message: string }>(`/educational/resources/${id}`);
-  }, 'deleting educational resource');
 };
 
 /**

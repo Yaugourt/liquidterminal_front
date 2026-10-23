@@ -2,7 +2,6 @@
 export * from './validators';
 
 // Votes (governance) types
-export * from './votes';
 
 // Staking types
 export * from './staking';

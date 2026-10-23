@@ -6,7 +6,6 @@ export {
   fetchPopularWikiResources,
   createEducationalCategory,
   createEducationalResource,
-  deleteEducationalResource,
   uploadCsvResources,
   submitResource,
   fetchMySubmissions,
@@ -23,7 +22,6 @@ export { useWikiLibrary } from './hooks/useWikiLibrary';
 export { usePopularWikiResources } from './hooks/usePopularWikiResources';
 export { useCreateEducationalCategory } from './hooks/useCreateEducationalCategory';
 export { useCreateEducationalResource } from './hooks/useCreateEducationalResource';
-export { useDeleteEducationalResource } from './hooks/useDeleteEducationalResource';
 export { useCsvUpload } from './hooks/useCsvUpload';
 export { useSubmitResource } from './hooks/useSubmitResource';
 export { useMySubmissions } from './hooks/useMySubmissions';

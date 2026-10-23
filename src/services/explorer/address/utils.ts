@@ -100,10 +100,6 @@ export function getTwapOrderAddresses(order: TwapOrderData, address: string) {
     };
 }
 
-export function isHip2Address(address: string): boolean {
-    return address === HIP2_ADDRESS;
-}
-
 /**
  * HL stamps system-generated rows (TWAP slices, liquidation-engine fills, some
  * `cStakingTransfer`s) with an all-zero hash: it identifies nothing, so such

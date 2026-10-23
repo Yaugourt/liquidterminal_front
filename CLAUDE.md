@@ -124,7 +124,7 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
   Don't mix : a function accessor with `type: "fees"` means the function should return a primitive value (number/string), the table styles it. If you return JSX, leave `type` off.
   Server-side sort via `onSortChange` controlled mode; opt-in `rowMotion` + `toolbar` slot.
 - **Leaderboard cards (top N, any page)**: `OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset` (see DESIGN_SYSTEM §5.b / §7.a). Lives in `common/` — usable from any domain.
-- **KPI ribbon (§7.b)**: `<KpiRibbon cells={[{label, value, sub?, tone?, sparkline?}]} />` — the **single** source for the horizontal stat strip (PulseBar, vaults, HIP-4, NetworkPulse all consume it). Never hand-roll the `gap-px bg-border-subtle` strip. Group ribbons by stacking `<KpiRibbon header={{label, helper}}>` in a `space-y-*` wrapper.
+- **KPI ribbon (§7.b)**: `<KpiRibbon cells={[{label, value, sub?, tone?, sparkline?}]} />` — the **single** source for the horizontal stat strip (the dashboard LiveStrip, vaults, HIP-4, NetworkPulse all consume it). Never hand-roll the `gap-px bg-border-subtle` strip. Group ribbons by stacking `<KpiRibbon header={{label, helper}}>` in a `space-y-*` wrapper.
 - **Numbers (standalone)**: `<Num>` for chips/KPI tiles. Inside tables use `Column.type: "numeric" | "fees" | "change"` instead.
 - **Layout**: `<PageHeader>` (title + description + actions slot), `<PageSection>` (titled section wrapper). Timeframe selectors: `<TimeframeTabs>` built on `PillTabs`.
 - **Charts**: `<AuroraAreaChart>` single-series / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Colors via `chartPalette` from `chartTheme.ts` — hardcoded hex blocked by ESLint (lab charts excepted).

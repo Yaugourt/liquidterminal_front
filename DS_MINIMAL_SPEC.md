@@ -10,7 +10,7 @@ Tokens are unchanged (globals.css). Only composition/treatment changes.
 
 ## Rollout — defaults vs variants (the one call that sets blast radius)
 
-These primitives are shared app-wide (PulseBar, dashboard cards, market tables…). Two options:
+These primitives are shared app-wide (dashboard live strip, dashboard cards, market tables…). Two options:
 
 - **Default-flip** — minimal becomes each primitive's default look. Truest to "minimal *is* the DS",
   but every existing page changes at once → needs a visual-check sweep of dashboard/market/explorer.
@@ -49,7 +49,7 @@ Add `variant?: "boxed" | "plain"` (recommend default `"plain"`).
   - label `text-[10px] uppercase tracking-[0.08em] text-text-tertiary` (drop `font-semibold`)
   - value `mono text-[22px] font-medium tracking-[-0.01em] leading-none mt-2` (was 20px/600)
   - sub `text-[10.5px] text-text-tertiary mt-1.5` (non-mono)
-Consumers if default-flipped: PulseBar, HIP-4, NetworkPulse → visual-check required.
+Consumers if default-flipped: dashboard LiveStrip, HIP-4, NetworkPulse → visual-check required.
 
 ### A3 · OverviewModule card-head — minimal  (`src/components/common/OverviewModule.tsx`)
 - `icon` is already optional → minimal **omits the brand icon square**.

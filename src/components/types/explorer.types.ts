@@ -1,5 +1,4 @@
 import { BlockDetails, BlockTransaction } from "@/services/explorer";
-import { TransactionType } from "@/services/explorer/address";
 
 /**
  * Types pour les composants Block
@@ -11,14 +10,4 @@ export interface BlockHeaderProps {
 
 export interface BlockTransactionListProps {
   transactions: BlockTransaction[];
-}
-
-/**
- * Types pour les composants Address
- */
-export interface TransactionListProps {
-  transactions: TransactionType[];
-  isLoading: boolean;
-  error: Error | null;
-  currentAddress: string;
 }

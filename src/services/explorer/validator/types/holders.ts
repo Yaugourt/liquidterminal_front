@@ -1,45 +1,4 @@
 /**
- * Interface pour un holder de HYPE staké
- */
-interface StakedHolder {
-  address: string;
-  amount: number;
-}
-
-/**
- * Paramètres pour récupérer la liste des holders
- */
-export interface HoldersParams {
-  page?: number;
-  limit?: number;
-}
-
-/**
- * Réponse API pour la liste paginée des holders
- */
-export interface StakedHoldersResponse {
-  success: boolean;
-  data: {
-    holders: StakedHolder[];
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
-      hasNext: boolean;
-      hasPrevious: boolean;
-    };
-    metadata: {
-      token: string;
-      lastUpdate: number;
-      holdersCount: number;
-    };
-  };
-  error?: string;
-  code?: string;
-}
-
-/**
  * Interface pour un range de distribution des holders
  */
 export interface HoldersDistributionRange {
@@ -76,25 +35,6 @@ export interface HoldersStatsResponse {
 }
 
 /**
- * Résultat du hook pour les holders paginés
- */
-export interface UseStakingHoldersPaginatedResult {
-  holders: StakedHolder[];
-  isLoading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-  total: number;
-  page: number;
-  totalPages: number;
-  metadata?: {
-    token: string;
-    lastUpdate: number;
-    holdersCount: number;
-  };
-  updateParams: (params: Partial<HoldersParams>) => void;
-}
-
-/**
  * Résultat du hook pour les stats des holders
  */
 export interface UseHoldersStatsResult {
@@ -110,14 +50,3 @@ export interface UseHoldersStatsResult {
   error: Error | null;
   refetch: () => Promise<void>;
 }
-
-
-/**
- * Options pour le hook des holders
- */
-export interface UseStakingHoldersOptions {
-  limit?: number;
-  defaultParams?: Partial<HoldersParams>;
-  initialData?: StakedHolder[];
-  refreshInterval?: number;
-} 
