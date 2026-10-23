@@ -5,8 +5,8 @@ import { Card } from "@/components/ui/card";
 import { CardHead, DominanceBar, chartPalette } from "@/components/common";
 import type { DominanceSegment } from "@/components/common";
 import { useHypeOverview } from "@/services/market/hype";
-import { compactHype } from "@/lib/formatters/numberFormatting";
-import { fmtUsd, fmtPct } from "./format";
+import { compactHype, formatPct } from "@/lib/formatters/numberFormatting";
+import { fmtUsd } from "./format";
 
 /**
  * SupplyScarcityCard — how the 1B genesis HYPE splits today: circulating,
@@ -71,7 +71,7 @@ export const SupplyScarcityCard = memo(function SupplyScarcityCard() {
             title="Composition · % of max supply"
             caption={
               overview
-                ? `AF + burned ≈ ${fmtPct(overview.removedFromFloatPct)} out of float`
+                ? `AF + burned ≈ ${formatPct(overview.removedFromFloatPct, { from: "percent" })} out of float`
                 : undefined
             }
             segments={segments}
@@ -94,7 +94,7 @@ export const SupplyScarcityCard = memo(function SupplyScarcityCard() {
         <StatRow
           label="Total supply"
           value={overview ? `${compactHype(overview.totalSupply)} HYPE` : "—"}
-          sub={overview ? `${fmtPct(pctOfMax(overview.totalSupply))} of max` : undefined}
+          sub={overview ? `${formatPct(pctOfMax(overview.totalSupply), { from: "percent" })} of max` : undefined}
         />
         <StatRow
           label="Circulating"
@@ -105,13 +105,13 @@ export const SupplyScarcityCard = memo(function SupplyScarcityCard() {
         <StatRow
           label="Future emissions"
           value={overview ? `${compactHype(overview.futureEmissions)} HYPE` : "—"}
-          sub={overview ? `${fmtPct(pctOfMax(overview.futureEmissions))} reserve` : undefined}
+          sub={overview ? `${formatPct(pctOfMax(overview.futureEmissions), { from: "percent" })} reserve` : undefined}
           accent={chartPalette.multiSeries[1]}
         />
         <StatRow
           label="Assistance Fund"
           value={overview ? `${compactHype(overview.composition.assistanceFund)} HYPE` : "—"}
-          sub={overview ? `${fmtUsd(overview.af?.hypeValueUsd)} · ${fmtPct(overview.afPctOfMax ?? 0)} of max` : undefined}
+          sub={overview ? `${fmtUsd(overview.af?.hypeValueUsd)} · ${formatPct(overview.afPctOfMax ?? 0, { from: "percent" })} of max` : undefined}
           accent={chartPalette.gold}
         />
         <StatRow

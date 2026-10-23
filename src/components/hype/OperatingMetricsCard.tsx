@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { CardHead, ChartError, ChartLoading, KpiRibbon, SourceBadge, combinedSourceStatus } from "@/components/common";
-import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactCount, compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import { usePerpGlobalStats } from "@/services/market/perp/hooks/usePerpGlobalStats";
 import { useSpotGlobalStats } from "@/services/market/spot/hooks/useSpotGlobalStats";
 import { useActiveTraders24h, useTotalFills24h } from "@/services/indexer/overview";
@@ -27,12 +27,6 @@ import { useActiveTraders24h, useTotalFills24h } from "@/services/indexer/overvi
  * only public volume series on a matching basis measures the spot DEX rather
  * than traded notional. It arrives with a volume history of our own.
  */
-/** "+9.8% vs prior 24h", or nothing when the endpoint reports no variation. */
-const signedPct = (value: number | null | undefined): string | undefined =>
-  value == null || !Number.isFinite(value)
-    ? undefined
-    : `${value >= 0 ? "+" : ""}${value.toFixed(1)}% vs prior 24h`;
-
 const toneOf = (value: number | null | undefined): "success" | "danger" | undefined =>
   value == null || !Number.isFinite(value) ? undefined : value >= 0 ? "success" : "danger";
 
@@ -96,13 +90,20 @@ export const OperatingMetricsCard = memo(function OperatingMetricsCard() {
                 {
                   label: "Active traders",
                   value: traders?.value == null ? "—" : compactCount(traders.value),
-                  sub: signedPct(traders?.variationPct),
+                  // "+9.8% vs prior 24h", or nothing when the endpoint reports no variation.
+                  sub:
+                    traders != null && Number.isFinite(traders.variationPct)
+                      ? `${formatPct(traders.variationPct, { from: "percent", decimals: 1, signed: true })} vs prior 24h`
+                      : undefined,
                   tone: toneOf(traders?.variationPct),
                 },
                 {
                   label: "Fills",
                   value: fills?.value == null ? "—" : compactCount(fills.value),
-                  sub: signedPct(fills?.variationPct),
+                  sub:
+                    fills != null && Number.isFinite(fills.variationPct)
+                      ? `${formatPct(fills.variationPct, { from: "percent", decimals: 1, signed: true })} vs prior 24h`
+                      : undefined,
                   tone: toneOf(fills?.variationPct),
                 },
               ]}

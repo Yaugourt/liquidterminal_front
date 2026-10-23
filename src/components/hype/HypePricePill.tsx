@@ -2,10 +2,9 @@
 
 import { memo } from "react";
 import { useHypeDayChange, useHypePrice } from "@/services/market/hype";
-import { formatPrice } from "@/lib/formatters/numberFormatting";
+import { formatPct, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { HypeMark } from "@/components/common";
-import { fmtSignedPct } from "./format";
 
 /**
  * HypePricePill — live HYPE price ticker for the page header `actions` slot.
@@ -36,7 +35,7 @@ export const HypePricePill = memo(function HypePricePill() {
         {price != null ? formatPrice(price, format) : "—"}
       </span>
       <span className={`mono text-[11px] font-semibold ${changeColor}`}>
-        {fmtSignedPct(change)}
+        {formatPct(change, { from: "percent", decimals: 2, signed: true })}
       </span>
     </div>
   );

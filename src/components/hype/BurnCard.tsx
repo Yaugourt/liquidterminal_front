@@ -6,8 +6,8 @@ import { Card } from "@/components/ui/card";
 import { CardHead, KpiRibbon } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHypeOverview } from "@/services/market/hype";
-import { compactHype } from "@/lib/formatters/numberFormatting";
-import { fmtUsd, fmtPct } from "./format";
+import { compactHype, formatPct } from "@/lib/formatters/numberFormatting";
+import { fmtUsd } from "./format";
 
 /** Curated, source-backed list of the mechanisms that remove HYPE from supply. */
 const BURN_MECHANISMS: { title: string; desc: string }[] = [
@@ -61,7 +61,7 @@ export const BurnCard = memo(function BurnCard() {
       key: "burnedUsd",
       label: "Burned value",
       value: fmtUsd(overview?.burnedUsd),
-      sub: overview ? `${fmtPct(((overview.burned / overview.maxSupply) * 100) || 0, 3)} of max` : undefined,
+      sub: overview ? `${formatPct(((overview.burned / overview.maxSupply) * 100) || 0, { from: "percent", decimals: 3 })} of max` : undefined,
     },
     {
       key: "afFloat",

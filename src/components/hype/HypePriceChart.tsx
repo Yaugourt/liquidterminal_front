@@ -5,9 +5,8 @@ import { Card } from "@/components/ui/card";
 import { AuroraAreaChart, CardHead, chartPalette } from "@/components/common";
 import { useTokenCandles } from "@/services/market/token";
 import { useHypeLivePrice, HYPE_SPOT_COIN, HYPE_GENESIS_DATE } from "@/services/market/hype";
-import { formatPrice } from "@/lib/formatters/numberFormatting";
+import { formatPct, formatPrice } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { fmtSignedPct } from "./format";
 
 type TF = "7D" | "30D" | "90D" | "1Y" | "All";
 type CandleInterval = "1h" | "4h" | "1d";
@@ -107,7 +106,7 @@ export const HypePriceChart = memo(function HypePriceChart() {
               {current != null ? formatPrice(current, format) : "—"}
             </span>
             <span className={`mono text-[11px] font-semibold ${changeColor}`}>
-              {fmtSignedPct(windowChange)} {tf}
+              {formatPct(windowChange, { from: "percent", decimals: 2, signed: true })} {tf}
             </span>
           </span>
         }
@@ -138,7 +137,7 @@ export const HypePriceChart = memo(function HypePriceChart() {
         </span>
         {fromAth != null && (
           <span className={`mono font-semibold ${fromAth >= 0 ? "text-success" : "text-danger"}`}>
-            {fmtSignedPct(fromAth)} from ATH
+            {formatPct(fromAth, { from: "percent", decimals: 2, signed: true })} from ATH
           </span>
         )}
         <span className="text-text-tertiary">

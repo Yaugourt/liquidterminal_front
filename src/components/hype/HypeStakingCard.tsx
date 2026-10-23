@@ -5,8 +5,8 @@ import { OverviewModule, KpiRibbon } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHoldersStats, useValidators } from "@/services/explorer/validator";
 import { useHypeOverview } from "@/services/market/hype";
-import { compactHype, compactCount } from "@/lib/formatters/numberFormatting";
-import { fmtUsd, fmtPct } from "./format";
+import { compactHype, compactCount, formatPct } from "@/lib/formatters/numberFormatting";
+import { fmtUsd } from "./format";
 
 /**
  * HypeStakingCard — HYPE secured in proof-of-stake. Staked HYPE is locked and
@@ -45,7 +45,7 @@ export const HypeStakingCard = memo(function HypeStakingCard() {
     {
       key: "pct",
       label: "% staked",
-      value: fmtPct(pctStaked),
+      value: formatPct(pctStaked, { from: "percent" }),
       sub: "of total supply",
     },
     {

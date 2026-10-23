@@ -5,9 +5,9 @@ import { Card } from "@/components/ui/card";
 import { CardHead, KpiRibbon, AuroraAreaChart, chartPalette } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHypeOverview, useAfBuybacks } from "@/services/market/hype";
-import { compactHype } from "@/lib/formatters/numberFormatting";
+import { compactHype, formatPct } from "@/lib/formatters/numberFormatting";
 import { FlywheelDiagram } from "./FlywheelDiagram";
-import { fmtUsd, fmtUsdFull, fmtHype, fmtPct, fmtSignedPct } from "./format";
+import { fmtUsd, fmtUsdFull, fmtHype } from "./format";
 
 /** "3m" / "5h" / "2d" ago. */
 const ago = (t: number): string => {
@@ -41,7 +41,7 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
       key: "holdings",
       label: "Holdings",
       value: af ? `${compactHype(af.hypeBalance)} HYPE` : "—",
-      sub: overview ? `${fmtPct(overview.afPctOfMax ?? 0)} of max supply` : undefined,
+      sub: overview ? `${formatPct(overview.afPctOfMax ?? 0, { from: "percent" })} of max supply` : undefined,
     },
     {
       key: "value",
@@ -61,18 +61,18 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
       label: "Unrealized PnL",
       value: fmtUsd(af?.unrealizedPnlUsd),
       tone: pnlTone,
-      sub: af ? fmtSignedPct(af.unrealizedPnlPct) : undefined,
+      sub: af ? formatPct(af.unrealizedPnlPct, { from: "percent", decimals: 2, signed: true }) : undefined,
     },
     {
       key: "circ",
       label: "Share of float",
-      value: fmtPct(overview?.afPctOfCirculating ?? null),
+      value: formatPct(overview?.afPctOfCirculating ?? null, { from: "percent" }),
       sub: "of circulating",
     },
     {
       key: "removed",
       label: "Out of float",
-      value: fmtPct(overview?.removedFromFloatPct ?? null),
+      value: formatPct(overview?.removedFromFloatPct ?? null, { from: "percent" }),
       sub: "AF + burned",
     },
   ];
@@ -134,7 +134,7 @@ export const AssistanceFundCard = memo(function AssistanceFundCard() {
           {buybackYield != null && (
             <span>
               Buyback yield{" "}
-              <span className="mono text-success font-semibold">~{fmtPct(buybackYield)}</span> of mcap
+              <span className="mono text-success font-semibold">~{formatPct(buybackYield, { from: "percent" })}</span> of mcap
             </span>
           )}
           <span>

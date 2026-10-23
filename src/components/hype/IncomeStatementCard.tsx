@@ -3,7 +3,7 @@
 import { memo, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { CardHead, ChartError, ChartLoading, KpiRibbon, TimeframeTabs, SourceBadge, sourceStatus } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import type { Timeframe } from "@/lib/timeframe";
 import {
   toIncomeStatement,
@@ -32,9 +32,6 @@ const PERIODS: { tf: Timeframe; period: FundamentalsPeriod; copy: string }[] = [
   { tf: "30d", period: "total30d", copy: "last 30 days" },
   { tf: "all", period: "totalAllTime", copy: "since launch" },
 ];
-
-const pct = (value: number | null, digits = 1): string =>
-  value == null ? "—" : `${(value * 100).toFixed(digits)}%`;
 
 interface LineProps {
   label: string;
@@ -139,7 +136,7 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
                 {
                   key: "margin",
                   label: "Gross margin",
-                  value: pct(statement.grossMargin),
+                  value: formatPct(statement.grossMargin),
                   sub: "kept per fee dollar",
                 },
                 {
@@ -147,7 +144,7 @@ export const IncomeStatementCard = memo(function IncomeStatementCard() {
                   // Two short words on purpose: labels sit on one line, and
                   // "Redistributed" truncates in a third of a narrow card.
                   label: "Paid out",
-                  value: pct(
+                  value: formatPct(
                     statement.grossMargin == null ? null : 1 - statement.grossMargin
                   ),
                   sub: "back to liquidity & flow",

@@ -4,7 +4,7 @@ import { memo, useId, useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
 import { CardHead, ChartError, ChartLoading, KpiRibbon, SourceBadge, sourceStatus, chartPalette , rechartsGridDefaults } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import { toQuarters, useFeeRevenueHistory, type RevenueQuarter } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
 
@@ -27,8 +27,6 @@ import { SeriesLegend } from "./SeriesLegend";
 
 const formatUsdAxis = (value: number): string =>
   value >= 1e9 ? compactUsd(value, { decimals: 1 }) : compactUsd(value, { decimals: 0, fallback: "$0" });
-
-const signedPct = (value: number): string => `${value >= 0 ? "+" : ""}${(value * 100).toFixed(0)}%`;
 
 const QuarterTooltip = ({
   active,
@@ -87,7 +85,7 @@ const QuarterTooltip = ({
                 q.qoq >= 0 ? "text-success" : "text-danger"
               }`}
             >
-              {signedPct(q.qoq)}
+              {formatPct(q.qoq, { decimals: 0, signed: true })}
             </span>
           </div>
         )}
@@ -151,14 +149,14 @@ export const QuarterlyRevenueCard = memo(function QuarterlyRevenueCard() {
           {
             key: "qoq",
             label: "QoQ",
-            value: summary.qoq == null ? "—" : signedPct(summary.qoq),
+            value: formatPct(summary.qoq, { decimals: 0, signed: true }),
             sub: summary.priorLabel ? `vs ${summary.priorLabel}` : "needs two quarters",
             tone: summary.qoq == null ? "default" : summary.qoq >= 0 ? "success" : "danger",
           },
           {
             key: "yoy",
             label: "YoY",
-            value: summary.yoy == null ? "—" : signedPct(summary.yoy),
+            value: formatPct(summary.yoy, { decimals: 0, signed: true }),
             sub: summary.yoy == null ? "needs five quarters" : "same quarter last year",
             tone: summary.yoy == null ? "default" : summary.yoy >= 0 ? "success" : "danger",
           },

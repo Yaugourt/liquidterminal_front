@@ -16,7 +16,7 @@ import {
 } from "recharts";
 import { Card } from "@/components/ui/card";
 import { CardHead, ChartError, ChartLoading, KpiRibbon, PeriodSelector, SourceBadge, sourceStatus, chartPalette , rechartsXAxisPadding , rechartsGridDefaults } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import { movingAverage, useFeeRevenueHistory, type FeeRevenueDay } from "@/services/market/fundamentals";
 import { SeriesLegend } from "./SeriesLegend";
 
@@ -67,9 +67,6 @@ const formatFullDay = (ms: number): string =>
     timeZone: "UTC",
   });
 
-const pct = (value: number | null, digits = 1): string =>
-  value == null ? "—" : `${(value * 100).toFixed(digits)}%`;
-
 interface SplitPoint extends FeeRevenueDay {
   /** Present so the tooltip can read the total without re-adding the bands. */
   total: number;
@@ -107,7 +104,7 @@ const SplitTooltip = ({
         <div className="flex items-center justify-between gap-4">
           <span className="text-[11px] text-text-tertiary">Margin</span>
           <span className="text-[11.5px] text-text-secondary mono tabular-nums">
-            {pct(point.margin)}
+            {formatPct(point.margin)}
           </span>
         </div>
       </div>
@@ -131,7 +128,7 @@ const MarginTooltip = ({
         {formatFullDay(point.time)}
       </div>
       <div className="mt-1 text-[13px] font-semibold text-text-primary mono tabular-nums">
-        {pct(point.margin)}
+        {formatPct(point.margin)}
       </div>
       <div className="text-[10px] text-text-tertiary">{MARGIN_SMOOTHING}-day average</div>
     </div>
@@ -230,7 +227,7 @@ export const FeesRevenueHistoryCard = memo(function FeesRevenueHistoryCard() {
         cells={[
           { key: "fees", label: "Gross fees", value: compactUsd(totals.fees), sub: "what users paid" },
           { key: "revenue", label: "Protocol revenue", value: compactUsd(totals.revenue), sub: "what was kept" },
-          { key: "margin", label: "Gross margin", value: pct(totals.margin), sub: "over the window" },
+          { key: "margin", label: "Gross margin", value: formatPct(totals.margin), sub: "over the window" },
           {
             key: "perDay",
             label: "Revenue / day",

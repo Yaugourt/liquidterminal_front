@@ -3,7 +3,7 @@
 import { memo, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { CardHead, ChartError, KpiRibbon, ChartLoading, SourceBadge, sourceStatus } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import { useHypeOverview } from "@/services/market/hype";
 import { toValuationMultiples, useFeeRevenueHistory } from "@/services/market/fundamentals";
 
@@ -24,9 +24,6 @@ import { toValuationMultiples, useFeeRevenueHistory } from "@/services/market/fu
 
 const ratio = (value: number | null): string =>
   value == null ? "—" : `${value < 10 ? value.toFixed(1) : Math.round(value)}×`;
-
-const pct = (value: number | null): string =>
-  value == null ? "—" : `${(value * 100).toFixed(1)}%`;
 
 interface RowProps {
   label: string;
@@ -124,8 +121,8 @@ export const ValuationMultiplesCard = memo(function ValuationMultiplesCard() {
             <Row
               label="Earnings yield"
               hint="The inverse of P/E, read as a return"
-              circulating={pct(multiples.earningsYield)}
-              diluted={pct(multiples.earningsYieldFd)}
+              circulating={formatPct(multiples.earningsYield)}
+              diluted={formatPct(multiples.earningsYieldFd)}
             />
 
             <KpiRibbon

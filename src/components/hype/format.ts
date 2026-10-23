@@ -23,13 +23,3 @@ export const fmtHypeFull = (n: number | null | undefined): string =>
   n != null && Number.isFinite(n)
     ? `${Math.round(n).toLocaleString("en-US")} HYPE`
     : "—";
-
-/** Unsigned percentage — `4.5%`. */
-export const fmtPct = (n: number | null | undefined, d = 1): string =>
-  n != null && Number.isFinite(n) ? `${n.toFixed(d)}%` : "—";
-
-/** Signed percentage with typographic minus — `+12.3%` / `−4.1%`. */
-export const fmtSignedPct = (n: number | null | undefined, d = 2): string =>
-  n != null && Number.isFinite(n)
-    ? `${n >= 0 ? "+" : "−"}${Math.abs(n).toFixed(d)}%`
-    : "—";

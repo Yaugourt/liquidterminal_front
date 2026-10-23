@@ -5,9 +5,9 @@ import { KpiRibbon, HypeMark } from "@/components/common";
 import type { KpiCell } from "@/components/common";
 import { useHypeOverview, useHypeLivePrice, useHypeDayVolume } from "@/services/market/hype";
 import { useRevenueBreakdown } from "@/services/market/revenue";
-import { formatPrice, compactHype } from "@/lib/formatters/numberFormatting";
+import { formatPct, formatPrice, compactHype } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
-import { fmtUsd, fmtSignedPct, fmtPct } from "./format";
+import { fmtUsd } from "./format";
 
 /**
  * HypeHeroRibbon — the headline KPI strip: price, 24h volume, market cap, FDV,
@@ -32,7 +32,7 @@ export const HypeHeroRibbon = memo(function HypeHeroRibbon() {
       <span className="text-text-tertiary">—</span>
     ) : (
       <span className={change >= 0 ? "text-success" : "text-danger"}>
-        {fmtSignedPct(change)} 24h
+        {formatPct(change, { from: "percent", decimals: 2, signed: true })} 24h
       </span>
     );
 
@@ -73,7 +73,7 @@ export const HypeHeroRibbon = memo(function HypeHeroRibbon() {
       ) : (
         "—"
       ),
-      sub: overview ? `${fmtPct(overview.pctCirculating)} of total` : undefined,
+      sub: overview ? `${formatPct(overview.pctCirculating, { from: "percent" })} of total` : undefined,
     },
     {
       key: "af",
