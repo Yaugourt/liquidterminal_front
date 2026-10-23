@@ -128,7 +128,7 @@ const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
 - **Numbers (standalone)**: `<Num>` for chips/KPI tiles. Inside tables use `Column.type: "numeric" | "fees" | "change"` instead.
 - **Layout**: `<PageHeader>` (title + description + actions slot), `<PageSection>` (titled section wrapper). Timeframe selectors: `<TimeframeTabs>` built on `PillTabs`.
 - **Charts**: `<AuroraAreaChart>` single-series / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Colors via `chartPalette` from `chartTheme.ts` — hardcoded hex blocked by ESLint (lab charts excepted).
-- **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `compactCount`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
+- **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `compactCount`, `formatPct`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
 - **Layout shell**: `bg-base` + subtle halo `z-0`; content `relative z-10`; sidebar 232px; sticky header `bg-base/80 backdrop-blur-xl` without `border-b`.
 
 ### Design catalogue (the live source)
@@ -163,7 +163,7 @@ See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) for the detailed composition patter
 | API constants | `src/services/api/constants.ts` |
 | Tailwind tokens | `tailwind.config.ts` |
 | Global CSS & design tokens | `src/app/globals.css` |
-| Number formatting | `src/lib/numberFormatting.ts` |
+| Number formatting | `src/lib/formatters/numberFormatting.ts` |
 | Date formatting | `src/lib/dateFormatting.ts` |
 
 Before changing a poll interval, cache TTL, rate limit or upstream budget, read docs/DATA_BUDGET.md and update it in the same commit.

@@ -347,3 +347,24 @@ export function formatFunding(funding: number | null | undefined): string {
   const percentage = funding * 100;
   return `${percentage >= 0 ? '+' : ''}${percentage.toFixed(4)}%`;
 }
+
+/**
+ * Percentage display — `12.3%`, or `+12.3%` / `-4.0%` with `signed`.
+ *
+ * Single source of truth: replaces the local `pct` / `fmtPct` / `signedPct`
+ * helpers. `n` is a ratio by default (`0.123` → `12.3%`); pass
+ * `from: 'percent'` when the value is already in percent units
+ * (`12.3` → `12.3%`). `signed` prefixes `+` on zero and positive values, like
+ * `signedCompactUsd`; negatives always carry `-`.
+ */
+export function formatPct(
+  n: number | null | undefined,
+  opts: { decimals?: number; signed?: boolean; from?: 'ratio' | 'percent'; fallback?: string } = {}
+): string {
+  const { decimals = 1, signed = false, from = 'ratio', fallback = '—' } = opts;
+  if (n == null || !Number.isFinite(n)) return fallback;
+  const value = from === 'ratio' ? n * 100 : n;
+  const text = `${Math.abs(value).toFixed(decimals)}%`;
+  if (value < 0) return `-${text}`;
+  return signed ? `+${text}` : text;
+}
