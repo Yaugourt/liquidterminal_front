@@ -73,6 +73,7 @@ export function UserAccountCompact() {
                             width={28}
                             height={28}
                             className="object-cover rounded-full"
+                            unoptimized
                         />
                     ) : (
                         <AvatarFallback className="bg-transparent text-brand text-[10px] font-semibold">

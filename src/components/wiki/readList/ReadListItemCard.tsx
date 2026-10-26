@@ -60,6 +60,8 @@ export const ReadListItemCard = memo(function ReadListItemCard({ item, preview, 
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
+            // Link-preview images live on arbitrary hosts: never through the optimizer.
+            unoptimized
           />
         ) : !imageError ? (
           <div className="w-full h-full flex items-center justify-center bg-surface-2">

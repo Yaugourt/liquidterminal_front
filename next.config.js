@@ -112,23 +112,27 @@ const nextConfig = {
     },
 
     images: {
-        // ✅ Image optimization enabled
+        // The optimizer fetches (and, on Vercel, bills) every distinct source URL,
+        // so remotePatterns lists only the hosts and path prefixes that next/image
+        // really loads. Link previews, favicons, NFT art, token icons and Twitter
+        // avatars come from arbitrary or shared CDNs: those components render
+        // `unoptimized` and must never be added here.
         remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'app.hyperliquid.xyz',
-                pathname: '/coins/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'pbs.twimg.com',
-                pathname: '/**',
-            },
-            {
+            // Our R2 bucket (the only writers are our upload middlewares and the
+            // builder-logo seeding script, every key lives under one of these folders):
+            // ecosystem project logos/banners, public goods media, builder brand logos.
+            ...[
+                '/projects/logos/**',
+                '/projects/banners/**',
+                '/publicgoods/logos/**',
+                '/publicgoods/banners/**',
+                '/publicgoods/screenshots/**',
+                '/builders/logos/**',
+            ].map((pathname) => ({
                 protocol: 'https',
                 hostname: 'pub-097cebbc75d04a3fbd5d0e416820c1a5.r2.dev',
-                pathname: '/**',
-            },
+                pathname,
+            })),
             // DefiLlama protocol logos (project page peers module).
             {
                 protocol: 'https',
@@ -140,33 +144,11 @@ const nextConfig = {
             ...(process.env.NODE_ENV === 'development'
                 ? [{ protocol: 'http', hostname: 'localhost', pathname: '/**' }]
                 : []),
-            {
-                protocol: 'https',
-                hostname: 'hyperliquid.gitbook.io',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'hyperliquid-co.gitbook.io',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'substackcdn.com',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'cdn.prod.website-files.com',
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'luganodes.com',
-                pathname: '/**',
-            },
         ],
-        dangerouslyAllowSVG: true,
+        // Off: a `.svg` src is then served as-is (unoptimized) by next/image, and an
+        // SVG answer from the optimizer is refused instead of served from our origin.
+        // Every SVG we show (builder/project logos on R2) has a `.svg` URL.
+        dangerouslyAllowSVG: false,
         contentDispositionType: 'attachment',
         contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
