@@ -69,6 +69,28 @@ export const sponsors: Sponsor[] = [
   // { name: "EQX Labs", tagline: "US equities, 24/7 on-chain", monogram: "EQX", href: "https://x.com/eqxlabs", featured: true },
 ];
 
+/** Something of ours pinned to the sidebar's featured slot, ahead of sponsors. */
+export interface FeaturedPromo {
+  name: string;
+  /** One line, no em dashes. */
+  tagline: string;
+  /** Internal route. */
+  href: string;
+  /** Small label on the right of the card. */
+  badge: string;
+}
+
+/**
+ * Takes the featured slot when set; `sponsors` then only appear on /funding.
+ * Set to null to give the slot back to the featured sponsor.
+ */
+export const featuredPromo: FeaturedPromo | null = {
+  name: ".hl Names",
+  tagline: "20% off your name",
+  href: "/names",
+  badge: "New",
+};
+
 /**
  * Ecosystem partners. Real relationships, but links are placeholders — replace
  * each "#" with the real URL before shipping.

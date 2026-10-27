@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, ChevronRight, Plus } from "lucide-react";
+import { AtSign, Heart, ChevronRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   sponsors,
   partners,
+  featuredPromo,
   FUNDING_HREF,
   type FundingAccent,
 } from "@/lib/funding-config";
@@ -30,7 +31,8 @@ const accentTile = (accent: FundingAccent = "brand"): string => {
  * SponsorCard — the "Backed by" block that sits between the nav and the footer.
  * Config-driven from `funding-config.ts`: an empty `sponsors` list swaps the
  * featured slot for a "become the first sponsor" call to action, so the UI
- * never names a prospect that has not signed. Every link routes to /funding.
+ * never names a prospect that has not signed. `featuredPromo`, when set, takes
+ * the slot for one of our own pages instead. Every other link routes to /funding.
  */
 export function SponsorCard({ collapsed, onNavigate }: SponsorCardProps) {
   const featured = sponsors.find((s) => s.featured) ?? sponsors[0] ?? null;
@@ -58,7 +60,7 @@ export function SponsorCard({ collapsed, onNavigate }: SponsorCardProps) {
       <div className="flex items-center justify-between px-0.5">
         <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] font-semibold text-text-tertiary">
           <Heart className="w-3 h-3 text-brand" fill="currentColor" />
-          Backed by
+          {featuredPromo ? "Featured" : "Backed by"}
         </span>
         <Link
           href={FUNDING_HREF}
@@ -70,8 +72,37 @@ export function SponsorCard({ collapsed, onNavigate }: SponsorCardProps) {
         </Link>
       </div>
 
-      {/* Featured slot: a real sponsor, or the "be first" CTA when none signed */}
-      {featured ? (
+      {/* Featured slot: our promo, a real sponsor, or the "be first" CTA when none signed */}
+      {featuredPromo ? (
+        <Link
+          href={featuredPromo.href}
+          onClick={onNavigate}
+          className="group relative flex items-center gap-2.5 rounded-lg border border-brand/30 bg-brand/[0.06] px-2.5 py-2 overflow-hidden hover:border-brand/50 transition-colors"
+        >
+          <span
+            aria-hidden
+            className="absolute inset-0 opacity-70 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(120px 60px at 14% 50%, rgba(131,233,255,0.16), transparent 70%)",
+            }}
+          />
+          <span className="relative w-9 h-9 rounded-md bg-surface-2 border border-brand/25 grid place-items-center shrink-0">
+            <AtSign className="w-4 h-4 text-brand" />
+          </span>
+          <span className="relative min-w-0 flex-1">
+            <span className="block text-[12.5px] font-semibold text-text-primary truncate">
+              {featuredPromo.name}
+            </span>
+            <span className="block text-[10.5px] text-gold truncate">
+              {featuredPromo.tagline}
+            </span>
+          </span>
+          <span className="relative shrink-0 text-[8px] uppercase tracking-[0.08em] font-semibold text-brand/80">
+            {featuredPromo.badge}
+          </span>
+        </Link>
+      ) : featured ? (
         <Link
           href={featured.href}
           target="_blank"

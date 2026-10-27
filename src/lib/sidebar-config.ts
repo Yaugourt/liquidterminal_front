@@ -1,5 +1,6 @@
 import { ComponentType } from "react";
 import { AtSign,
+  Gift,
   Heart,
   Network,
   Vault,
@@ -172,6 +173,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
       { name: 'Projects', href: '/ecosystem/project', icon: null, IconComponent: Boxes },
       { name: 'Public Goods', href: '/ecosystem/publicgoods', icon: null, IconComponent: Heart },
       { name: '.hl Names', href: '/names', icon: null, IconComponent: AtSign },
+      { name: 'Perks', href: '/perks', icon: null, IconComponent: Gift },
     ],
   },
   {
