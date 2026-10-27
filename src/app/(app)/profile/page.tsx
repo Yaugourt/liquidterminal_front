@@ -56,9 +56,12 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
 
     // Chargement des items de la liste sélectionnée
     useEffect(() => {
+        // Switching list: the answer for the previous one must not land
+        let cancelled = false;
         const loadListItems = async () => {
             if (selectedListId === null) {
                 setActiveListItems([]);
+                setIsLoadingListItems(false);
                 return;
             }
 
@@ -66,17 +69,22 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
                 setIsLoadingListItems(true);
                 const { getWalletListItems } = await import("@/services/market/tracker/walletlist.service");
                 const response = await getWalletListItems(selectedListId);
+                if (cancelled) return;
                 setActiveListItems(response.data || []);
             } catch (error) {
+                if (cancelled) return;
                 console.error("Failed to load list items", error);
                 toast.error("Failed to load list contents");
                 setActiveListItems([]);
             } finally {
-                setIsLoadingListItems(false);
+                if (!cancelled) setIsLoadingListItems(false);
             }
         };
 
         loadListItems();
+        return () => {
+            cancelled = true;
+        };
     }, [selectedListId]);
 
     // Calcul des wallets à afficher

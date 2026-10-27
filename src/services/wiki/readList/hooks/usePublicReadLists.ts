@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { getPublicReadListsPaginated, copyPublicReadList } from '../api';
 import { 
   PublicReadList, 
@@ -20,12 +20,17 @@ export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) =>
     search: initialParams?.search || '',
   });
 
+  // Latest fetch: a slower answer for an older search or page must not overwrite it.
+  const requestSeq = useRef(0);
+
   const fetchReadLists = useCallback(async () => {
+    const seq = ++requestSeq.current;
     setLoading(true);
     setError(null);
     
     try {
       const response = await getPublicReadListsPaginated(params);
+      if (seq !== requestSeq.current) return;
       if (response.success) {
         setReadLists(response.data);
         setPagination(response.pagination);
@@ -33,10 +38,11 @@ export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) =>
         setError('Failed to load public read lists');
       }
     } catch (err) {
+      if (seq !== requestSeq.current) return;
       const errorMessage = handleReadListApiError(err);
       setError(typeof errorMessage === 'string' ? errorMessage : 'Failed to fetch public read lists');
     } finally {
-      setLoading(false);
+      if (seq === requestSeq.current) setLoading(false);
     }
   }, [params]);
 

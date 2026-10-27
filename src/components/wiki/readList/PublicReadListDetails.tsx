@@ -49,20 +49,25 @@ export function PublicReadListDetails({
 
   useEffect(() => {
     if (!readList) return;
+    // Switching list: the answer for the previous one must not land
+    let cancelled = false;
     const fetchItems = async () => {
       setLoading(true);
       try {
         const response = await getReadListItems(readList.id);
-        if (response.success && response.data) {
+        if (!cancelled && response.success && response.data) {
           setItems(response.data);
         }
       } catch {
         // silently fail
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
     fetchItems();
+    return () => {
+      cancelled = true;
+    };
   }, [readList]);
 
   const handleCopy = async () => {
