@@ -531,6 +531,12 @@ export const seoConfig = {
     keywords: ["Hyperliquid Names", ".hl name", "hl names", "Hyperliquid domain", "HyperEVM name", "mint .hl"],
     path: "/names",
   },
+  perksPage: {
+    title: "Perks - Partner offers on Liquid Terminal",
+    description: "Offers from Hyperliquid projects for Liquid Terminal users: discounts and codes, unlocked when you sign in.",
+    keywords: ["Hyperliquid perks", "Hyperliquid offers", "Liquid Terminal", "promo code"],
+    path: "/perks",
+  },
   hypeOperations: {
     title: "Hyperliquid Operating Metrics - Fee Run Rate & TVL",
     description: "Hyperliquid operating metrics: fee run rate, total value locked history and the core activity figures behind them.",
