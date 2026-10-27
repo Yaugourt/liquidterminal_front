@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useDataFetching } from "@/hooks/useDataFetching";
-import { REFRESH_INTERVALS } from "@/services/api/constants";
 import type { UnderlyingClass } from "@/lib/hip3/underlying";
 
 export type UnderlyingUnavailableReason = "unmapped" | "unconfigured" | "plan" | "upstream";
@@ -70,12 +69,16 @@ export interface Hip3Basis {
   isLoading: boolean;
 }
 
+/** Matches the route's `exchange-market-hours` revalidate, the shortest-lived part of the answer. */
+const QUOTE_REFRESH_MS = 15 * 60_000;
+
 export function useHip3Underlying(coin: string | null, markPx: number | null): Hip3Basis {
   const { data, isLoading } = useDataFetching<UnderlyingResponse | null>({
     fetchFn: (signal) => (coin ? fetchUnderlying(coin, signal) : Promise.resolve(null)),
     dependencies: [coin],
-    // The route caches for hours; this only picks up its refresh.
-    refreshInterval: REFRESH_INTERVALS.HOURLY,
+    // The price is cached for hours server-side, the open/closed flag for 15 min;
+    // a poll is a cache hit, so this only picks up the flag's refresh.
+    refreshInterval: QUOTE_REFRESH_MS,
     maxRetries: 1,
   });
 

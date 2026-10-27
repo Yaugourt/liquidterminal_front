@@ -16,8 +16,13 @@ import { getUnderlyingRef, type UnderlyingClass } from "@/lib/hip3/underlying";
  */
 export const revalidate = 21600;
 
-/** Market hours barely move; a day of caching keeps this off the call budget. */
-const HOURS_REVALIDATE = 86400;
+/**
+ * `isMarketOpen` is the exchange's current session, not its schedule: it flips
+ * at the open, the close and on holidays, so a day of caching served "open" all
+ * night and "closed" through Monday. A quarter of an hour bounds the staleness
+ * and, at three exchanges, the calls (at most 288 a day, only while visited).
+ */
+const HOURS_REVALIDATE = 900;
 
 /** Which FMP exchange calendar governs each market label in the mapping. */
 const EXCHANGE_BY_MARKET: Record<string, string> = {

@@ -397,7 +397,7 @@ Also on the page: FR-20 (SpotAuctionBand), FR-32.
 | FR-62 | HIP-3 snapshot ribbon | `/indexer/hip3/snapshots` | 10 s (`src/services/indexer/hip3/hooks/index.ts:41`) | 15 s (`hypedexer.cache.ts:110`) | 25 s | P |
 | FR-63 | Hip3MarketTape | `/indexer/hip3/fills` | 10 s (`index.ts:66`) | 10 s (`hypedexer.cache.ts:109`) | 20 s | P |
 | FR-64 | Hip3TopTraders | `/indexer/hip3/stats/traders` | 60 s (`index.ts:85`) | 120 s (`hypedexer.cache.ts:111`) | 180 s | P |
-| FR-65 | Hip3BasisCard underlying | Next route `/api/hip3/underlying` (FR-D-22) | 1 h (`src/services/market/hip3/underlying.ts:78`) | Next `revalidate` 6 h (`src/app/api/hip3/underlying/route.ts:17`) | 7 h | P |
+| FR-65 | Hip3BasisCard underlying | Next route `/api/hip3/underlying` (FR-D-22) | 15 min (`src/services/market/hip3/underlying.ts:81`) | Next `revalidate` 6 h for the end-of-day price (`src/app/api/hip3/underlying/route.ts:17`), 15 min for the open/closed flag (`:49`) | 6 h 15 min (flag: 30 min) | P |
 
 Token pages also carry FR-49..51.
 
@@ -560,7 +560,7 @@ These leave from the **visitor's IP**, not the backend's: they never count again
 | FR-D-19 | HL info `metaAndAssetCtxs {dex}` | HIP-3 asset page | 6/min | M (60 KB for `xyz`) |
 | FR-D-20 | Elysium testnet RPC: chain head on `testnet-rpc.elysium.kinetiq.xyz` (`src/services/elysium/api.ts:34`, `:90-96`); viem contract reads try `elysium-testnet-rpc.hypedexer.com` first, then the kinetiq RPC (`src/services/elysium/rpc.ts:24`, `src/lib/elysium-chain.ts:23`); openchain.xyz selector lookups (`src/lib/elysium/tx.ts:144`, `:158`) | `/elysium*` | head 30/min; lookups on demand; trust page ~16 requests a 120 s cycle (FR-144, measured 2026-10-14) | S |
 | FR-D-21 | HyperEVM RPC `rpc.hyperliquid.xyz/evm`: `.hl` / `.hype` resolution in search (memo for the visit, `src/services/search/names.ts:45`), name mint | search, `/names` | on demand | S |
-| FR-D-22 | Next server routes `/api/reserve-yield` (HL info + HyperEVM + archive RPCs, `src/lib/reserve-yield.ts:22-30`) and `/api/hip3/underlying` (financialmodelingprep.com) | `/hype/reserve-yield`; HIP-3 asset | 1/min; 1/h | — |
+| FR-D-22 | Next server routes `/api/reserve-yield` (HL info + HyperEVM + archive RPCs, `src/lib/reserve-yield.ts:22-30`) and `/api/hip3/underlying` (financialmodelingprep.com) | `/hype/reserve-yield`; HIP-3 asset | 1/min; 4/h | — |
 | FR-D-23 | HyperEVM testnet RPCs: `rpc.hyperliquid-testnet.xyz/evm`, reads batched through Multicall3 (`src/services/elysium/parent.ts:14-19`, `src/lib/elysium-chain.ts:85`); `hyperliquid-testnet.drpc.org` for `eth_getLogs` in 100-block windows, at most 40 a walk (`src/services/elysium/bridge-track.ts:15-25`, `src/lib/elysium-chain.ts:80`) | `/elysium/trust` (FR-144), `/elysium/bridge` tracker (FR-145) | trust ~7 requests a 120 s cycle; tracker 3 a 60 s poll, plus the confirmed-root walk at most once per 120 s (6 `eth_getLogs` measured 2026-10-14, at most 40) | S |
 
 FR-D-22 is not browser-direct: it runs on the Next server, behind the CDN cache of FR-135 / FR-65, so its upstream calls come from the Next host's IP, not the visitor's nor the backend's.
