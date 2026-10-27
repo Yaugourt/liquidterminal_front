@@ -62,7 +62,7 @@ async function loadSources(): Promise<Sources> {
     raw<Sources["perp"]>("/market/perp/globalstats"),
     wrapped<{ name: string; price: number; marketCap: number }[]>("/market/spot"),
     raw<Sources["stables"]>("/market/stablecoins"),
-    raw<{ stats?: Sources["liq"] }>("/liquidations/historical/stats"),
+    wrapped<{ stats?: Sources["liq"] }>("/liquidations/historical/stats"),
     wrapped<Sources["hip3"]>("/indexer/hip3/overview"),
     raw<Sources["global"]>("/home/globalstats"),
     wrapped<{ current: Sources["builders"] }>("/indexer/builders/stats"),
