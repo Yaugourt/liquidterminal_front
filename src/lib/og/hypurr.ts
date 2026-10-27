@@ -8,21 +8,29 @@ import { SITE_CONFIG } from "@/lib/site-config";
  * origin but not from the serverless filesystem, so we fetch by URL and inline
  * the bytes, cached per mood.
  */
-const cache = new Map<string, string | null>();
+const cache = new Map<string, string>();
+/** When a mood last failed to load. A failure is retried after `RETRY_AFTER_MS`, never kept for the life of the instance. */
+const failedAt = new Map<string, number>();
+const RETRY_AFTER_MS = 60_000;
 
 export async function loadHypurr(mood = "hypurr"): Promise<string | null> {
-  if (cache.has(mood)) return cache.get(mood) ?? null;
+  const cached = cache.get(mood);
+  if (cached) return cached;
+  const failed = failedAt.get(mood);
+  if (failed !== undefined && Date.now() - failed < RETRY_AFTER_MS) return null;
   try {
     const res = await fetch(`${SITE_CONFIG.url}/hypurr/${encodeURIComponent(mood)}.png`);
     if (!res.ok) {
-      cache.set(mood, null);
+      failedAt.set(mood, Date.now());
       return null;
     }
     const buf = Buffer.from(await res.arrayBuffer());
     const uri = `data:image/png;base64,${buf.toString("base64")}`;
     cache.set(mood, uri);
+    failedAt.delete(mood);
     return uri;
   } catch {
+    failedAt.set(mood, Date.now());
     return null;
   }
 }
