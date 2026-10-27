@@ -93,8 +93,13 @@ interface ApiReadList {
   updatedAt?: string | null
 }
 
+/** Flips to incomplete when a backend source failed: its URLs are missing, not absent. */
+interface Health {
+  complete: boolean
+}
+
 /** Wiki category and public read-list URLs, straight from the backend. */
-async function dynamicWikiRoutes(baseUrl: string): Promise<MetadataRoute.Sitemap> {
+async function dynamicWikiRoutes(baseUrl: string, health: Health): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = []
   try {
     const res = await fetch(`${env.NEXT_PUBLIC_API}/educational/categories`, {
@@ -110,9 +115,12 @@ async function dynamicWikiRoutes(baseUrl: string): Promise<MetadataRoute.Sitemap
           priority: 0.6,
         })
       }
+    } else {
+      health.complete = false
     }
   } catch {
-    // Backend down: the static sitemap still ships.
+    // Backend down: the static sitemap still ships (see `sitemap` for what is cached).
+    health.complete = false
   }
   try {
     const res = await fetch(`${env.NEXT_PUBLIC_API}/readlists?limit=100`, {
@@ -129,22 +137,36 @@ async function dynamicWikiRoutes(baseUrl: string): Promise<MetadataRoute.Sitemap
           priority: 0.5,
         })
       }
+    } else {
+      health.complete = false
     }
   } catch {
     // Same: never let the sitemap 500 because of the API.
+    health.complete = false
   }
   return routes
 }
 
 const ENTITY_LIMIT = 100
 
+/**
+ * Projects are listed page by page until the backend says there are no more
+ * (`collectPaginated` stops at `totalPages`); this only bounds a runaway list.
+ * A fixed 3 pages dropped every project past the 300th (343 listed).
+ */
+const PROJECT_MAX_PAGES = 10
+
 /** GET/POST JSON with soft failure: the sitemap must never 500 because of an API. */
-async function fetchJson<T>(url: string, init?: RequestInit): Promise<T | null> {
+async function fetchJson<T>(url: string, health: Health, init?: RequestInit): Promise<T | null> {
   try {
     const res = await fetch(url, { next: { revalidate: 3600 }, ...init })
-    if (!res.ok) return null
+    if (!res.ok) {
+      health.complete = false
+      return null
+    }
     return (await res.json()) as T
   } catch {
+    health.complete = false
     return null
   }
 }
@@ -157,11 +179,12 @@ interface PaginatedBody<T> {
 /** Collect a bounded number of pages from a paginated backend list. */
 async function collectPaginated<T>(
   buildUrl: (page: number) => string,
-  maxPages: number
+  maxPages: number,
+  health: Health
 ): Promise<T[]> {
   const items: T[] = []
   for (let page = 1; page <= maxPages; page++) {
-    const body = await fetchJson<PaginatedBody<T>>(buildUrl(page))
+    const body = await fetchJson<PaginatedBody<T>>(buildUrl(page), health)
     const rows = body?.data ?? []
     if (rows.length === 0) break
     items.push(...rows)
@@ -176,29 +199,33 @@ async function collectPaginated<T>(
  * These pages exist and carry per-entity metadata; the sitemap has to
  * surface them or crawlers only ever discover the list pages.
  */
-async function entityRoutes(baseUrl: string): Promise<MetadataRoute.Sitemap> {
+async function entityRoutes(baseUrl: string, health: Health): Promise<MetadataRoute.Sitemap> {
   const api = env.NEXT_PUBLIC_API
   const routes: MetadataRoute.Sitemap = []
 
   const [spotTokens, perpMarkets, vaults, projects, perpDexs] = await Promise.all([
     collectPaginated<{ name?: string }>(
       (page) => `${api}/market/spot?limit=${ENTITY_LIMIT}&page=${page}&sortBy=volume&sortOrder=desc`,
-      5
+      5,
+      health
     ),
     collectPaginated<{ name?: string }>(
       (page) => `${api}/market/perp?limit=${ENTITY_LIMIT}&page=${page}&sortBy=volume&sortOrder=desc`,
-      3
+      3,
+      health
     ),
     collectPaginated<{ summary?: { vaultAddress?: string; isClosed?: boolean } }>(
       (page) => `${api}/market/vaults?limit=${ENTITY_LIMIT}&page=${page}`,
-      3
+      3,
+      health
     ),
     collectPaginated<{ id?: number }>(
       (page) => `${api}/project?limit=${ENTITY_LIMIT}&page=${page}&sort=title&order=asc`,
-      3
+      PROJECT_MAX_PAGES,
+      health
     ),
     // HIP-3 dex list comes straight from the public Hyperliquid API (tiny list).
-    fetchJson<Array<{ name?: string } | null>>(`${API_URLS.HYPERLIQUID_API}/info`, {
+    fetchJson<Array<{ name?: string } | null>>(`${API_URLS.HYPERLIQUID_API}/info`, health, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'perpDexs' }),
@@ -249,22 +276,36 @@ async function entityRoutes(baseUrl: string): Promise<MetadataRoute.Sitemap> {
   return routes
 }
 
+/** The last sitemap built from complete data, served again when a source fails. */
+let lastCompleteSitemap: MetadataRoute.Sitemap | null = null
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_CONFIG.url
+  const health: Health = { complete: true }
   const staticRoutes: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
     url: `${baseUrl}${route.path}`,
     changeFrequency: route.changeFrequency,
     priority: route.priority,
   }))
   const [wikiRoutes, entities] = await Promise.all([
-    dynamicWikiRoutes(baseUrl),
-    entityRoutes(baseUrl),
+    dynamicWikiRoutes(baseUrl, health),
+    entityRoutes(baseUrl, health),
   ])
   const all = [...staticRoutes, ...wikiRoutes, ...entities]
   const seen = new Set<string>()
-  return all.filter((route) => {
+  const routes = all.filter((route) => {
     if (seen.has(route.url)) return false
     seen.add(route.url)
     return true
   })
+  if (health.complete) {
+    lastCompleteSitemap = routes
+    return routes
+  }
+  // A source failed during this regeneration. Shipping the gap would replace
+  // the previous good page for an hour: serve the last complete one, or throw so
+  // Next keeps the previous cached page. The build itself never fails over a blip.
+  if (lastCompleteSitemap) return lastCompleteSitemap
+  if (process.env.NEXT_PHASE === 'phase-production-build') return routes
+  throw new Error('sitemap: a backend source failed and no complete sitemap is cached')
 }
