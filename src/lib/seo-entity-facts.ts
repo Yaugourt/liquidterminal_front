@@ -10,6 +10,8 @@ import { compactUsd } from "@/lib/formatters/numberFormatting";
 
 const INFO_URL = "https://api.hyperliquid.xyz/info";
 const REVALIDATE_S = 300;
+/** The layouts await this before rendering: a stalled API must cost the sentence, not the page. */
+const TIMEOUT_MS = 2500;
 
 async function info<T>(body: object): Promise<T | null> {
   try {
@@ -18,6 +20,7 @@ async function info<T>(body: object): Promise<T | null> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
       next: { revalidate: REVALIDATE_S },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     return res.ok ? ((await res.json()) as T) : null;
   } catch {
