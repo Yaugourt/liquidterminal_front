@@ -4,6 +4,7 @@ import { memo } from "react";
 import Link from "next/link";
 import { HlAddressText, TokenAvatar } from "@/components/common";
 import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { hip3AssetHref } from "@/lib/hip3/coin";
 import type { Activity, ActivityKind } from "@/services/explorer/address";
 import { cn } from "@/lib/utils";
 
@@ -67,7 +68,9 @@ export function AssetChip({ asset }: { asset: NonNullable<Activity["asset"]> }) 
     "coin" in asset
       ? market === "spot"
         ? `/market/spot/${encodeURIComponent(asset.label)}`
-        : `/market/perp/${encodeURIComponent(asset.coin)}`
+        : market === "hip3"
+          ? hip3AssetHref(asset.coin)
+          : `/market/perp/${encodeURIComponent(asset.coin)}`
       : null;
   const body = (
     <>
