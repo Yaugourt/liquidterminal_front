@@ -23,16 +23,21 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
   const [selectedList, setSelectedList] = useState<WalletList | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  // Pour éviter les double-loads
-  const isLoadingRef = useRef(false);
+  // Latest request: an answer that is no longer the latest (older query, or a
+  // "load more" overtaken by a new search) must not write.
+  const requestSeq = useRef(0);
 
-
+  // Typing fires one request per settled query, not one per keystroke
+  const [query, setQuery] = useState(searchQuery);
+  useEffect(() => {
+    const timer = setTimeout(() => setQuery(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const loadLists = useCallback(async (pageNum: number, isReset = false) => {
-    if (isLoadingRef.current) return;
+    const seq = ++requestSeq.current;
 
     try {
-      isLoadingRef.current = true;
       setLoading(true);
 
       const params: Record<string, unknown> = {
@@ -42,11 +47,12 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
         order: 'desc'
       };
 
-      if (searchQuery.trim()) {
-        params.search = searchQuery.trim();
+      if (query.trim()) {
+        params.search = query.trim();
       }
 
       const response = await getPublicWalletLists(params);
+      if (seq !== requestSeq.current) return;
 
       if (response.data) {
         setLists(prev => isReset ? response.data : [...prev, ...response.data]);
@@ -54,21 +60,22 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
         setPage(pageNum);
       }
     } catch {
-      toast.error('Failed to load public lists');
+      if (seq === requestSeq.current) toast.error('Failed to load public lists');
     } finally {
-      setLoading(false);
-      setInitialLoading(false);
-      isLoadingRef.current = false;
+      if (seq === requestSeq.current) {
+        setLoading(false);
+        setInitialLoading(false);
+      }
     }
-  }, [searchQuery]);
+  }, [query]);
 
-  // Reset when search changes
+  // First load, and reset when the search changes
   useEffect(() => {
     setLists([]);
     setPage(1);
     setHasMore(true);
     loadLists(1, true);
-  }, [searchQuery, loadLists]);
+  }, [loadLists]);
 
   // Load more handler
   const handleLoadMore = () => {
@@ -82,11 +89,6 @@ export function PublicWalletLists({ searchQuery = "" }: PublicWalletListsProps) 
     setSelectedList(list);
     setIsPreviewOpen(true);
   };
-
-  // Initial load
-  useEffect(() => {
-    loadLists(1, true);
-  }, [loadLists]);
 
   if (initialLoading) {
     return (
