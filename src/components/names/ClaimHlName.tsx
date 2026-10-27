@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { zeroHash, type Address, type EIP1193Provider, type Hash } from "viem";
-import { AtSign, Check, ExternalLink, Wallet } from "lucide-react";
+import { AtSign, Check, ExternalLink, ShieldCheck, Wallet } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,10 @@ import { useHlName } from "@/services/names";
 import {
   checkLabel,
   forgetCachedName,
+  HLN_MINTER,
   HLN_NAMES,
+  HYPEREVM_USDC,
+  hypeUsd,
   mintName,
   nameOwner,
   priceUsd,
@@ -43,6 +46,14 @@ const STEP_TEXT: Record<MintStep, string> = {
 
 const usd = (n: number) => `$${n.toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
+
+function ContractLink({ address, label }: { address: string; label: string }) {
+  return (
+    <a href={`https://hyperevmscan.io/address/${address}`} target="_blank" rel="noopener noreferrer" className="mono text-text-secondary hover:text-brand">
+      {label}
+    </a>
+  );
+}
 
 /** Debounced on-chain availability of what the user types. */
 function useAvailability(input: string): Availability {
@@ -89,12 +100,14 @@ export function ClaimHlName({ initial = "" }: { initial?: string }) {
   const [err, setErr] = useState<string | null>(null);
   const [minted, setMinted] = useState<{ name: string; hash: Hash } | null>(null);
   const [referred, setReferred] = useState(false);
+  const [hypePx, setHypePx] = useState<number | null>(null);
 
   const availability = useAvailability(input);
   const currentName = useHlName(account);
 
   useEffect(() => {
     referralHash().then((h) => setReferred(h !== zeroHash));
+    void hypeUsd().then(setHypePx);
     const p = injectedWallet();
     setProvider(p);
     if (!p) return;
@@ -212,6 +225,11 @@ export function ClaimHlName({ initial = "" }: { initial?: string }) {
                   onTabChange={(v) => setToken(v as PayToken)}
                 />
               </div>
+              {token === "native" && hypePx && (
+                <p className="text-right text-[12px] text-text-secondary">
+                  About <span className="mono text-text-primary">{(price.paid / hypePx).toFixed(4)} HYPE</span> at ${hypePx.toFixed(2)}
+                </p>
+              )}
               <p className="text-[11.5px] leading-relaxed text-text-tertiary">
                 {token === "usdc"
                   ? "Paid in USDC on HyperEVM. First time: one approval, then the mint."
@@ -265,6 +283,7 @@ export function ClaimHlName({ initial = "" }: { initial?: string }) {
         </div>
       </Card>
 
+      <div className="space-y-4">
       <Card padding="none">
         <CardHead title="Pricing" tag="per year" />
         <div className="space-y-4 p-4">
@@ -292,6 +311,41 @@ export function ClaimHlName({ initial = "" }: { initial?: string }) {
           </div>
         </div>
       </Card>
+
+      <Card padding="none">
+        <CardHead title="What you sign" tag="open source" />
+        <div className="space-y-3 p-4 text-[12px] leading-relaxed text-text-tertiary">
+          <ul className="space-y-2">
+            <li className="flex gap-2">
+              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-success" />
+              <span>
+                <span className="text-text-secondary">USDC:</span> one approval for the exact price, to the{" "}
+                <ContractLink address={HLN_MINTER} label="Minter" />, then the mint. Never an unlimited approval.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-success" />
+              <span>
+                <span className="text-text-secondary">HYPE:</span> one transaction to the <ContractLink address={HLN_MINTER} label="Minter" />, the price plus a 2% margin for the oracle.
+              </span>
+            </li>
+            <li className="flex gap-2">
+              <ShieldCheck size={14} className="mt-0.5 shrink-0 text-success" />
+              <span>
+                Before your wallet opens, the page checks that the signed pass is for the name you typed, in the token you chose, at no more than the list price, and that your wallet is still on HyperEVM and on the same account.
+              </span>
+            </li>
+          </ul>
+          <p>
+            USDC contract <ContractLink address={HYPEREVM_USDC} label={short(HYPEREVM_USDC)} />. The code of this page is{" "}
+            <a href="https://github.com/Yaugourt/liquidterminal_front/blob/main/src/services/names/mint.ts" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-brand">
+              on GitHub
+            </a>
+            .
+          </p>
+        </div>
+      </Card>
+      </div>
     </div>
   );
 }

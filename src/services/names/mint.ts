@@ -2,7 +2,8 @@
 
 import { erc20Abi, parseAbi, zeroAddress, zeroHash, type Address, type EIP1193Provider, type Hash, type Hex } from "viem";
 import { namehash, normalize } from "viem/ens";
-import { post } from "@/services/api/axios-config";
+import { post, postExternal } from "@/services/api/axios-config";
+import { buildHyperliquidUrl } from "@/services/api/constants";
 import { hyperEvmClient, hyperEvmWallet } from "@/lib/hyperevm/wallet";
 
 /**
@@ -99,10 +100,69 @@ interface MintPass {
   amountRequired: string;
 }
 
+/**
+ * Most a pass may ask for, above the price we expect from the public price
+ * list: USDC passes are exact; HYPE passes follow their oracle, which drifts
+ * from the Hyperliquid mid we price against by far less than this.
+ */
+const USDC_TOLERANCE_BPS = 0n;
+const HYPE_TOLERANCE_BPS = 1_000n; // 10%
+
+/** HYPE in USD (Hyperliquid mid), to check what a HYPE mint pass asks for. */
+export async function hypeUsd(): Promise<number | null> {
+  try {
+    const mids = await postExternal<Record<string, string>>(buildHyperliquidUrl("HYPERLIQUID_INFO"), { type: "allMids" });
+    const px = Number(mids?.HYPE);
+    return Number.isFinite(px) && px > 0 ? px : null;
+  } catch {
+    return null;
+  }
+}
+
+/** HYPE wei for `usd` at `px`, rounded up. */
+const hypeWei = (usd: number, px: number) => (BigInt(Math.round(usd * 1e6)) * 10n ** 18n + BigInt(Math.round(px * 1e6)) - 1n) / BigInt(Math.round(px * 1e6));
+
+/**
+ * Asks our backend for a signed pass and checks it before any wallet sees it:
+ * it must be for this label and token, and must not cost more than the public
+ * price. The backend checks the same; this repeats it so a compromised or
+ * misconfigured backend still cannot make the page ask for more.
+ */
 async function mintPass(label: string, token: PayToken): Promise<MintPass> {
   const res = await post<{ success: boolean; data: MintPass }>(`/names/mintpass/${encodeURIComponent(label)}`, { token }, { useCache: false });
-  if (!res.success || !res.data?.sig) throw new Error("Hyperliquid Names did not sign the mint. Try again in a minute.");
-  return res.data;
+  const pass = res.data;
+  const fail = (why: string) => new Error(`Mint stopped: ${why}. Nothing was sent. Try again in a minute.`);
+  if (!res.success || !pass?.sig) throw new Error("Hyperliquid Names did not sign the mint. Try again in a minute.");
+  if (pass.label !== label) throw fail("the signed name does not match the one you typed");
+  const expectedToken = token === "usdc" ? HYPEREVM_USDC.toLowerCase() : "native";
+  if (typeof pass.token !== "string" || pass.token.toLowerCase() !== expectedToken) throw fail("the payment token does not match");
+  if (!/^[1-9][0-9]{0,29}$/.test(pass.amountRequired)) throw fail("the quoted amount is not valid");
+
+  const amount = BigInt(pass.amountRequired);
+  const usd = priceUsd(label);
+  if (token === "usdc") {
+    const max = (BigInt(usd) * 1_000_000n * (10_000n + USDC_TOLERANCE_BPS)) / 10_000n;
+    if (amount > max) throw fail(`the quote is above the $${usd} list price`);
+  } else {
+    const px = await hypeUsd();
+    if (px == null) throw fail("the HYPE price could not be read to check the quote");
+    const max = (hypeWei(usd, px) * (10_000n + HYPE_TOLERANCE_BPS)) / 10_000n;
+    if (amount > max) throw fail(`the quote is above the $${usd} list price at today's HYPE price`);
+  }
+  return pass;
+}
+
+/**
+ * The wallet must still be on the account and the network the user saw:
+ * a wallet that switched either in between is stopped before it signs.
+ */
+async function assertWalletState(provider: EIP1193Provider, account: Address): Promise<void> {
+  const accounts = (await provider.request({ method: "eth_accounts" })) as string[];
+  if (!accounts.some((a) => a.toLowerCase() === account.toLowerCase())) {
+    throw new Error("Your wallet switched account. Reconnect and try again.");
+  }
+  const chainId = Number(BigInt((await provider.request({ method: "eth_chainId" })) as string));
+  if (chainId !== 999) throw new Error("Your wallet is not on HyperEVM. Switch network and try again.");
 }
 
 export type MintStep = "pass" | "approve" | "confirm" | "pending";
@@ -133,6 +193,7 @@ export async function mintName(opts: {
     const allowance = await hyperEvmClient.readContract({ address: HYPEREVM_USDC, abi: erc20Abi, functionName: "allowance", args: [account, HLN_MINTER] });
     if (allowance < amount) {
       onStep?.("approve");
+      await assertWalletState(provider, account);
       const approve = await wallet.writeContract({ address: HYPEREVM_USDC, abi: erc20Abi, functionName: "approve", args: [HLN_MINTER, amount] });
       await hyperEvmClient.waitForTransactionReceipt({ hash: approve });
     }
@@ -146,6 +207,7 @@ export async function mintName(opts: {
       args: [pass.label, 1n, pass.sig, BigInt(pass.timestamp), HYPEREVM_USDC, referral],
     });
     onStep?.("confirm");
+    await assertWalletState(provider, account);
     const hash = await wallet.writeContract(request);
     onStep?.("pending");
     await hyperEvmClient.waitForTransactionReceipt({ hash });
@@ -164,6 +226,7 @@ export async function mintName(opts: {
     value,
   });
   onStep?.("confirm");
+  await assertWalletState(provider, account);
   const hash = await wallet.writeContract(request);
   onStep?.("pending");
   await hyperEvmClient.waitForTransactionReceipt({ hash });
