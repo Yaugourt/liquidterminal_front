@@ -1,6 +1,6 @@
 // Types pour les informations d'enchère
 export interface AuctionInfo {
-  time: number;
+  time: number; // Unix timestamp in ms
   deployer: string;
   name: string;
   deployGas: string;

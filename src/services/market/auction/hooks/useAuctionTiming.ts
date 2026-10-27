@@ -164,7 +164,7 @@ export const useAuctionTiming = (): UseAuctionTimingResult => {
     // 7d window aggregates (avg winning bid + count).
     const cutoff7d = now - SEVEN_DAYS_MS;
     const recent = latestAuctions.filter(
-      (a) => a.time * 1000 >= cutoff7d && parseFloat(a.deployGas) > 0,
+      (a) => a.time >= cutoff7d && parseFloat(a.deployGas) > 0,
     );
     const deploys7d = recent.length;
     const avg7dPrice = deploys7d

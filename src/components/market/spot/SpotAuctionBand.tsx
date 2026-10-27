@@ -32,9 +32,7 @@ function fmtAgo(ms: number, now: number): string {
  * the gas actually paid over the last 90d, and the latest deploys. Links to
  * /market/spot/auction for the full history.
  *
- * 7d aggregates are computed here from `useLatestAuctions` (ms timestamps) —
- * the `avg7dPrice`/`deploys7d` fields of `useAuctionTiming` mix up s/ms and
- * over-count, so they are deliberately not used.
+ * 7d aggregates are computed here from `useLatestAuctions` (ms timestamps).
  */
 export function SpotAuctionBand() {
   const { auctionState } = useAuctionTiming();

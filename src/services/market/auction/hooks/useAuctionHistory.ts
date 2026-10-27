@@ -52,9 +52,7 @@ export interface UseAuctionHistoryResult {
  * returns the entire history in a single response), everything else derived
  * client-side: era split, search, leaderboards, per-era aggregates.
  *
- * 7d stats are computed here with ms timestamps — `useAuctionTiming`'s
- * `avg7dPrice`/`deploys7d` mix seconds/ms and over-count, so they are
- * deliberately not reused.
+ * 7d stats are computed here from the full history (ms timestamps).
  */
 export function useAuctionHistory(): UseAuctionHistoryResult {
   const { auctions, isLoading, isRefreshing, dataUpdatedAt, error, refetch, splitTimestamp } =
