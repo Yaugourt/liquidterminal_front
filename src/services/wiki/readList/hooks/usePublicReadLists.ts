@@ -46,8 +46,8 @@ export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) =>
       return {
         ...prev,
         ...newParams,
-        // Reset to page 1 when changing search or filters
-        page: shouldResetPage ? 1 : (prev.page || 1)
+        // Reset to page 1 when changing search or filters; a page change keeps the page asked for
+        page: newParams.page ?? (shouldResetPage ? 1 : (prev.page || 1))
       };
     });
   }, []);
