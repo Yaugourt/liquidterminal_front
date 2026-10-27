@@ -33,12 +33,26 @@ async function fetchAllResources(): Promise<ApiResource[]> {
     const res = await fetch(`${API_BASE}/educational/resources?limit=100&page=${page}`, {
       next: { revalidate: 3600 },
     });
-    if (!res.ok) break;
+    // A failed page must not pass for the end of the list: the file would be
+    // truncated and cached as if complete.
+    if (!res.ok) throw new Error(`educational/resources page ${page}: ${res.status}`);
     const body = (await res.json()) as ResourcesPage;
     all.push(...(body.data ?? []));
     if (!body.pagination?.hasNext) break;
   }
   return all;
+}
+
+/** The last file built from every page of the list, served again when a regeneration fails. */
+let lastCompleteBody: string | null = null;
+
+function respond(body: string) {
+  return new Response(body, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "public, max-age=3600",
+    },
+  });
 }
 
 /**
@@ -51,9 +65,15 @@ export async function GET() {
   let resources: ApiResource[] = [];
   try {
     resources = await fetchAllResources();
-  } catch {
-    // Backend unreachable: still serve the header so the file never 500s.
+  } catch (error) {
+    // Backend blip during regeneration. Serving the gap would replace the last
+    // good corpus for an hour: serve that one, or throw so Next keeps the
+    // previous cached file. The build itself never fails over a blip.
+    if (lastCompleteBody) return respond(lastCompleteBody);
+    if (process.env.NEXT_PHASE !== "phase-production-build") throw error;
   }
+  // An answered-but-empty list is no corpus either.
+  if (resources.length === 0 && lastCompleteBody) return respond(lastCompleteBody);
 
   const byCategory = new Map<string, ApiResource[]>();
   for (const resource of resources) {
@@ -90,10 +110,7 @@ export async function GET() {
 ${sections}
 `;
 
-  return new Response(body, {
-    headers: {
-      "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=3600",
-    },
-  });
+  // Only reached after a full fetch (or at build time): remember it.
+  if (resources.length > 0) lastCompleteBody = body;
+  return respond(body);
 }
