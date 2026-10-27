@@ -36,6 +36,9 @@ const createActionCreators = (set: (fn: (state: WalletListsState) => Partial<Wal
 export const useWalletLists = create<WalletListsState>()(
   (set, get) => {
       const actions = createActionCreators(set);
+      // Latest loadListItems call: an answer that is no longer the latest, or
+      // for a list that is no longer the selected one, must not write.
+      let itemsRequestSeq = 0;
       
       return {
         userLists: [],
@@ -243,6 +246,8 @@ export const useWalletLists = create<WalletListsState>()(
 
         // Charger les items d'une liste dans le store (comme les readlists)
         loadListItems: async (listId: number): Promise<void> => {
+          const seq = ++itemsRequestSeq;
+          const isStale = () => seq !== itemsRequestSeq || get().activeListId !== listId;
           try {
             if (!listId || isNaN(listId)) {
               actions.updateActiveItems(() => []);
@@ -253,6 +258,7 @@ export const useWalletLists = create<WalletListsState>()(
             actions.setLoading(true);
             
             const response = await getWalletListItems(listId);
+            if (isStale()) return;
             const itemsArray = response?.data || [];
             
             // Filtrer les items qui ont un userWallet valide (au cas où un wallet a été supprimé)
@@ -264,6 +270,7 @@ export const useWalletLists = create<WalletListsState>()(
             actions.setLoading(false);
             
           } catch (error: unknown) {
+            if (isStale()) return;
             // Si c'est une erreur 404, c'est probablement une liste vide
             const apiError = error as { statusCode?: number; status?: number; response?: { status?: number } };
             if (apiError?.statusCode === 404 || apiError?.status === 404 || (apiError?.response?.status === 404)) {

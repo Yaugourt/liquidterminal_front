@@ -71,6 +71,9 @@ export const useReadLists = create<ReadListsState>()(
     (set, get) => {
       const actions = createActionCreators(set);
       const orderManager = createOrderManager<ReadList>('readlists', (list) => list.id);
+      // Latest loadReadListItems call: an answer that is no longer the latest,
+      // or for a list that is no longer the selected one, must not write.
+      let itemsRequestSeq = 0;
       
       return {
         readLists: [],
@@ -141,7 +144,10 @@ export const useReadLists = create<ReadListsState>()(
             
             throw new Error("Failed to create read list");
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to create read list'));
+            // Per-action failure: the caller toasts it. The shared `error`
+            // is for loads that leave the page without data.
+            actions.setLoading(false);
+            throw error;
           }
         },
         
@@ -162,7 +168,8 @@ export const useReadLists = create<ReadListsState>()(
             
             throw new Error("Failed to update read list");
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to update read list'));
+            actions.setLoading(false);
+            throw error;
           }
         },
         
@@ -188,7 +195,7 @@ export const useReadLists = create<ReadListsState>()(
             actions.setLoading(false);
           } catch (error) {
             const errorMessage = handleApiError(error, 'Failed to delete read list');
-            actions.setError(errorMessage);
+            actions.setLoading(false);
             throw new Error(errorMessage);
           }
         },
@@ -209,6 +216,8 @@ export const useReadLists = create<ReadListsState>()(
         },
         
         loadReadListItems: async (listId: number, page: number = 1, limit: number = 100): Promise<void> => {
+          const seq = ++itemsRequestSeq;
+          const isStale = () => seq !== itemsRequestSeq || get().activeReadListId !== listId;
           try {
             if (!listId || isNaN(listId)) {
               actions.updateActiveItems(() => []);
@@ -220,6 +229,7 @@ export const useReadLists = create<ReadListsState>()(
             actions.setLoading(true);
             
             const response = await getReadListItems(listId, { page, limit });
+            if (isStale()) return;
             const itemsArray = response?.data || [];
             
             // Si c'est la première page, remplacer les items, sinon ajouter
@@ -254,6 +264,7 @@ export const useReadLists = create<ReadListsState>()(
             actions.setLoading(false);
             
           } catch (error) {
+            if (isStale()) return;
             actions.setError(handleApiError(error, 'Failed to load read list items'));
             actions.updateActiveItems(() => []);
             set(() => ({ itemsPagination: null }));
@@ -291,7 +302,8 @@ export const useReadLists = create<ReadListsState>()(
             
             throw new Error("Failed to add item to read list");
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to add item to read list'));
+            actions.setLoading(false);
+            throw error;
           }
         },
         
@@ -311,7 +323,8 @@ export const useReadLists = create<ReadListsState>()(
             
             throw new Error("Failed to update read list item");
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to update read list item'));
+            actions.setLoading(false);
+            throw error;
           }
         },
         
@@ -327,7 +340,7 @@ export const useReadLists = create<ReadListsState>()(
             
           } catch (error) {
             const errorMessage = handleApiError(error, 'Failed to delete read list item');
-            actions.setError(errorMessage);
+            actions.setLoading(false);
             throw new Error(errorMessage);
           }
         },
@@ -348,8 +361,8 @@ export const useReadLists = create<ReadListsState>()(
             }
             return {};
           } catch (error) {
-            actions.setError(handleApiError(error, 'Failed to toggle read status'));
-            return {};
+            actions.setLoading(false);
+            throw error;
           }
         },
         
