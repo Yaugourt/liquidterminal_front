@@ -14,15 +14,22 @@ export async function fetchPerpMarkets(params: PerpMarketParams, signal?: AbortS
 }
 
 /**
- * Find a single perp market by coin name (e.g. "BTC"). The backend has no
- * single-market endpoint, so the full directory is fetched once and searched.
+ * Find a single perp market by coin name (e.g. "BTC"), case-insensitively. The
+ * backend has no single-market endpoint, so the full directory is fetched once
+ * and searched. Resolves null when the directory loaded without that coin and
+ * rejects when it did not load, so "unknown coin" and "backend down" differ.
  */
+export const findPerpMarket = async (coinName: string): Promise<PerpMarketData | null> => {
+  const response = await fetchPerpMarkets({ limit: 1000, page: 1 });
+  return (
+    response.data.find((m) => m.name.toLowerCase() === coinName.toLowerCase()) ?? null
+  );
+};
+
+/** Same lookup, but a failed directory load resolves null (callers keep placeholder values). */
 export const getPerpMarket = async (coinName: string): Promise<PerpMarketData | null> => {
   try {
-    const response = await fetchPerpMarkets({ limit: 1000, page: 1 });
-    return (
-      response.data.find((m) => m.name.toLowerCase() === coinName.toLowerCase()) ?? null
-    );
+    return await findPerpMarket(coinName);
   } catch {
     // Silent error handling: the caller falls back to placeholder values
     return null;
@@ -30,6 +37,8 @@ export const getPerpMarket = async (coinName: string): Promise<PerpMarketData | 
 };
 
 export interface PerpAssetCtx {
+  /** Canonical Hyperliquid coin name (case matters for chart, book and trades). */
+  name: string;
   markPx: number | null;
   oraclePx: number | null;
   premium: number | null;
@@ -65,6 +74,7 @@ export const getPerpAssetCtx = async (coin: string): Promise<PerpAssetCtx | null
     const ctx = ctxs?.[idx];
     if (!ctx) return null;
     return {
+      name: universe[idx].name,
       markPx: ctxNum(ctx.markPx),
       oraclePx: ctxNum(ctx.oraclePx),
       premium: ctxNum(ctx.premium),
