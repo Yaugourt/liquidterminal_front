@@ -26,24 +26,35 @@ export function formatLargeNumber(value: number, options: {
   // Fonction helper pour formater le nombre sans arrondi
   const formatNum = (num: number): string => {
     const factor = Math.pow(10, decimals);
-    const truncated = Math.floor(num * factor) / factor;
+    // num * factor can land just under the integer (4.35 * 100 = 434.99999999999994):
+    // snap the float noise before truncating so 4350 stays "4.35 K", not "4.34 K"
+    const truncated = Math.floor(Number((num * factor).toFixed(6))) / factor;
     const fixed = truncated.toFixed(decimals);
     return forceDecimals ? fixed : fixed.replace(/\.?0+$/, '');
   };
 
-  if (value >= 1e9) {
-    return `${prefix}${formatNum(value / 1e9)} B`;
+  // Units work on the magnitude; the sign goes in front of the prefix ("-$5 K"),
+  // and is dropped when the truncated value is zero.
+  const abs = Math.abs(value);
+  const sign = (text: string) => (value < 0 && text !== '0' && Number(text) !== 0 ? '-' : '');
+
+  if (abs >= 1e9) {
+    const text = formatNum(abs / 1e9);
+    return `${sign(text)}${prefix}${text} B`;
   }
   
-  if (value >= 1e6) {
-    return `${prefix}${formatNum(value / 1e6)} M`;
+  if (abs >= 1e6) {
+    const text = formatNum(abs / 1e6);
+    return `${sign(text)}${prefix}${text} M`;
   }
   
-  if (value >= 1e3) {
-    return `${prefix}${formatNum(value / 1e3)} K`;
+  if (abs >= 1e3) {
+    const text = formatNum(abs / 1e3);
+    return `${sign(text)}${prefix}${text} K`;
   }
   
-  return `${prefix}${formatNum(value)}${suffix ? ' ' + suffix : ''}`;
+  const text = formatNum(abs);
+  return `${sign(text)}${prefix}${text}${suffix ? ' ' + suffix : ''}`;
 }
 
 /**
