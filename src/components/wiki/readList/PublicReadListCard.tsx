@@ -19,7 +19,8 @@ interface PublicReadListCardProps {
   readList: PublicReadList;
   isSelected?: boolean;
   onSelect?: () => void;
-  onCopy?: () => void;
+  /** Resolves true once the list was copied; false when it was not (error, sign-in prompt). */
+  onCopy?: () => Promise<boolean>;
 }
 
 export const PublicReadListCard = memo(function PublicReadListCard({
@@ -36,9 +37,11 @@ export const PublicReadListCard = memo(function PublicReadListCard({
     if (isCopying) return;
     setIsCopying(true);
     try {
-      if (onCopy) await onCopy();
-      setHasCopied(true);
-      setTimeout(() => setHasCopied(false), 2000);
+      const copied = onCopy ? await onCopy() : false;
+      if (copied) {
+        setHasCopied(true);
+        setTimeout(() => setHasCopied(false), 2000);
+      }
     } finally {
       setIsCopying(false);
     }

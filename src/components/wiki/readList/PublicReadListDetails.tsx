@@ -23,7 +23,8 @@ import { motion, AnimatePresence } from "framer-motion";
 interface PublicReadListDetailsProps {
   readList: PublicReadList | null;
   onBack: () => void;
-  onCopy: () => void;
+  /** Resolves true once the list was copied; false when it was not (error, sign-in prompt). */
+  onCopy: () => Promise<boolean>;
 }
 
 const ResourceSkeleton = () => (
@@ -65,7 +66,7 @@ export function PublicReadListDetails({
   }, [readList]);
 
   const handleCopy = async () => {
-    await onCopy();
+    if (!(await onCopy())) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

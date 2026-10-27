@@ -66,15 +66,15 @@ export default function PublicReadListsPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [updateParams]);
 
-  const handleCopyReadList = useCallback(async (readListId: number) => {
+  const handleCopyReadList = useCallback(async (readListId: number): Promise<boolean> => {
     // Copying requires an account: prompt Privy login for anonymous visitors
     // instead of surfacing an opaque token refresh error toast.
     if (!isAuthenticated) {
       toast.info("Sign in to copy this list to your account");
       login();
-      return;
+      return false;
     }
-    await copyReadList(readListId);
+    return copyReadList(readListId);
   }, [copyReadList, isAuthenticated, login]);
 
   const handleSelectReadList = useCallback((readList: PublicReadList) => {
@@ -117,9 +117,7 @@ export default function PublicReadListsPage() {
           <PublicReadListDetails
             readList={selectedReadList}
             onBack={handleBackToList}
-            onCopy={async () => {
-              if (selectedReadList) await handleCopyReadList(selectedReadList.id);
-            }}
+            onCopy={async () => (selectedReadList ? handleCopyReadList(selectedReadList.id) : false)}
           />
         </motion.div>
       ) : (
