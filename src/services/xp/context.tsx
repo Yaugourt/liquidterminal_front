@@ -12,7 +12,8 @@ import {
   DailyTaskType,
 } from './types';
 
-// Storage key for tracking daily login
+// Storage key for tracking daily login (one per user id: several accounts can
+// share a browser)
 const DAILY_LOGIN_KEY = 'xp_daily_login_date';
 
 interface XpContextValue {
@@ -74,7 +75,8 @@ function formatTimeUntilReset(weekEnd: string | null): string {
 }
 
 export function XpProvider({ children }: { children: ReactNode }) {
-  const { ready, authenticated } = usePrivy();
+  const { ready, authenticated, user } = usePrivy();
+  const userId = user?.id;
   
   // Stats state
   const [stats, setStats] = useState<XpStats | null>(null);
@@ -97,13 +99,13 @@ export function XpProvider({ children }: { children: ReactNode }) {
   // Daily Limits state
   const [dailyLimits, setDailyLimits] = useState<DailyLimit[]>([]);
 
-  // Track if daily login has been attempted this session
-  const dailyLoginAttempted = useRef(false);
+  // User id the daily login was attempted for this session
+  const dailyLoginAttempted = useRef<string | null>(null);
 
   // Check if we already logged in today (local storage)
-  const hasLoggedInToday = useCallback((): boolean => {
+  const hasLoggedInToday = useCallback((id: string): boolean => {
     if (typeof window === 'undefined') return true;
-    const lastLogin = localStorage.getItem(DAILY_LOGIN_KEY);
+    const lastLogin = localStorage.getItem(`${DAILY_LOGIN_KEY}:${id}`);
     if (!lastLogin) return false;
 
     const today = new Date().toDateString();
@@ -111,22 +113,29 @@ export function XpProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Mark today as logged in
-  const markLoggedInToday = useCallback(() => {
+  const markLoggedInToday = useCallback((id: string) => {
     if (typeof window === 'undefined') return;
     const today = new Date().toDateString();
-    localStorage.setItem(DAILY_LOGIN_KEY, today);
+    localStorage.setItem(`${DAILY_LOGIN_KEY}:${id}`, today);
   }, []);
+
+  // Who is signed in now, to drop an answer that lands after logout or an account switch
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId;
 
   // Fetch XP stats
   const fetchStats = useCallback(async () => {
     if (!ready || !authenticated) return;
 
+    const requestedFor = userIdRef.current;
     try {
       setIsLoading(true);
       setError(null);
       const data = await xpService.getStats();
+      if (userIdRef.current !== requestedFor) return;
       setStats(data);
     } catch (err) {
+      if (userIdRef.current !== requestedFor) return;
       setError(err as Error);
       console.error('Failed to fetch XP stats:', err);
     } finally {
@@ -195,20 +204,20 @@ export function XpProvider({ children }: { children: ReactNode }) {
 
   // Handle daily login
   const handleDailyLogin = useCallback(async () => {
-    if (!ready || !authenticated || dailyLoginAttempted.current) return;
+    if (!ready || !authenticated || !userId || dailyLoginAttempted.current === userId) return;
 
     // Skip if already logged in today (optimistic check)
-    if (hasLoggedInToday()) {
-      dailyLoginAttempted.current = true;
+    if (hasLoggedInToday(userId)) {
+      dailyLoginAttempted.current = userId;
       return;
     }
 
-    dailyLoginAttempted.current = true;
+    dailyLoginAttempted.current = userId;
 
     try {
       const result = await xpService.dailyLogin();
       setLastLoginResult(result);
-      markLoggedInToday();
+      markLoggedInToday(userId);
 
       // If XP was granted, refresh stats and daily tasks
       if (result.xpGranted > 0) {
@@ -218,7 +227,7 @@ export function XpProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error('Failed to register daily login:', err);
     }
-  }, [ready, authenticated, hasLoggedInToday, markLoggedInToday, fetchStats, fetchDailyTasks]);
+  }, [ready, authenticated, userId, hasLoggedInToday, markLoggedInToday, fetchStats, fetchDailyTasks]);
 
   // Refetch all XP data
   const refetchAll = useCallback(async () => {
@@ -252,7 +261,7 @@ export function XpProvider({ children }: { children: ReactNode }) {
       setWeekStart(null);
       setWeekEnd(null);
       setDailyLimits([]);
-      dailyLoginAttempted.current = false;
+      dailyLoginAttempted.current = null;
     }
   }, [ready, authenticated, fetchStats, fetchDailyTasks, fetchWeeklyChallenges, fetchDailyLimits, handleDailyLogin]);
 

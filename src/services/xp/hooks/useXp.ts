@@ -4,7 +4,8 @@ import { xpService } from '../api';
 import { XpStats, XpTransaction, DailyLoginData } from '../types';
 import { XpContext } from '../context';
 
-// Storage key for tracking daily login
+// Storage key for tracking daily login (one per user id: several accounts can
+// share a browser)
 const DAILY_LOGIN_KEY = 'xp_daily_login_date';
 
 interface UseXpReturn {
@@ -28,7 +29,8 @@ export function useXp(): UseXpReturn {
     // Try to use context if available
     const context = useContext(XpContext);
     
-    const { ready, authenticated } = usePrivy();
+    const { ready, authenticated, user } = usePrivy();
+    const userId = user?.id;
     const [localStats, setLocalStats] = useState<XpStats | null>(null);
     const [history, setHistory] = useState<XpTransaction[]>([]);
     const [historyPagination, setHistoryPagination] = useState<UseXpReturn['historyPagination']>(null);
@@ -37,13 +39,13 @@ export function useXp(): UseXpReturn {
     const [error, setError] = useState<Error | null>(null);
     const [lastLoginResult, setLastLoginResult] = useState<DailyLoginData | null>(null);
 
-    // Track if daily login has been attempted this session
-    const dailyLoginAttempted = useRef(false);
+    // User id the daily login was attempted for this session
+    const dailyLoginAttempted = useRef<string | null>(null);
 
     // Check if we already logged in today (local storage)
-    const hasLoggedInToday = useCallback((): boolean => {
+    const hasLoggedInToday = useCallback((id: string): boolean => {
         if (typeof window === 'undefined') return true;
-        const lastLogin = localStorage.getItem(DAILY_LOGIN_KEY);
+        const lastLogin = localStorage.getItem(`${DAILY_LOGIN_KEY}:${id}`);
         if (!lastLogin) return false;
 
         const today = new Date().toDateString();
@@ -51,10 +53,10 @@ export function useXp(): UseXpReturn {
     }, []);
 
     // Mark today as logged in
-    const markLoggedInToday = useCallback(() => {
+    const markLoggedInToday = useCallback((id: string) => {
         if (typeof window === 'undefined') return;
         const today = new Date().toDateString();
-        localStorage.setItem(DAILY_LOGIN_KEY, today);
+        localStorage.setItem(`${DAILY_LOGIN_KEY}:${id}`, today);
     }, []);
 
     // Fetch XP stats (only if no context)
@@ -93,21 +95,21 @@ export function useXp(): UseXpReturn {
 
     // Handle daily login (only if no context)
     const handleDailyLogin = useCallback(async () => {
-        if (!ready || !authenticated || dailyLoginAttempted.current) return;
+        if (!ready || !authenticated || !userId || dailyLoginAttempted.current === userId) return;
         if (context) return; // Context handles this
 
         // Skip if already logged in today (optimistic check)
-        if (hasLoggedInToday()) {
-            dailyLoginAttempted.current = true;
+        if (hasLoggedInToday(userId)) {
+            dailyLoginAttempted.current = userId;
             return;
         }
 
-        dailyLoginAttempted.current = true;
+        dailyLoginAttempted.current = userId;
 
         try {
             const result = await xpService.dailyLogin();
             setLastLoginResult(result);
-            markLoggedInToday();
+            markLoggedInToday(userId);
 
             // If XP was granted, refresh stats
             if (result.xpGranted > 0) {
@@ -116,7 +118,7 @@ export function useXp(): UseXpReturn {
         } catch (err) {
             console.error('Failed to register daily login:', err);
         }
-    }, [ready, authenticated, hasLoggedInToday, markLoggedInToday, fetchStats, context]);
+    }, [ready, authenticated, userId, hasLoggedInToday, markLoggedInToday, fetchStats, context]);
 
     // Initial load: fetch stats and attempt daily login (only if no context)
     useEffect(() => {
@@ -131,7 +133,7 @@ export function useXp(): UseXpReturn {
             setHistory([]);
             setHistoryPagination(null);
             setLastLoginResult(null);
-            dailyLoginAttempted.current = false;
+            dailyLoginAttempted.current = null;
         }
     }, [ready, authenticated, fetchStats, handleDailyLogin, context]);
 
