@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { getAddress, zeroHash, type Address, type EIP1193Provider, type Hash } from "viem";
 import { AlertTriangle, AtSign, Check, ChevronDown, ExternalLink, Minus, Plus, ShieldCheck, Wallet, X } from "lucide-react";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TokenAvatar } from "@/components/common";
+import { HlNamesLogo } from "./HlNamesLogo";
 import { useHlName } from "@/services/names";
 import {
   cardFor,
@@ -124,8 +124,10 @@ function NameCard({ name, dimmed, template }: { name: string; dimmed: boolean; t
           // eslint-disable-next-line @next/next/no-img-element -- data: URI of the NFT SVG, checked by the backend
           <img src={src} alt={`${name} card preview`} className="h-full w-full" />
         ) : (
-          <div className="grid h-full w-full place-items-center">
-            <span className="px-6 text-center text-[clamp(18px,5vw,30px)] font-semibold text-text-primary">{name}</span>
+          // Until the card template loads (or if it cannot): the same layout, logo top left, name above the horizon.
+          <div className="relative h-full w-full bg-[radial-gradient(120%_60%_at_50%_100%,rgb(56_98_155/0.9),rgb(114_197_149/0.55)_35%,transparent_70%)]">
+            <HlNamesLogo className="absolute left-[5%] top-[5%] h-[14%] w-[14%]" />
+            <span className="absolute inset-x-0 bottom-[8%] truncate px-6 text-center text-[clamp(20px,5vw,34px)] text-text-primary">{name}</span>
           </div>
         )}
       </div>
@@ -273,7 +275,7 @@ export function ClaimHlName({ initial = "" }: { initial?: string }) {
         <div className="min-w-0 space-y-4 lg:sticky lg:top-24">
           <NameCard name={cardName} dimmed={cardDimmed} template={template} />
           <div className="flex items-center justify-center gap-2 text-[12px] text-text-tertiary">
-            <Image src="/partners/hlnames.svg" alt="" width={18} height={18} />
+            <HlNamesLogo className="h-5 w-5" />
             <span>
               An NFT on HyperEVM, minted through the{" "}
               <a href={HLN_APP} target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-brand">
@@ -289,7 +291,7 @@ export function ClaimHlName({ initial = "" }: { initial?: string }) {
           <div className="space-y-5 p-5 md:p-6">
             {referred && !minted && (
               <div className="flex items-center gap-2.5 rounded-lg border border-gold/25 bg-gold/[0.07] px-3 py-2">
-                <Image src="/partners/hlnames.svg" alt="" width={20} height={20} />
+                <HlNamesLogo className="h-7 w-7" />
                 <p className="text-[12.5px] text-text-secondary">
                   <span className="font-semibold text-gold">{discountPct}% off</span> every name minted on Liquid Terminal
                 </p>
@@ -604,7 +606,7 @@ export function ClaimHlName({ initial = "" }: { initial?: string }) {
       {/* Hyperliquid Names, beyond the mint */}
       <div className="flex flex-col gap-3 border-t border-border-subtle pt-5 md:flex-row md:items-center">
         <span className="flex shrink-0 items-center gap-2 text-[12.5px] font-medium text-text-secondary">
-          <Image src="/partners/hlnames.svg" alt="" width={22} height={22} />
+          <HlNamesLogo className="h-6 w-6" />
           Hyperliquid Names
         </span>
         <div className="flex flex-wrap gap-x-5 gap-y-2 md:ml-auto">

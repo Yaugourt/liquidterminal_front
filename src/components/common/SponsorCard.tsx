@@ -88,7 +88,11 @@ export function SponsorCard({ collapsed, onNavigate }: SponsorCardProps) {
             }}
           />
           <span className="relative w-9 h-9 rounded-md bg-surface-2 border border-brand/25 grid place-items-center shrink-0">
-            <AtSign className="w-4 h-4 text-brand" />
+            {featuredPromo.logo ? (
+              <Image src={featuredPromo.logo} alt="" width={28} height={28} className="w-7 h-7" />
+            ) : (
+              <AtSign className="w-4 h-4 text-brand" />
+            )}
           </span>
           <span className="relative min-w-0 flex-1">
             <span className="block text-[12.5px] font-semibold text-text-primary truncate">

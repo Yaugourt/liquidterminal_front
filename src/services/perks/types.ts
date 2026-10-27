@@ -3,6 +3,8 @@ export interface Perk {
   id: string;
   partner: string;
   partnerUrl: string;
+  /** Partner logo, a path in /public ("/partners/hlnames.svg"). */
+  logo?: string;
   title: string;
   description: string;
   /** `members`: link and code are only sent to a signed-in user. */

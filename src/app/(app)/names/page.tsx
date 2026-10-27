@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/common";
 import { ClaimHlName } from "@/components/names/ClaimHlName";
+import { HlNamesLogo } from "@/components/names/HlNamesLogo";
 
 /**
  * Get a .hl name (Hyperliquid Names), minted from the user's wallet without
@@ -12,7 +13,12 @@ export default async function NamesPage({ searchParams }: { searchParams: Promis
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Get a .hl name"
+        title={
+          <span className="inline-flex items-center gap-3">
+            <HlNamesLogo className="h-9 w-9" />
+            Get a .hl name
+          </span>
+        }
         titleQualifier="Hyperliquid Names"
         description="One readable name for your Hyperliquid wallet, shown instead of 0x… on Liquid Terminal, in your Telegram alerts and across the ecosystem."
       />

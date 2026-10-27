@@ -78,6 +78,8 @@ export interface FeaturedPromo {
   href: string;
   /** Small label on the right of the card. */
   badge: string;
+  /** Logo in /public, shown in the card's tile. */
+  logo?: string;
 }
 
 /**
@@ -89,6 +91,7 @@ export const featuredPromo: FeaturedPromo | null = {
   tagline: "20% off your name",
   href: "/names",
   badge: "New",
+  logo: "/partners/hlnames.svg",
 };
 
 /**

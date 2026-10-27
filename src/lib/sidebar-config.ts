@@ -1,5 +1,6 @@
 import { ComponentType } from "react";
-import { AtSign,
+import { HlNamesLogo } from "@/components/names/HlNamesLogo";
+import {
   Gift,
   Heart,
   Network,
@@ -172,7 +173,7 @@ export const defaultNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Projects', href: '/ecosystem/project', icon: null, IconComponent: Boxes },
       { name: 'Public Goods', href: '/ecosystem/publicgoods', icon: null, IconComponent: Heart },
-      { name: '.hl Names', href: '/names', icon: null, IconComponent: AtSign },
+      { name: '.hl Names', href: '/names', icon: null, IconComponent: HlNamesLogo },
       { name: 'Perks', href: '/perks', icon: null, IconComponent: Gift },
     ],
   },

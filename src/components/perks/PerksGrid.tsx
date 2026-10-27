@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Check, Copy, ExternalLink, Lock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -58,8 +59,10 @@ function PerkCard({ perk, onUnlock }: { perk: Perk; onUnlock: () => void }) {
             href={perk.partnerUrl.startsWith("https://") ? perk.partnerUrl : undefined}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[11px] uppercase tracking-[0.08em] text-text-tertiary hover:text-brand"
+            className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.08em] text-text-tertiary hover:text-brand"
           >
+            {/* Only our own /public files: a logo never loads from a third-party host. */}
+            {perk.logo?.startsWith("/") && !perk.logo.startsWith("//") && <Image src={perk.logo} alt="" width={28} height={28} className="h-7 w-7" />}
             {perk.partner}
           </a>
           {perk.access === "members" && (
