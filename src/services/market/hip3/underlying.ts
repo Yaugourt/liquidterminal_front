@@ -69,15 +69,15 @@ export interface Hip3Basis {
   isLoading: boolean;
 }
 
-/** Matches the route's `exchange-market-hours` revalidate, the shortest-lived part of the answer. */
+/** How stale the open/closed flag may get: the route computes it on each request. */
 const QUOTE_REFRESH_MS = 15 * 60_000;
 
 export function useHip3Underlying(coin: string | null, markPx: number | null): Hip3Basis {
   const { data, isLoading } = useDataFetching<UnderlyingResponse | null>({
     fetchFn: (signal) => (coin ? fetchUnderlying(coin, signal) : Promise.resolve(null)),
     dependencies: [coin],
-    // The price is cached for hours server-side, the open/closed flag for 15 min;
-    // a poll is a cache hit, so this only picks up the flag's refresh.
+    // The price is cached for hours server-side; the open/closed flag is computed
+    // per request, so a poll keeps it current without calling FMP.
     refreshInterval: QUOTE_REFRESH_MS,
     maxRetries: 1,
   });
