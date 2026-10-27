@@ -8,6 +8,13 @@ interface PriceChangeProps {
   suffix?: string;
 }
 
+// `+` on positives, and no "-0.00" when a tiny negative rounds to zero.
+function formatSigned(value: number, decimals: number): string {
+  const text = value.toFixed(decimals);
+  const unsigned = Number(text) === 0 ? text.replace('-', '') : text;
+  return `${value > 0 ? '+' : ''}${unsigned}`;
+}
+
 export function PriceChange({ 
   value, 
   className,
@@ -23,7 +30,7 @@ export function PriceChange({
   };
 
   // Formate le nombre avec le signe et 2 décimales
-  const formattedValue = `${value > 0 ? '+' : ''}${value.toFixed(2)}`;
+  const formattedValue = formatSigned(value, 2);
 
   return (
     <div className={cn("flex items-center gap-1", getColorClass(value), className)}>
@@ -57,5 +64,5 @@ export function getPriceChangeColor(value: number): string {
 }
 
 export function formatPriceChange(value: number, decimals: number = 2): string {
-  return `${value > 0 ? '+' : ''}${value.toFixed(decimals)}%`;
+  return `${formatSigned(value, decimals)}%`;
 } 

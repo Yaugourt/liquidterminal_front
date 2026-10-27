@@ -74,7 +74,8 @@ export function formatNumber(
   // Règle: Si le nombre dépasse 1 million, enlever toutes les décimales
   const finalMaximumFractionDigits = Math.abs(value) >= 1_000_000 ? 0 : maximumFractionDigits;
   // Formatter le nombre complet avec séparateur de milliers
-  const parts = Math.abs(value).toFixed(finalMaximumFractionDigits).split('.');
+  const fixed = Math.abs(value).toFixed(finalMaximumFractionDigits);
+  const parts = fixed.split('.');
   
   // Ajouter les séparateurs de milliers
   if (formatConfig.thousandsSeparator) {
@@ -84,8 +85,8 @@ export function formatNumber(
   // Assembler le nombre avec le séparateur décimal approprié
   let formattedNumber = parts.join(formatConfig.decimalSeparator);
   
-  // Ajouter le signe négatif si nécessaire
-  if (value < 0) {
+  // Ajouter le signe négatif si nécessaire (pas de "-0.00" quand l'arrondi vaut zéro)
+  if (value < 0 && Number(fixed) !== 0) {
     formattedNumber = '-' + formattedNumber;
   }
   
@@ -134,16 +135,18 @@ export function formatMetricValue(
     showCurrency
   };
 
-  if (numValue >= 1000000000) {
-    return `${prefix}${formatNumber(numValue / 1000000000, format, formatOptions)}${suffix} B`;
-  }
-  if (numValue >= 1000000) {
-    return `${prefix}${formatNumber(numValue / 1000000, format, formatOptions)}${suffix} M`;
-  }
-  if (numValue >= 1000) {
-    return `${prefix}${formatNumber(numValue / 1000, format, formatOptions)}${suffix} K`;
-  }
-  return `${prefix}${formatNumber(numValue, format, formatOptions)}${suffix}`;
+  // Unit by raw value, then carry to the next unit when the rounded scaled
+  // value reaches 1000 (999,999.9 -> "1.00 M", never "1,000.00 K").
+  const units = [
+    { div: 1, label: '' },
+    { div: 1e3, label: ' K' },
+    { div: 1e6, label: ' M' },
+    { div: 1e9, label: ' B' }
+  ];
+  let i = numValue >= 1e9 ? 3 : numValue >= 1e6 ? 2 : numValue >= 1e3 ? 1 : 0;
+  while (i < units.length - 1 && numValue > 0 && Number((numValue / units[i].div).toFixed(maximumFractionDigits)) >= 1000) i++;
+  const unit = units[i];
+  return `${prefix}${formatNumber(numValue / unit.div, format, formatOptions)}${suffix}${unit.label}`;
 }
 
 /**
@@ -239,11 +242,34 @@ export function formatAssetTokenAmount(value: number, format: NumberFormatType):
  * Formate un pourcentage pour l'affichage des assets
  */
 export function formatAssetPercent(value: number, format: NumberFormatType): string {
-  const sign = value >= 0 ? '+' : '-';
+  // A negative that rounds to 0 stays "+0%", never "-0%"
+  const sign = value >= 0 || Math.round(-value) === 0 ? '+' : '-';
   return sign + formatNumber(Math.abs(value), format, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0
   }) + '%';
+}
+
+/** One step of a compact scale: values from `min` up, divided by `div`, printed with `dp` decimals. */
+interface CompactUnit {
+  min: number;
+  div: number;
+  suffix: string;
+  dp: number;
+}
+
+/**
+ * Picks the unit from the raw value, then carries to the next unit while the
+ * rounded scaled value reaches 1000 (999,960 -> `1.00M`, never `1000.0K`).
+ * `abs` must be finite and >= 0; `units` ascending, the first one is the base.
+ * The sign is left to the caller, which drops it when `value` rounds to zero.
+ */
+function compactParts(abs: number, units: CompactUnit[]): { value: string; suffix: string } {
+  let i = 0;
+  while (i + 1 < units.length && abs >= units[i + 1].min) i++;
+  while (i + 1 < units.length && Number((abs / units[i].div).toFixed(units[i].dp)) >= 1000) i++;
+  const unit = units[i];
+  return { value: (abs / unit.div).toFixed(unit.dp), suffix: unit.suffix };
 }
 
 /**
@@ -259,12 +285,14 @@ export function compactUsd(
 ): string {
   const { decimals, fallback = '—' } = opts;
   if (n == null || !Number.isFinite(n)) return fallback;
-  const sign = n < 0 ? '-' : '';
-  const abs = Math.abs(n);
-  if (abs >= 1e9) return `${sign}$${(abs / 1e9).toFixed(decimals ?? 2)}B`;
-  if (abs >= 1e6) return `${sign}$${(abs / 1e6).toFixed(decimals ?? 2)}M`;
-  if (abs >= 1e3) return `${sign}$${(abs / 1e3).toFixed(decimals ?? 1)}K`;
-  return `${sign}$${abs.toFixed(decimals ?? 2)}`;
+  const { value, suffix } = compactParts(Math.abs(n), [
+    { min: 0, div: 1, suffix: '', dp: decimals ?? 2 },
+    { min: 1e3, div: 1e3, suffix: 'K', dp: decimals ?? 1 },
+    { min: 1e6, div: 1e6, suffix: 'M', dp: decimals ?? 2 },
+    { min: 1e9, div: 1e9, suffix: 'B', dp: decimals ?? 2 },
+  ]);
+  const sign = n < 0 && Number(value) !== 0 ? '-' : '';
+  return `${sign}$${value}${suffix}`;
 }
 
 /**
@@ -308,13 +336,15 @@ export function compactHype(
 ): string {
   const { decimals, fallback = '—' } = opts;
   if (n == null || !Number.isFinite(n)) return fallback;
-  const sign = n < 0 ? '-' : '';
   const abs = Math.abs(n);
-  if (abs >= 1e9) return `${sign}${(abs / 1e9).toFixed(decimals ?? 2)}B`;
-  if (abs >= 1e6) return `${sign}${(abs / 1e6).toFixed(decimals ?? 1)}M`;
-  if (abs >= 1e3) return `${sign}${(abs / 1e3).toFixed(decimals ?? 1)}K`;
-  if (abs >= 100) return `${sign}${abs.toFixed(0)}`;
-  return `${sign}${abs.toFixed(decimals ?? 2)}`;
+  const { value, suffix } = compactParts(abs, [
+    { min: 0, div: 1, suffix: '', dp: abs >= 100 ? 0 : decimals ?? 2 },
+    { min: 1e3, div: 1e3, suffix: 'K', dp: decimals ?? 1 },
+    { min: 1e6, div: 1e6, suffix: 'M', dp: decimals ?? 1 },
+    { min: 1e9, div: 1e9, suffix: 'B', dp: decimals ?? 2 },
+  ]);
+  const sign = n < 0 && Number(value) !== 0 ? '-' : '';
+  return `${sign}${value}${suffix}`;
 }
 
 /**
@@ -330,11 +360,13 @@ export function compactCount(
 ): string {
   const { fallback = '—' } = opts;
   if (n == null || !Number.isFinite(n)) return fallback;
-  const abs = Math.abs(n);
-  const sign = n < 0 ? '-' : '';
-  if (abs >= 1e6) return `${sign}${(abs / 1e6).toFixed(2)}M`;
-  if (abs >= 1e3) return `${sign}${(abs / 1e3).toFixed(1)}K`;
-  return `${sign}${Math.round(abs)}`;
+  const { value, suffix } = compactParts(Math.abs(n), [
+    { min: 0, div: 1, suffix: '', dp: 0 },
+    { min: 1e3, div: 1e3, suffix: 'K', dp: 1 },
+    { min: 1e6, div: 1e6, suffix: 'M', dp: 2 },
+  ]);
+  const sign = n < 0 && Number(value) !== 0 ? '-' : '';
+  return `${sign}${value}${suffix}`;
 }
 
 /**
@@ -345,7 +377,9 @@ export function compactCount(
 export function formatFunding(funding: number | null | undefined): string {
   if (funding == null || !Number.isFinite(funding)) return '-';
   const percentage = funding * 100;
-  return `${percentage >= 0 ? '+' : ''}${percentage.toFixed(4)}%`;
+  const text = Math.abs(percentage).toFixed(4);
+  // A negative that rounds to 0.0000 stays unsigned-positive, never "-0.0000%"
+  return `${percentage >= 0 || Number(text) === 0 ? '+' : '-'}${text}%`;
 }
 
 /**
@@ -364,7 +398,8 @@ export function formatPct(
   const { decimals = 1, signed = false, from = 'ratio', fallback = '—' } = opts;
   if (n == null || !Number.isFinite(n)) return fallback;
   const value = from === 'ratio' ? n * 100 : n;
-  const text = `${Math.abs(value).toFixed(decimals)}%`;
-  if (value < 0) return `-${text}`;
+  const fixed = Math.abs(value).toFixed(decimals);
+  const text = `${fixed}%`;
+  if (value < 0 && Number(fixed) !== 0) return `-${text}`;
   return signed ? `+${text}` : text;
 }
