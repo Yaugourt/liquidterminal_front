@@ -16,20 +16,8 @@ import { getUnderlyingRef, type UnderlyingClass } from "@/lib/hip3/underlying";
  */
 export const revalidate = 21600;
 
-/**
- * `isMarketOpen` is the exchange's current session, not its schedule: it flips
- * at the open, the close and on holidays, so a day of caching served "open" all
- * night and "closed" through Monday. A quarter of an hour bounds the staleness
- * and, at three exchanges, the calls (at most 288 a day, only while visited).
- */
-const HOURS_REVALIDATE = 900;
-
-/** Which FMP exchange calendar governs each market label in the mapping. */
-const EXCHANGE_BY_MARKET: Record<string, string> = {
-  NASDAQ: "NASDAQ",
-  NYSE: "NYSE",
-  "NYSE Arca": "AMEX",
-};
+/** Market labels of the mapping that trade in the US regular cash-equity session. */
+const US_EQUITY_MARKETS = new Set(["NASDAQ", "NYSE", "NYSE Arca"]);
 
 interface EodRow {
   symbol?: string;
@@ -38,23 +26,33 @@ interface EodRow {
   volume?: number;
 }
 
-async function fetchMarketOpen(market: string, key: string): Promise<boolean | null> {
-  const exchange = EXCHANGE_BY_MARKET[market];
+/**
+ * Whether the US regular session (Monday to Friday, 9:30 to 16:00 New York
+ * time) is open now. Computed rather than fetched: the session flips at the open
+ * and the close, so a cached FMP `isMarketOpen` read "open" all night and
+ * "closed" through Monday, and following it from FMP every few minutes would
+ * take most of the plan's daily calls. Exchange holidays and half days are not
+ * known here: on those days the card reads "open" during regular hours.
+ */
+function isUsSessionOpen(now: Date): boolean {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    weekday: "short",
+    hour: "numeric",
+    minute: "numeric",
+    hourCycle: "h23",
+  }).formatToParts(now);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((p) => p.type === type)?.value ?? "";
+  const weekday = part("weekday");
+  if (weekday === "Sat" || weekday === "Sun") return false;
+  const minutes = Number(part("hour")) * 60 + Number(part("minute"));
+  return minutes >= 9 * 60 + 30 && minutes < 16 * 60;
+}
+
+function marketOpenFor(market: string, now: Date): boolean | null {
   // Commodities, FX and index calendars are not the cash-equity session; rather
   // than claim a state we cannot verify, report none.
-  if (!exchange) return null;
-  try {
-    const response = await fetch(
-      `https://financialmodelingprep.com/stable/exchange-market-hours?exchange=${exchange}&apikey=${key}`,
-      { next: { revalidate: HOURS_REVALIDATE } }
-    );
-    if (!response.ok) return null;
-    const body = await response.json();
-    const row = Array.isArray(body) ? body[0] : body;
-    return typeof row?.isMarketOpen === "boolean" ? row.isMarketOpen : null;
-  } catch {
-    return null;
-  }
+  return US_EQUITY_MARKETS.has(market) ? isUsSessionOpen(now) : null;
 }
 
 export async function GET(request: NextRequest) {
@@ -106,7 +104,7 @@ export async function GET(request: NextRequest) {
         ? ((latest.price - previousClose) / previousClose) * 100
         : null;
 
-    const marketOpen = await fetchMarketOpen(ref.market, key);
+    const marketOpen = marketOpenFor(ref.market, new Date());
 
     return NextResponse.json({
       available: true as const,

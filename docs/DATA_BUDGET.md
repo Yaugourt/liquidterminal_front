@@ -397,7 +397,7 @@ Also on the page: FR-20 (SpotAuctionBand), FR-32.
 | FR-62 | HIP-3 snapshot ribbon | `/indexer/hip3/snapshots` | 10 s (`src/services/indexer/hip3/hooks/index.ts:41`) | 15 s (`hypedexer.cache.ts:110`) | 25 s | P |
 | FR-63 | Hip3MarketTape | `/indexer/hip3/fills` | 10 s (`index.ts:66`) | 10 s (`hypedexer.cache.ts:109`) | 20 s | P |
 | FR-64 | Hip3TopTraders | `/indexer/hip3/stats/traders` | 60 s (`index.ts:85`) | 120 s (`hypedexer.cache.ts:111`) | 180 s | P |
-| FR-65 | Hip3BasisCard underlying | Next route `/api/hip3/underlying` (FR-D-22) | 15 min (`src/services/market/hip3/underlying.ts:81`) | Next `revalidate` 6 h for the end-of-day price (`src/app/api/hip3/underlying/route.ts:17`), 15 min for the open/closed flag (`:49`) | 6 h 15 min (flag: 30 min) | P |
+| FR-65 | Hip3BasisCard underlying | Next route `/api/hip3/underlying` (FR-D-22) | 15 min (`src/services/market/hip3/underlying.ts:81`) | Next `revalidate` 6 h for the end-of-day price (`src/app/api/hip3/underlying/route.ts:17`); the open/closed flag is computed per request from the US session, no FMP call (`:29-56`) | 6 h 15 min (flag: 15 min) | P |
 
 Token pages also carry FR-49..51.
 
