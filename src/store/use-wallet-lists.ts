@@ -33,6 +33,16 @@ const createActionCreators = (set: (fn: (state: WalletListsState) => Partial<Wal
     set((state: WalletListsState) => ({ activeListItems: updater(state.activeListItems) })),
 });
 
+// What a signed-out store holds; also what an auth change resets it to.
+export const initialWalletListsData = {
+  userLists: [] as WalletList[],
+  publicLists: [] as WalletList[],
+  activeListId: null as number | null,
+  activeListItems: [] as WalletListItem[],
+  loading: false,
+  error: null as string | null,
+};
+
 export const useWalletLists = create<WalletListsState>()(
   (set, get) => {
       const actions = createActionCreators(set);
@@ -41,12 +51,7 @@ export const useWalletLists = create<WalletListsState>()(
       let itemsRequestSeq = 0;
       
       return {
-        userLists: [],
-        publicLists: [],
-        activeListId: null,
-        activeListItems: [],
-        loading: false,
-        error: null,
+        ...initialWalletListsData,
         
         initialize: async (): Promise<void> => {
           // Pour l'instant, on ne charge rien automatiquement

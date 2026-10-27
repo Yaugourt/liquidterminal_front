@@ -66,6 +66,16 @@ const createActionCreators = (set: (fn: (state: ReadListsState) => Partial<ReadL
     set(() => ({ activeReadListId: id, activeReadListItems: [], itemsPagination: null }))
 });
 
+// What a signed-out store holds; also what an auth change resets it to.
+export const initialReadListsData = {
+  readLists: [] as ReadList[],
+  activeReadListId: null as number | null,
+  activeReadListItems: [] as ReadListItem[],
+  itemsPagination: null as ReadListsState['itemsPagination'],
+  loading: false,
+  error: null as string | null,
+};
+
 export const useReadLists = create<ReadListsState>()(
   persist(
     (set, get) => {
@@ -76,12 +86,7 @@ export const useReadLists = create<ReadListsState>()(
       let itemsRequestSeq = 0;
       
       return {
-        readLists: [],
-        activeReadListId: null,
-        activeReadListItems: [],
-        itemsPagination: null,
-        loading: false,
-        error: null,
+        ...initialReadListsData,
         
         initialize: async ({ privyUserId, username, privyToken }: InitializeParams): Promise<void> => {
           try {

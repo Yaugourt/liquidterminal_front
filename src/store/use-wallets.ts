@@ -25,6 +25,15 @@ const createActionCreators = (set: (fn: (state: WalletsState) => Partial<Wallets
     set(() => ({ activeWalletId: id }))
 });
 
+// What a signed-out store holds; also what an auth change resets it to.
+export const initialWalletsData = {
+  wallets: [] as Wallet[],
+  userWallets: [] as UserWallet[],
+  activeWalletId: null as number | null,
+  loading: false,
+  error: null as string | null,
+};
+
 export const useWallets = create<WalletsState>()(
   persist(
     (set, get) => {
@@ -44,11 +53,7 @@ export const useWallets = create<WalletsState>()(
       };
       
       return {
-        wallets: [],
-        userWallets: [],
-        activeWalletId: null,
-        loading: false,
-        error: null,
+        ...initialWalletsData,
         
         initialize: async ({ privyUserId, username, privyToken }: InitializeParams): Promise<void> => {
           try {

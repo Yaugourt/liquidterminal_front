@@ -2,13 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { usePrivy } from "@/services/auth/privy";
 import { authService, User, AuthError, LoginCredentials } from "../index";
 import { registerPrivyAccessTokenGetter, registerPrivyLogout, setPrivyAuthenticated } from "../../api/privy.service";
+import { syncUserStoresOwner } from "@/store/user-stores-owner";
 
 export function useAuth() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<AuthError | null>(null);
-  const { user: privyUser, authenticated, login: privyLogin, logout: privyLogout, getAccessToken } = usePrivy();
+  const { ready, user: privyUser, authenticated, login: privyLogin, logout: privyLogout, getAccessToken } = usePrivy();
   const [userProcessed, setUserProcessed] = useState(false);
 
   useEffect(() => {
@@ -32,6 +33,14 @@ export function useAuth() {
     setPrivyAuthenticated(authenticated);
     return () => setPrivyAuthenticated(false);
   }, [authenticated]);
+
+  // The per-account stores (wallets, wallet lists, read lists) are emptied on
+  // logout and whenever another account signs in, session expiry included.
+  const privyUserId = authenticated ? privyUser?.id : undefined;
+  useEffect(() => {
+    if (!ready || (authenticated && !privyUserId)) return;
+    void syncUserStoresOwner(privyUserId ?? '');
+  }, [ready, authenticated, privyUserId]);
 
   const ensureUserInitialized = useCallback(async () => {
     if (!authenticated || !privyUser) return false;
