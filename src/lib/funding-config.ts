@@ -86,7 +86,7 @@ export interface FeaturedPromo {
  */
 export const featuredPromo: FeaturedPromo | null = {
   name: ".hl Names",
-  tagline: "10% off your name",
+  tagline: "20% off your name",
   href: "/names",
   badge: "New",
 };

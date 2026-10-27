@@ -1,8 +1,8 @@
 "use client";
 
-import { erc20Abi, parseAbi, zeroAddress, zeroHash, type Address, type EIP1193Provider, type Hash, type Hex } from "viem";
+import { erc20Abi, formatUnits, parseAbi, zeroAddress, zeroHash, type Address, type EIP1193Provider, type Hash, type Hex } from "viem";
 import { namehash, normalize } from "viem/ens";
-import { post, postExternal } from "@/services/api/axios-config";
+import { get, post, postExternal } from "@/services/api/axios-config";
 import { buildHyperliquidUrl } from "@/services/api/constants";
 import { hyperEvmClient, hyperEvmWallet } from "@/lib/hyperevm/wallet";
 
@@ -13,10 +13,12 @@ import { hyperEvmClient, hyperEvmWallet } from "@/lib/hyperevm/wallet";
  *   2. the user's wallet calls their Minter contract with it, in HYPE or USDC.
  *
  * A mint can carry a referral (the namehash of a registered .hl name): the
- * buyer pays 10% less and the referrer earns a share. Checked on 3 Oct 2026
- * by simulating the Minter: with a registered referral, 91% of the quoted
- * price goes through and 90% reverts; an unregistered referral reverts, so
- * we only pass ours once it is registered.
+ * buyer pays less and the referrer earns a share. Measured on the Minter on
+ * 27 Oct 2026: with liquidterminal.hl it takes exactly 80% of the price
+ * (USDC binary-searched to the unit, HYPE to 0.01%), with any other .hl name
+ * 90%; an unregistered referral reverts, so ours is only passed once it is
+ * registered. Every extra year adds RENEWAL_USD to the price (their
+ * Builder Program docs), and the Minter computes it from durationInYears.
  */
 
 export const HLN_MINTER: Address = "0xb1d8b142c6B8C1738D0F522164D618218d53aB00";
@@ -38,7 +40,14 @@ export const PRICE_TIERS = [
   { length: "4+ characters", usd: 20 },
 ] as const;
 export const RENEWAL_USD = 10;
-export const REFERRAL_DISCOUNT = 0.1;
+/** Our referral's discount on chain (see above). */
+export const REFERRAL_DISCOUNT = 0.2;
+export const MAX_YEARS = 5;
+
+/** List price in USD for `years` years: the mint, then RENEWAL_USD per extra year. */
+export function totalUsd(label: string, years: number): number {
+  return priceUsd(label) + RENEWAL_USD * (years - 1);
+}
 
 const minterAbi = parseAbi([
   "function mintWithNative(string label, uint256 durationInYears, bytes sig, uint256 timestamp, bytes32 referral) payable",
@@ -179,17 +188,22 @@ export async function mintName(opts: {
   account: Address;
   label: string;
   token: PayToken;
+  years?: number;
   onStep?: (step: MintStep) => void;
 }): Promise<Hash> {
   const { provider, account, label, token, onStep } = opts;
+  const years = Math.min(Math.max(Math.trunc(opts.years ?? 1), 1), MAX_YEARS);
   const wallet = hyperEvmWallet(provider, account);
   const referral = await referralHash();
-  const share = referral === zeroHash ? 100n : 92n; // the referral discount, with headroom
+  // The pass prices one year at the list price: scale it to the years and
+  // the referral discount, as the Minter does (basis points, exact in USDC).
+  const shareBps = referral === zeroHash ? 10_000n : BigInt(Math.round((1 - REFERRAL_DISCOUNT) * 10_000));
+  const scale = (oneYear: bigint) => (oneYear * BigInt(totalUsd(label, years)) * shareBps) / (BigInt(priceUsd(label)) * 10_000n);
 
   if (token === "usdc") {
     onStep?.("pass");
     const first = await mintPass(label, "usdc");
-    const amount = BigInt(first.amountRequired);
+    const amount = scale(BigInt(first.amountRequired));
     const allowance = await hyperEvmClient.readContract({ address: HYPEREVM_USDC, abi: erc20Abi, functionName: "allowance", args: [account, HLN_MINTER] });
     if (allowance < amount) {
       onStep?.("approve");
@@ -204,7 +218,7 @@ export async function mintName(opts: {
       address: HLN_MINTER,
       abi: minterAbi,
       functionName: "mintWithERC20",
-      args: [pass.label, 1n, pass.sig, BigInt(pass.timestamp), HYPEREVM_USDC, referral],
+      args: [pass.label, BigInt(years), pass.sig, BigInt(pass.timestamp), HYPEREVM_USDC, referral],
     });
     onStep?.("confirm");
     await assertWalletState(provider, account);
@@ -216,13 +230,14 @@ export async function mintName(opts: {
 
   onStep?.("pass");
   const pass = await mintPass(label, "native");
-  const value = (BigInt(pass.amountRequired) * share * 102n) / 10_000n;
+  // 2% over the oracle quote for price moves, as their example does.
+  const value = (scale(BigInt(pass.amountRequired)) * 102n) / 100n;
   const { request } = await hyperEvmClient.simulateContract({
     account,
     address: HLN_MINTER,
     abi: minterAbi,
     functionName: "mintWithNative",
-    args: [pass.label, 1n, pass.sig, BigInt(pass.timestamp), referral],
+    args: [pass.label, BigInt(years), pass.sig, BigInt(pass.timestamp), referral],
     value,
   });
   onStep?.("confirm");
@@ -236,3 +251,53 @@ export async function mintName(opts: {
 /** Asks the backend to drop its cached name for this address, so the new name shows up. */
 export const forgetCachedName = (address: string) =>
   post(`/names/forget/${address}`, {}, { useCache: false }).catch(() => undefined);
+
+/** HYPE and USDC a wallet holds on HyperEVM, as decimal numbers. */
+export async function walletBalances(account: Address): Promise<{ hype: number; usdc: number }> {
+  const [hype, usdc] = await Promise.all([
+    hyperEvmClient.getBalance({ address: account }),
+    hyperEvmClient.readContract({ address: HYPEREVM_USDC, abi: erc20Abi, functionName: "balanceOf", args: [account] }),
+  ]);
+  return { hype: Number(formatUnits(hype, 18)), usdc: Number(formatUnits(usdc, 6)) };
+}
+
+export interface OwnedName {
+  name: string;
+  /** Unix seconds, null when unknown. */
+  expiry: number | null;
+}
+
+/** Names a wallet holds, soonest expiry first (backend, cached 5 min). */
+export async function fetchOwnedNames(address: string): Promise<OwnedName[]> {
+  const res = await get<{ success: boolean; data: OwnedName[] }>(`/names/owned/${address}`, undefined, { useCache: false });
+  return res.data ?? [];
+}
+
+let cardTemplate: Promise<string | null> | null = null;
+
+/** The Hyperliquid Names NFT card SVG (checked by the backend), to preview a name. */
+export function fetchCardTemplate(): Promise<string | null> {
+  cardTemplate ??= get<{ success: boolean; data: { svg: string } }>("/names/card-template")
+    .then((r) => (r.data?.svg?.includes('id="dt"') ? r.data.svg : null))
+    .catch(() => {
+      cardTemplate = null;
+      return null;
+    });
+  return cardTemplate;
+}
+
+const escapeXml = (s: string) => s.replace(/[<>&"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+/**
+ * The card with `name` in place of the template's: same sizing rule as their
+ * own card script, font-size = min(795 / length, 50) px. Returned as a data
+ * URI for an <img>, where nothing in the SVG can run.
+ */
+export function cardFor(template: string, name: string): string {
+  const size = Math.min(795 / Math.max([...name].length, 1), 50);
+  const svg = template.replace(
+    /<text([^>]*)id="dt"([^>]*)>[^<]*<\/text>/,
+    (_m, a: string, b: string) => `<text${a.replace(/font-size="[^"]*"/, "")}id="dt"${b.replace(/font-size="[^"]*"/, "")} font-size="${size.toFixed(2)}px">${escapeXml(name)}</text>`
+  );
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
