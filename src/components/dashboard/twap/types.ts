@@ -12,6 +12,9 @@ export interface TwapTableData {
   reduceOnly: boolean;
   ended?: string | null;
   error?: string | null;
+  /** Executed size from the live feed; with `executedExact` the progress is the executed share, not the time. */
+  executedSz?: number;
+  executedExact?: boolean;
 }
 
 export interface TwapTableProps {

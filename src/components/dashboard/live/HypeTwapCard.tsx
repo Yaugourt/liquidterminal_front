@@ -24,7 +24,7 @@ function MarketRow({ label, s }: { label: string; s: TwapSide }) {
  * through TWAPs right now, and which ones.
  */
 export const HypeTwapCard = memo(function HypeTwapCard({ board, isLoading }: { board: TwapBoard; isLoading: boolean }) {
-  const { totals, spot, perp, active, started24h } = board.hype;
+  const { totals, spot, perp, active, started24h, stalled } = board.hype;
   const net = totals.netUsd;
 
   return (
@@ -32,7 +32,7 @@ export const HypeTwapCard = memo(function HypeTwapCard({ board, isLoading }: { b
       <CardHead
         title="HYPE TWAPs"
         tag="spot + perp"
-        actions={<DataStatus variant="polled" updatedAt={board.updatedAt} />}
+        actions={board.isLive ? <DataStatus variant="live" /> : <DataStatus variant="polled" updatedAt={board.updatedAt} />}
       />
       <div className="px-3.5 pt-3 pb-2.5 border-b border-border-subtle">
         <div className="text-[10px] uppercase tracking-[0.07em] text-text-tertiary font-semibold">Net left to execute</div>
@@ -41,7 +41,7 @@ export const HypeTwapCard = memo(function HypeTwapCard({ board, isLoading }: { b
         </div>
         <div className="mono text-[11px] text-text-tertiary mt-1.5">
           <span className="text-success">buy {compactUsd(totals.buyLeftUsd)}</span> ·{" "}
-          <span className="text-danger">sell {compactUsd(totals.sellLeftUsd)}</span> · {totals.count} running
+          <span className="text-danger">sell {compactUsd(totals.sellLeftUsd)}</span> · {totals.count} running{stalled > 0 ? ` · ${stalled} stalled` : ""}
         </div>
         <div className="mt-2">
           <FlowBar buy={totals.buyLeftUsd} sell={totals.sellLeftUsd} className="h-2" />

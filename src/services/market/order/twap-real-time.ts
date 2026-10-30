@@ -6,6 +6,8 @@
  * this module owns the time/progression math only.
  */
 
+import { doneFraction } from "./twap-progress";
+
 /**
  * Minimal input shape for real-time TWAP progression.
  * Compatible with both `TwapTableData` from dashboard and explorer.
@@ -20,12 +22,16 @@ export interface TwapProgressionInput {
   amount: string;
   /** Original total value in USD. */
   value: number;
+  /** Executed size known from the live feed, when there is one. */
+  executedSz?: number;
+  /** `executedSz` covers the whole TWAP: progress is the executed share, not the time. */
+  executedExact?: boolean;
 }
 
 export interface TwapRealTimeData {
   /** 0–100 percentage. */
   progression: number;
-  /** Remaining USD value (linear vs elapsed time). */
+  /** Remaining USD value. */
   remainingValue: number;
   /** Remaining base-asset amount. */
   remainingAmount: number;
@@ -34,27 +40,31 @@ export interface TwapRealTimeData {
 }
 
 /**
- * Compute the current TWAP progression as a smooth function of elapsed time
- * (not the discrete number of suborders). Remaining quantity and value scale
- * linearly with the remaining time fraction.
+ * Compute the current TWAP progression: the same fraction as the dashboard
+ * board (`doneFraction`), the executed share when it is exact, otherwise the
+ * elapsed time floored by the executed size. Remaining quantity and value
+ * scale linearly with what is left. `now` ticks every second in the hook.
  */
-export function calculateRealTimeProgression(twap: TwapProgressionInput): TwapRealTimeData {
-  const startTime = twap.time;
-  const durationMs = twap.duration * 60 * 1000; // minutes → ms
-  const elapsedTime = Date.now() - startTime;
-
-  const timeProgressionPercent = Math.min(100, Math.max(0, (elapsedTime / durationMs) * 100));
-  const remainingPercent = Math.max(0, 100 - timeProgressionPercent);
-
+export function calculateRealTimeProgression(twap: TwapProgressionInput, now: number = Date.now()): TwapRealTimeData {
   const originalAmount = parseFloat(twap.amount);
-  const remainingAmount = originalAmount * (remainingPercent / 100);
-  const remainingValue = remainingAmount * (twap.value / originalAmount);
+  const fraction = doneFraction(
+    {
+      size: originalAmount,
+      executed: twap.executedSz ?? 0,
+      exact: twap.executedExact === true,
+      time: twap.time,
+      durationMin: twap.duration,
+    },
+    now
+  );
+  const remaining = 1 - fraction;
+  const progression = fraction * 100;
 
   return {
-    progression: timeProgressionPercent,
-    remainingValue: Math.max(0, remainingValue),
-    remainingAmount,
-    isCompleted: timeProgressionPercent >= 100,
+    progression,
+    remainingValue: Math.max(0, twap.value * remaining),
+    remainingAmount: Number.isFinite(originalAmount) ? originalAmount * remaining : 0,
+    isCompleted: progression >= 100,
   };
 }
 

@@ -9,3 +9,9 @@ export * from './hooks';
 
 // TWAP real-time math (utils + types shared with the hook)
 export * from './twap-real-time';
+
+// Progress of a running TWAP (executed share when known, time otherwise)
+export * from './twap-progress';
+
+// Raw status vocabulary (terminal or not)
+export * from './twap-status';

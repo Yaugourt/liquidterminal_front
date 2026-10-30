@@ -2,15 +2,21 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTwapOrders } from "@/services/market/order/hooks/useTwapOrders";
+import { isTwapStalled, twapDoneFraction } from "@/services/market/order/twap-progress";
 import type { EnrichedTwapOrder, TwapMarketType } from "@/services/market/order/types";
 
 /**
  * Live TWAP picture for the dashboard, from the indexed TWAP list (every
- * TWAP started in the last 24 hours, plus those still running from before).
+ * TWAP started in the last 24 hours, plus those still running from before)
+ * with the backend's live feed merged in: new and ended TWAPs show up within
+ * seconds, and the clock ticks every second.
  *
- * A TWAP slices its size into one order every 30 seconds over its duration,
- * so what is left to execute is estimated from the time elapsed: running
- * TWAPs carry no executed amount yet. Values use the current market price.
+ * What is left to execute uses the real executed size when the feed has
+ * followed the TWAP since its start; otherwise it is estimated from the time
+ * elapsed (one slice every 30 seconds over the duration), floored by the
+ * executed size when one is known. A TWAP followed since its start that has
+ * not filled for 10 minutes is "stalled": it stays out of what is running
+ * and what is left, and is counted apart. Values use the current market price.
  */
 
 export interface LiveTwap {
@@ -22,7 +28,7 @@ export interface LiveTwap {
   /** Full size in coin units and in USD at the current price. */
   size: number;
   totalUsd: number;
-  /** Estimated from elapsed time. */
+  /** Executed share when known, otherwise estimated from elapsed time. */
   doneFraction: number;
   remainingUsd: number;
   startTime: number;
@@ -50,8 +56,10 @@ export interface TwapBoard {
   totals: TwapSide;
   /** Started in the last 24h (any status) and their full notional. */
   started24h: { count: number; usd: number; buys: number; sells: number };
-  /** Real executed notional of the TWAPs that ended in the window (indexer source only). */
+  /** Executed notional of the TWAPs started in the window: final for ended ones, so far for running ones (indexer source only). */
   executed24hUsd: number;
+  /** Running on paper but without a fill for 10 minutes (kept out of everything above). */
+  stalled: number;
   byCoin: CoinTwapFlow[];
   hype: {
     active: LiveTwap[];
@@ -59,8 +67,11 @@ export interface TwapBoard {
     spot: TwapSide;
     perp: TwapSide;
     started24h: { count: number; usd: number };
+    stalled: number;
   };
   updatedAt: number | null;
+  /** The live feed is connected and its upstream is up. */
+  isLive: boolean;
 }
 
 const isHype = (t: { coin: string }) => t.coin === "HYPE";
@@ -77,7 +88,7 @@ function side(list: LiveTwap[]): TwapSide {
 
 function toLive(o: EnrichedTwapOrder, now: number): LiveTwap {
   const duration = o.action.twap.m * 60_000;
-  const doneFraction = duration > 0 ? Math.min(1, Math.max(0, (now - o.time) / duration)) : 1;
+  const doneFraction = twapDoneFraction(o, now);
   return {
     hash: o.hash,
     user: o.user,
@@ -94,21 +105,24 @@ function toLive(o: EnrichedTwapOrder, now: number): LiveTwap {
 }
 
 export function useTwapBoard(): TwapBoard & { isLoading: boolean; error: Error | null } {
-  const { orders, metadata, isLoading, error } = useTwapOrders({ limit: 10_000, status: "all" });
+  const { orders, metadata, isLoading, error, isLive } = useTwapOrders({ limit: 10_000, status: "all" });
 
-  // Remaining amounts move with the clock, not only with the 30s refetch.
+  // Remaining amounts move with the clock, not only with the 15s refetch and the live pushes.
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 5_000);
+    const id = setInterval(() => setNow(Date.now()), 1_000);
     return () => clearInterval(id);
   }, []);
 
   const board = useMemo<TwapBoard>(() => {
     const dayAgo = now - 86_400_000;
     const all = orders.filter((o) => !o.error && o.totalValueUSD > 0).map((o) => toLive(o, now));
-    const running = new Set(
-      orders.filter((o) => !o.ended && !o.error && now < o.time + o.action.twap.m * 60_000).map((o) => o.hash)
-    );
+    const running = new Set<string>();
+    const stalledHashes = new Set<string>();
+    for (const o of orders) {
+      if (o.ended || o.error || now >= o.time + o.action.twap.m * 60_000) continue;
+      (isTwapStalled(o, now) ? stalledHashes : running).add(o.hash);
+    }
     const active = all.filter((t) => running.has(t.hash)).sort((a, b) => b.remainingUsd - a.remainingUsd);
     const recent = all.filter((t) => t.startTime >= dayAgo);
 
@@ -122,9 +136,11 @@ export function useTwapBoard(): TwapBoard & { isLoading: boolean; error: Error |
       coins.set(t.coin, c);
     }
 
+    // Ended: the final value; running: what the live feed has seen executed so far (0 without it).
     const executed24hUsd = orders
-      .filter((o) => o.time >= dayAgo && o.ended)
+      .filter((o) => o.time >= dayAgo)
       .reduce((s, o) => s + (o.executedNtl ?? 0), 0);
+    const stalled = all.filter((t) => stalledHashes.has(t.hash));
     const hypeActive = active.filter(isHype);
     const hypeRecent = recent.filter(isHype);
     return {
@@ -137,6 +153,7 @@ export function useTwapBoard(): TwapBoard & { isLoading: boolean; error: Error |
         sells: recent.filter((t) => !t.isBuy).reduce((s, t) => s + t.totalUsd, 0),
       },
       executed24hUsd,
+      stalled: stalled.length,
       byCoin: [...coins.values()].sort(
         (a, b) => b.buyLeftUsd + b.sellLeftUsd - (a.buyLeftUsd + a.sellLeftUsd)
       ),
@@ -146,10 +163,12 @@ export function useTwapBoard(): TwapBoard & { isLoading: boolean; error: Error |
         spot: side(hypeActive.filter((t) => t.market === "spot")),
         perp: side(hypeActive.filter((t) => t.market === "perp")),
         started24h: { count: hypeRecent.length, usd: hypeRecent.reduce((s, t) => s + t.totalUsd, 0) },
+        stalled: stalled.filter(isHype).length,
       },
       updatedAt: metadata?.lastUpdate ?? null,
+      isLive: isLive ?? false,
     };
-  }, [orders, metadata, now]);
+  }, [orders, metadata, now, isLive]);
 
   return { ...board, isLoading, error };
 }

@@ -1,13 +1,14 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   useTwapOrders,
   useHypeBuyPressure,
-  useTwapRealTime,
-  type TwapProgressionInput,
+  isTwapStalled,
+  twapDoneFraction,
+  type EnrichedTwapOrder,
   type TwapMarketType,
 } from "@/services/market/order";
 import { usePerpDexMarketData } from "@/services/market/perpDex/hooks/usePerpDexMarketData";
@@ -68,11 +69,28 @@ function formatSignedUsd(v: number): string {
   return `${sign}${compactUsd(Math.abs(v))}`;
 }
 
+/** What a row shows, from one fraction: sorting and display cannot disagree. */
+interface PanelRow {
+  order: EnrichedTwapOrder;
+  /** 0-100, executed share when exact, elapsed time floored by the executed size otherwise. */
+  pct: number;
+  remainingAmount: number;
+  remainingValue: number;
+}
+
 export const TwapPanel = memo(function TwapPanel() {
-  const { orders, total, totalVolume, metadata, isLoading, error, isStale } = useTwapOrders({
-    limit: 100,
+  // Every active TWAP: the sort and the running count need the whole list, not the newest hundred.
+  const { orders, totalVolume, isLoading, error, isStale } = useTwapOrders({
+    limit: 10_000,
     status: "active",
   });
+
+  // The remaining amounts move with the clock, not only with the 15s refetch and the live pushes.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1_000);
+    return () => clearInterval(id);
+  }, []);
   const {
     buyPressure,
     totalBuyValue,
@@ -93,66 +111,54 @@ export const TwapPanel = memo(function TwapPanel() {
     return map;
   }, [perpDexs]);
 
-  const count = metadata?.activeOrders ?? total;
+  // Running now, like the board: a TWAP followed since its start that has not filled for
+  // 10 minutes is stalled and no longer counted (it stays in the list).
+  const count = useMemo(
+    () => orders.filter((o) => now < o.time + o.action.twap.m * 60_000 && !isTwapStalled(o, now)).length,
+    [orders, now],
+  );
 
   /** Effective REMAINING USD value per order — what the rightmost column
    * actually shows. Sorting on `totalValueUSD` (initial) caused inversions:
    * a $1M TWAP filled at 90% (= $100K remaining) outranked a $200K TWAP at
    * 10% (= $180K remaining), even though $180K renders above $100K visually.
    *
-   * HIP-3 orders have `totalValueUSD = 0` (no upstream price) → derive from
-   * oracle price × remaining size instead.
+   * The fraction is the board's (`twapDoneFraction`): the executed share when
+   * the feed has followed the TWAP since its start, the time elapsed floored by
+   * the executed size otherwise. The same numbers feed the sort and the cells,
+   * and they tick every second together.
    *
-   * We use the static `progressionPercent` snapshot (not the 1s realtime
-   * tick) to keep the order stable between ticks. */
-  const sortedOrders = useMemo(() => {
-    const remainingUsd = (o: (typeof orders)[number]): number => {
-      if (o.marketType === "hip3") {
-        const px = hip3PriceMap.get(o.tokenSymbol.toUpperCase()) ?? 0;
-        if (px <= 0) return 0;
-        const totalSize = parseFloat(o.action.twap.s);
-        if (!Number.isFinite(totalSize)) return 0;
-        const remaining = totalSize * (1 - Math.min(1, Math.max(0, o.progressionPercent / 100)));
-        return remaining * px;
-      }
-      const pct = Math.min(1, Math.max(0, o.progressionPercent / 100));
-      return o.totalValueUSD * (1 - pct);
-    };
-    return [...orders].sort((a, b) => remainingUsd(b) - remainingUsd(a));
-  }, [orders, hip3PriceMap]);
+   * HIP-3 orders have `totalValueUSD = 0` (no upstream price) → derive from
+   * oracle price × remaining size instead. */
+  const sortedRows = useMemo<PanelRow[]>(() => {
+    const rows = orders.map((order): PanelRow => {
+      const fraction = twapDoneFraction(order, now);
+      const totalSize = parseFloat(order.action.twap.s);
+      const remainingAmount = Number.isFinite(totalSize) ? totalSize * (1 - fraction) : 0;
+      // HIP-3 has no upstream price → totalValueUSD is 0, so the WS
+      // oracle price is the only way to display a meaningful Value.
+      const hip3Px =
+        order.marketType === "hip3" ? hip3PriceMap.get(order.tokenSymbol.toUpperCase()) ?? 0 : 0;
+      const remainingValue =
+        order.marketType === "hip3"
+          ? remainingAmount * hip3Px
+          : order.totalValueUSD * (1 - fraction);
+      return { order, pct: Math.min(100, Math.max(0, fraction * 100)), remainingAmount, remainingValue };
+    });
+    return rows.sort((a, b) => b.remainingValue - a.remainingValue);
+  }, [orders, hip3PriceMap, now]);
 
-  const totalPages = Math.max(1, Math.ceil(sortedOrders.length / ROWS_PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(sortedRows.length / ROWS_PER_PAGE));
   const [page, setPage] = useState(0);
   const safePage = Math.min(page, totalPages - 1);
-  // Memoise the page slice — otherwise its reference changes every render
-  // and downstream effects (useTwapRealTime) loop forever.
-  const pageOrders = useMemo(
+  const pageRows = useMemo(
     () =>
-      sortedOrders.slice(
+      sortedRows.slice(
         safePage * ROWS_PER_PAGE,
         safePage * ROWS_PER_PAGE + ROWS_PER_PAGE,
       ),
-    [sortedOrders, safePage],
+    [sortedRows, safePage],
   );
-
-  // Real-time tick (1s) for the rows currently on screen — keeps Filled %
-  // and remaining amount/value moving live, like the full TwapTable.
-  const realtimeInputs = useMemo<
-    (TwapProgressionInput & { ended?: string | null; error?: string | null })[]
-  >(
-    () =>
-      pageOrders.map((order) => ({
-        id: order.hash,
-        time: order.time,
-        duration: order.action.twap.m,
-        amount: order.action.twap.s,
-        value: order.totalValueUSD,
-        ended: order.ended ?? null,
-        error: order.error,
-      })),
-    [pageOrders],
-  );
-  const realtimeMap = useTwapRealTime(realtimeInputs);
 
   /** Répartition Buy/Sell HYPE en pourcent — pour la barre. */
   const { buyPct, sellPct } = useMemo(() => {
@@ -236,34 +242,15 @@ export const TwapPanel = memo(function TwapPanel() {
           <span className="w-[72px] text-right">Value</span>
         </div>
 
-        {pageOrders.length === 0 ? (
+        {pageRows.length === 0 ? (
           <div className="px-3.5 py-6 text-center text-[11px] text-text-tertiary">
             No active TWAP orders
           </div>
         ) : (
-          pageOrders.map((order) => {
+          pageRows.map(({ order, pct, remainingAmount, remainingValue }) => {
             const { twap } = order.action;
             const isBuy = twap.b;
-            const realtime = realtimeMap.get(order.hash);
-            const pct = Math.min(
-              100,
-              Math.max(
-                0,
-                Math.round(realtime?.progression ?? order.progressionPercent),
-              ),
-            );
-            const remainingAmount =
-              realtime?.remainingAmount ?? parseFloat(twap.s);
-            // HIP-3 has no upstream price → totalValueUSD is 0, so the WS
-            // oracle price is the only way to display a meaningful Value.
-            const hip3Px =
-              order.marketType === "hip3"
-                ? hip3PriceMap.get(order.tokenSymbol.toUpperCase()) ?? 0
-                : 0;
-            const remainingValue =
-              order.marketType === "hip3" && hip3Px > 0
-                ? remainingAmount * hip3Px
-                : realtime?.remainingValue ?? order.totalValueUSD;
+            const shownPct = Math.round(pct);
 
             return (
               <div
@@ -316,11 +303,11 @@ export const TwapPanel = memo(function TwapPanel() {
                       className={`block h-full ${
                         isBuy ? "bg-success" : "bg-danger"
                       }`}
-                      style={{ width: `${pct}%` }}
+                      style={{ width: `${shownPct}%` }}
                     />
                   </span>
                   <span className="mono text-[10.5px] text-text-secondary font-semibold w-7 text-right">
-                    {pct}%
+                    {shownPct}%
                   </span>
                 </div>
                 <div className="w-[72px] mono text-[13px] font-semibold text-text-primary text-right tracking-tight">
@@ -333,7 +320,7 @@ export const TwapPanel = memo(function TwapPanel() {
       </div>
 
       {/* Pagination */}
-      {sortedOrders.length > ROWS_PER_PAGE && (
+      {sortedRows.length > ROWS_PER_PAGE && (
         <div className="flex items-center justify-between px-3.5 py-2 border-t border-border-subtle">
           <button
             type="button"

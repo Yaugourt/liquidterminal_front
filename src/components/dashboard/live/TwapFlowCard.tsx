@@ -61,14 +61,15 @@ export function TwapRow({ t }: { t: LiveTwap }) {
 
 /**
  * TWAP flow: the sliced orders running on Hyperliquid right now. What is
- * left to buy and to sell (estimated from elapsed time), the coins with the
- * most TWAP flow, and the biggest TWAPs in progress.
+ * left to buy and to sell (from the executed size when known, otherwise
+ * estimated from elapsed time), the coins with the most TWAP flow, and the
+ * biggest TWAPs in progress.
  */
 export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { board: TwapBoard; isLoading: boolean }) {
-  const { totals, started24h, byCoin, active, executed24hUsd } = board;
+  const { totals, started24h, byCoin, active, executed24hUsd, stalled } = board;
   const cells: KpiCell[] = [
-    { key: "active", label: "Running now", value: isLoading && !active.length ? "…" : String(totals.count), sub: `${started24h.count} started in 24h` },
-    { key: "done", label: "Executed, 24h", value: executed24hUsd > 0 ? compactUsd(executed24hUsd) : "—", sub: "TWAPs that ended" },
+    { key: "active", label: "Running now", value: isLoading && !active.length ? "…" : String(totals.count), sub: `${started24h.count} started in 24h${stalled > 0 ? ` · ${stalled} stalled` : ""}` },
+    { key: "done", label: "Executed, 24h", value: executed24hUsd > 0 ? compactUsd(executed24hUsd) : "—", sub: "ended + running so far" },
     { key: "buy", label: "Left to buy", value: compactUsd(totals.buyLeftUsd), tone: "success", sub: "estimated" },
     { key: "sell", label: "Left to sell", value: compactUsd(totals.sellLeftUsd), tone: "danger", sub: "estimated" },
     {
@@ -88,7 +89,7 @@ export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { b
         tag="running now"
         href="/dashboard/market"
         viewAllLabel="All TWAPs"
-        actions={<DataStatus variant="polled" updatedAt={board.updatedAt} />}
+        actions={board.isLive ? <DataStatus variant="live" /> : <DataStatus variant="polled" updatedAt={board.updatedAt} />}
       />
       <div className="p-3.5 pb-2">
         <KpiRibbon cells={cells} columns="grid-cols-2 sm:grid-cols-3 xl:grid-cols-5" />
@@ -121,7 +122,7 @@ export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { b
           )}
         </div>
         <div className="px-3.5 py-2.5">
-          <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1">Biggest running · bar = time elapsed</div>
+          <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1">Biggest running · bar = share executed</div>
           <div className="h-[196px] overflow-y-auto scrollbar-brand pr-1">
             {active.slice(0, 12).map((t) => (
               <TwapRow key={t.hash} t={t} />
@@ -130,7 +131,7 @@ export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { b
         </div>
       </div>
       <div className="px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
-        Executed amounts are real for TWAPs that ended. Left to execute is estimated from the time elapsed (one slice every 30s), at the current price. Source: our indexer, every TWAP of the last 24h plus those still running.
+        New and ended TWAPs show up within seconds. Amounts left use the executed size when it is known (ended TWAPs, and running ones followed since their start); otherwise they are estimated from the time elapsed (one slice every 30s), at the current price. A TWAP with no fill for 10 minutes counts as stalled, not running. Source: our indexer, every TWAP of the last 24h plus those still running.
       </div>
     </Card>
   );

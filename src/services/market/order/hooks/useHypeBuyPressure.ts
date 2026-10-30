@@ -1,6 +1,7 @@
     import { useMemo, useState, useEffect } from 'react';
 import { useTwapOrders } from './useTwapOrders';
 import { EnrichedTwapOrder } from '../types';
+import { isTwapStalled, twapDoneFraction } from '../twap-progress';
 
 export interface HypeBuyPressureResult {
   /** Combined HYPE buy/sell pressure across spot HYPE + perp HYPE TWAPs. */
@@ -11,28 +12,23 @@ export interface HypeBuyPressureResult {
   error: Error | null;
 }
 
-// Helper function to calculate real-time progression (EXACTLY same logic as TwapTable)
-const calculateRealTimeProgression = (order: EnrichedTwapOrder) => {
-  const startTime = order.time;
-  const durationMs = order.action.twap.m * 60 * 1000; // minutes to ms
-  const currentTime = Date.now();
-  const elapsedTime = Math.max(0, currentTime - startTime);
-  
-  // Calculate smooth progression based on elapsed time (SAME AS TWAP TABLE)
-  const timeProgressionPercent = Math.min(100, Math.max(0, (elapsedTime / durationMs) * 100));
-  
-  // Calculate remaining quantity and value based on smooth time progression
-  const remainingPercent = Math.max(0, 100 - timeProgressionPercent);
-  const originalAmount = parseFloat(order.action.twap.s);
-  const remainingAmount = originalAmount * (remainingPercent / 100);
-  
-  // For value calculation, use the remaining amount with current token price
-  const remainingValue = remainingAmount * (order.totalValueUSD / parseFloat(order.action.twap.s));
-  
+interface RealTimeCalc {
+  progression: number;
+  remainingValue: number;
+  isCompleted: boolean;
+  /** Tracked since its start, running on paper, no fill for 10 minutes: not pressure. */
+  stalled: boolean;
+}
+
+// Same math as the dashboard's TWAP board: the executed share when the live
+// feed knows it, the time elapsed otherwise (see twap-progress.ts).
+const calculateRealTimeProgression = (order: EnrichedTwapOrder, now: number): RealTimeCalc => {
+  const done = twapDoneFraction(order, now);
   return {
-    progression: timeProgressionPercent,
-    remainingValue: Math.max(0, remainingValue),
-    isCompleted: timeProgressionPercent >= 100
+    progression: done * 100,
+    remainingValue: Math.max(0, order.totalValueUSD * (1 - done)),
+    isCompleted: done >= 1,
+    stalled: isTwapStalled(order, now),
   };
 };
 
@@ -46,20 +42,21 @@ export function useHypeBuyPressure(): HypeBuyPressureResult {
     status: "active" // Only active orders
   });
 
-  const [realTimeData, setRealTimeData] = useState<Map<string, { progression: number; remainingValue: number; isCompleted: boolean }>>(new Map());
+  const [realTimeData, setRealTimeData] = useState<Map<string, RealTimeCalc>>(new Map());
 
   // Real-time progression calculation (independent from API refresh)
-  // Note: API 30s refresh only adds/removes orders, progression calculated here
+  // Note: the polled list and the live feed add/remove orders and move executed sizes, the clock part is calculated here
   useEffect(() => {
     if (!orders || orders.length === 0) return;
 
     const updateRealTimeData = () => {
-      const newRealTimeData = new Map();
+      const newRealTimeData = new Map<string, RealTimeCalc>();
+      const now = Date.now();
       
       orders.forEach(order => {
         // Only update active TWAP orders (not completed, cancelled, or errored)
         if (!order.ended && !order.error) {
-          const realTimeCalc = calculateRealTimeProgression(order);
+          const realTimeCalc = calculateRealTimeProgression(order, now);
           newRealTimeData.set(order.hash, realTimeCalc);
         }
       });
@@ -96,6 +93,7 @@ export function useHypeBuyPressure(): HypeBuyPressureResult {
       if (!isHype) continue;
 
       const rt = realTimeData.get(order.hash);
+      if (rt?.stalled) continue;
       const value = rt ? rt.remainingValue : order.totalValueUSD;
       if (order.action.twap.b) buy += value;
       else sell += value;

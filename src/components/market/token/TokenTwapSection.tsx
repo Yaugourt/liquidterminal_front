@@ -23,7 +23,9 @@ const transformTwapData = (enrichedOrders: EnrichedTwapOrder[]): TwapTableData[]
     duration: order.action.twap.m,
     reduceOnly: order.action.twap.r,
     ended: order.ended,
-    error: order.error
+    error: order.error,
+    executedSz: order.executedSz,
+    executedExact: order.executedExact
   }));
 };
 
