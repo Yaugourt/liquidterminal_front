@@ -74,7 +74,27 @@ export interface RunExportResult {
   fileName: string;
   /** Bytes received, so the UI can report what actually landed. */
   size: number;
+  /**
+   * Set when the back stopped at its row ceiling (`X-Export-Truncated: true`).
+   * `totalRows` is `X-Export-Total-Rows`, or null if absent/unreadable.
+   * Undefined on a complete file or when talking to an older back.
+   */
+  truncated?: { totalRows: number | null };
 }
+
+/** Row ceiling the back applies to one CSV export. */
+export const EXPORT_ROW_CEILING = 50_000;
+
+/** Visitor-facing sentence for a truncated export, or null when the file is complete. */
+export const describeExportTruncation = (result: RunExportResult): string | null => {
+  if (!result.truncated) return null;
+  const { totalRows } = result.truncated;
+  const of =
+    totalRows != null && totalRows > EXPORT_ROW_CEILING
+      ? ` of ${totalRows.toLocaleString('en-US')}`
+      : '';
+  return `The file stops at ${EXPORT_ROW_CEILING.toLocaleString('en-US')}${of} rows. Narrow the time window or filters to get the rest.`;
+};
 
 /**
  * Runs the export and hands the browser a file.
@@ -117,7 +137,16 @@ export const runExport = async (
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  return { fileName, size: blob.size };
+  const headers = response.headers as Record<string, unknown> | undefined;
+  const isTruncated = String(headers?.['x-export-truncated'] ?? '').toLowerCase() === 'true';
+  if (!isTruncated) return { fileName, size: blob.size };
+
+  const total = Number(headers?.['x-export-total-rows']);
+  return {
+    fileName,
+    size: blob.size,
+    truncated: { totalRows: Number.isFinite(total) && total > 0 ? total : null },
+  };
 };
 
 /** Pulls the filename out of `attachment; filename="…"`. */

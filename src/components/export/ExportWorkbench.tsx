@@ -15,6 +15,7 @@ import {
   runExport,
   readExportError,
   estimateExportDuration,
+  describeExportTruncation,
   type ExportDataset,
   type ExportParamSpec,
   type ExportParamValues,
@@ -76,6 +77,7 @@ export function ExportWorkbench() {
   const [running, setRunning] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  const [truncationNotice, setTruncationNotice] = useState<string | null>(null);
 
   // Deep link from a card's "More options", then the first dataset as fallback.
   useEffect(() => {
@@ -156,6 +158,7 @@ export function ExportWorkbench() {
     setRunning(true);
     setMessage(null);
     setFailed(false);
+    setTruncationNotice(null);
     try {
       const columns =
         selectedColumns && selectedColumns.length > 0 && selectedColumns.length < availableColumns.length
@@ -163,6 +166,7 @@ export function ExportWorkbench() {
           : undefined;
       const result = await runExport(dataset.id, values, columns);
       setMessage(`${result.fileName} · ${(result.size / 1024).toFixed(0)} KB`);
+      setTruncationNotice(describeExportTruncation(result));
       await refetchQuota();
     } catch (error) {
       setMessage(await readExportError(error));
@@ -407,6 +411,9 @@ export function ExportWorkbench() {
               <p className={`text-[11.5px] break-all ${failed ? "text-danger" : "text-success"}`}>
                 {message}
               </p>
+            )}
+            {truncationNotice && !failed && (
+              <p className="text-[11px] text-gold">{truncationNotice}</p>
             )}
           </div>
           <div className="px-3.5 py-2.5 border-t border-border-subtle space-y-2">

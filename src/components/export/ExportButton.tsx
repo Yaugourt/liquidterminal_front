@@ -12,6 +12,7 @@ import {
   useExportQuota,
   useExportPreview,
   runExport,
+  describeExportTruncation,
   readExportError,
   estimateExportDuration,
   type ExportParamValues,
@@ -57,6 +58,7 @@ export const ExportButton = memo(function ExportButton({
   const [running, setRunning] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  const [truncationNotice, setTruncationNotice] = useState<string | null>(null);
 
   const { datasets } = useExportCatalog();
   const dataset = useMemo(
@@ -81,9 +83,11 @@ export const ExportButton = memo(function ExportButton({
     setRunning(true);
     setMessage(null);
     setFailed(false);
+    setTruncationNotice(null);
     try {
       const result = await runExport(dataset.id, values);
       setMessage(`${result.fileName} · ${(result.size / 1024).toFixed(0)} KB`);
+      setTruncationNotice(describeExportTruncation(result));
       await refetchQuota();
     } catch (error) {
       setMessage(await readExportError(error));
@@ -177,6 +181,9 @@ export const ExportButton = memo(function ExportButton({
               >
                 {message}
               </p>
+            )}
+            {truncationNotice && !failed && (
+              <p className="text-[11px] text-gold">{truncationNotice}</p>
             )}
           </div>
         )}
