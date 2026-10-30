@@ -7,7 +7,8 @@ export const useDashboardStats = (initialData?: DashboardGlobalStats): UseDashbo
     initialData,
     // Assembled from shared backend caches, flat in visitors: live pollers
     // (15-30 s) plus DefiLlama bridged USDC cached 5 min (null when unavailable).
-    refreshInterval: 15000,
+    // Global stats are read every 5 s by the backend while its Hyperliquid weight has room.
+    refreshInterval: 5000,
     maxRetries: 3
   });
 

@@ -68,7 +68,8 @@ export function useSpotTokens({
         };
       }
     },
-    refreshInterval: 10000,
+    // The backend's copy follows Hyperliquid's activeAssetCtx frames (~2 s old at most).
+    refreshInterval: 5000,
     maxRetries: 3,
     dependencies: [strict, page, limit, sortBy, sortOrder]
   });

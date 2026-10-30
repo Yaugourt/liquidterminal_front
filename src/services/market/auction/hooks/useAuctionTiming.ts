@@ -78,7 +78,8 @@ export const useAuctionTiming = (): UseAuctionTimingResult => {
   // Récupérer les données d'auction timing
   const { data: timingData, isLoading: timingLoading, error: timingError, refetch } = useDataFetching<AuctionTiming>({
     fetchFn: fetchAuctionTiming,
-    refreshInterval: 30000, // Refetch data every 30 seconds
+    // The backend reads the spot deploy state every 5 s; the price itself ticks locally.
+    refreshInterval: 10000,
     maxRetries: 3,
     dependencies: []
   });

@@ -5,7 +5,7 @@ import { useDataFetching } from '@/hooks/useDataFetching';
 export const useValidators = (initialData?: Validator[]): UseValidatorsResult => {
   const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<{ validators: Validator[], stats: ValidatorStats }>({
     fetchFn: fetchAllValidators,
-    refreshInterval: 30000 // 30 seconds
+    refreshInterval: 10000 // the backend reads validators every 10 s while its Hyperliquid weight has room
   });
 
   const validators = data?.validators || initialData || [];

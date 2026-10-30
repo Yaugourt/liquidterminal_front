@@ -43,7 +43,8 @@ export function usePerpMarkets({
         hasPrevious: response.pagination.page > 1
       };
     },
-    refreshInterval: 10000,
+    // The backend's copy follows Hyperliquid's activeAssetCtx frames (~2 s old at most).
+    refreshInterval: 5000,
     maxRetries: 3,
     dependencies: [params]
   });
