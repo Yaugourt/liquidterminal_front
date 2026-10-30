@@ -131,7 +131,7 @@ export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { b
         </div>
       </div>
       <div className="px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
-        New and ended TWAPs show up within seconds. Amounts left use the executed size when it is known (ended TWAPs, and running ones followed since their start); otherwise they are estimated from the time elapsed (one slice every 30s), at the current price. A TWAP with no fill for 10 minutes counts as stalled, not running. Source: our indexer, every TWAP of the last 24h plus those still running.
+        New and ended TWAPs show up within seconds. Amounts left use the executed size when it is known (ended TWAPs, and running ones followed since their start); otherwise they are estimated from the time elapsed (one slice every 30s), at the current price. A TWAP that stops filling and falls behind its schedule counts as stalled, not running. Source: our indexer, every TWAP of the last 24h plus those still running.
       </div>
     </Card>
   );

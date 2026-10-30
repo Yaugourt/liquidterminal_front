@@ -111,8 +111,8 @@ export const TwapPanel = memo(function TwapPanel() {
     return map;
   }, [perpDexs]);
 
-  // Running now, like the board: a TWAP followed since its start that has not filled for
-  // 10 minutes is stalled and no longer counted (it stays in the list).
+  // Running now, like the board: a stalled TWAP (followed since its start, not filling and
+  // behind its schedule, see isTwapStalled) is no longer counted (it stays in the list).
   const count = useMemo(
     () => orders.filter((o) => now < o.time + o.action.twap.m * 60_000 && !isTwapStalled(o, now)).length,
     [orders, now],
