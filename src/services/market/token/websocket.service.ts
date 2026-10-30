@@ -3,6 +3,8 @@ import {
   TokenWebSocketStore,
   TokenTradeResponse,
   TokenOrderBookResponse,
+  TokenAssetCtx,
+  TokenAssetCtxResponse,
 } from './types';
 import { WebSocketClient, PING_HEARTBEAT } from '@/lib/websocket-client';
 import { mergeTrades, newestTrade } from '@/lib/hl-trades';
@@ -10,10 +12,28 @@ import { mergeTrades, newestTrade } from '@/lib/hl-trades';
 const WS_URL = 'wss://api.hyperliquid.xyz/ws';
 const MAX_RECONNECT_ATTEMPTS = 3;
 const RECONNECT_DELAY = 2000;
+
+const ctxNumber = (value: string | undefined): number | null => {
+  if (value == null) return null;
+  const parsed = parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+/** Same stats: the ~1/s frame is mostly unchanged, so skip the store write. */
+const sameAssetCtx = (a: TokenAssetCtx | null, b: TokenAssetCtx): boolean =>
+  a !== null &&
+  a.coin === b.coin &&
+  a.markPx === b.markPx &&
+  a.prevDayPx === b.prevDayPx &&
+  a.dayNtlVlm === b.dayNtlVlm &&
+  a.oraclePx === b.oraclePx &&
+  a.premium === b.premium &&
+  a.funding === b.funding &&
+  a.openInterest === b.openInterest;
 /** Trades kept for the Recent Trades lists, newest first. */
 const MAX_TRADES = 50;
 
-export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
+export const useTokenWebSocketStore = create<TokenWebSocketStore>((set, get) => {
   let client: WebSocketClient | null = null;
   let resetTimeout: NodeJS.Timeout | null = null;
   let currentCoinId: string | null = null;
@@ -24,6 +44,7 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
   return {
     currentPrice: 0,
     lastSide: null,
+    assetCtx: null,
     orderBook: {
       bids: [],
       asks: []
@@ -62,6 +83,7 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
           isConnected: false,
           currentPrice: 0,
           lastSide: null,
+          assetCtx: null,
           orderBook: { bids: [], asks: [] },
           trades: []
         });
@@ -89,6 +111,14 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
           client?.send({
             method: 'subscribe',
             subscription: { type: 'l2Book', coin: coinId }
+          });
+
+          // 24h stats of the coin (change, volume, and for a perp oracle,
+          // premium, funding, OI): ~1 frame/s, ~0.4 KB. A spot coin answers
+          // on activeSpotAssetCtx.
+          client?.send({
+            method: 'subscribe',
+            subscription: { type: 'activeAssetCtx', coin: coinId }
           });
         },
         onMessage: (data) => {
@@ -122,6 +152,27 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
                   set({ lastSide: null });
                 }, 2000);
               }
+            }
+
+            if (message.channel === 'activeAssetCtx' || message.channel === 'activeSpotAssetCtx') {
+              const { coin, ctx } = (data as TokenAssetCtxResponse).data ?? {};
+              if (coin !== coinId || !ctx) return;
+              const markPx = ctxNumber(ctx.markPx);
+              const prevDayPx = ctxNumber(ctx.prevDayPx);
+              const dayNtlVlm = ctxNumber(ctx.dayNtlVlm);
+              if (markPx === null || prevDayPx === null || dayNtlVlm === null) return;
+              const next: TokenAssetCtx = {
+                coin,
+                markPx,
+                prevDayPx,
+                dayNtlVlm,
+                oraclePx: ctxNumber(ctx.oraclePx),
+                premium: ctxNumber(ctx.premium),
+                funding: ctxNumber(ctx.funding),
+                openInterest: ctxNumber(ctx.openInterest),
+              };
+              if (!sameAssetCtx(get().assetCtx, next)) set({ assetCtx: next });
+              return;
             }
 
             if (message.channel === 'l2Book') {
@@ -179,6 +230,7 @@ export const useTokenWebSocketStore = create<TokenWebSocketStore>((set) => {
         error: null,
         currentPrice: 0,
         lastSide: null,
+        assetCtx: null,
         orderBook: { bids: [], asks: [] },
         trades: []
       });

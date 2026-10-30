@@ -36,8 +36,49 @@ export interface TokenOrderBookResponse {
   data: TokenOrderBookData;
 }
 
+/**
+ * `activeAssetCtx` (perp) / `activeSpotAssetCtx` (spot) frame, ~1/s, values as
+ * decimal strings. Perp-only fields are absent on a spot frame.
+ */
+export interface TokenAssetCtxResponse {
+  channel: string;     // "activeAssetCtx" | "activeSpotAssetCtx"
+  data?: {
+    coin: string;
+    ctx?: {
+      markPx?: string;
+      prevDayPx?: string;
+      dayNtlVlm?: string;
+      oraclePx?: string;
+      premium?: string;
+      funding?: string;
+      /** In coins, not USD. */
+      openInterest?: string;
+    };
+  };
+}
+
+/**
+ * Live 24h stats of the coin the token socket is on. Units as Hyperliquid
+ * sends them: prices and `dayNtlVlm` in USD, `funding` hourly as a fraction,
+ * `premium` as a fraction, `openInterest` in coins. The perp-only fields are
+ * null on a spot coin.
+ */
+export interface TokenAssetCtx {
+  /** Coin the frame was for (the socket's subscription name). */
+  coin: string;
+  markPx: number;
+  prevDayPx: number;
+  dayNtlVlm: number;
+  oraclePx: number | null;
+  premium: number | null;
+  funding: number | null;
+  openInterest: number | null;
+}
+
 export interface TokenWebSocketState {
   currentPrice: number;
+  /** Latest asset context of the socket's coin (null until its first frame). */
+  assetCtx: TokenAssetCtx | null;
   lastSide: "A" | "B" | null;
   orderBook: {
     bids: TokenOrderBookLevel[];

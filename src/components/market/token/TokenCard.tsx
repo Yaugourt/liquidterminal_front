@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import {
   useTokenLivePrice,
+  useTokenAssetCtx,
   marketIndexToCoinId,
 } from "@/services/market/token";
 import { Card } from "@/components/ui/card";
@@ -25,6 +26,25 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
   // Price/orderbook/trades are WebSocket-pushed. The hook surfaces the socket
   // state as `isLoading` (== !isConnected); invert it for the live cue.
   const { price: livePrice, lastSide, isLoading: wsLoading } = useTokenLivePrice(coinId);
+  // 24h stats pushed ~1/s on the same socket. The REST row stays the first
+  // paint and the fallback while the socket is down or silent.
+  const assetCtx = useTokenAssetCtx(coinId);
+
+  const isPerp = token.type === 'perpetual';
+  const oracle = (isPerp ? assetCtx?.oraclePx : null) ?? token.oracle;
+  const premium = (isPerp ? assetCtx?.premium : null) ?? token.premium;
+  const fundingRate = (isPerp ? assetCtx?.funding : null) ?? token.fundingRate;
+  // Same as the REST row: percent of the previous-day price off the mark
+  // (change24h is already x100), and OI in USD (the context carries coins).
+  const change24h =
+    assetCtx && assetCtx.prevDayPx > 0
+      ? (assetCtx.markPx / assetCtx.prevDayPx - 1) * 100
+      : token.change24h;
+  const volume24h = assetCtx?.dayNtlVlm ?? token.volume24h;
+  const openInterest =
+    isPerp && assetCtx?.openInterest != null
+      ? assetCtx.openInterest * assetCtx.markPx
+      : token.openInterest;
 
   const formatPriceValue = (value: number) => {
     return formatPrice(value, format);
@@ -94,24 +114,24 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           </div>
 
           {/* Oracle (Perpetual only) */}
-          {token.type === 'perpetual' && token.oracle && (
+          {token.type === 'perpetual' && oracle && (
             <div className="flex flex-col">
               <span className="text-stat-label">Oracle</span>
               <span className="mono text-text-primary text-sm font-medium">
-                {formatPriceValue(token.oracle)}
+                {formatPriceValue(oracle)}
               </span>
             </div>
           )}
 
           {/* Premium (Perpetual only): mark vs oracle, signed */}
-          {token.type === 'perpetual' && token.premium != null && (
+          {token.type === 'perpetual' && premium != null && (
             <div className="flex flex-col">
               <span className="text-stat-label">Premium</span>
               <span className={cn(
                 "mono text-sm font-medium",
-                token.premium >= 0 ? "text-success" : "text-danger"
+                premium >= 0 ? "text-success" : "text-danger"
               )}>
-                {`${token.premium >= 0 ? '+' : ''}${(token.premium * 100).toFixed(4)}%`}
+                {`${premium >= 0 ? '+' : ''}${(premium * 100).toFixed(4)}%`}
               </span>
             </div>
           )}
@@ -119,12 +139,12 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           {/* 24h Change: "N/A" when the stat is not available (no fake 0%) */}
           <div className="flex flex-col">
             <span className="text-stat-label">24h Change</span>
-            {token.change24h != null ? (
+            {change24h != null ? (
               <span className={cn(
                 "mono text-sm font-medium",
-                token.change24h >= 0 ? "text-success" : "text-danger"
+                change24h >= 0 ? "text-success" : "text-danger"
               )}>
-                {formatPercentage(token.change24h)}
+                {formatPercentage(change24h)}
               </span>
             ) : (
               <span className="text-text-tertiary text-sm font-medium">N/A</span>
@@ -135,7 +155,7 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
           <div className="flex flex-col">
             <span className="text-stat-label">24h Volume</span>
             <span className="mono text-text-primary text-sm font-medium">
-              {token.volume24h != null ? formatVolumeValue(token.volume24h) : (
+              {volume24h != null ? formatVolumeValue(volume24h) : (
                 <span className="text-text-tertiary">N/A</span>
               )}
             </span>
@@ -151,11 +171,11 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
             </div>
           )}
 
-          {token.type === 'perpetual' && token.openInterest && (
+          {token.type === 'perpetual' && openInterest && (
             <div className="flex flex-col">
               <span className="text-stat-label">Open Interest</span>
               <span className="mono text-text-primary text-sm font-medium">
-                {formatVolumeValue(token.openInterest)}
+                {formatVolumeValue(openInterest)}
               </span>
             </div>
           )}
@@ -184,12 +204,12 @@ export const TokenCard = memo(function TokenCard({ token, className, perpCoinId 
                 Funding / Countdown
               </span>
               <div className="flex flex-col">
-                {token.fundingRate != null ? (
+                {fundingRate != null ? (
                   <span className={cn(
                     "mono text-sm font-medium",
-                    token.fundingRate >= 0 ? "text-success" : "text-danger"
+                    fundingRate >= 0 ? "text-success" : "text-danger"
                   )}>
-                    {formatFundingRate(token.fundingRate)}
+                    {formatFundingRate(fundingRate)}
                   </span>
                 ) : (
                   <span className="text-text-tertiary text-sm font-medium">N/A</span>

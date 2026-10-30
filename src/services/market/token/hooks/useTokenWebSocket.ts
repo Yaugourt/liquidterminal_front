@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useTokenWebSocketStore } from '../websocket.service';
-import { TokenWebSocketState, UseTokenWebSocketResult } from '../types';
+import { TokenAssetCtx, TokenWebSocketState, UseTokenWebSocketResult } from '../types';
 
 /**
  * Holds a reference on the shared token socket for `coinId` while mounted.
@@ -69,4 +69,14 @@ export function useTokenTrades(coinId: string): Pick<UseTokenWebSocketResult, 't
     trades: s.trades,
     isLoading: !s.isConnected,
   }));
+}
+
+/**
+ * Live 24h stats (mark, previous-day price, volume; perp: oracle, premium,
+ * funding, OI) of `coinId`, or null until the first frame and for any other
+ * coin. No re-render on trade or order-book updates.
+ */
+export function useTokenAssetCtx(coinId: string): TokenAssetCtx | null {
+  const { assetCtx } = useTokenWebSocketSlice(coinId, (s) => ({ assetCtx: s.assetCtx }));
+  return assetCtx && assetCtx.coin === coinId ? assetCtx : null;
 }
