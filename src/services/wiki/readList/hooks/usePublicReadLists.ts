@@ -5,6 +5,7 @@ import {
   PublicReadListQueryParams, 
   PublicReadListPagination 
 } from '../types';
+import { showXpGainToast } from '@/components/xp';
 import { readListMessages, handleReadListApiError } from '@/lib/toast-messages';
 
 export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) => {
@@ -63,6 +64,9 @@ export const usePublicReadLists = (initialParams?: PublicReadListQueryParams) =>
       const response = await copyPublicReadList(readListId);
       if (response.success) {
         readListMessages.success.listCreated(response.data.name);
+        if (typeof response.xpGranted === 'number' && response.xpGranted > 0) {
+          showXpGainToast(response.xpGranted, 'ReadList copied');
+        }
         return true;
       } else {
         handleReadListApiError(new Error(response.message || 'Copy failed'));

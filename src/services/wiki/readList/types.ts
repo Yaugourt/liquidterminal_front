@@ -126,4 +126,6 @@ export interface ReadListCopyResponse {
   success: boolean;
   data: PublicReadListWithItems;
   message: string;
+  /** XP actually granted for the copy; 0 when the daily cap is hit, absent on older backs. */
+  xpGranted?: number;
 }

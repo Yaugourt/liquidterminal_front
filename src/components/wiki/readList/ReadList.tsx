@@ -108,10 +108,10 @@ export function ReadList() {
         setIsCreateModalOpen(false);
         readListMessages.success.listCreated(data.name);
 
-        // XP matches backend constants: CREATE_READLIST 15 + public bonus 10
-        const xpReward = data.isPublic ? 25 : 15;
-        const rewardMsg = data.isPublic ? "+25 XP Public ReadList created" : "+15 XP ReadList created";
-        showXpGainToast(xpReward, rewardMsg);
+        // Only what the API granted: 0 once the daily cap is hit, absent on older backs.
+        if (newList.xpGranted && newList.xpGranted > 0) {
+          showXpGainToast(newList.xpGranted, data.isPublic ? "Public ReadList created" : "ReadList created");
+        }
       }
     } catch (error) {
       handleReadListApiError(error);

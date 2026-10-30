@@ -64,7 +64,7 @@ export function AddToTrackListButton({ address, className = "" }: AddToTrackList
       const result = await addWallet(address, `Wallet ${truncatedAddress}`);
       toast.success("Wallet added to your track list");
 
-      if (result?.xpGranted) {
+      if (result?.xpGranted && result.xpGranted > 0) {
         showXpGainToast(result.xpGranted, "Wallet tracked");
       }
     } catch (error) {

@@ -31,7 +31,7 @@ interface ReadListsState {
   error: string | null;
   
   initialize: (params: InitializeParams) => Promise<void>;
-  createReadList: (data: CreateReadListData) => Promise<ReadList | void>;
+  createReadList: (data: CreateReadListData) => Promise<(ReadList & { xpGranted?: number }) | void>;
   updateReadList: (id: number, data: UpdateReadListData) => Promise<ReadList | void>;
   deleteReadList: (id: number) => Promise<void>;
   setActiveReadList: (id: number) => void;
@@ -130,7 +130,7 @@ export const useReadLists = create<ReadListsState>()(
           }
         },
         
-        createReadList: async (data: CreateReadListData): Promise<ReadList | void> => {
+        createReadList: async (data: CreateReadListData): Promise<(ReadList & { xpGranted?: number }) | void> => {
           try {
             actions.setLoading(true);
             validateName(data.name, { fieldName: 'Read list name' });
@@ -138,13 +138,15 @@ export const useReadLists = create<ReadListsState>()(
             const response = await apiCreateReadList(data);
             
             if (response) {
-              actions.updateReadLists(lists => [...lists, response]);
+              // xpGranted belongs to the reply, not to the stored list.
+              const { xpGranted, ...list } = response;
+              actions.updateReadLists(lists => [...lists, list]);
               actions.setLoading(false);
               
               if (!get().activeReadListId) {
-                actions.setActiveList(response.id);
+                actions.setActiveList(list.id);
               }
-              return response;
+              return { ...list, xpGranted };
             }
             
             throw new Error("Failed to create read list");
