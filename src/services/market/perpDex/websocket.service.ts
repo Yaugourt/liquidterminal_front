@@ -13,6 +13,12 @@ const BASE_RECONNECT_DELAY = 2000;
 
 interface PerpDexMarketDataStore {
   marketData: Map<string, DexMarketData>;
+  /**
+   * Contexts of the native perps (dex ''), in the index order of
+   * `allPerpMetas[0].universe`. Kept apart from `marketData`, whose consumers
+   * are the HIP-3 dex views and must not see the native perps.
+   */
+  nativeAssets: AssetMarketData[];
   isConnected: boolean;
   error: string | null;
   lastUpdate: Date | null;
@@ -77,6 +83,7 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
 
   return {
     marketData: new Map(),
+    nativeAssets: [],
     isConnected: false,
     error: null,
     lastUpdate: null,
@@ -112,10 +119,14 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
               if (message.channel === 'allDexsAssetCtxs') {
                 const ctxMessage = data as AllDexsAssetCtxsMessage;
                 const newMarketData = new Map<string, DexMarketData>();
+                let nativeAssets: AssetMarketData[] = [];
 
                 ctxMessage.data.ctxs.forEach(([dexName, assetCtxs]) => {
-                  // Skip empty dex name (native perps)
-                  if (!dexName) return;
+                  // Empty dex name = native perps: kept apart from the HIP-3 dexs
+                  if (!dexName) {
+                    nativeAssets = assetCtxs.map(parseAssetCtx);
+                    return;
+                  }
 
                   const dexData = parseDexCtx(dexName, assetCtxs);
                   newMarketData.set(dexName, dexData);
@@ -123,6 +134,7 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
 
                 set({
                   marketData: newMarketData,
+                  nativeAssets,
                   lastUpdate: new Date()
                 });
               }
@@ -156,7 +168,8 @@ export const usePerpDexMarketDataStore = create<PerpDexMarketDataStore>((set, ge
       set({
         isConnected: false,
         error: null,
-        marketData: new Map()
+        marketData: new Map(),
+        nativeAssets: []
       });
     },
 

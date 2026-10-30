@@ -76,6 +76,12 @@ export interface ParsedPerpMetas {
   dexMetas: Map<string, PerpMetaAssetWithCollateral[]>;
   dexCollateral: Map<string, CollateralToken>; // Map of dexName -> collateral token
   allAssets: PerpMetaAssetWithCollateral[];
+  /**
+   * Native perp names in `allPerpMetas[0].universe` order, which is the index
+   * order of the native contexts (dex '') of the allDexsAssetCtxs socket.
+   * Append-only: a new listing takes the next index.
+   */
+  nativeNames: string[];
 }
 
 /**
@@ -98,6 +104,7 @@ export const fetchAllPerpMetas = async (): Promise<ParsedPerpMetas> => {
     const dexMetas = new Map<string, PerpMetaAssetWithCollateral[]>();
     const dexCollateral = new Map<string, CollateralToken>();
     const allAssets: PerpMetaAssetWithCollateral[] = [];
+    const nativeNames = (response[0]?.universe ?? []).map((asset) => asset.name);
     
     // Process each DEX entry (skip index 0 which is native perps)
     response.forEach((dex, index) => {
@@ -130,7 +137,7 @@ export const fetchAllPerpMetas = async (): Promise<ParsedPerpMetas> => {
       });
     });
     
-    return { dexMetas, dexCollateral, allAssets };
+    return { dexMetas, dexCollateral, allAssets, nativeNames };
   }, 'fetching all perp metas');
 };
 

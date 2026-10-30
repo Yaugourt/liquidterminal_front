@@ -10,6 +10,7 @@ import {
 } from "@/components/common";
 import { useTrendingSpotTokens } from "@/services/market/spot/hooks/useSpotMarket";
 import { useTrendingPerpMarkets } from "@/services/market/perp/hooks/usePerpMarket";
+import { useNativePerpLive } from "@/services/market/perpDex/hooks";
 import type { SpotToken } from "@/services/market/spot/types";
 import type { PerpMarketData } from "@/services/market/perp/types";
 import { compactUsd, formatNumber } from "@/lib/formatters/numberFormatting";
@@ -77,9 +78,23 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
 
   const { data, isLoading, isRefreshing, refetch, dataUpdatedAt } =
     market === "spot" ? spot : perp;
-  const rows = useMemo(() => (data ?? []).slice(0, TOP_N), [data]);
-
   const isSpot = market === "spot";
+
+  // Perp rows are polled (up to 20 s old); the allDexsAssetCtxs socket the
+  // page already has open (HIP-3 panels) overlays live price, 24h change and
+  // volume on them. The set of rows stays the poll's, re-ranked by live volume.
+  const live = useNativePerpLive(!isSpot);
+  const rows = useMemo(() => {
+    const top = (data ?? []).slice(0, TOP_N);
+    if (isSpot || !live) return top;
+    return (top as PerpMarketData[])
+      .map((row) => {
+        const l = live.get(row.name);
+        return l ? { ...row, price: l.price, change24h: l.change24h, volume: l.volume } : row;
+      })
+      .sort((a, b) => b.volume - a.volume);
+  }, [data, live, isSpot]);
+  const isLive = !isSpot && live !== null;
 
   return (
     <OverviewModule
@@ -88,12 +103,16 @@ export const MoversCard = memo(function MoversCard({ market }: { market: Market 
       viewAllLabel={isSpot ? "All spot" : "All perp"}
       href={`/market/${market}`}
       actions={
-        <DataStatus
-          variant="polled"
-          updatedAt={dataUpdatedAt}
-          isRefreshing={isRefreshing}
-          onRefresh={refetch}
-        />
+        isLive ? (
+          <DataStatus variant="live" />
+        ) : (
+          <DataStatus
+            variant="polled"
+            updatedAt={dataUpdatedAt}
+            isRefreshing={isRefreshing}
+            onRefresh={refetch}
+          />
+        )
       }
     >
       {/* Declared widths switch the table to `table-fixed`: the asset name

@@ -34,7 +34,7 @@ function sharedFor<T>(load: () => Promise<T>): () => Promise<T> {
 }
 
 const loadPerpDexs = sharedFor(fetchPerpDexs);
-const loadAllPerpMetas = sharedFor(fetchAllPerpMetas);
+export const loadAllPerpMetas = sharedFor(fetchAllPerpMetas);
 
 /**
  * Hook that combines all PerpDex data sources:
