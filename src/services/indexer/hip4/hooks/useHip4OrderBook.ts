@@ -21,8 +21,9 @@ export interface UseHip4OrderBookResult {
 }
 
 /**
- * Live L2 order book for a HIP-4 outcome coin, REST-polled every 5s (the shared
- * market WS doesn't carry `#NNN` coins). Only fetches eligible live coins
+ * Live L2 order book for a HIP-4 outcome coin, REST-polled every 5s (Hyperliquid's
+ * WS l2Book/trades/allMids do carry `#NNN` coins, tested 2026-10-30; this poll
+ * has not been moved to a socket). Only fetches eligible live coins
  * (`#NNN`, `enabled`); expired/untradeable coins return `null` upstream so the
  * UI degrades to a placeholder rather than polling a dead book tightly.
  */

@@ -1,6 +1,7 @@
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { isFinalError } from "./finalError";
+import { acquireHip4Mids, useHip4MidsStore } from "../midsSocket";
 import {
   fetchHip4OutcomeMeta,
   fetchHip4AllMids,
@@ -97,34 +98,119 @@ function loadOutcomeTemplates(): Promise<Hip4TemplateIndex> {
   return entry.pending;
 }
 
-interface LiveMarketsSnapshot {
+interface MetaSnapshot {
   meta: Awaited<ReturnType<typeof fetchHip4OutcomeMeta>>;
-  mids: Record<string, string>;
   templates: Hip4TemplateIndex;
 }
 
+/** Outcome mids and when they were read (the fetch time, kept across skipped polls). */
+interface RestMids {
+  mids: Record<string, string>;
+  at: number;
+}
+
+// outcomeMeta (113 KB) changes only when an outcome is created or settled: a
+// minute is enough, and the mids below tell sooner (see META_FORCE_GAP_MS).
+const META_POLL_MS = 60_000;
+// The socket's frames come every ~5.5 s. REST allMids (25 KB) is the first
+// paint and the fallback: its 15 s poll reads the network only when no frame
+// arrived for this long, i.e. while the socket is down, paused or silent.
+const MIDS_POLL_MS = 15_000;
+const SOCKET_FRESH_MS = 12_000;
+// A `#` coin in the mids that outcomeMeta does not list is an outcome created
+// since the last meta read: read it again at once, but never more than once
+// per gap (a coin the meta never lists must not turn into a poll).
+const META_FORCE_GAP_MS = 10_000;
+
 /**
- * Fetches the canonical live markets that HypeDexer's aggregation tables omit:
- * `outcomeMeta` (metadata) + `allMids` (live implied probabilities) + the
- * template registry (titles). All three come from Hyperliquid, so the markets
- * never wait on the indexer: their volumes load on their own, below.
+ * Fetches the canonical outcomeMeta + the template registry (titles), both
+ * from Hyperliquid, so the markets never wait on the indexer: their volumes
+ * load on their own, above. The live mids come from the socket (REST first).
  */
-async function fetchLiveMarketsSnapshot(): Promise<LiveMarketsSnapshot> {
-  const [meta, mids, templates] = await Promise.all([
-    fetchHip4OutcomeMeta(),
-    fetchHip4AllMids(),
-    loadOutcomeTemplates(),
-  ]);
-  return { meta, mids, templates };
+async function fetchMetaSnapshot(): Promise<MetaSnapshot> {
+  const [meta, templates] = await Promise.all([fetchHip4OutcomeMeta(), loadOutcomeTemplates()]);
+  return { meta, templates };
+}
+
+/** Outcome ids (not coins) the meta lists. */
+function listedOutcomeIds(meta: MetaSnapshot["meta"]): Set<number> {
+  const ids = new Set<number>();
+  for (const o of meta.outcomes) ids.add(o.outcome);
+  return ids;
+}
+
+/** `#<10*outcome + side>` coins of `mids` whose outcome the meta does not list. */
+function unknownMidCoins(mids: Record<string, string>, listed: Set<number>): string[] {
+  const unknown: string[] = [];
+  for (const coin of Object.keys(mids)) {
+    const encoding = Number(coin.slice(1));
+    if (Number.isInteger(encoding) && !listed.has(Math.floor(encoding / 10))) unknown.push(coin);
+  }
+  return unknown;
 }
 
 export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
-  const { data, isLoading, error, isStale, dataUpdatedAt, refetch } =
-    useDataFetching<LiveMarketsSnapshot>({
-      fetchFn: fetchLiveMarketsSnapshot,
-      refreshInterval: 15000, // prices are real-time; metadata changes slowly
-      maxRetries: 2,
-    });
+  const {
+    data: metaData,
+    isLoading: metaLoading,
+    error: metaError,
+    isStale: metaStale,
+    refetch: refetchMeta,
+  } = useDataFetching<MetaSnapshot>({
+    fetchFn: fetchMetaSnapshot,
+    refreshInterval: META_POLL_MS,
+    maxRetries: 2,
+  });
+
+  // The socket exists while this hook is mounted (a shared, ref-counted hold).
+  useEffect(() => acquireHip4Mids(), []);
+  const socketMids = useHip4MidsStore((s) => s.mids);
+  const socketAt = useHip4MidsStore((s) => s.updatedAt);
+
+  // REST allMids: first paint, then fallback. While frames keep coming the
+  // poll returns the last read untouched (same object, no state change).
+  const lastRestRef = useRef<RestMids | null>(null);
+  const fetchRestMids = useCallback(async (): Promise<RestMids> => {
+    const last = lastRestRef.current;
+    const frameAt = useHip4MidsStore.getState().updatedAt;
+    if (last && frameAt != null && Date.now() - frameAt < SOCKET_FRESH_MS) return last;
+    const mids = await fetchHip4AllMids();
+    const read = { mids, at: Date.now() };
+    lastRestRef.current = read;
+    return read;
+  }, []);
+  const {
+    data: restData,
+    isLoading: restLoading,
+    error: restError,
+    isStale: restStale,
+    refetch: refetchRest,
+  } = useDataFetching<RestMids>({
+    fetchFn: fetchRestMids,
+    refreshInterval: MIDS_POLL_MS,
+    maxRetries: 2,
+  });
+
+  // Whichever read is newer drives the prices.
+  const socketNewer = socketAt != null && (restData == null || socketAt >= restData.at);
+  const mids = socketNewer ? socketMids : restData?.mids ?? null;
+  const midsAt = socketNewer ? socketAt : restData?.at ?? null;
+  // A failed REST read matters only while the socket is not supplying frames.
+  const socketRecent = socketAt != null && Date.now() - socketAt < SOCKET_FRESH_MS;
+
+  // An outcome in the mids that the meta does not know: read the meta now.
+  const forcedRef = useRef<{ coins: Set<string>; at: number }>({ coins: new Set(), at: 0 });
+  useEffect(() => {
+    if (!metaData || !mids) return;
+    const unknown = unknownMidCoins(mids, listedOutcomeIds(metaData.meta));
+    const forced = forcedRef.current;
+    if (!unknown.some((coin) => !forced.coins.has(coin))) return;
+    // Too soon after the last forced read: the next frame asks again.
+    if (Date.now() - forced.at < META_FORCE_GAP_MS) return;
+    for (const coin of unknown) forced.coins.add(coin);
+    forced.at = Date.now();
+    refetchMeta();
+  }, [metaData, mids, refetchMeta]);
 
   // Per-outcome volume, recovered from the indexer's analytics by the backend
   // (best-effort: the markets render with prices meanwhile, and still do if
@@ -138,11 +224,21 @@ export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
 
   const markets = useMemo<Hip4LiveMarketData | null>(
     () =>
-      data
-        ? buildLiveMarkets(data.meta.outcomes, data.mids, volumes?.volumes, data.templates, data.meta.questions)
+      metaData && mids
+        ? buildLiveMarkets(metaData.meta.outcomes, mids, volumes?.volumes, metaData.templates, metaData.meta.questions)
         : null,
-    [data, volumes]
+    [metaData, mids, volumes]
   );
+
+  const refetch = useCallback(() => {
+    refetchMeta();
+    refetchRest();
+  }, [refetchMeta, refetchRest]);
+
+  // The meta decides what is listed; the mids can come from either source, so
+  // their error counts only when nothing supplies them.
+  const midsError = mids == null ? restError : null;
+  const error = metaError ?? midsError;
 
   return {
     liveQuestions: markets?.questions ?? EMPTY_QUESTIONS,
@@ -153,11 +249,11 @@ export function useHip4LiveMarkets(): UseHip4LiveMarketsResult {
     volumesPartial: volumes ? volumes.partial : volumesError != null,
     volumesSettled: volumes != null || volumesError != null,
     volumesMissing: volumes == null && volumesError != null,
-    isLoading,
-    isStale,
+    isLoading: metaLoading || (mids == null && restLoading),
+    isStale: metaStale || (restStale && !socketRecent),
     error,
     failed: isFinalError(error),
-    dataUpdatedAt,
+    dataUpdatedAt: metaData && midsAt != null ? midsAt : null,
     refetch,
   };
 }

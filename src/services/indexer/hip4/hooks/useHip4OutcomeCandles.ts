@@ -8,7 +8,7 @@ import type { Hip4Candle, Hip4CandleInterval } from "../types";
  * each a browser-direct candleSnapshot (Hyperliquid weight 20 + 1 per 60
  * candles, on the visitor's own 1,200/min IP budget): ~180 weight a poll, so
  * 30s keeps a HIP-4 tab near 360/min and leaves room for a second tab or the
- * visitor's own trading. The forming candle follows the live mids (15s) in
+ * visitor's own trading. The forming candle follows the live mids (socket frames, ~5.5s) in
  * between, at no extra weight — see `liveTip`.
  */
 const CANDLE_POLL_MS = 30_000;

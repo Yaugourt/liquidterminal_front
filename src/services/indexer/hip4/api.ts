@@ -92,7 +92,7 @@ export async function fetchHip4OutcomeMeta(): Promise<Required<Hip4OutcomeMetaRe
     const res = await postExternal<Hip4OutcomeMetaResponse>(
       `${API_URLS.HYPERLIQUID_API}/info`,
       { type: "outcomeMeta" },
-      // Fast-fail: one 5s attempt. useDataFetching's 15s poll + maxRetries is the
+      // Fast-fail: one 5s attempt. useDataFetching's poll + maxRetries is the
       // only recovery layer — don't stack the inner 4×10s axios retry chain.
       { timeoutMs: 5000, retryOnError: false }
     );
