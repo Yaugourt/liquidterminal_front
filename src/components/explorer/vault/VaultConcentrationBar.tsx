@@ -147,7 +147,7 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
                 />
                 <AddressDisplay address={d.address} />
                 <span className="mono text-text-secondary ml-auto">
-                  ${formatLargeNumber(d.net, { decimals: 2 })}
+                  {formatLargeNumber(d.net, { prefix: "$", decimals: 2 })}
                 </span>
                 <span className="mono text-text-tertiary w-12 text-right">
                   {((d.net / totalNet) * 100).toFixed(1)}%
@@ -159,7 +159,7 @@ export function VaultConcentrationBar({ vaultAddress }: VaultConcentrationBarPro
                 <span className="h-2 w-2 rounded-full flex-shrink-0 bg-text-tertiary/30" />
                 <span className="text-text-secondary">Others</span>
                 <span className="mono text-text-secondary ml-auto">
-                  ${formatLargeNumber(others, { decimals: 2 })}
+                  {formatLargeNumber(others, { prefix: "$", decimals: 2 })}
                 </span>
                 <span className="mono text-text-tertiary w-12 text-right">
                   {othersShare.toFixed(1)}%

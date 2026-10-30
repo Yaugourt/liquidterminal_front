@@ -9,6 +9,10 @@ import { Card } from "@/components/ui/card";
 import { InlineSpinner } from "@/components/ui/inline-spinner";
 import { KpiRibbon, type KpiCell } from "@/components/common";
 
+/** "+$5 K" / "-$5 K": the sign sits in front of the currency, never between. */
+const signedUsd = (value: number): string =>
+  `${value < 0 ? "" : "+"}${formatLargeNumber(value, { prefix: "$" })}`;
+
 interface NotableWalletCardProps {
   label: string;
   icon: LucideIcon;
@@ -83,8 +87,8 @@ export function TrackerStatsBar() {
   }
 
   const statsCells: KpiCell[] = [
-    { label: "24h Volume", value: `$${formatLargeNumber(totalVolume24h)}` },
-    { label: "24h PnL (Top 50)", value: `+$${formatLargeNumber(totalPnl24h)}` },
+    { label: "24h Volume", value: formatLargeNumber(totalVolume24h, { prefix: "$" }) },
+    { label: "24h PnL (Top 50)", value: signedUsd(totalPnl24h) },
     { label: "24h Fills", value: formatLargeNumber(totalFills24h) },
   ];
 
@@ -102,7 +106,7 @@ export function TrackerStatsBar() {
           bgColor="bg-gold/10"
           borderColor="border-gold/20"
           walletAddress={topPnlTrader?.user ?? null}
-          stat={topPnlTrader ? `+$${formatLargeNumber(topPnlTrader.totalPnl)}` : null}
+          stat={topPnlTrader ? signedUsd(topPnlTrader.totalPnl) : null}
           statColor="text-success"
         />
         <NotableWalletCard
@@ -112,7 +116,7 @@ export function TrackerStatsBar() {
           bgColor="bg-brand/10"
           borderColor="border-brand/20"
           walletAddress={topVolumeTrader?.user ?? null}
-          stat={topVolumeTrader ? `$${formatLargeNumber(topVolumeTrader.totalVolume)}` : null}
+          stat={topVolumeTrader ? formatLargeNumber(topVolumeTrader.totalVolume, { prefix: "$" }) : null}
           statColor="text-brand"
         />
         <NotableWalletCard
