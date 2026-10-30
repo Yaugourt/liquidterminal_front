@@ -53,6 +53,9 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
     const [activeListItems, setActiveListItems] = useState<WalletListItem[]>([]);
     const [isLoadingListItems, setIsLoadingListItems] = useState(false);
     const [referralStats, setReferralStats] = useState<ReferralStats | null>(null);
+    // Picture URL that failed to load (changed on X since the last login,
+    // blocked by an extension): the initial shows instead of a broken image.
+    const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null);
 
     // Chargement des items de la liste sélectionnée
     useEffect(() => {
@@ -137,6 +140,7 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
         if (!url) return undefined;
         return url.replace('_normal', '');
     };
+    const avatarUrl = getProfilePictureUrl(privyUser?.twitter?.profilePictureUrl ?? undefined);
 
     // Anonymous visitors get an explicit sign-in prompt instead of an
     // endless loading state (the backend user only exists after login).
@@ -174,14 +178,17 @@ function ProfileContent({ initialTab }: { initialTab: string }) {
             <Card padding="lg" interactive={false} className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
                 <div className="flex items-center gap-4">
                     <Avatar className="h-20 w-20 ring-2 ring-gold ring-offset-2 ring-offset-surface">
-                        {privyUser?.twitter?.profilePictureUrl ? (
+                        {avatarUrl && avatarUrl !== failedAvatarUrl ? (
                             <Image
-                                src={getProfilePictureUrl(privyUser.twitter.profilePictureUrl)!}
+                                src={avatarUrl}
                                 alt="Avatar"
                                 width={80}
                                 height={80}
                                 className="object-cover rounded-full"
                                 unoptimized
+                                // pbs.twimg.com answers 403 to a request carrying another site's Referer.
+                                referrerPolicy="no-referrer"
+                                onError={() => setFailedAvatarUrl(avatarUrl)}
                             />
                         ) : (
                             <AvatarFallback className="bg-base text-gold text-3xl font-semibold">

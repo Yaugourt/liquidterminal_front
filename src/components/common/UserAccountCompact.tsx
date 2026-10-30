@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { LogIn, LogOut } from "lucide-react"
@@ -19,6 +20,10 @@ const TelegramIcon = ({ className }: { className?: string }) => (
 export function UserAccountCompact() {
     const { authenticated, login, logout, privyUser, user } = useAuthContext()
     const router = useRouter()
+    const avatarUrl = privyUser?.twitter?.profilePictureUrl
+    // A picture that fails to load (changed on X since the last login, blocked
+    // by an extension) shows the initial instead of a broken image.
+    const [failedAvatarUrl, setFailedAvatarUrl] = useState<string | null>(null)
 
     if (!authenticated) {
         return (
@@ -66,14 +71,17 @@ export function UserAccountCompact() {
                 title={privyUser?.twitter?.username || 'Profile'}
             >
                 <Avatar className="h-full w-full">
-                    {privyUser?.twitter?.profilePictureUrl ? (
+                    {avatarUrl && avatarUrl !== failedAvatarUrl ? (
                         <Image
-                            src={privyUser.twitter.profilePictureUrl}
+                            src={avatarUrl}
                             alt="Avatar"
                             width={28}
                             height={28}
                             className="object-cover rounded-full"
                             unoptimized
+                            // pbs.twimg.com answers 403 to a request carrying another site's Referer.
+                            referrerPolicy="no-referrer"
+                            onError={() => setFailedAvatarUrl(avatarUrl)}
                         />
                     ) : (
                         <AvatarFallback className="bg-transparent text-brand text-[10px] font-semibold">
