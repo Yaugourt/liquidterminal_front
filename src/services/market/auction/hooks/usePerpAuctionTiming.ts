@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDataFetching } from '@/hooks/useDataFetching';
 import { fetchPerpAuctionTiming } from '../api';
 import { UseAuctionTimingResult, AuctionState, PerpAuctionTiming } from '../types';
@@ -10,34 +10,30 @@ const BASE_PRICE = 500;
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Calcule le prix actuel en temps réel selon la formule Dutch Auction
- * Formule: price(t) = initial_price - ((initial_price - 500) * (t / 31h))
+ * Price of the running Dutch auction at `now`: it falls linearly from startGas
+ * to 500 HYPE over the auction, so it is computed every second instead of
+ * showing the last poll's currentGas, which froze for 30 s and then jumped
+ * (checked on 2026-10-30 against Hyperliquid: 788.9545 predicted, 788.9543
+ * read). Once the auction is settled (endGas set) its reported price is used.
  */
-const calculateCurrentPrice = (timing: PerpAuctionTiming): number => {
+const calculateCurrentPrice = (timing: PerpAuctionTiming, now: number): number => {
   const { currentAuction } = timing;
-  const now = Date.now();
-  
-  // Si pas d'auction active (temps ou currentGas null), retourner le prix de base
-  if (now < currentAuction.startTime || 
-      now > currentAuction.endTime || 
+
+  // No auction running (outside its window, or currentGas null): base price.
+  if (now < currentAuction.startTime ||
+      now > currentAuction.endTime ||
       currentAuction.currentGas === null) {
     return BASE_PRICE;
   }
-  
-  // Si on a currentGas de l'API, l'utiliser directement
-  if (currentAuction.currentGas) {
+
+  const startGas = parseFloat(currentAuction.startGas);
+  const totalDuration = currentAuction.endTime - currentAuction.startTime; // 31 h
+  if (currentAuction.endGas || !Number.isFinite(startGas) || totalDuration <= 0) {
     return parseFloat(currentAuction.currentGas);
   }
-  
-  const startGas = parseFloat(currentAuction.startGas);
-  const totalDuration = currentAuction.endTime - currentAuction.startTime; // 31 heures en ms
-  const elapsed = now - currentAuction.startTime;
-  
-  // Formule Dutch Auction : prix diminue linéairement vers 500 HYPE
-  const progress = Math.min(elapsed / totalDuration, 1);
-  const currentPrice = startGas - ((startGas - BASE_PRICE) * progress);
-  
-  return Math.max(currentPrice, BASE_PRICE);
+
+  const progress = Math.min((now - currentAuction.startTime) / totalDuration, 1);
+  return Math.max(startGas - (startGas - BASE_PRICE) * progress, BASE_PRICE);
 };
 
 /**
@@ -62,9 +58,8 @@ const formatTimeRemaining = (milliseconds: number): string => {
 /**
  * Calcule le pourcentage de progression de l'auction (31 heures)
  */
-const calculateProgress = (timing: PerpAuctionTiming): number => {
+const calculateProgress = (timing: PerpAuctionTiming, now: number): number => {
   const { currentAuction } = timing;
-  const now = Date.now();
   
   if (now < currentAuction.startTime) return 0;
   if (now > currentAuction.endTime || currentAuction.currentGas === null) return 0;
@@ -94,6 +89,13 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
   // Past perp auctions — feeds the "last sold" stat under the live progress bar.
   const { auctions: pastPerpAuctions } = usePastAuctionsPerp();
 
+  // The auction price falls every second and the countdowns tick with it.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1_000);
+    return () => clearInterval(id);
+  }, []);
+
   // Calculer l'état de l'auction en temps réel
   const auctionState = useMemo((): AuctionState => {
     if (!timingData) {
@@ -114,7 +116,6 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
       };
     }
 
-    const now = Date.now();
     const { currentAuction, nextAuction } = timingData;
     
     // Une auction est active seulement si elle est dans la période ET que currentGas n'est pas null
@@ -128,13 +129,13 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
     // Calcul du prix en temps réel
     let currentPrice;
     if (isActive) {
-      currentPrice = calculateCurrentPrice(timingData);
+      currentPrice = calculateCurrentPrice(timingData, now);
     } else {
       // Si inactive, afficher le prix de départ de la prochaine auction
       currentPrice = parseFloat(nextAuction.startGas);
     }
     const currentPriceUSD = currentPrice * (hypePrice || 0);
-    const progressPercentage = calculateProgress(timingData);
+    const progressPercentage = calculateProgress(timingData, now);
     
     // Last sold perp deploy — latest entry from Hypurrscan past auctions.
     const lastPerp = [...pastPerpAuctions].sort(
@@ -201,7 +202,7 @@ export const usePerpAuctionTiming = (): UseAuctionTimingResult => {
       deploys7d,
       etaToLastSold,
     };
-  }, [timingData, hypePrice, pastPerpAuctions]);
+  }, [timingData, hypePrice, pastPerpAuctions, now]);
 
   return {
     auctionState,

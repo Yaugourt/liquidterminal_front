@@ -22,14 +22,14 @@ export function useEvmBridgeEvents(
   const { data, isLoading, error, isStale, refetch } = useDataFetching<EvmBridgeEvent[]>({
     // The window is computed per fetch so polls move it forward (it used to be
     // frozen at mount: a tab left open kept asking for the same minutes).
-    // Floored to the poll period (15s), so visitors in the same 15s share one
+    // Floored to the poll period (5s), so visitors in the same 5s share one
     // backend cache entry while the feed still moves at every poll.
     fetchFn: () => {
-      const end_time = Math.floor(Date.now() / 15_000) * 15_000;
+      const end_time = Math.floor(Date.now() / 5_000) * 5_000;
       return fetchEvmBridgeEvents({ limit, start_time: end_time - hours * 3_600_000, end_time });
     },
     dependencies: [limit, hours],
-    refreshInterval: 15_000,
+    refreshInterval: 5_000,
     maxRetries: 3,
   });
 

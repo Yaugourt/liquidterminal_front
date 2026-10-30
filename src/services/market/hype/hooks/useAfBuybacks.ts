@@ -14,7 +14,9 @@ import type { AfBuybacks, AfBuybacksPayload, UseAfBuybacksResult } from '../type
 export function useAfBuybacks(): UseAfBuybacksResult {
   const { data, isLoading, isRefreshing, error, refetch, dataUpdatedAt } = useDataFetching<AfBuybacksPayload>({
     fetchFn: fetchAfBuybacks,
-    refreshInterval: REFRESH_INTERVALS.DAILY, // 5 min — buyback is a slow aggregate
+    // Today's bar and the recent buys grow with every fill; the backend reads
+    // them at most once a minute for every visitor.
+    refreshInterval: REFRESH_INTERVALS.STATIC,
     dependencies: [],
     maxRetries: 2,
   });

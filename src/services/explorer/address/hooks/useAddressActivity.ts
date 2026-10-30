@@ -7,7 +7,9 @@ export function useAddressActivity(address: string) {
   const { data, isLoading, error, refetch, dataUpdatedAt } = useDataFetching<Activity[]>({
     fetchFn: () => getAddressActivity(address),
     dependencies: [address],
-    refreshInterval: 120_000,
+    // New fills and transactions within 30 s; the heavy ledger is re-read
+    // every 2 minutes (api.ts).
+    refreshInterval: 30_000,
   });
   return { activity: data ?? [], isLoading, error, refetch, dataUpdatedAt };
 }

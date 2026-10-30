@@ -32,7 +32,8 @@ export const fetchDailyVolume = async (): Promise<DailyVolume[]> => {
 export const useDailyVolume = () => {
   const { data, isLoading, error, refetch } = useDataFetching<DailyVolume[]>({
     fetchFn: fetchDailyVolume,
-    refreshInterval: 300000,
+    // The last bar is today's running total: it keeps the backend's 30 s pace.
+    refreshInterval: 30000,
     maxRetries: 1,
   });
   return { days: data ?? [], isLoading, error, refetch };

@@ -21,9 +21,9 @@ import { loadAssetResolver } from './assets';
 
 /** The address page asks for the same raw history from several widgets: share it for 30s. */
 const rawCache = new Map<string, { at: number; value: Promise<unknown> }>();
-function shared<T>(key: string, load: () => Promise<T>): Promise<T> {
+function shared<T>(key: string, load: () => Promise<T>, ttlMs = 30_000): Promise<T> {
     const hit = rawCache.get(key);
-    if (hit && Date.now() - hit.at < 30_000) return hit.value as Promise<T>;
+    if (hit && Date.now() - hit.at < ttlMs) return hit.value as Promise<T>;
     const value = load();
     rawCache.set(key, { at: Date.now(), value });
     value.catch(() => rawCache.delete(key));
@@ -45,6 +45,13 @@ async function getUserTransactionsRawUncached(address: string): Promise<UserTran
 }
 
 /**
+ * The ledger is the heaviest of the address reads (up to ~500 KB for a
+ * vault-sized wallet) and its rows (deposits, withdrawals, transfers) are
+ * rare: it is read again every 2 minutes while the feeds poll every 30 s.
+ */
+const LEDGER_TTL_MS = 120_000;
+
+/**
  * Raw HL non-funding ledger (deposits, withdrawals, transfers, vault moves,
  * liquidations) since 2022 — the capital-flow source for the address digest.
  */
@@ -56,7 +63,7 @@ export async function getUserNonFundingLedgerUpdates(address: string): Promise<N
             user: address,
             startTime: 1640995200000
         });
-    }, 'fetching ledger updates'));
+    }, 'fetching ledger updates'), LEDGER_TTL_MS);
 }
 
 /** HL answers at most this many ledger rows per call, oldest first. */

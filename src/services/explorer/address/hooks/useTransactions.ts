@@ -22,7 +22,8 @@ export const useTransactions = (address: string): UseTransactionsResult => {
   const { data, isLoading, error } = useDataFetching<FormattedUserTransaction[]>({
     fetchFn: () => getUserTransactions(address),
     dependencies: [address],
-    refreshInterval: 120000
+    // Same cadence as the activity feed: the reads are shared for 30 s (api.ts).
+    refreshInterval: 30000
   });
 
   return {
