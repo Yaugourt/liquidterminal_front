@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { usePageTitle } from "@/store/use-page-title";
 import {
   useHip4QuestionsWithOutcomes,
-  useHip4Fills,
+  useHip4CoinFills,
   useHip4LiveMarkets,
   useHip4MarketLookup,
   useHip4ProbabilityHistory,
@@ -110,9 +110,10 @@ export default function Hip4MarketDetailPage() {
   const live = useHip4LiveMarkets();
   // How the markets that no longer trade ended (last trades, winners).
   const resolutions = useHip4Resolutions();
-  // Higher limit so the same feed powers recent fills AND the derived trade-flow
-  // / top-traders aggregates (one fetch, three views — no extra network).
-  const fillsResult = useHip4Fills({ coin: activeCoin, limit: 400 });
+  // The tape: a 400-fill base a minute plus the newest 50 every 5 s, merged
+  // once per fill, so the same feed powers recent fills AND the derived
+  // trade-flow / top-traders aggregates (no extra network).
+  const fillsResult = useHip4CoinFills(activeCoin);
 
   // Live-only coins resolve only from the live hook, so wait for it to *settle*
   // (succeed or fail for good, retries included) before deciding the market is
