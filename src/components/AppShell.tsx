@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { ExplorerSearchBar } from "@/components/explorer/ExplorerSearchBar";
 import { SidebarToggle, DonatePrompt } from "@/components/common";
+import { HlNamesPrompt } from "@/components/names/HlNamesPrompt";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useSidebarUi } from "@/store/use-sidebar-ui";
 // Direct paths (not the barrels): the barrels also re-export the lazy-loaded
@@ -76,6 +77,7 @@ export function AppShell({ children, footer }: { children: React.ReactNode; foot
             <MissionsGate />
             {/* The Cmd+K palette is mounted once in the root layout. */}
             <DonatePrompt />
+            <HlNamesPrompt />
         </div>
     );
 }

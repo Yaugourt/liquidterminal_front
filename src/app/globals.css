@@ -395,6 +395,45 @@ html {
   }
 }
 
+/* ─── One-time prompts (HlNamesPrompt) ───────────────────────────────
+   Eased in, not popped: the backdrop fades over 600ms, the card rises 14px and
+   settles from 97% scale on a long ease-out, then its blocks follow 70ms apart (delay set inline per block).
+   Closing is quicker and does not travel. Radix waits for the closing
+   animation before unmounting. */
+
+@keyframes prompt-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes prompt-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes prompt-rise {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes prompt-sink {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(6px) scale(0.99); }
+}
+@keyframes prompt-item {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.prompt-overlay[data-state="open"] { animation: prompt-fade-in 600ms ease-out both; }
+.prompt-overlay[data-state="closed"] { animation: prompt-fade-out 220ms ease-in both; }
+.prompt-card[data-state="open"] { animation: prompt-rise 650ms cubic-bezier(0.16, 1, 0.3, 1) 80ms both; }
+.prompt-card[data-state="closed"] { animation: prompt-sink 200ms ease-in both; }
+.prompt-card[data-state="open"] .prompt-item { animation: prompt-item 500ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .prompt-overlay[data-state],
+  .prompt-card[data-state],
+  .prompt-card[data-state] .prompt-item {
+    animation: prompt-fade-in 150ms linear both;
+  }
+  .prompt-overlay[data-state="closed"],
+  .prompt-card[data-state="closed"] {
+    animation: prompt-fade-out 150ms linear both;
+  }
+}
+
 /* Forced colors (Windows High Contrast) overrides `stroke` but NOT
    `stroke-opacity`, so the currents survive the override and land in the forced
    text colour: a field tuned to sit at 5-27% of cyan on navy becomes 38 lines
