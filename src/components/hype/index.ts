@@ -9,7 +9,6 @@ export { FlywheelDiagram } from "./FlywheelDiagram";
 export { RevenueFlywheelCard } from "./RevenueFlywheelCard";
 export { BurnCard } from "./BurnCard";
 export { HypeStakingCard } from "./HypeStakingCard";
-export { HypeScopeBar } from "./HypeScopeBar";
 export { IncomeStatementCard } from "./IncomeStatementCard";
 export { FeeRankCard } from "./FeeRankCard";
 export { RevenueSegmentsCard } from "./RevenueSegmentsCard";

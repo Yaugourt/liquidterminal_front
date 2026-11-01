@@ -4,6 +4,7 @@ import { SearchTrigger } from "@/components/search/SearchTrigger"
 import { SettingsSelector } from "@/components/common"
 import { UserAccountCompact, DonateButton } from "@/components/common"
 import { NetworkPill } from "@/components/network/NetworkSwitch"
+import { SectionNav } from "@/components/navigation/SectionNav"
 
 interface HeaderProps {
     searchWidth?: string;
@@ -27,6 +28,8 @@ export function Header({
                     <SettingsSelector />
                 </div>
             </div>
+            {/* Section tabs ride in the sticky header, so they stay in reach on long pages. */}
+            <SectionNav />
         </header>
     )
 }

@@ -20,6 +20,7 @@ import {
     applyPreferencesToNavigation,
     getGroupId,
     toolsFor,
+    sectionForPath,
     TOOLS,
     PINNED_TOOLS,
     type NavigationGroup,
@@ -178,8 +179,15 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         // Tools compete too, so /elysium/simulate lights Simulator, not Overview.
         toolItems.forEach(visit);
         visit(allToolsItem);
+        // Hyperliquid rows are sections: any page of a section (by its tabs,
+        // not its URL prefix) lights the section's row. Tool pages keep theirs.
+        const onTool = best === allToolsItem.href || toolItems.some((t) => t.href === best);
+        if (network === "hyperliquid" && !onTool) {
+            const hit = sectionForPath(pathname);
+            if (hit) return hit.section.href;
+        }
         return best;
-    }, [pathname, railGroups, toolItems, allToolsItem]);
+    }, [pathname, railGroups, toolItems, allToolsItem, network]);
 
     /** A tool page that has no tile of its own lights "All tools" instead. */
     const pinnedHrefs = pinnedTools.map((tool) => tool.href);
@@ -236,7 +244,16 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         <span className="w-4 h-4 shrink-0 grid place-items-center">
                             {renderIcon(item, isActive)}
                         </span>
-                        <span className={labelClass}>{item.name}</span>
+                        {item.hint ? (
+                            <span className="flex min-w-0 flex-col">
+                                <span className={labelClass}>{item.name}</span>
+                                <span className={cn(labelClass, "text-[10.5px] font-normal leading-tight text-text-tertiary")}>
+                                    {item.hint}
+                                </span>
+                            </span>
+                        ) : (
+                            <span className={labelClass}>{item.name}</span>
+                        )}
                         {/* End-of-row marker: colored pill (Core/new) > static tag
                             (HIP-3/HIP-4) > live count/price move. */}
                         {item.badge ? (

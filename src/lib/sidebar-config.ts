@@ -1,31 +1,19 @@
 import { ComponentType } from "react";
-import { HlNamesLogo } from "@/components/names/HlNamesLogo";
 import {
-  Gift,
-  Heart,
   Network,
-  Vault,
   Wallet,
   Globe,
-  BookOpen,
   Home,
-  CandlestickChart,
-  Zap,
   Sparkles,
   Blocks,
   Fuel,
-  Layers,
-  Hammer,
-  Scale,
   Boxes,
-  Library,
   BarChart3,
   Landmark,
   GraduationCap,
   Cpu,
   Download,
   Share2,
-  Percent,
   BellRing,
   Receipt,
   ArrowLeftRight,
@@ -65,6 +53,8 @@ export interface NavigationItem {
   badge?: NavigationBadge;
   /** Static muted marker at row end (e.g. "HIP-3"), when there is no live count. */
   tag?: string;
+  /** Second line under the name (what a section holds). */
+  hint?: string;
   children?: NavigationItem[];
 }
 
@@ -102,77 +92,139 @@ export const getItemId = (name: string, href: string): string => {
 /**
  * Default navigation configuration
  */
-export const defaultNavigationGroups: NavigationGroup[] = [
+/**
+ * Hyperliquid sections. Each one is a single row in the sidebar and owns the
+ * in-page section bar (SectionNav) shown on every one of its pages. Tabs say
+ * which pages belong to a section, not URL prefixes: Vaults (/explorer/vaults)
+ * and Yields (/market/yields) both sit in Capital. One list feeds the sidebar
+ * and every section bar, so the two can never disagree.
+ */
+export interface SectionTab {
+  label: string;
+  href: string;
+  /** Static muted marker after the label (e.g. "HIP-3"). */
+  tag?: string;
+}
+
+export interface NavSection {
+  id: string;
+  name: string;
+  /** What the section holds, shown under its name in the sidebar. */
+  hint?: string;
+  /** Where the sidebar row lands. */
+  href: string;
+  IconComponent?: ComponentType<{ className?: string }>;
+  /** HL CDN token logo instead of a lucide icon. */
+  tokenIcon?: string;
+  tabs: SectionTab[];
+}
+
+export const HL_SECTIONS: NavSection[] = [
   {
-    // Header-less block: the two places everyone starts from.
-    groupName: null,
-    items: [
-      { name: 'Home', href: '/dashboard', icon: null, IconComponent: Home },
-      { name: 'HYPE', href: '/hype', icon: null, tokenIcon: 'HYPE' },
+    id: 'home', name: 'Home', href: '/dashboard', IconComponent: Home,
+    tabs: [
+      { label: 'Overview', href: '/dashboard' },
+      { label: 'Market', href: '/dashboard/market' },
+      { label: 'Capital', href: '/dashboard/capital' },
+      { label: 'Ecosystem', href: '/dashboard/ecosystem' },
+    ],
+  },
+  {
+    id: 'hype', name: 'HYPE', href: '/hype', tokenIcon: 'HYPE',
+    tabs: [
+      { label: 'Overview', href: '/hype' },
+      { label: 'Financials', href: '/hype/financials' },
+      { label: 'Valuation', href: '/hype/valuation' },
+      { label: 'Capital', href: '/hype/capital' },
+      { label: 'Reserve Yield', href: '/hype/reserve-yield' },
+      { label: 'Operations', href: '/hype/operations' },
     ],
   },
   {
     // Everything that quotes on HyperCore, plus what gets forced out of it.
-    // Same entries, same order as the MarketScopeBar on /market/*, so the rail
-    // and the in-page tabs never disagree.
-    groupName: 'Markets',
-    IconComponent: BarChart3,
-    accent: 'brand',
-    items: [
-      { name: 'Overview', href: '/market', icon: null, IconComponent: CandlestickChart },
-      { name: 'Spot', href: '/market/spot', icon: null, IconComponent: Coins },
-      { name: 'Perps', href: '/market/perp', icon: null, IconComponent: BarChart3 },
-      { name: 'Perp DEXs', href: '/market/perpdex', icon: null, IconComponent: Layers, tag: 'HIP-3' },
-      { name: 'Outcomes', href: '/market/hip4', icon: null, IconComponent: Sparkles, tag: 'HIP-4' },
-      { name: 'Trades', href: '/market/trades', icon: null, IconComponent: ArrowLeftRight },
-      { name: 'Liquidations', href: '/explorer/liquidations', icon: null, IconComponent: Zap },
+    id: 'markets', name: 'Markets', hint: 'Spot, perps, HIP-3, HIP-4', href: '/market', IconComponent: BarChart3,
+    tabs: [
+      { label: 'Overview', href: '/market' },
+      { label: 'Spot', href: '/market/spot' },
+      { label: 'Perps', href: '/market/perp' },
+      { label: 'Perp DEXs', href: '/market/perpdex', tag: 'HIP-3' },
+      { label: 'Outcomes', href: '/market/hip4', tag: 'HIP-4' },
+      { label: 'Trades', href: '/market/trades' },
+      { label: 'Liquidations', href: '/explorer/liquidations' },
     ],
   },
   {
     // Where value sits and what it earns: pooled (vaults), staked (validators),
     // and the two revenue rails, builder codes and the priority-fee auction.
-    groupName: 'Capital',
-    IconComponent: Landmark,
-    accent: 'gold',
-    items: [
-      { name: 'Vaults', href: '/explorer/vaults', icon: null, IconComponent: Vault },
-      { name: 'Yields', href: '/market/yields', icon: null, IconComponent: Percent },
-      { name: 'Staking', href: '/explorer/validator', icon: null, IconComponent: Network },
-      { name: 'Builders', href: '/market/builders', icon: null, IconComponent: Hammer },
-      { name: 'Portfolio Margin', href: '/market/portfolio-margin', icon: null, IconComponent: Scale, badge: { label: 'New', tone: 'new' } },
-      { name: 'Priority Fees', href: '/explorer/priority-fees', icon: null, IconComponent: Fuel },
+    id: 'capital', name: 'Capital', hint: 'Vaults, staking, yields, builders', href: '/explorer/vaults', IconComponent: Landmark,
+    tabs: [
+      { label: 'Vaults', href: '/explorer/vaults' },
+      { label: 'Yields', href: '/market/yields' },
+      { label: 'Staking', href: '/explorer/validator' },
+      { label: 'Builders', href: '/market/builders' },
+      { label: 'Portfolio margin', href: '/market/portfolio-margin' },
+      { label: 'Priority fees', href: '/explorer/priority-fees' },
     ],
   },
   {
     // How the machine runs: the HyperCore L1 (Explorer) and the HyperEVM.
-    groupName: 'Chain',
-    IconComponent: Boxes,
-    accent: 'neutral',
-    items: [
-      { name: 'Explorer', href: '/explorer', icon: null, IconComponent: Blocks, badge: { label: 'Core', tone: 'core' } },
-      { name: 'HyperEVM', href: '/evm', icon: null, IconComponent: Cpu },
+    id: 'chain', name: 'Chain', hint: 'Explorer, HyperEVM', href: '/explorer', IconComponent: Boxes,
+    tabs: [
+      { label: 'Explorer', href: '/explorer' },
+      { label: 'HyperEVM', href: '/evm' },
     ],
   },
   {
-    groupName: 'Ecosystem',
-    IconComponent: Globe,
-    accent: 'neutral',
-    items: [
-      { name: 'Projects', href: '/ecosystem/project', icon: null, IconComponent: Boxes },
-      { name: 'Public Goods', href: '/ecosystem/publicgoods', icon: null, IconComponent: Heart },
-      { name: '.hl Names', href: '/names', icon: null, IconComponent: HlNamesLogo },
-      { name: 'Perks', href: '/perks', icon: null, IconComponent: Gift },
+    id: 'ecosystem', name: 'Ecosystem', hint: 'Projects, public goods, names', href: '/ecosystem/project', IconComponent: Globe,
+    tabs: [
+      { label: 'Projects', href: '/ecosystem/project' },
+      { label: 'Public goods', href: '/ecosystem/publicgoods' },
+      { label: '.hl Names', href: '/names' },
+      { label: 'Perks', href: '/perks' },
     ],
   },
   {
-    groupName: 'Learn',
-    IconComponent: GraduationCap,
-    accent: 'neutral',
-    items: [
-      { name: 'Wiki', href: '/wiki', icon: null, IconComponent: Library },
-      { name: 'Read Lists', href: '/wiki/readlist', icon: null, IconComponent: BookOpen },
-      { name: 'HIP-4 docs', href: '/hip4', icon: null, IconComponent: FileSearch },
+    id: 'learn', name: 'Learn', hint: 'Wiki, read lists, HIP-4 docs', href: '/wiki', IconComponent: GraduationCap,
+    tabs: [
+      { label: 'Wiki', href: '/wiki' },
+      { label: 'Topics', href: '/wiki/topics' },
+      { label: 'Read lists', href: '/wiki/readlist' },
+      { label: 'HIP-4 docs', href: '/hip4' },
     ],
+  },
+];
+
+const pathIn = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`);
+
+/**
+ * The section and tab a path belongs to: the tab with the longest matching
+ * href across every section, so /explorer/vaults lands in Capital, not in
+ * Chain's /explorer. Tool pages belong to no section (they carry their own
+ * title), and neither do pages outside every tab (profile, funding, Elysium).
+ */
+export function sectionForPath(pathname: string | null | undefined): { section: NavSection; tab: SectionTab } | undefined {
+  if (!pathname || toolForPath(pathname)) return undefined;
+  let hit: { section: NavSection; tab: SectionTab } | undefined;
+  for (const section of HL_SECTIONS) {
+    for (const tab of section.tabs) {
+      if (pathIn(pathname, tab.href) && (!hit || tab.href.length > hit.tab.href.length)) hit = { section, tab };
+    }
+  }
+  return hit;
+}
+
+/** The Hyperliquid rail: one header-less block, one row per section. */
+export const defaultNavigationGroups: NavigationGroup[] = [
+  {
+    groupName: null,
+    items: HL_SECTIONS.map((section) => ({
+      name: section.name,
+      href: section.href,
+      icon: null,
+      IconComponent: section.IconComponent,
+      tokenIcon: section.tokenIcon,
+      hint: section.hint,
+    })),
   },
 ];
 
@@ -198,11 +250,13 @@ const navigationGroupsToPreferences = (groups: NavigationGroup[]): SidebarPrefer
   });
 
   return {
+    // v4: the rail is one row per section; pages moved to the section bar.
+    // Old prefs name families that no longer exist and would hide the rows.
     // v3: Tools family added, Spot/Perps/Trades back in the rail, tools moved
     // out of the home block. Older prefs key off the old layout, so they must be
     // discarded rather than merged, else the new group has no pref and hides.
     // v2: the families were renamed (Markets/Capital/Chain/Ecosystem/Learn).
-    version: 3,
+    version: 4,
     groups: groupPreferences
   };
 };
