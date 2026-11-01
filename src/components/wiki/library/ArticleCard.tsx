@@ -14,6 +14,7 @@ import { safeHref } from "@/lib/safeUrl";
 import type { EducationalResource } from "@/services/wiki/types";
 import { ReportResourceModal } from "../ReportResourceModal";
 import { AddToReadListModal } from "../AddToReadListModal";
+import { TypeBadge } from "../primitives/TypeBadge";
 
 interface ArticleCardProps {
   resource: EducationalResource;
@@ -23,8 +24,9 @@ interface ArticleCardProps {
    * "grid": vertical card with a 16/9 hero (read list pages).
    * "compact": horizontal row with a 64px thumb (library Cards view).
    * "tweet": X/Twitter posts rendered author-avatar + text (no hero image).
+   * "row": one uniform row for any source (wiki feeds).
    */
-  variant?: "grid" | "compact" | "tweet";
+  variant?: "grid" | "compact" | "tweet" | "row";
 }
 
 /** Readable hostname for fallbacks: strips protocol and www. */
@@ -53,6 +55,28 @@ export function xHandleOf(url: string): string | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Author and text of an X card. Previews are stored as title = the post's
+ * headline and description = "Name (@handle) on X". Older rows used
+ * title = "Name: text…" with description = "@handle": that shape is still read,
+ * but only when the description says so, never by splitting any title on its
+ * first colon (a headline like "HyperEVM farming: Part 6" is not an author).
+ */
+export function xCardText(
+  title: string | null | undefined,
+  description: string | null | undefined,
+  xHandle: string | null,
+  fallback: string,
+): { authorName: string; tweetText: string } {
+  const byline = description?.trim().match(/^(.+) \(@[A-Za-z0-9_]{1,15}\) on (X|Twitter)$/);
+  if (byline) return { authorName: byline[1].slice(0, 48), tweetText: title ?? "" };
+  const legacy = /^@[A-Za-z0-9_]{1,15}$/.test(description?.trim() ?? "") ? title?.indexOf(": ") ?? -1 : -1;
+  if (title && legacy > 0) {
+    return { authorName: title.slice(0, legacy).slice(0, 48), tweetText: title.slice(legacy + 2) };
+  }
+  return { authorName: xHandle ? `@${xHandle}` : fallback, tweetText: title ?? description ?? "" };
 }
 
 /**
@@ -87,13 +111,7 @@ export const ArticleCard = memo(function ArticleCard({
   // Tweet-style card: X/Twitter posts show the author avatar + text (no hero).
   const xHandle = xHandleOf(resource.url);
   const avatarSrc = xHandle ? `https://unavatar.io/twitter/${xHandle}` : null;
-  // X link previews store "Author: tweet text" in the title and "@handle" in
-  // the description — so the tweet body comes from the title, not the
-  // description (which would render as a bare "@handle").
-  const colonAt = preview?.title ? preview.title.indexOf(": ") : -1;
-  const authorName =
-    colonAt > 0 ? preview!.title!.slice(0, colonAt).slice(0, 48) : xHandle ? `@${xHandle}` : title;
-  const tweetText = colonAt > 0 ? preview!.title!.slice(colonAt + 2) : preview?.description || "";
+  const { authorName, tweetText } = xCardText(preview?.title, preview?.description, xHandle, title);
 
   const handleAddToReadList = useCallback(async (readListId: number) => {
     try {
@@ -240,6 +258,90 @@ export const ArticleCard = memo(function ArticleCard({
 
         {modals}
       </Card>
+    );
+  }
+
+  if (variant === "row") {
+    // One shape for every source: a 16/9 thumb (preview image, X avatar or the
+    // site's favicon), the headline, then who/where/when on one line. Rows keep
+    // the feed's reading order and the same height, whatever the source.
+    const headline = xHandle ? tweetText || title : title;
+    // Short descriptions are bylines ("by four-pillars", a Space host's handle):
+    // shown next to the site rather than dropped.
+    const shortDesc = preview?.description?.trim();
+    const author = shortDesc && shortDesc.length <= 40 && !shortDesc.includes("\n") ? shortDesc.replace(/^by\s+/i, "") : null;
+    const site = preview?.siteName || hostname;
+    const byline = xHandle ? authorName : author ? `${site} · ${author}` : site;
+    // An X Space has no author in its URL: its host handle is the description.
+    const hostHandle = !xHandle && /(^|\.)x\.com$/.test(hostname) && author && /^@?[A-Za-z0-9_]{1,15}$/.test(author) ? author.replace(/^@/, "") : null;
+    const avatar = avatarSrc ?? (hostHandle ? `https://unavatar.io/twitter/${hostHandle}` : null);
+    const thumbSrc = showHeroImage ? preview!.image! : avatar && !avatarError ? avatar : null;
+    return (
+      <div className="group relative h-full">
+        <a
+          href={safeHref(resource.url)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="focus-ring flex h-full gap-3 rounded-lg border border-border-subtle bg-surface p-2.5 transition-colors hover:border-border-default hover:bg-surface-2/60"
+        >
+          <div className="relative aspect-video w-20 shrink-0 self-start overflow-hidden rounded-md border border-border-subtle bg-surface-2 sm:w-32">
+            {thumbSrc ? (
+              <Image
+                src={thumbSrc}
+                alt=""
+                fill
+                className={!showHeroImage ? "object-contain p-3" : "object-cover"}
+                onError={() => (showHeroImage ? setImageError(true) : setAvatarError(true))}
+                unoptimized
+              />
+            ) : preview?.favicon && !faviconError ? (
+              <span className="flex h-full w-full items-center justify-center">
+                <Image
+                  src={preview.favicon}
+                  alt=""
+                  width={22}
+                  height={22}
+                  className="rounded opacity-80"
+                  onError={() => setFaviconError(true)}
+                  unoptimized
+                />
+              </span>
+            ) : (
+              <span className="flex h-full w-full items-center justify-center text-lg font-semibold uppercase text-brand/40">
+                {hostname.charAt(0)}
+              </span>
+            )}
+          </div>
+
+          <div className="flex min-w-0 flex-1 flex-col gap-1.5 py-0.5">
+            <h3 className="line-clamp-2 text-[13.5px] font-semibold leading-snug text-text-primary transition-colors group-hover:text-brand">
+              {headline}
+            </h3>
+            <div className="mt-auto flex min-w-0 items-center gap-1.5 text-[11px] text-text-tertiary">
+              <TypeBadge url={resource.url} variant="icon" />
+              <span className="truncate text-text-secondary">{byline}</span>
+              {resource.createdAt && (
+                <>
+                  <span aria-hidden>·</span>
+                  <span className="mono shrink-0">{timeAgo(resource.createdAt)}</span>
+                </>
+              )}
+              {typeof resource.savesCount === "number" && resource.savesCount > 0 && (
+                <>
+                  <span aria-hidden>·</span>
+                  <span className="mono shrink-0 text-gold">{resource.savesCount} saved</span>
+                </>
+              )}
+            </div>
+          </div>
+        </a>
+
+        <div className="absolute right-2 top-2 z-10 flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          {hoverActions}
+        </div>
+
+        {modals}
+      </div>
     );
   }
 

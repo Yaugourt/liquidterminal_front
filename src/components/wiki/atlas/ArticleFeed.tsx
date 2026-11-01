@@ -8,7 +8,7 @@ import { PillTabs } from "@/components/ui/pill-tabs";
 import { useWikiLibrary } from "@/services/wiki";
 import type { EducationalResource } from "@/services/wiki/types";
 import { CONTENT_TYPE_META, CONTENT_TYPE_ORDER, detectContentType, type ContentType } from "../primitives";
-import { ArticleCard, xHandleOf } from "../library/ArticleCard";
+import { ArticleCard } from "../library/ArticleCard";
 import { AtlasArticleTable } from "./AtlasArticleTable";
 
 const PAGE_SIZE = 24;
@@ -184,18 +184,12 @@ export function ArticleFeed({
           </p>
         </div>
       ) : (
-        // Masonry columns: cards keep their own height. In a grid, a text card
-        // next to one with a 16/9 preview stretched over ~200px of blank.
-        <div className="columns-1 gap-3 p-3.5 sm:columns-2 2xl:columns-3">
+        // Uniform rows in reading order, two per line on wide screens. The old
+        // masonry columns filled top to bottom, so every image card piled up in
+        // one column and the newest items no longer read left to right.
+        <div className="grid grid-cols-1 gap-2 p-3 xl:grid-cols-2">
           {shown.map((r) => (
-            <div key={r.id} className="mb-3 break-inside-avoid">
-              <ArticleCard
-                resource={r}
-                // Only real tweets (author handle in the URL) get the tweet card:
-                // x.com/i/spaces/… are recorded episodes, not posts.
-                variant={xHandleOf(r.url) ? "tweet" : "grid"}
-              />
-            </div>
+            <ArticleCard key={r.id} resource={r} variant="row" />
           ))}
         </div>
       )}
