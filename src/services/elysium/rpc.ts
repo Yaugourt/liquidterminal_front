@@ -1,8 +1,9 @@
-import { createPublicClient, defineChain, fallback, http, parseAbi, type Address } from "viem";
+import { createPublicClient, defineChain, parseAbi, type Address } from "viem";
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { ELYSIUM_RPC_URL } from "./api";
 import { ELYSIUM_ALT_RPC_URL } from "@/lib/elysium-chain";
 import { simulateCall, simulateDeploy, type DeployCall, type SimCall } from "@/lib/elysium/simulate";
+import { freshElysiumTransport } from "@/lib/elysium/fresh-transport";
 
 /** Elysium testnet as a viem chain (chain id and currency read from the RPC). */
 export const elysiumTestnet = defineChain({
@@ -17,11 +18,16 @@ export const elysiumTestnet = defineChain({
 
 export { ELYSIUM_ALT_RPC_URL } from "@/lib/elysium-chain";
 
-// Contract reads are folded into one Multicall3 eth_call; either RPC can serve.
+const rpc = freshElysiumTransport(ELYSIUM_RPC_URL, ELYSIUM_ALT_RPC_URL);
+
+/** Which RPC reads go to first, and both heads at the last check. */
+export const elysiumRpcFreshness = rpc.freshness;
+
+// Contract reads are folded into one Multicall3 eth_call; reads go to the RPC whose head is current.
 export const elysiumClient = createPublicClient({
   chain: elysiumTestnet,
   batch: { multicall: true },
-  transport: fallback([http(ELYSIUM_ALT_RPC_URL, { retryCount: 1 }), http(ELYSIUM_RPC_URL, { retryCount: 2, retryDelay: 800 })]),
+  transport: rpc.transport,
 });
 
 /** Arbitrum precompiles, identical on every Nitro chain. */

@@ -1,5 +1,9 @@
-import { createPublicClient, encodeFunctionData, fallback, formatUnits, http, maxUint256, parseAbi } from "viem";
+import { createPublicClient, encodeFunctionData, formatUnits, http, maxUint256, parseAbi } from "viem";
 import { ELYSIUM_ALT_RPC_URL, ELYSIUM_CHAIN } from "@/lib/elysium-chain";
+import { freshElysiumTransport } from "@/lib/elysium/fresh-transport";
+
+/** Both RPCs, read from the one whose head is current (the alternate one has lagged by days). */
+const fresh = freshElysiumTransport(ELYSIUM_CHAIN.rpc, ELYSIUM_ALT_RPC_URL);
 
 /**
  * Server-side Elysium chain reads for share tiles. The client-side reader
@@ -27,12 +31,12 @@ export const elysiumTxClient = createPublicClient({
     rpcUrls: { default: { http: [ELYSIUM_ALT_RPC_URL] } },
     contracts: { multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" } },
   },
-  transport: fallback([http(ELYSIUM_ALT_RPC_URL, { retryCount: 1 }), http(ELYSIUM_CHAIN.rpc, { retryCount: 2, retryDelay: 800 })]),
+  transport: fresh.transport,
 });
 
-/** Simulations go to the RPC without a rate limit first (eth_simulateV1 is heavier than a read). */
+/** Simulations prefer the RPC without a rate limit, but only while its state is current. */
 export const elysiumSimClient = createPublicClient({
-  transport: fallback([http(ELYSIUM_ALT_RPC_URL, { retryCount: 1 }), http(ELYSIUM_CHAIN.rpc, { retryCount: 2, retryDelay: 800 })]),
+  transport: fresh.transport,
 });
 
 const SYS = parseAbi(["function arbOSVersion() view returns (uint256)"]);

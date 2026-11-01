@@ -95,7 +95,7 @@ export function ElysiumNetwork() {
             <div className="px-3.5 py-1.5 text-[12px] overflow-x-auto">
               <dl className="text-[12px]">
                   <Row k="RPC" v={ELYSIUM_CHAIN.rpc} copy={ELYSIUM_CHAIN.rpc} hint="Public, CORS open, rate limited. debug_* methods need an API key." />
-                  <Row k="Alternate RPC" v={ELYSIUM_ALT_RPC_URL} copy={ELYSIUM_ALT_RPC_URL} hint="Public, CORS open. This page reads through it first." />
+                  <Row k="Alternate RPC" v={ELYSIUM_ALT_RPC_URL} copy={ELYSIUM_ALT_RPC_URL} hint="Public, CORS open. Read first while its head keeps up with the chain." />
                   <Row k="Chain ID" v={`${ELYSIUM_CHAIN.chainId} (0x${ELYSIUM_CHAIN.chainId.toString(16)})`} copy={String(ELYSIUM_CHAIN.chainId)} />
                   <Row k="Currency" v="HYPE, 18 decimals" />
                   <Row k="Explorer" v={<ExtLink href={ELYSIUM_CHAIN.explorer}>{ELYSIUM_CHAIN.explorer}</ExtLink>} />
