@@ -36,6 +36,17 @@ export interface ContractContext {
     lastCall: string | null;
     topMethods: { methodId: string; signature: string | null; name: string | null; txs: number }[];
   };
+  /** Tokens born on a launchpad we decode; absent on backends older than 2026-11-01. */
+  launch?: {
+    launchpad: string;
+    kind: string;
+    creator: string | null;
+    at: string | null;
+    graduated: boolean;
+    holders: number | null;
+    top10Pct: number | null;
+    devPct: number | null;
+  } | null;
   dex: {
     pool: { factory: string; version: string; token0: string; token1: string; fee: number | null } | null;
     factory: { pools: number; version: string | null } | null;

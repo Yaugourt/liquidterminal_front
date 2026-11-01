@@ -434,6 +434,12 @@ export const seoConfig = {
     keywords: ["Elysium contract decoder", "decode bytecode", "proxy implementation", "contract admin", "Elysium contracts"],
     path: "/elysium/decode",
   },
+  elysiumCheck: {
+    title: "Elysium Token Checker - Owner Powers, Transfer Tax & Holders",
+    description: "Check any Elysium token before you buy: what its owner can still do (mint, pause, blacklist, fees), a simulated transfer test that catches taxes and blocked sells, and how concentrated its holders are.",
+    keywords: ["Elysium token checker", "honeypot check", "token tax checker", "Elysium token scanner", "rug check"],
+    path: "/elysium/check",
+  },
   elysiumFees: {
     title: "Elysium Fees by App - Who Pays for the Blockspace",
     description: "Gas fees paid on Elysium testnet, ranked by contract and by deployer over 24h, 7d and 30d: share of all fees, change, callers, average fee and an estimate of the 25% app share of sequencer revenue.",

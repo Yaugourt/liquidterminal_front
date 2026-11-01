@@ -87,11 +87,27 @@ export function decodeLog(log: SimLog, extraAbi?: Abi): DecodedLog {
 }
 
 /** Revert reason: a decoded custom error, `Error(string)`, or the node message. */
+/** Uniswap's two-to-three letter revert strings, spelled out (TransferHelper, routers, pools). */
+const SHORT_REASONS: Record<string, string> = {
+  STF: "safeTransferFrom failed: the sender lacks the tokens or the allowance",
+  TF: "safeTransfer failed",
+  SA: "safeApprove failed",
+  STE: "native transfer failed",
+  "Too little received": "the output would be under the minimum set (slippage)",
+  "Too much requested": "the input would be over the maximum set (slippage)",
+  "Transaction too old": "the deadline has passed",
+  SPL: "the price limit is out of range",
+  LOK: "the pool is locked (reentrancy)",
+  AS: "the swap amount is zero",
+};
+
 export function revertText(revertData: Hex | null, revertMessage: string | null, abi?: Abi): string | null {
   if (!revertData || revertData === "0x") return revertMessage;
   try {
     const d = decodeErrorResult({ abi, data: revertData });
-    return `${d.errorName}(${(d.args ?? []).map(fmtArg).join(", ")})`;
+    const text = `${d.errorName}(${(d.args ?? []).map(fmtArg).join(", ")})`;
+    const reason = d.errorName === "Error" && typeof d.args?.[0] === "string" ? SHORT_REASONS[d.args[0]] : undefined;
+    return reason ? `${text}: ${reason}` : text;
   } catch {
     return revertMessage ?? `custom error ${revertData.slice(0, 10)}`;
   }

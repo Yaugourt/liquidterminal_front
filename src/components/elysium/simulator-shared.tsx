@@ -6,7 +6,8 @@ import { Card } from "@/components/ui/card";
 import { CardHead, ModuleTable, ModuleTableRow } from "@/components/common";
 import { NATIVE_TRANSFER_ADDRESS } from "@/services/elysium/rpc";
 import { fmtArg, type DecodedLog } from "@/lib/elysium/sim-abi";
-import { AddrLink } from "./shared";
+import type { AddressChanges, AssetChange } from "@/lib/elysium/balance-changes";
+import { AddrLink, short } from "./shared";
 
 export { decodeLog, fmtArg, parseArg, parseSig, revertText, toBigInt, type DecodedLog } from "@/lib/elysium/sim-abi";
 
@@ -91,6 +92,66 @@ export function EventsCard({ logs, meta, labels }: { logs: DecodedLog[]; meta: T
             })}
           </ModuleTable>
         </div>
+      )}
+    </Card>
+  );
+}
+
+const ROLE_LABEL: Record<string, string> = { sender: "Sender", target: "Called contract" };
+
+/**
+ * Net balance changes of a simulation, per address: what the sender gives and
+ * gets, then the contract and everyone else the call touched.
+ */
+export function BalanceChangesCard({
+  rows,
+  meta,
+  sender,
+  target,
+}: {
+  rows: AddressChanges[];
+  meta: TokenMeta;
+  sender: string;
+  target?: string;
+}) {
+  const fmt = (c: AssetChange) => {
+    if (c.kind === "nft") {
+      const sym = meta[c.asset]?.symbol ?? short(c.asset);
+      return `${c.delta > 0n ? "+" : ""}${c.delta.toString()} ${sym} NFT${c.nftIds?.length ? ` (#${c.nftIds.map((i) => i.slice(1)).join(", #")})` : ""}`;
+    }
+    const m = c.kind === "native" ? { symbol: "HYPE", decimals: 18 } : meta[c.asset];
+    const sign = c.delta > 0n ? "+" : "−";
+    const abs = c.delta < 0n ? -c.delta : c.delta;
+    if (!m) return `${sign}${abs.toString()} (raw) ${short(c.asset)}`;
+    return `${sign}${Number(formatUnits(abs, m.decimals)).toLocaleString("en-US", { maximumFractionDigits: 6 })} ${m.symbol}`;
+  };
+  const role = (a: string) => (a === sender.toLowerCase() ? "sender" : target && a === target.toLowerCase() ? "target" : null);
+  return (
+    <Card className="overflow-hidden flex flex-col">
+      <CardHead title="Balance changes" tag={rows.length ? `${rows.length} address${rows.length > 1 ? "es" : ""}` : undefined} />
+      {rows.length === 0 ? (
+        <p className="px-3.5 py-4 text-[12px] text-text-tertiary">No token or HYPE changes hands in this call.</p>
+      ) : (
+        <ul className="divide-y divide-border-subtle text-[12px]">
+          {rows.map((r) => {
+            const who = role(r.address);
+            return (
+              <li key={r.address} className="flex flex-col gap-1 px-3.5 py-2.5 sm:flex-row sm:items-baseline sm:gap-4">
+                <span className="flex min-w-0 items-baseline gap-2 sm:w-[220px] sm:shrink-0">
+                  <AddrLink address={r.address} className="mono text-text-secondary" />
+                  {who ? <span className={who === "sender" ? "text-brand" : "text-text-tertiary"}>{ROLE_LABEL[who]}</span> : null}
+                </span>
+                <span className="flex min-w-0 flex-wrap gap-x-4 gap-y-0.5">
+                  {r.changes.map((c) => (
+                    <span key={c.asset} className={`mono break-all ${c.delta > 0n ? "text-success" : c.delta < 0n ? "text-danger" : "text-text-secondary"}`}>
+                      {fmt(c)}
+                    </span>
+                  ))}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </Card>
   );

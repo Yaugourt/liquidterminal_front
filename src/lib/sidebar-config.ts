@@ -24,6 +24,7 @@ import {
   FileSearch,
   HandCoins,
   ShieldCheck,
+  ScanSearch,
   LayoutGrid,
 } from "lucide-react";
 import type { NetworkId } from "@/lib/networks";
@@ -371,7 +372,8 @@ export interface ToolItem {
  * behind "All tools", so the block never grows with the list.
  */
 export const TOOLS: ToolItem[] = [
-  { name: 'Simulator', href: '/elysium/simulate', IconComponent: FlaskConical, network: 'elysium', description: 'Dry-run a call or a contract deployment on the latest Elysium block. Nothing is signed.' },
+  { name: 'Simulator', href: '/elysium/simulate', IconComponent: FlaskConical, network: 'elysium', description: 'Dry-run a call or a deployment on the latest Elysium block, see every balance change, or replay a sent tx. Nothing is signed.' },
+  { name: 'Token checker', shortName: 'Checker', href: '/elysium/check', IconComponent: ScanSearch, network: 'elysium', description: 'Before you buy: owner powers, a simulated transfer test for taxes and blocked sells, and holder spread.' },
   { name: 'Decoder', href: '/elysium/decode', IconComponent: FileSearch, network: 'elysium', description: 'Turn calldata, a selector or a contract into readable functions.' },
   { name: 'Tx inspector', shortName: 'Inspector', href: '/elysium/tx', IconComponent: Receipt, network: 'elysium', description: 'Paste a transaction hash: decoded call, fee split, token movements and events.' },
   { name: 'Share studio', shortName: 'Share', href: '/elysium/share', IconComponent: Share2, network: 'elysium', description: 'Turn an Elysium metric into a post-ready image.' },

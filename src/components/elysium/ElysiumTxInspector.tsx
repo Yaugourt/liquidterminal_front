@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { formatEther, formatGwei } from "viem";
+import { formatGwei } from "viem";
 import { ArrowRight, FileSearch, FlaskConical, Info, Search } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -135,8 +135,8 @@ function Inspection({ tx, now }: { tx: TxInspection; now: number }) {
   }, [tx.tokenMoves]);
   const replay = useMemo(() => {
     if (!tx.to || tx.system) return null;
-    const sp = new URLSearchParams({ from: tx.from, to: tx.to, value: formatEther(tx.value), data: tx.input });
-    return `/elysium/simulate?${sp.toString()}`;
+    // The simulator loads the tx itself and compares its real outcome with today's run.
+    return `/elysium/simulate?tx=${tx.hash}`;
   }, [tx]);
 
   const cells: KpiCell[] = [

@@ -61,7 +61,8 @@ These pages are client-rendered dashboards; the numbers below them come from pub
 - [Overview](${base}/elysium): blocks, transactions, active addresses, bridge and batches
 - [Trust](${base}/elysium/trust): validators, challenge period, force inclusion, upgrade keys, bridge beacons and chain parameter changes, read live from the rollup contracts
 - [Network](${base}/elysium/network): chain ID, RPC endpoints, gas, ArbOS and rollup contracts, read live
-- [Simulator](${base}/elysium/simulate): dry-run a call or a contract deployment on live state; /elysium/simulate?kind=deploy for deployments
+- [Simulator](${base}/elysium/simulate): dry-run a call or a contract deployment on live state, with net balance changes; /elysium/simulate?kind=deploy for deployments, /elysium/simulate?tx={hash} to replay a sent transaction
+- [Token checker](${base}/elysium/check?address={token}): owner powers, a simulated transfer test (taxes, blocked sells) and holder spread for any Elysium token
 - [Decoder](${base}/elysium/decode): what a contract is, its functions, proxy and admin powers. Per-address pages at /elysium/address/{address}
 - [Ecosystem](${base}/elysium/ecosystem), [Launchpads](${base}/elysium/launchpads): every project building on Elysium with its 7-day activity, and every launchpad token with price, volume, holders and bonding progress
 - [Contracts](${base}/elysium/contracts), [Tokens](${base}/elysium/tokens), [DEX](${base}/elysium/dex), [Bridge](${base}/elysium/bridge), [Users](${base}/elysium/users), [Economics](${base}/elysium/economics): computed analytics

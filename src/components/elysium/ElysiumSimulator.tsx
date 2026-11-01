@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   decodeFunctionResult,
   encodeFunctionData,
+  formatEther,
   formatUnits,
   isAddress,
   isHex,
@@ -12,7 +13,7 @@ import {
   type Address,
   type Hex,
 } from "viem";
-import { Link2, Play } from "lucide-react";
+import { History, Link2, Play } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CopyButton } from "@/components/ui/copy-button";
@@ -22,12 +23,15 @@ import { PillTabs } from "@/components/ui/pill-tabs";
 import {
   NATIVE_TRANSFER_ADDRESS,
   PRECOMPILE,
+  elysiumClient,
   fetchTokenMeta,
   simulateElysiumCall,
   type SimResult,
 } from "@/services/elysium/rpc";
 import { EMPTY } from "./shared";
-import { EventsCard, Field, decodeLog, fmtArg, inputCls, parseArg, parseSig, revertText } from "./simulator-shared";
+import { decodeContract, type Decoded } from "@/services/elysium/decode";
+import { balanceChanges, orderChanges } from "@/lib/elysium/balance-changes";
+import { BalanceChangesCard, EventsCard, Field, decodeLog, fmtArg, inputCls, parseArg, parseSig, revertText } from "./simulator-shared";
 import { ElysiumDeploySimulator } from "./ElysiumDeploySimulator";
 
 const WHYPE = "0xcd57f65c2b0e5881cfc2e609f7cd53b746e1f234";
@@ -51,6 +55,16 @@ const PRESETS: { label: string; form: Form }[] = [
   { label: "Gas prices (precompile)", form: { from: SAMPLE_FROM, to: PRECOMPILE.ArbGasInfo, value: "0", mode: "fn", sig: "getPricesInWei() view returns (uint256,uint256,uint256,uint256,uint256,uint256)", args: [], data: "", fund: false } },
   { label: "A failing transfer", form: { from: SAMPLE_FROM, to: WHYPE, value: "0", mode: "fn", sig: "transfer(address to, uint256 amount)", args: ["0x2222222222222222222222222222222222222222", "1e18"], data: "", fund: false } },
 ];
+
+/** The transaction a replay was loaded from, to compare its real outcome with the new run. */
+interface Origin {
+  hash: string;
+  status: "success" | "reverted" | null;
+  block: number | null;
+  data: string;
+}
+
+const TX_HASH = /^0x[0-9a-fA-F]{64}$/;
 
 function formFromParams(sp: URLSearchParams): Form | null {
   if (!sp.get("to")) return null;
@@ -112,6 +126,9 @@ function CallSimulator() {
   const [ran, setRan] = useState<Form | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [txHash, setTxHash] = useState(() => sp.get("tx") ?? "");
+  const [origin, setOrigin] = useState<Origin | null>(null);
+  const [contract, setContract] = useState<{ address: string; decoded: Decoded | null } | null>(null);
 
   const fn = useMemo(() => (form.mode === "fn" ? parseSig(form.sig) : null), [form.mode, form.sig]);
   const set = (patch: Partial<Form>) => setForm((f) => ({ ...f, ...patch }));
@@ -155,11 +172,57 @@ function CallSimulator() {
     [pathname, router]
   );
 
-  // Open in a working state: run the shared link, or the first example.
+  /** Loads a sent transaction into the form and runs it again on the latest state. */
+  const replay = useCallback(
+    async (hash: string) => {
+      setErr(null);
+      if (!TX_HASH.test(hash.trim())) {
+        setErr("A transaction hash is 0x followed by 64 hex characters");
+        return;
+      }
+      try {
+        const h = hash.trim() as Hex;
+        const [tx, receipt] = await Promise.all([elysiumClient.getTransaction({ hash: h }), elysiumClient.getTransactionReceipt({ hash: h }).catch(() => null)]);
+        if (!tx.to) throw new Error("This transaction deploys a contract: replay its bytecode from the Deploy tab");
+        const f: Form = { from: tx.from, to: tx.to, value: formatEther(tx.value), mode: "raw", sig: "", args: [], data: tx.input, fund: false };
+        setOrigin({ hash: h, status: receipt ? receipt.status : null, block: tx.blockNumber != null ? Number(tx.blockNumber) : null, data: tx.input });
+        setForm(f);
+        await run(f);
+      } catch (e) {
+        setErr(e instanceof Error ? e.message.split("\n")[0] : String(e));
+      }
+    },
+    [run]
+  );
+
+  // Open in a working state: replay the linked transaction, run the shared link, or the first example.
   useEffect(() => {
-    void run(form);
+    const tx = sp.get("tx");
+    if (tx) void replay(tx);
+    else void run(form);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Read the target's bytecode to offer its functions (names from the selector database).
+  useEffect(() => {
+    const to = form.to.trim();
+    if (!isAddress(to) || contract?.address === to.toLowerCase()) return;
+    let live = true;
+    const t = setTimeout(() => {
+      decodeContract(to)
+        .then((decoded) => live && setContract({ address: to.toLowerCase(), decoded }))
+        .catch(() => live && setContract({ address: to.toLowerCase(), decoded: null }));
+    }, 400);
+    return () => {
+      live = false;
+      clearTimeout(t);
+    };
+  }, [form.to, contract?.address]);
+
+  const pickable = useMemo(() => {
+    if (!contract?.decoded || contract.address !== form.to.trim().toLowerCase()) return [];
+    return contract.decoded.functions.filter((f): f is { selector: string; signature: string } => !!f.signature);
+  }, [contract, form.to]);
 
   const ranFn = ran && ran.mode === "fn" ? parseSig(ran.sig) : null;
   const returned = useMemo(() => {
@@ -175,6 +238,11 @@ function CallSimulator() {
   const revert = useMemo(() => (result ? revertText(result.revertData, result.revertMessage) : null), [result]);
 
   const logs = useMemo(() => (result?.logs ?? []).map((l) => decodeLog(l)), [result]);
+  const changes = useMemo(
+    () => (result && ran ? orderChanges(balanceChanges(result.logs), ran.from, ran.to) : []),
+    [result, ran]
+  );
+  const replayed = origin && ran && ran.mode === "raw" && ran.data === origin.data ? origin : null;
   const fee = result?.gasEstimate != null ? result.gasEstimate * result.gasPriceWei : null;
   const shareUrl = ran && typeof window !== "undefined" ? `${window.location.origin}${pathname}?${formToParams(ran)}` : "";
 
@@ -183,11 +251,28 @@ function CallSimulator() {
       <div className="flex flex-wrap items-center gap-2 text-[12px]">
         <span className="text-text-tertiary">Examples</span>
         {PRESETS.map((p) => (
-          <Button key={p.label} size="sm" variant="outline" onClick={() => { setForm(p.form); void run(p.form); }}>
+          <Button key={p.label} size="sm" variant="outline" onClick={() => { setOrigin(null); setForm(p.form); void run(p.form); }}>
             {p.label}
           </Button>
         ))}
       </div>
+      <form
+        className="flex flex-col gap-2 sm:flex-row sm:items-center"
+        onSubmit={(e) => { e.preventDefault(); void replay(txHash); }}
+      >
+        <label htmlFor="sim-replay" className="flex shrink-0 items-center gap-1.5 text-[12px] text-text-tertiary">
+          <History size={13} /> Replay a transaction
+        </label>
+        <input
+          id="sim-replay"
+          className={`${inputCls} sm:max-w-[560px]`}
+          value={txHash}
+          onChange={(e) => setTxHash(e.target.value)}
+          placeholder="0x… tx hash: see what it would do on today's state"
+          spellCheck={false}
+        />
+        <Button type="submit" size="sm" variant="outline" disabled={busy || !txHash}>Replay</Button>
+      </form>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
         <Card className="overflow-hidden flex flex-col">
           <CardHead title="Call" tag="nothing is signed or sent" />
@@ -203,6 +288,23 @@ function CallSimulator() {
                 <input id="sim-to" className={inputCls} value={form.to} onChange={(e) => set({ to: e.target.value })} spellCheck={false} placeholder="0x…" />
               </Field>
             </div>
+            {pickable.length > 0 ? (
+              <Field id="sim-pick" label={`Functions found in this contract · ${pickable.length}`} hint="Read from its bytecode, names from the public selector database.">
+                <select
+                  id="sim-pick"
+                  className={inputCls}
+                  value={form.mode === "fn" && pickable.some((p) => p.signature === form.sig) ? form.sig : ""}
+                  onChange={(e) => e.target.value && set({ mode: "fn", sig: e.target.value, args: [] })}
+                >
+                  <option value="">Pick a function…</option>
+                  {pickable.map((p) => (
+                    <option key={p.selector} value={p.signature}>{p.signature}</option>
+                  ))}
+                </select>
+              </Field>
+            ) : contract?.decoded && contract.address === form.to.trim().toLowerCase() && !contract.decoded.isContract ? (
+              <p className="text-[11px] text-text-tertiary">No code at this address: a call to it only moves HYPE.</p>
+            ) : null}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
               <Field id="sim-value" label="Value (HYPE)">
                 <input id="sim-value" className={inputCls} value={form.value} onChange={(e) => set({ value: e.target.value })} inputMode="decimal" />
@@ -277,6 +379,22 @@ function CallSimulator() {
                     <div className="mono text-gold">{fee != null ? `${Number(formatUnits(fee, 18)).toLocaleString("en-US", { maximumSignificantDigits: 3 })} HYPE` : EMPTY}</div>
                   </div>
                 </div>
+                {replayed ? (
+                  <div className="rounded-md border border-border-subtle bg-surface-2 px-2.5 py-2 text-text-secondary">
+                    Replay of <a href={`/elysium/tx/${replayed.hash}`} className="mono text-brand hover:underline">{replayed.hash.slice(0, 10)}…</a>
+                    {replayed.status ? (
+                      <>
+                        {" "}which <span className={replayed.status === "success" ? "text-success" : "text-danger"}>{replayed.status === "success" ? "succeeded" : "reverted"}</span>
+                        {replayed.block != null ? ` at block ${replayed.block.toLocaleString("en-US")}` : ""}.{" "}
+                        {replayed.status === result.status
+                          ? "Same outcome on today's state."
+                          : result.status === "success"
+                            ? "It would succeed today."
+                            : "It would fail today."}
+                      </>
+                    ) : " (not mined yet)."}
+                  </div>
+                ) : null}
                 <p className="text-[11px] text-text-tertiary">
                   Gas to set = eth_estimateGas, which adds the cost of posting the tx to HyperEVM on top of execution.
                 </p>
@@ -313,6 +431,7 @@ function CallSimulator() {
               </div>
             )}
           </Card>
+          {result && ran ? <BalanceChangesCard rows={changes} meta={meta} sender={ran.from} target={ran.to} /> : null}
           {result ? <EventsCard logs={logs} meta={meta} /> : null}
         </div>
       </div>
