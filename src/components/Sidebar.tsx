@@ -272,7 +272,9 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                             <span className={cn("ml-auto shrink-0 mono text-[9.5px] text-text-tertiary", labelClass)}>
                                 {item.tag}
                             </span>
-                        ) : badges[item.href] ? (
+                        ) : badges[item.href] && !item.hint ? (
+                            // A section row (it has a hint) carries no count: the count
+                            // belongs to its landing tab, shown in the section bar.
                             <span className={cn("ml-auto shrink-0 mono text-[10.5px] flex items-baseline gap-1", labelClass)}>
                                 {badges[item.href].prefix && (
                                     <span className="text-text-tertiary">{badges[item.href].prefix}</span>
