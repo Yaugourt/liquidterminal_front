@@ -318,6 +318,13 @@ export const seoConfig = {
     path: "/alerts",
   },
 
+  toolsPage: {
+    title: "Free Hyperliquid & Elysium Tools - Simulator, Decoder, Wallet Tracker",
+    description: "Every free Liquid Terminal tool in one place: Elysium transaction simulator, decoder and tx inspector, Hyperliquid wallet tracker, alerts, CSV export and share studio. Nothing to install.",
+    keywords: ["Hyperliquid tools", "Elysium tools", "Elysium simulator", "transaction decoder", "Hyperliquid wallet tracker", "Hyperliquid CSV export"],
+    path: "/tools",
+  },
+
   exportPage: {
     title: "Export Hyperliquid Data as CSV",
     description: "Download Hyperliquid market, chain and capital data as CSV: fills, liquidations, HIP-3 and HIP-4 markets, vaults, validators and more, over the date range you choose.",

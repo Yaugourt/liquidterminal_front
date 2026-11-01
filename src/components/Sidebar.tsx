@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Settings, Shield, MessageCircle, Github, BookOpen, ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { Settings, Shield, MessageCircle, Github, BookOpen, ChevronDown, PanelLeftClose, PanelLeftOpen, LayoutGrid } from "lucide-react"
 import { NetworkSubtitle } from "@/components/network/NetworkSwitch";
 import { NETWORKS, networkFromPath } from "@/lib/networks";
 import { cn } from "@/lib/utils"
@@ -19,6 +19,9 @@ import {
     getDefaultSidebarPreferences,
     applyPreferencesToNavigation,
     getGroupId,
+    toolsFor,
+    TOOLS,
+    PINNED_TOOLS,
     type NavigationGroup,
     type NavigationItem,
     type NavigationAccent,
@@ -92,6 +95,19 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     // The Elysium rail is fixed; user preferences only reshape the Hyperliquid one.
     const railGroups = network === "elysium" ? elysiumNavigationGroups : navigationGroups;
 
+    // Tools sit above the data: the first PINNED_TOOLS of this network as
+    // tiles, every other tool (both networks) behind "All tools" (/tools).
+    const networkTools = useMemo(() => toolsFor(network), [network]);
+    const pinnedTools = networkTools.slice(0, PINNED_TOOLS);
+    const toolItems = useMemo<NavigationItem[]>(
+        () => networkTools.map((tool) => ({ name: tool.shortName ?? tool.name, href: tool.href, IconComponent: tool.IconComponent })),
+        [networkTools]
+    );
+    const allToolsItem = useMemo<NavigationItem>(
+        () => ({ name: "All tools", href: "/tools", IconComponent: LayoutGrid, tag: String(TOOLS.length) }),
+        []
+    );
+
     // Hover flyout (collapsed mode). JS-positioned because the nav scroll
     // container would clip an absolutely-positioned CSS flyout.
     const [flyout, setFlyout] = useState<FlyoutState | null>(null);
@@ -159,10 +175,20 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             item.children?.forEach(visit);
         };
         railGroups.forEach((g) => g.items.forEach(visit));
+        // Tools compete too, so /elysium/simulate lights Simulator, not Overview.
+        toolItems.forEach(visit);
+        visit(allToolsItem);
         return best;
-    }, [pathname, railGroups]);
+    }, [pathname, railGroups, toolItems, allToolsItem]);
+
+    /** A tool page that has no tile of its own lights "All tools" instead. */
+    const pinnedHrefs = pinnedTools.map((tool) => tool.href);
+    const allToolsActive =
+        activeHref === allToolsItem.href ||
+        Boolean(activeHref && toolItems.some((t) => t.href === activeHref) && !pinnedHrefs.includes(activeHref));
 
     const isItemActive = (item: NavigationItem): boolean =>
+        (item.href === allToolsItem.href && allToolsActive) ||
         item.href === activeHref || Boolean(item.children?.some((child) => child.href === activeHref));
 
     /** Icon node — token logo > custom image > lucide, in a fixed 16px slot. */
@@ -351,7 +377,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     };
 
     /** Group header morphs between its text label and a hairline separator. */
-    const renderGroupHeader = (groupName: string, gold = false) => (
+    const renderGroupHeader = (groupName: string, tone: "neutral" | "gold" | "brand" = "neutral") => (
         <div
             className={cn(
                 "relative overflow-hidden transition-all duration-200",
@@ -361,7 +387,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             <div
                 className={cn(
                     "text-[10px] uppercase tracking-[0.1em] font-semibold whitespace-nowrap transition-opacity duration-150",
-                    gold ? "text-gold" : "text-text-tertiary",
+                    tone === "gold" ? "text-gold" : tone === "brand" ? "text-brand" : "text-text-tertiary",
                     isCollapsed ? "opacity-0" : "opacity-100 delay-75"
                 )}
             >
@@ -455,6 +481,49 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 {/* Navigation */}
                 <nav className="flex-1 px-2.5 py-3 overflow-y-auto overflow-x-hidden scrollbar-brand">
                     <ul className={cn("transition-all duration-200", isCollapsed ? "space-y-3" : "space-y-1.5")}>
+                        {/* Tools first: the pages you act on, as tiles on the
+                            expanded rail and as plain icon rows on the 56px one. */}
+                        {pinnedTools.length > 0 && (
+                            <li className={cn(isCollapsed ? "space-y-1" : "space-y-1.5")}>
+                                {renderGroupHeader("Tools", "brand")}
+                                {isCollapsed ? (
+                                    <ul className="space-y-0.5">
+                                        {pinnedTools.map((tool) => renderItem({ name: tool.shortName ?? tool.name, href: tool.href, IconComponent: tool.IconComponent }))}
+                                        {renderItem(allToolsItem)}
+                                    </ul>
+                                ) : (
+                                    <>
+                                        <ul className="grid grid-cols-2 gap-1.5">
+                                            {pinnedTools.map((tool) => {
+                                                const isActive = activeHref === tool.href;
+                                                const Icon = tool.IconComponent;
+                                                return (
+                                                    <li key={tool.href}>
+                                                        <Link
+                                                            href={tool.href}
+                                                            title={tool.name}
+                                                            aria-current={isActive ? "page" : undefined}
+                                                            onClick={() => setIsOpen(false)}
+                                                            className={cn(
+                                                                "focus-ring flex flex-col gap-1.5 rounded-md border px-2.5 py-2 text-[12px] font-medium transition-colors",
+                                                                isActive
+                                                                    ? "border-brand/30 bg-brand/10 text-text-primary"
+                                                                    : "border-border-subtle bg-surface-2 text-text-secondary hover:border-border-default hover:text-text-primary"
+                                                            )}
+                                                        >
+                                                            <Icon className="w-4 h-4 shrink-0 text-brand" />
+                                                            <span className="truncate">{tool.shortName ?? tool.name}</span>
+                                                        </Link>
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                        <ul>{renderItem(allToolsItem)}</ul>
+                                    </>
+                                )}
+                            </li>
+                        )}
+                        <li className={cn(!isCollapsed && "mt-1 border-t border-border-subtle pt-2.5")}>{renderGroupHeader("Data")}</li>
                         {railGroups.map((group, groupIndex) => {
                             // Header-less home block: no family header, no fold.
                             if (!group.groupName) {
@@ -484,7 +553,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
                         {isAdmin && (
                             <li className="space-y-1">
-                                {renderGroupHeader('Administration', true)}
+                                {renderGroupHeader('Administration', "gold")}
                                 <ul className="space-y-0.5">
                                     <li className="relative">
                                         {adminActive && (

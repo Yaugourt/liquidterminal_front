@@ -37,8 +37,8 @@ import {
   HandCoins,
   ShieldCheck,
   LayoutGrid,
-  Wrench,
 } from "lucide-react";
+import type { NetworkId } from "@/lib/networks";
 import { SidebarPreferences, SidebarGroupPreference, SidebarItemPreference } from "@/store/use-sidebar-preferences";
 
 /** Small pill shown at the end of an entry (e.g. Core / new). */
@@ -151,19 +151,6 @@ export const defaultNavigationGroups: NavigationGroup[] = [
     items: [
       { name: 'Explorer', href: '/explorer', icon: null, IconComponent: Blocks, badge: { label: 'Core', tone: 'core' } },
       { name: 'HyperEVM', href: '/evm', icon: null, IconComponent: Cpu },
-    ],
-  },
-  {
-    // Personal tools that work across every family: follow wallets, get
-    // alerted, pull the data out, turn a metric into a post.
-    groupName: 'Tools',
-    IconComponent: Wrench,
-    accent: 'neutral',
-    items: [
-      { name: 'Wallet tracker', href: '/market/tracker', icon: null, IconComponent: Wallet },
-      { name: 'Alerts', href: '/alerts', icon: null, IconComponent: BellRing },
-      { name: 'Export', href: '/export', icon: null, IconComponent: Download },
-      { name: 'Share', href: '/share', icon: null, IconComponent: Share2 },
     ],
   },
   {
@@ -302,17 +289,50 @@ export const elysiumNavigationGroups: NavigationGroup[] = [
       { name: 'Economics', href: '/elysium/economics', icon: null, IconComponent: Fuel },
       { name: 'Fees by app', href: '/elysium/fees', icon: null, IconComponent: HandCoins },
       { name: 'Trust', href: '/elysium/trust', icon: null, IconComponent: ShieldCheck },
-      { name: 'Share', href: '/elysium/share', icon: null, IconComponent: Share2 },
-    ],
-  },
-  {
-    groupName: 'Build',
-    items: [
       { name: 'Network', href: '/elysium/network', icon: null, IconComponent: Cpu },
-      { name: 'Simulator', href: '/elysium/simulate', icon: null, IconComponent: FlaskConical },
-      { name: 'Tx inspector', href: '/elysium/tx', icon: null, IconComponent: Receipt },
-      { name: 'Decoder', href: '/elysium/decode', icon: null, IconComponent: FileSearch },
-      { name: 'Run a node', href: '/elysium/node', icon: null, IconComponent: Server },
     ],
   },
 ];
+
+/**
+ * A tool is a page you act on (simulate, decode, track, export) rather than
+ * one you read. Tools sit above the data in the sidebar, as tiles, and all of
+ * them are listed on /tools.
+ */
+export interface ToolItem {
+  /** Full name, used on /tools and as the tool page title. */
+  name: string;
+  /** Tile label when the full name would wrap in a half-width tile. */
+  shortName?: string;
+  href: string;
+  IconComponent: ComponentType<{ className?: string }>;
+  /** One line on what it does, shown on /tools. */
+  description: string;
+  network: NetworkId;
+}
+
+/**
+ * Every tool, per network, most used first. The sidebar pins the first
+ * PINNED_TOOLS of the active network as tiles; the rest are one click away
+ * behind "All tools", so the block never grows with the list.
+ */
+export const TOOLS: ToolItem[] = [
+  { name: 'Simulator', href: '/elysium/simulate', IconComponent: FlaskConical, network: 'elysium', description: 'Dry-run a call or a contract deployment on the latest Elysium block. Nothing is signed.' },
+  { name: 'Decoder', href: '/elysium/decode', IconComponent: FileSearch, network: 'elysium', description: 'Turn calldata, a selector or a contract into readable functions.' },
+  { name: 'Tx inspector', shortName: 'Inspector', href: '/elysium/tx', IconComponent: Receipt, network: 'elysium', description: 'Paste a transaction hash: decoded call, fee split, token movements and events.' },
+  { name: 'Share studio', shortName: 'Share', href: '/elysium/share', IconComponent: Share2, network: 'elysium', description: 'Turn an Elysium metric into a post-ready image.' },
+  { name: 'Run a node', href: '/elysium/node', IconComponent: Server, network: 'elysium', description: 'Set up your own Elysium node, step by step.' },
+  { name: 'Wallet tracker', shortName: 'Tracker', href: '/market/tracker', IconComponent: Wallet, network: 'hyperliquid', description: 'Follow wallets, their positions and their fills.' },
+  { name: 'Alerts', href: '/alerts', IconComponent: BellRing, network: 'hyperliquid', description: 'Get notified when the moves you follow happen.' },
+  { name: 'Export', href: '/export', IconComponent: Download, network: 'hyperliquid', description: 'Download Hyperliquid data as CSV.' },
+  { name: 'Share studio', shortName: 'Share', href: '/share', IconComponent: Share2, network: 'hyperliquid', description: 'Turn any Hyperliquid metric into a post-ready image.' },
+];
+
+/** Tiles shown in the sidebar: two rows of two, whatever the size of the list. */
+export const PINNED_TOOLS = 4;
+
+export const toolsFor = (network: NetworkId): ToolItem[] => TOOLS.filter((tool) => tool.network === network);
+
+/** The tool a path belongs to, if any (a tool's sub-routes count as the tool). */
+export const toolForPath = (pathname: string | null | undefined): ToolItem | undefined =>
+  pathname ? TOOLS.find((tool) => pathname === tool.href || pathname.startsWith(`${tool.href}/`)) : undefined;
