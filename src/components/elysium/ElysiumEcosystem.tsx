@@ -388,7 +388,7 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
         last 24 hours (or 7 days) with the period just before; &ldquo;New&rdquo; means no user in that previous period. Gaining and losing
         lists only rank projects with {MIN_USERS} or more users in one of the two periods. The 14-day curve counts users per rolling 24 hours.
         Totals and &ldquo;since&rdquo; dates count every transaction since the project&apos;s first one. A dash means the project has no
-        contract on chain yet. Launchpad volume is decoded from Chainzy, CorePad, Signal and Neuriio trades; HYPE is valued at its
+        contract on chain yet. Launchpad volume is decoded from aka.fun, BunnyPad, Chainzy, CorePad, Kiln, Neuriio and Signal trades; HYPE is valued at its
         Hyperliquid price and test USDC at $1. &ldquo;Verified&rdquo; counts the listed contracts whose source is verified on the Elysium
         explorer.
       </p>
