@@ -16,6 +16,7 @@ import { AddToTrackListButton } from "@/components/market/tracker/AddToTrackList
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/common";
 import { truncateAddress } from "@/lib/formatters/numberFormatting";
+import { safeExternalHref } from "@/lib/safeUrl";
 import { useHlProfile } from "@/services/names";
 
 interface AddressHeroProps {
@@ -41,9 +42,17 @@ export function AddressHero({ address, externalUrl }: AddressHeroProps) {
   const { wallets } = useWallets();
 
   const alias = getAlias(address);
-  // Hyperliquid Names: name, avatar and public links set by the owner.
+  // Hyperliquid Names: name, avatar and public links set by the owner. The
+  // record values are attacker-controlled (any .hl owner sets them), so each
+  // URL goes through safeExternalHref, which keeps only http(s) and drops a
+  // javascript:/data: href before it reaches the DOM.
   const { data: hl } = useHlProfile(address);
-  const hlLinks = hl ? Object.entries(hl.records).filter(([k]) => k !== "Bio") : [];
+  const hlLinks: Array<[string, string]> = hl
+    ? Object.entries(hl.records)
+        .filter(([k]) => k !== "Bio")
+        .map(([k, url]) => [k, safeExternalHref(url)] as const)
+        .filter((entry): entry is [string, string] => entry[1] !== null)
+    : [];
   const gradient = useAddressGradient(address);
 
   const isTracked = useMemo(() => {
