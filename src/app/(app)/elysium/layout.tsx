@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Metadata } from "next";
 import { generateMetadata, seoConfig } from "@/lib/seo";
 import { ElysiumPageHeader } from "@/components/elysium/ElysiumPageHeader";
@@ -9,7 +10,10 @@ export const metadata: Metadata = generateMetadata(seoConfig.elysium);
 export default function ElysiumLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="space-y-5">
-      <ElysiumPageHeader />
+      {/* The header reads ?network= (useSearchParams), which needs a Suspense boundary. */}
+      <Suspense>
+        <ElysiumPageHeader />
+      </Suspense>
       {children}
     </div>
   );

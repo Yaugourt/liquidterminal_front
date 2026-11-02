@@ -1,4 +1,5 @@
 import { useDataFetching } from "@/hooks/useDataFetching";
+import { useElysiumNetwork } from "@/store/use-elysium-network";
 import {
   fetchElysiumBatches,
   fetchElysiumBlocks,
@@ -55,12 +56,16 @@ import type {
   ElysiumTransaction,
 } from "./types";
 
-/** Shared polling wrapper: every Elysium read degrades to empty on error. */
+/**
+ * Shared polling wrapper: every Elysium read degrades to empty on error. The
+ * selected chain is a dependency, so switching testnet / mainnet refetches.
+ */
 function usePoll<T>(fetchFn: () => Promise<T>, refreshInterval: number, dependencies: unknown[] = []) {
+  const network = useElysiumNetwork((s) => s.network);
   const { data, isLoading, error, isStale, dataUpdatedAt, isRefreshing, refetch } = useDataFetching<T>({
     fetchFn,
     refreshInterval,
-    dependencies,
+    dependencies: [...dependencies, network],
     maxRetries: 1,
   });
   return { data, isLoading, error, isStale, dataUpdatedAt, isRefreshing, refetch };
@@ -103,8 +108,15 @@ export const useElysiumFees = (window: ElysiumFeesWindow = "7d") =>
   usePoll<ElysiumFeesAnalytics>(() => fetchElysiumFees(window), 120_000, [window]);
 
 // Per-address reads.
-export const useElysiumAddressProfile = (address: string) =>
-  usePoll<ElysiumAddressProfile>(() => fetchElysiumAddressProfile(address), 60_000, [address]);
+/** Computed from our testnet tables: on mainnet it resolves to null instead of mixing chains. */
+export const useElysiumAddressProfile = (address: string) => {
+  const network = useElysiumNetwork((s) => s.network);
+  return usePoll<ElysiumAddressProfile | null>(
+    () => (network === "mainnet" ? Promise.resolve(null) : fetchElysiumAddressProfile(address)),
+    60_000,
+    [address]
+  );
+};
 export const useElysiumUserBalances = (address: string) =>
   usePoll<ElysiumUserBalances>(() => fetchElysiumUserBalances(address), 30_000, [address]);
 export const useElysiumUserActivity = (address: string, limit = 50) =>

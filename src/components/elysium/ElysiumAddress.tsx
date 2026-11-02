@@ -1,5 +1,7 @@
 "use client";
 
+import { useElysiumNetwork } from "@/store/use-elysium-network";
+
 import Link from "next/link";
 import { memo } from "react";
 import { ArrowDownLeft, ArrowUpRight, Code2, ExternalLink } from "lucide-react";
@@ -75,7 +77,8 @@ const Balances = memo(function Balances({ address }: { address: string }) {
 });
 
 const Profile = memo(function Profile({ address }: { address: string }) {
-  const { data, error } = useElysiumAddressProfile(address);
+  const { data, error, isLoading } = useElysiumAddressProfile(address);
+  const mainnet = useElysiumNetwork((s) => s.network) === "mainnet";
   return (
     <Card className="overflow-hidden flex flex-col">
       <CardHead
@@ -86,7 +89,13 @@ const Profile = memo(function Profile({ address }: { address: string }) {
         ) : undefined}
       />
       {!data ? (
-        <Empty>{error ? "Analytics are unavailable right now." : "Loading…"}</Empty>
+        <Empty>
+          {mainnet && !isLoading
+            ? "Computed from our testnet tables: mainnet indexing starts with the launch."
+            : error
+              ? "Analytics are unavailable right now."
+              : "Loading…"}
+        </Empty>
       ) : (
         <div className="px-3.5 py-2 space-y-3 text-[12px]">
           <dl className="grid grid-cols-2 gap-x-4 gap-y-2 mono">
@@ -260,10 +269,12 @@ export function ElysiumAddress({ address }: { address: string }) {
   const { format } = useNumberFormat();
   const { data: profile } = useElysiumAddressProfile(address);
   const { data: balances } = useElysiumUserBalances(address);
-  const n = (v: number | undefined) => (v == null ? "…" : formatNumber(v, format, { maximumFractionDigits: 0 }));
+  const mainnet = useElysiumNetwork((s) => s.network) === "mainnet";
+  // Mainnet has no computed profile yet: show a dash, not an endless "…".
+  const n = (v: number | undefined) => (v == null ? (mainnet ? EMPTY : "…") : formatNumber(v, format, { maximumFractionDigits: 0 }));
 
   const cells: KpiCell[] = [
-    { key: "hype", label: "HYPE balance", value: balances ? amount(balances.native_balance) : "…", sub: "testnet gas token" },
+    { key: "hype", label: "HYPE balance", value: balances ? amount(balances.native_balance) : "…", sub: mainnet ? "gas token" : "testnet gas token" },
     { key: "txs", label: "User txs", value: n(profile?.activity.userTxs), sub: profile ? `${profile.activity.activeDays} active days` : undefined },
     {
       key: "24h",
@@ -271,7 +282,7 @@ export function ElysiumAddress({ address }: { address: string }) {
       value: n(profile?.activity.txs24h),
       sub: profile ? `${formatPct(profile.activity.share24h, { decimals: 2, fallback: EMPTY })} of the network` : undefined,
     },
-    { key: "first", label: "First seen", value: profile ? (profile.firstSeen ? elysiumTimeLabel(profile.firstSeen) : "never sent") : "…", sub: "UTC, as a sender" },
+    { key: "first", label: "First seen", value: profile ? (profile.firstSeen ? elysiumTimeLabel(profile.firstSeen) : "never sent") : mainnet ? EMPTY : "…", sub: "UTC, as a sender" },
   ];
 
   return (

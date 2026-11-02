@@ -1,5 +1,7 @@
 "use client";
 
+import { useElysiumNetwork } from "@/store/use-elysium-network";
+
 import Link from "next/link";
 import { memo, useMemo } from "react";
 import { ArrowDownLeft, ArrowUpRight, Coins, Rocket } from "lucide-react";
@@ -52,6 +54,7 @@ function blocksPerSecond(blocks: ElysiumBlock[] | null | undefined): number | nu
 // ── KPI ribbon ───────────────────────────────────────────────────────────────
 const ElysiumKpis = memo(function ElysiumKpis() {
   const { format } = useNumberFormat();
+  const network = useElysiumNetwork((s) => s.network);
   const { data: head } = useElysiumHead();
   const { data: stats } = useElysiumStats();
   const { data: daily } = useElysiumDaily(30);
@@ -70,7 +73,7 @@ const ElysiumKpis = memo(function ElysiumKpis() {
       key: "head",
       label: "Block",
       value: head != null ? formatNumber(head, format, { maximumFractionDigits: 0 }) : stats ? formatNumber(stats.last_block, format, { maximumFractionDigits: 0 }) : "…",
-      sub: head != null ? "live, public RPC" : "indexed tip",
+      sub: head != null ? (network === "mainnet" ? "last indexed block" : "live, public RPC") : "indexed tip",
       href: head != null ? `${EXPLORER}/block/${head}` : undefined,
     },
     { key: "bps", label: "Blocks / s", value: bps != null ? bps.toFixed(1) : "…", sub: "last 100 blocks" },
@@ -368,10 +371,10 @@ const ElysiumReserves = memo(function ElysiumReserves() {
                 <span className="text-danger">{unbacked} under-backed.</span>
               )}
             </div>
-            {rows.map((r) => {
+            {rows.map((r, i) => {
               const pct = r.locked > 0 ? Math.min(100, (r.supply / r.locked) * 100) : 0;
               return (
-                <div key={`${r.route}-${r.symbol}`} className="space-y-1">
+                <div key={`${r.route}-${r.symbol}-${i}`} className="space-y-1">
                   <div className="flex items-center gap-2 text-[12px]">
                     {r.route === "native" ? <HypeMark logoOnly size="xs" /> : <Coins size={13} className="text-text-tertiary" />}
                     <span className="text-text-primary font-medium">{r.symbol}</span>
@@ -513,12 +516,16 @@ const ElysiumTokens = memo(function ElysiumTokens() {
  * Every figure is testnet: token units only, no USD values exist upstream.
  */
 export function ElysiumOverview() {
+  const mainnet = useElysiumNetwork((s) => s.network) === "mainnet";
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-[11px] text-text-tertiary">
         <ElysiumMark size={13} className="text-text-secondary" />
-        Testnet data: balances and amounts are test tokens with no market value.
+        {mainnet
+          ? "Mainnet data, chain 99901, from the HypeDexer index. Amounts in token units."
+          : "Testnet data: balances and amounts are test tokens with no market value."}
       </div>
+      {mainnet ? null : (
       <Link
         href="/elysium/start"
         className="flex flex-wrap items-center gap-3 rounded-lg border border-brand/30 bg-brand/5 px-4 py-3 hover:border-brand/60 transition-colors"
@@ -532,6 +539,7 @@ export function ElysiumOverview() {
         </span>
         <span className="text-[12px] font-medium text-brand">Get started</span>
       </Link>
+      )}
       <ElysiumKpis />
       <ElysiumActivity />
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 items-start">
