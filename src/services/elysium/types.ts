@@ -326,3 +326,26 @@ export interface ElysiumFeesAnalytics {
   }[];
   deployers: { deployer: string; contracts: number; feesHype: number; share: number; txs: number; gasUsed: number }[];
 }
+
+/** /tokens/:address from the provider. */
+export interface ElysiumTokenDetail {
+  address: string;
+  standard: string;
+  name: string | null;
+  symbol: string | null;
+  decimals: number | null;
+  origin: string | null;
+  first_seen: string | null;
+  transfer_count: number;
+  total_supply: number | null;
+  holders: number | null;
+  last_transfer_time: string | null;
+}
+
+/** /tokens/:address/holders row; `share` is 0..1 of supply. */
+export interface ElysiumTokenHolder {
+  address: string;
+  balance_raw: string;
+  balance: number;
+  share: number;
+}

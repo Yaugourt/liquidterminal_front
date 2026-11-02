@@ -116,8 +116,11 @@ function Report({ check }: { check: TokenCheck }) {
     {
       key: "holders",
       label: "Holders",
-      value: launch?.holders != null ? compactCount(launch.holders) : EMPTY,
-      sub: launch?.top10Pct != null ? `top 10 hold ${formatPct(launch.top10Pct, { from: "percent" })}` : "launchpad tokens only",
+      value: (check.spread?.holders ?? launch?.holders) != null ? compactCount(check.spread?.holders ?? launch?.holders) : EMPTY,
+      sub:
+        (check.spread?.top10Pct ?? launch?.top10Pct) != null
+          ? `top 10 hold ${formatPct(check.spread?.top10Pct ?? launch?.top10Pct, { from: "percent" })}`
+          : undefined,
     },
     {
       key: "origin",
@@ -146,6 +149,7 @@ function Report({ check }: { check: TokenCheck }) {
       </Card>
 
       <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-2">
+        <div className="space-y-4 min-w-0">
         <Card className="overflow-hidden flex flex-col">
           <CardHead
             title="What we found"
@@ -155,6 +159,8 @@ function Report({ check }: { check: TokenCheck }) {
             {findings.map((f) => <FindingRow key={f.id} f={f} />)}
           </ul>
         </Card>
+        {check.spread?.top.length ? <TopHolders check={check} /> : null}
+        </div>
 
         <div className="space-y-4 min-w-0">
           <TransferTest check={check} legs={legs} />
@@ -185,10 +191,50 @@ function Report({ check }: { check: TokenCheck }) {
 
       <p className="text-[11px] text-text-tertiary">
         Checks, not a verdict: a clean report does not make a token safe, and a flag is not proof of a scam. Powers are read from function names in the
-        bytecode (names from the public selector database), transfers are simulated with eth_simulateV1 on the latest block, holder spread comes from our
-        launchpad index. Testnet tokens have no value. Nothing here is advice.
+        bytecode (names from the public selector database), transfers are simulated with eth_simulateV1 on the latest block, holders come from the HypeDexer
+        holder index. Testnet tokens have no value. Nothing here is advice.
       </p>
     </div>
+  );
+}
+
+/** The 10 largest holders, wallets and contracts told apart. */
+function TopHolders({ check }: { check: TokenCheck }) {
+  const top = check.spread?.top ?? [];
+  return (
+    <Card className="overflow-hidden flex flex-col">
+      <CardHead title="Top holders" tag={check.spread?.top10Pct != null ? `top 10 hold ${formatPct(check.spread.top10Pct, { from: "percent" })}` : undefined} />
+      <ModuleTable
+        density="compact"
+        columns={[
+          { header: "#", width: 36, align: "left" },
+          { header: "Holder", align: "left" },
+          { header: "Share", width: 80, align: "right" },
+        ]}
+      >
+        {top.map((h, i) => (
+          <ModuleTableRow
+            key={h.address}
+            cells={[
+              <span key="n" className="mono text-text-tertiary">{i + 1}</span>,
+              <span key="a" className="flex min-w-0 flex-col gap-1">
+                <span className="flex min-w-0 items-baseline gap-2">
+                  <AddrLink address={h.address} className="mono text-text-secondary" />
+                  <span className="text-[11px] text-text-tertiary">{h.isContract === null ? "" : h.isContract ? "contract" : "wallet"}</span>
+                </span>
+                <span className="h-1 rounded-full bg-surface-2">
+                  <span className="block h-1 rounded-full bg-brand/70" style={{ width: `${Math.min(100, Math.max(1, h.pct))}%` }} />
+                </span>
+              </span>,
+              <span key="p" className="mono text-text-primary">{formatPct(h.pct, { from: "percent", decimals: h.pct < 1 ? 2 : 1 })}</span>,
+            ]}
+          />
+        ))}
+      </ModuleTable>
+      <p className="px-3.5 py-2.5 text-[11px] text-text-tertiary">
+        {check.spread?.holders != null ? `${compactCount(check.spread.holders)} holders in all. ` : ""}A contract here is usually a pool, a bonding curve or a vault.
+      </p>
+    </Card>
   );
 }
 
@@ -242,8 +288,11 @@ function TransferTest({ check, legs }: { check: TokenCheck; legs: TransferLeg[] 
             ))}
           </ModuleTable>
           <p className="px-3.5 py-2.5 text-[11px] text-text-tertiary">
-            A tenth of the balance of <AddrLink address={check.holder.address} className="mono text-text-secondary" />, a holder found in the last{" "}
-            {compactCount(check.holder.scannedBlocks)} blocks ({compactCount(check.holder.transfersSeen)} transfers), moved to fresh wallets
+            A tenth of the balance of <AddrLink address={check.holder.address} className="mono text-text-secondary" />,{" "}
+            {check.holder.scannedBlocks > 0
+              ? `a holder found in the last ${compactCount(check.holder.scannedBlocks)} blocks (${compactCount(check.holder.transfersSeen)} transfers),`
+              : "one of its largest wallet holders,"}{" "}
+            moved to fresh wallets
             {check.pool ? " then into the pool" : ""}. Amounts in {sym ?? "token units"}.
           </p>
         </>
@@ -256,7 +305,7 @@ function HowItWorks() {
   const steps = [
     { title: "Owner powers", text: "Reads the bytecode for mint, pause, blacklist, fee and withdrawal functions, and whether an owner can still call them." },
     { title: "Transfer test", text: "Takes a real holder and simulates three moves: to a fresh wallet, between fresh wallets, into the DEX pool. Taxes and blocks show up." },
-    { title: "Who holds it", text: "Holder count, top 10 share and creator share for tokens launched on the launchpads we index." },
+    { title: "Who holds it", text: "Holder count, the 10 largest holders (wallet or contract) and the creator share, for any token." },
   ];
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

@@ -12,6 +12,7 @@ import { useDataFetching } from "@/hooks/useDataFetching";
 import { TRANSFER_TOPIC } from "@/lib/elysium/balance-changes";
 import { elysiumClient } from "./rpc";
 import { decodeContract, fetchContractContext, type ContractContext, type Decoded } from "./decode";
+import { fetchElysiumTokenDetail, fetchElysiumTokenHolders } from "./api";
 
 /**
  * Token checker: what an Elysium ERC-20 lets its owner do, and whether it
@@ -62,10 +63,19 @@ export interface TransferLeg {
   revert: string | null;
 }
 
+/** Who holds the token, from the provider's holder index (any token, not only launches). */
+export interface HolderSpread {
+  holders: number | null;
+  /** Share of supply held by the 10 largest holders, percent. */
+  top10Pct: number | null;
+  top: { address: Address; pct: number; isContract: boolean | null }[];
+}
+
 export interface TokenCheck {
   address: Address;
   decoded: Decoded;
   context: ContractContext | null;
+  spread: HolderSpread | null;
   holder: { address: Address; balance: bigint; scannedBlocks: number; transfersSeen: number } | null;
   pool: Address | null;
   legs: TransferLeg[];
@@ -114,10 +124,16 @@ async function recentRecipients(token: Address): Promise<{ recipients: Address[]
   return best;
 }
 
-/** The wallet (no code) with the largest balance among recent recipients, else the creator. */
-async function pickHolder(token: Address, fallbacks: Address[]) {
-  const { recipients, blocks, transfers } = await recentRecipients(token);
-  const candidates = [...recipients, ...fallbacks.filter((f) => !recipients.some((r) => isAddressEqual(r, f)))];
+/**
+ * The wallet (no code) with the largest balance: the provider's top holders
+ * first, then recent recipients from the logs, then the creator.
+ */
+async function pickHolder(token: Address, fallbacks: Address[], topHolders: Address[]) {
+  const { recipients, blocks, transfers } = topHolders.length >= 5 ? { recipients: [] as Address[], blocks: 0, transfers: 0 } : await recentRecipients(token);
+  const candidates: Address[] = [];
+  for (const a of [...topHolders, ...recipients, ...fallbacks]) {
+    if (!candidates.some((c) => isAddressEqual(c, a))) candidates.push(a);
+  }
   if (!candidates.length) return null;
   const balances = await Promise.all(
     candidates.map((c) =>
@@ -241,6 +257,7 @@ const pct = (n: number) => `${n < 0.01 && n > 0 ? "<0.01" : n.toFixed(n < 10 ? 2
 
 /** Findings in reading order: what the code allows, how it moves, who holds it. */
 export function buildFindings(c: Omit<TokenCheck, "findings">): Finding[] {
+  const spread = c.spread;
   const f: Finding[] = [];
   const { decoded, context, legs } = c;
   const owner = decoded.identity.owner;
@@ -309,13 +326,18 @@ export function buildFindings(c: Omit<TokenCheck, "findings">): Finding[] {
   }
 
   const launch = context?.launch;
-  if (launch) {
-    if (launch.top10Pct !== null && launch.top10Pct >= 50) {
-      f.push({ id: "top10", level: "warn", title: `Top 10 holders own ${pct(launch.top10Pct)}`, detail: "Bonding curves and pools count as holders here." });
-    }
-    if (launch.devPct !== null && launch.devPct >= 5) {
-      f.push({ id: "dev", level: launch.devPct >= 20 ? "bad" : "warn", title: `Creator holds ${pct(launch.devPct)}`, detail: `Creator ${launch.creator ?? "unknown"}.` });
-    }
+  // Live holder index first (any token), the launchpad snapshot as a fallback.
+  const top10 = spread?.top10Pct ?? launch?.top10Pct ?? null;
+  if (top10 !== null && top10 >= 50) {
+    const top = spread?.top[0];
+    const lead = top ? ` The largest, ${top.address.slice(0, 6)}…${top.address.slice(-4)}${top.isContract ? " (a contract: pool, curve or vault)" : " (a wallet)"}, holds ${pct(top.pct)}.` : "";
+    f.push({ id: "top10", level: "warn", title: `Top 10 holders own ${pct(top10)}`, detail: `Pools, curves and vaults count as holders here.${lead}` });
+  }
+  const creator = launch?.creator ?? context?.deployment?.deployer ?? null;
+  const fromSpread = creator ? spread?.top.find((h) => isAddressEqual(h.address, getAddress(creator)))?.pct : undefined;
+  const devPct = fromSpread ?? launch?.devPct ?? null;
+  if (devPct !== null && devPct >= 5) {
+    f.push({ id: "dev", level: devPct >= 20 ? "bad" : "warn", title: `Creator holds ${pct(devPct)}`, detail: `Creator ${creator ?? "unknown"}.` });
   }
   const dep = context?.deployer;
   if (dep && dep.contracts >= 25) {
@@ -346,10 +368,27 @@ export async function checkToken(input: string): Promise<TokenCheck> {
   // The first pool our index pairs it with; launchpad tokens graduate into one.
   const pool = context?.dex.pools[0]?.pool ? getAddress(context.dex.pools[0].pool) : null;
   const fallbacks = [context?.launch?.creator, context?.deployment?.deployer].filter((a): a is string => !!a).map((a) => getAddress(a));
-  const [holder, ownerIsContract] = await Promise.all([pickHolder(address, fallbacks), ownerCheck]);
+  // The tool simulates on testnet, so the holder index is read on testnet too.
+  const [detail, holderRows] = await Promise.all([
+    fetchElysiumTokenDetail(address, "testnet").catch(() => null),
+    fetchElysiumTokenHolders(address, 20, "testnet").catch(() => null),
+  ]);
+  const topAddrs = (holderRows ?? []).map((h) => getAddress(h.address));
+  const codes = await Promise.all(
+    topAddrs.slice(0, 10).map((a) => elysiumClient.getCode({ address: a }).then((c) => !!c && c !== "0x").catch(() => null))
+  );
+  const spread: HolderSpread | null = holderRows
+    ? {
+        holders: detail?.holders ?? null,
+        top10Pct: holderRows.length ? holderRows.slice(0, 10).reduce((s, h) => s + h.share, 0) * 100 : null,
+        top: holderRows.slice(0, 10).map((h, i) => ({ address: topAddrs[i], pct: h.share * 100, isContract: codes[i] ?? null })),
+      }
+    : null;
+  const walletsFirst = [...topAddrs.filter((_, i) => codes[i] === false), ...topAddrs.filter((_, i) => codes[i] !== false)];
+  const [holder, ownerIsContract] = await Promise.all([pickHolder(address, fallbacks, walletsFirst), ownerCheck]);
   const test = holder ? await transferTest(address, holder.address, holder.balance, pool).catch(() => null) : null;
 
-  const base = { address, decoded, context, holder, pool, legs: test?.legs ?? [], ownerIsContract, block: test?.block ?? null };
+  const base = { address, decoded, context, spread, holder, pool, legs: test?.legs ?? [], ownerIsContract, block: test?.block ?? null };
   return { ...base, findings: buildFindings(base) };
 }
 

@@ -1,5 +1,6 @@
 import { get, postExternal } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
+import { currentElysiumNetwork } from "@/store/use-elysium-network";
 import type {
   ElysiumAddressProfile,
   ElysiumFeesAnalytics,
@@ -25,6 +26,8 @@ import type {
   ElysiumStats,
   ElysiumToken,
   ElysiumTransaction,
+  ElysiumTokenDetail,
+  ElysiumTokenHolder,
 } from "./types";
 
 const BASE = "/indexer/elysium";
@@ -44,9 +47,13 @@ export function elysiumTimeMs(time: string | null | undefined): number {
   return Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(time) ? time : `${time}Z`);
 }
 
+/** Provider pass-through: reads whichever chain the section is set to. */
 async function getData<T>(path: string, params?: Record<string, unknown>, context = path): Promise<T> {
   return withErrorHandling(async () => {
-    const res = await get<Envelope<T>>(`${BASE}${path}`, params, OPTS);
+    // An explicit `network` wins (tools pinned to testnet); else the section's choice.
+    const network = (params?.network as string | undefined) ?? currentElysiumNetwork();
+    const query = network === "mainnet" ? { ...params, network } : { ...params, network: undefined };
+    const res = await get<Envelope<T>>(`${BASE}${path}`, query, OPTS);
     return res.data;
   }, `fetching elysium ${context}`);
 }
@@ -86,8 +93,12 @@ export const fetchElysiumBridgedTokens = (route: "canonical" | "mirror" = "canon
 /** Tokens seen on Elysium, most transferred first. */
 export const fetchElysiumTokens = (limit = 10) => getData<ElysiumToken[]>("/tokens", { limit, standard: "erc20" });
 
-/** Current head from the public RPC (keyless). */
+/**
+ * Current head from the public RPC (keyless). Mainnet has no public RPC until
+ * launch, so its head is the provider's last indexed block.
+ */
 export const fetchElysiumHead = async (): Promise<number> => {
+  if (currentElysiumNetwork() === "mainnet") return fetchElysiumStats().then((s) => s.last_block);
   return withErrorHandling(async () => {
     const res = await postExternal<{ result?: string }>(
       ELYSIUM_RPC_URL,
@@ -101,6 +112,7 @@ export const fetchElysiumHead = async (): Promise<number> => {
 };
 
 // ── Computed analytics (backend aggregates over the ingested chain) ──────────
+// Testnet only: our ingestion reads chain 99801. Mainnet pages hide these.
 
 const ANALYTICS = "/elysium/analytics";
 
@@ -139,3 +151,11 @@ export const fetchElysiumUserActivity = (address: string, limit = 50) =>
 /** Bridge transfers of an address. */
 export const fetchElysiumUserBridge = (address: string, limit = 20) =>
   getData<ElysiumBridgeTransfer[]>(`/user/${address.toLowerCase()}/bridge`, { limit }, "user bridge");
+
+/** One token: supply, holder and transfer counts. */
+export const fetchElysiumTokenDetail = (address: string, network?: "testnet" | "mainnet") =>
+  getData<ElysiumTokenDetail>(`/tokens/${address.toLowerCase()}`, { network }, "token detail");
+
+/** Largest holders of a token, by balance, with their share of supply (0..1). */
+export const fetchElysiumTokenHolders = (address: string, limit = 20, network?: "testnet" | "mainnet") =>
+  getData<ElysiumTokenHolder[]>(`/tokens/${address.toLowerCase()}/holders`, { limit, network }, "token holders");
