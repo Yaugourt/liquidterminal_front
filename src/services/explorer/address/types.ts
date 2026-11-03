@@ -167,6 +167,8 @@ export interface TwapTableData {
   /** Executed size from the live feed; with `executedExact` the progress is the executed share, not the time. */
   executedSz?: number;
   executedExact?: boolean;
+  /** Last fill seen by the live feed (epoch ms; null: none yet). */
+  lastFillAt?: number | null;
 }
 
 export interface UseUserTwapOrdersResult {

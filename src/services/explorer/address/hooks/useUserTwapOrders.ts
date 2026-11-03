@@ -19,7 +19,8 @@ const transformTwapData = (enrichedOrders: EnrichedTwapOrder[]): TwapTableData[]
     ended: order.ended || null,
     error: order.error,
     executedSz: order.executedSz,
-    executedExact: order.executedExact
+    executedExact: order.executedExact,
+    lastFillAt: order.lastFillAt
   }));
 };
 
