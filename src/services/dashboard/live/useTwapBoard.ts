@@ -12,10 +12,12 @@ import type { EnrichedTwapOrder, TwapMarketType } from "@/services/market/order/
  * seconds, and the clock ticks every second.
  *
  * What is left to execute uses the real executed size when the feed has
- * followed the TWAP since its start; otherwise it is estimated from the time
- * elapsed (one slice every 30 seconds over the duration), floored by the
- * executed size when one is known. A TWAP followed since its start that has
- * not filled for 10 minutes is "stalled": it stays out of what is running
+ * followed the TWAP since its start, run on by the clock between two fills;
+ * otherwise it is estimated from the time elapsed (the schedule spreads the
+ * size evenly over the duration), floored by the executed size when one is
+ * known. Both move with the clock, not only with the polls and the pushes
+ * (see twap-progress.ts). A TWAP followed since its start that stops filling
+ * and falls behind its schedule is "stalled": it stays out of what is running
  * and what is left, and is counted apart. Values use the current market price.
  */
 
@@ -72,6 +74,8 @@ export interface TwapBoard {
   updatedAt: number | null;
   /** The live feed is connected and its upstream is up. */
   isLive: boolean;
+  /** The instant every amount above was computed at (ticks every second): countdowns read the same clock. */
+  now: number;
 }
 
 const isHype = (t: { coin: string }) => t.coin === "HYPE";
@@ -167,6 +171,7 @@ export function useTwapBoard(): TwapBoard & { isLoading: boolean; error: Error |
       },
       updatedAt: metadata?.lastUpdate ?? null,
       isLive: isLive ?? false,
+      now,
     };
   }, [orders, metadata, now, isLive]);
 

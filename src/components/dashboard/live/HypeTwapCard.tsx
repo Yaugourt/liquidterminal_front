@@ -55,13 +55,13 @@ export const HypeTwapCard = memo(function HypeTwapCard({ board, isLoading }: { b
         </div>
       </div>
       <div className="px-3.5 py-2">
-        <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1">Biggest running</div>
+        <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1">Biggest running · left to execute</div>
         {active.length === 0 ? (
           <div className="py-6 text-center text-[12px] text-text-tertiary">{isLoading ? "Loading…" : "No HYPE TWAP running"}</div>
         ) : (
           <div className="h-[168px] overflow-y-auto scrollbar-brand pr-1">
             {active.slice(0, 8).map((t) => (
-              <TwapRow key={t.hash} t={t} />
+              <TwapRow key={t.hash} t={t} now={board.now} />
             ))}
           </div>
         )}

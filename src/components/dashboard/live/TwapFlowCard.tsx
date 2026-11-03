@@ -5,17 +5,18 @@ import Link from "next/link";
 
 import { Card } from "@/components/ui/card";
 import { CardHead, DataStatus, KpiRibbon, TokenAvatar, type KpiCell } from "@/components/common";
-import { compactUsd } from "@/lib/formatters/numberFormatting";
+import { compactUsd, formatPct, fullUsd } from "@/lib/formatters/numberFormatting";
 import type { LiveTwap, TwapBoard } from "@/services/dashboard/live/useTwapBoard";
 
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
-/** "2h 14m" / "38m" left. */
-export function timeLeft(end: number, now = Date.now()): string {
-  const m = Math.max(0, Math.round((end - now) / 60_000));
+/** Time left: "6d 6h" / "2h 14m", then "12m 04s" in the last hour, which counts down by the second. */
+export function timeLeft(end: number, now: number): string {
+  const s = Math.max(0, Math.ceil((end - now) / 1000));
+  if (s < 3600) return `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, "0")}s`;
+  const m = Math.round(s / 60);
   if (m >= 60 * 24) return `${Math.floor(m / 1440)}d ${Math.floor((m % 1440) / 60)}h`;
-  if (m >= 60) return `${Math.floor(m / 60)}h ${m % 60}m`;
-  return `${m}m`;
+  return `${Math.floor(m / 60)}h ${m % 60}m`;
 }
 
 export const signedUsd = (v: number) => `${v >= 0 ? "+" : "−"}${compactUsd(Math.abs(v))}`;
@@ -35,25 +36,53 @@ export function FlowBar({ buy, sell, className = "h-1.5" }: { buy: number; sell:
   );
 }
 
-export function TwapRow({ t }: { t: LiveTwap }) {
+/**
+ * One running TWAP. First line: who, and what is left to execute in USD, to
+ * the dollar so the drain shows as the board ticks each second. Second line:
+ * the share executed as a bar, then the full size and the time left. Between
+ * 1024 and 1279px the dashboard puts these rows in ~200px columns: the wallet
+ * gives way there, and the full size is kept for screen readers and in the
+ * amount's tooltip.
+ */
+export function TwapRow({ t, now }: { t: LiveTwap; now: number }) {
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 py-1.5 border-t border-border-subtle first:border-t-0">
-      <div className="min-w-0 flex items-center gap-1.5 text-[12px]">
-        <Link href={`/market/${t.market === "spot" ? "spot" : "perp"}/${encodeURIComponent(t.coin)}`} className="inline-flex items-center gap-1.5 text-text-primary hover:text-brand font-medium">
+    <div className="py-1.5 border-t border-border-subtle first:border-t-0">
+      <div className="flex items-center gap-1.5 text-[12px]">
+        <Link
+          href={`/market/${t.market === "spot" ? "spot" : "perp"}/${encodeURIComponent(t.coin)}`}
+          className="inline-flex min-w-0 items-center gap-1.5 text-text-primary hover:text-brand font-medium"
+        >
           <TokenAvatar assetName={t.coin} size="xs" />
-          {t.coin}
+          <span className="truncate">{t.coin}</span>
         </Link>
-        <span className={`mono text-[10.5px] font-semibold ${t.isBuy ? "text-success" : "text-danger"}`}>{t.isBuy ? "BUY" : "SELL"}</span>
-        <span className="mono text-[10px] text-text-tertiary uppercase">{t.market}</span>
-        <Link href={`/market/tracker/wallet/${t.user}`} className="mono text-[11px] text-text-tertiary hover:text-brand truncate hidden sm:inline">
-          {short(t.user)}
-        </Link>
+        <span className={`shrink-0 mono text-[10.5px] font-semibold ${t.isBuy ? "text-success" : "text-danger"}`}>{t.isBuy ? "BUY" : "SELL"}</span>
+        <span className="shrink-0 mono text-[10px] text-text-tertiary uppercase">{t.market}</span>
+        {/* Zero basis: the wallet only takes the room left over, so it gives way before the coin does. */}
+        <span className="hidden sm:block lg:max-xl:hidden flex-1 basis-0 min-w-0 truncate">
+          <Link href={`/market/tracker/wallet/${t.user}`} className="mono text-[11px] text-text-tertiary hover:text-brand">
+            {short(t.user)}
+          </Link>
+        </span>
+        <span className="ml-auto shrink-0 mono text-text-primary" title={`${fullUsd(t.remainingUsd)} left of ${fullUsd(t.totalUsd)}`}>
+          {fullUsd(t.remainingUsd)}
+        </span>
       </div>
-      <div className="mono text-[12px] text-right text-text-primary whitespace-nowrap">
-        {compactUsd(t.totalUsd)} <span className="text-text-tertiary">· {timeLeft(t.endTime)} left</span>
-      </div>
-      <div className="col-span-2 mt-1 h-1 rounded-full bg-surface-2 overflow-hidden">
-        <span className={`block h-full ${t.isBuy ? "bg-success/70" : "bg-danger/70"}`} style={{ width: `${t.doneFraction * 100}%` }} />
+      <div className="mt-1 flex items-center gap-2">
+        <div
+          className="flex-1 min-w-0 h-1 rounded-full bg-surface-2 overflow-hidden"
+          role="progressbar"
+          aria-label="Share executed"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(t.doneFraction * 100)}
+          title={`${formatPct(t.doneFraction)} executed`}
+        >
+          <span className={`block h-full ${t.isBuy ? "bg-success/70" : "bg-danger/70"}`} style={{ width: `${t.doneFraction * 100}%` }} />
+        </div>
+        <span className="shrink-0 mono text-[10.5px] text-text-tertiary whitespace-nowrap">
+          <span className="lg:max-xl:sr-only">of {compactUsd(t.totalUsd)} · </span>
+          {timeLeft(t.endTime, now)} left
+        </span>
       </div>
     </div>
   );
@@ -122,16 +151,16 @@ export const TwapFlowCard = memo(function TwapFlowCard({ board, isLoading }: { b
           )}
         </div>
         <div className="px-3.5 py-2.5">
-          <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1">Biggest running · bar = share executed</div>
+          <div className="text-[10px] uppercase tracking-[0.06em] text-text-tertiary font-semibold mb-1">Biggest running · left to execute</div>
           <div className="h-[196px] overflow-y-auto scrollbar-brand pr-1">
             {active.slice(0, 12).map((t) => (
-              <TwapRow key={t.hash} t={t} />
+              <TwapRow key={t.hash} t={t} now={board.now} />
             ))}
           </div>
         </div>
       </div>
       <div className="px-3.5 py-1.5 border-t border-border-subtle text-[10px] text-text-tertiary">
-        New and ended TWAPs show up within seconds. Amounts left use the executed size when it is known (ended TWAPs, and running ones followed since their start); otherwise they are estimated from the time elapsed (one slice every 30s), at the current price. A TWAP that stops filling and falls behind its schedule counts as stalled, not running. Source: our indexer, every TWAP of the last 24h plus those still running.
+        New and ended TWAPs show up within seconds. Amounts left use the executed size when it is known (ended TWAPs, and running ones followed since their start, moved on by the clock until their next fill); otherwise they are estimated from the time elapsed (one slice every 30s). Both at the current price. A TWAP that stops filling and falls behind its schedule counts as stalled, not running. Source: our indexer, every TWAP of the last 24h plus those still running.
       </div>
     </Card>
   );
