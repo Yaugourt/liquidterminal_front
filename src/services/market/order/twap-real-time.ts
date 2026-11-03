@@ -26,7 +26,7 @@ export interface TwapProgressionInput {
   executedSz?: number;
   /** `executedSz` covers the whole TWAP: progress is the executed share, not the time. */
   executedExact?: boolean;
-  /** Last fill seen by the live feed (epoch ms; null: none yet): an exact share runs on with the clock between two fills. */
+  /** Last fill seen by the live feed (epoch ms; null: none yet): marks a running TWAP, whose share moves with the clock between two fills. */
   lastFillAt?: number | null;
 }
 
@@ -44,9 +44,10 @@ export interface TwapRealTimeData {
 /**
  * Compute the current progression of a running TWAP: the same fraction as the
  * dashboard board (`doneFraction`), the executed share when it is exact (run
- * on by the clock between two fills), otherwise the elapsed time floored by
- * the executed size. Remaining quantity and value scale linearly with what is
- * left. `now` ticks every second in the hook.
+ * on by the clock between two fills), otherwise the elapsed time (one slice
+ * ahead, where a TWAP on schedule stands) floored by the executed size.
+ * Remaining quantity and value scale linearly with what is left. `now` ticks
+ * every second in the hook.
  */
 export function calculateRealTimeProgression(twap: TwapProgressionInput, now: number = Date.now()): TwapRealTimeData {
   const originalAmount = parseFloat(twap.amount);

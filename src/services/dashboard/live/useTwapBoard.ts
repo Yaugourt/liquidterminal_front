@@ -14,11 +14,12 @@ import type { EnrichedTwapOrder, TwapMarketType } from "@/services/market/order/
  * What is left to execute uses the real executed size when the feed has
  * followed the TWAP since its start, run on by the clock between two fills;
  * otherwise it is estimated from the time elapsed (the schedule spreads the
- * size evenly over the duration), floored by the executed size when one is
- * known. Both move with the clock, not only with the polls and the pushes
- * (see twap-progress.ts). A TWAP followed since its start that stops filling
- * and falls behind its schedule is "stalled": it stays out of what is running
- * and what is left, and is counted apart. Values use the current market price.
+ * size evenly over the duration, one slice every 30 s from the start),
+ * floored by the executed size when one is known. Both move with the clock,
+ * not only with the polls and the pushes (see twap-progress.ts). A TWAP
+ * followed since its start that stops filling and falls behind its schedule
+ * is "stalled": it stays out of what is running and what is left, and is
+ * counted apart. Values use the current market price.
  */
 
 export interface LiveTwap {
