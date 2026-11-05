@@ -1,3 +1,5 @@
+import { tileFetch } from "./tileFetch";
+
 /**
  * Font buffers for share-tile rendering.
  *
@@ -47,12 +49,12 @@ async function fetchFace(spec: FontSpec): Promise<TileFont | null> {
     const api = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
       spec.family
     )}:wght@${spec.weight}`;
-    const css = await fetch(api, { headers: { "User-Agent": LEGACY_UA } }).then((r) =>
+    const css = await tileFetch(api, { headers: { "User-Agent": LEGACY_UA } }).then((r) =>
       r.ok ? r.text() : ""
     );
     const url = css.match(/src:\s*url\((https:\/\/[^)]+\.(?:ttf|woff))\)/)?.[1];
     if (!url) return null;
-    const res = await fetch(url);
+    const res = await tileFetch(url);
     if (!res.ok) return null;
     return { name: spec.name, data: await res.arrayBuffer(), weight: spec.weight, style: "normal" };
   } catch {

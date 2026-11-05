@@ -7,6 +7,7 @@ import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
 import type { RevenueBreakdown, RevenueWindow } from "@/services/market/revenue";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Protocol Revenue as a standalone, citable image.
@@ -62,7 +63,7 @@ function parseWindow(raw: string | null): RevenueWindow {
 
 async function loadBreakdown(window: RevenueWindow): Promise<RevenueBreakdown | null> {
   try {
-    const res = await fetch(
+    const res = await tileFetch(
       backendUrl(`/market/revenue/history?window=${encodeURIComponent(window)}`),
       { next: { revalidate } }
     );

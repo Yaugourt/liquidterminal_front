@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Liquidations over the last 24h as a standalone image: the flush total, the
@@ -30,7 +31,7 @@ interface LiqStats {
 
 async function load(): Promise<LiqStats | null> {
   try {
-    const res = await fetch(backendUrl("/liquidations/historical/stats"), {
+    const res = await tileFetch(backendUrl("/liquidations/historical/stats"), {
       next: { revalidate },
     });
     if (!res.ok) return null;

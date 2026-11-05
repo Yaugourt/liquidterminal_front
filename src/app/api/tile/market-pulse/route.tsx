@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Hyperliquid market pulse (last 24h) as a standalone image: the routine daily
@@ -31,7 +32,7 @@ interface PerpStats {
 /** `/indexer/*` responses wrap the payload in `{ data }`. */
 async function loadWrapped<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(backendUrl(path), { next: { revalidate } });
+    const res = await tileFetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: T };
     return json.data ?? null;
@@ -43,7 +44,7 @@ async function loadWrapped<T>(path: string): Promise<T | null> {
 /** `/market/perp/globalstats` returns the stats object directly (no envelope). */
 async function loadRaw<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(backendUrl(path), { next: { revalidate } });
+    const res = await tileFetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {

@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * HYPE spot price + fundamentals as a standalone image. One branded card for
@@ -28,7 +29,7 @@ interface SpotToken {
 
 async function loadHype(): Promise<SpotToken | null> {
   try {
-    const res = await fetch(backendUrl("/market/spot"), { next: { revalidate } });
+    const res = await tileFetch(backendUrl("/market/spot"), { next: { revalidate } });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: SpotToken[] };
     return (json.data ?? []).find((t) => t.name?.toUpperCase() === "HYPE") ?? null;

@@ -7,6 +7,7 @@ import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
 import { seriesPaths } from "@/lib/og/chart";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Self-sampled headline trend (open interest, active users, protocol fees) as a
@@ -44,7 +45,7 @@ function parseMetric(raw: string | null): MetricKey {
 
 async function load(metric: MetricKey): Promise<Point[]> {
   try {
-    const res = await fetch(
+    const res = await tileFetch(
       backendUrl(`/market/metrics/history?metric=${metric}&hours=168`),
       { next: { revalidate } }
     );

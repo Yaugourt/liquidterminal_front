@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * The biggest closed trades market-wide (top realized win and loss) as a
@@ -28,7 +29,7 @@ interface Trade {
 
 async function loadExtreme(dir: "DESC" | "ASC"): Promise<Trade | null> {
   try {
-    const res = await fetch(
+    const res = await tileFetch(
       backendUrl(`/indexer/completed-trades/?sort_by=pnl_realized&sort_dir=${dir}&limit=1`),
       { next: { revalidate } }
     );

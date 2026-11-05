@@ -1,8 +1,9 @@
 import type React from "react";
 import { ImageResponse } from "next/og";
-import { env } from "@/lib/env";
+import { backendUrl } from "./backend";
 import { loadTileFonts } from "./fonts";
 import { tileColors } from "./tileTheme";
+import { tileFetch } from "./tileFetch";
 
 /**
  * Shared pieces for the Elysium share-tiles: backend loader, complete-day
@@ -14,7 +15,7 @@ const C = tileColors;
 /** Elysium endpoints wrap their payload in `{ success, data }`. */
 export async function loadElysium<T>(path: string, revalidate: number): Promise<T | null> {
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API}${path}`, { next: { revalidate } });
+    const res = await tileFetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: T };
     return json.data ?? null;

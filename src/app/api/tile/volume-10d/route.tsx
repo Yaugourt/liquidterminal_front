@@ -6,6 +6,7 @@ import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
 import { seriesPaths } from "@/lib/og/chart";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Market-wide daily traded volume over the trailing window, as a standalone
@@ -26,7 +27,7 @@ interface Day {
 
 async function load(): Promise<Day[]> {
   try {
-    const res = await fetch(backendUrl("/indexer/overview/daily-volume-10d"), {
+    const res = await tileFetch(backendUrl("/indexer/overview/daily-volume-10d"), {
       next: { revalidate },
     });
     if (!res.ok) return [];

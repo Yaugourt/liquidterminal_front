@@ -1,4 +1,5 @@
 import { SITE_CONFIG } from "@/lib/site-config";
+import { tileFetch } from "./tileFetch";
 
 /**
  * Load a Hypurr mascot mood as a base64 data URI for a share-tile.
@@ -19,7 +20,7 @@ export async function loadHypurr(mood = "hypurr"): Promise<string | null> {
   const failed = failedAt.get(mood);
   if (failed !== undefined && Date.now() - failed < RETRY_AFTER_MS) return null;
   try {
-    const res = await fetch(`${SITE_CONFIG.url}/hypurr/${encodeURIComponent(mood)}.png`);
+    const res = await tileFetch(`${SITE_CONFIG.url}/hypurr/${encodeURIComponent(mood)}.png`);
     if (!res.ok) {
       failedAt.set(mood, Date.now());
       return null;

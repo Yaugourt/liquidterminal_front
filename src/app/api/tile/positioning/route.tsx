@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Smart-money positioning as a standalone, citable image.
@@ -36,7 +37,7 @@ interface Positioning {
 
 async function load(): Promise<Positioning | null> {
   try {
-    const res = await fetch(backendUrl("/top-traders/positioning"), {
+    const res = await tileFetch(backendUrl("/top-traders/positioning"), {
       next: { revalidate },
     });
     if (!res.ok) return null;

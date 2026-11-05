@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Staking decentralization as a standalone image: the Nakamoto coefficient
@@ -26,7 +27,7 @@ interface Validator {
 
 async function load(): Promise<Validator[]> {
   try {
-    const res = await fetch(backendUrl("/staking/validators"), { next: { revalidate } });
+    const res = await tileFetch(backendUrl("/staking/validators"), { next: { revalidate } });
     if (!res.ok) return [];
     const json = (await res.json()) as { data?: Validator[] };
     return json.data ?? [];

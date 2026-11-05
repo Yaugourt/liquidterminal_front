@@ -4,6 +4,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { ELYSIUM_FOOTNOTE, ElysiumBadge, StatRow, agoText, elysiumTileResponse } from "@/lib/og/elysium";
 import { elysiumHead } from "@/lib/og/elysium-rpc";
 import { SNAPSHOT_BASE, SNAPSHOT_POINTER } from "@/services/elysium/snapshot-config";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Node bootstrap snapshots: the daily archive of the Elysium testnet state a
@@ -36,8 +37,8 @@ function parseListing(xml: string): Archive[] {
 export async function GET() {
   try {
     const [listing, pointer, head] = await Promise.all([
-      fetch(`${SNAPSHOT_BASE}/`, { next: { revalidate } }).then((r) => (r.ok ? r.text() : "")),
-      fetch(SNAPSHOT_POINTER, { next: { revalidate } }).then((r) => (r.ok ? r.text() : "")),
+      tileFetch(`${SNAPSHOT_BASE}/`, { next: { revalidate } }).then((r) => (r.ok ? r.text() : "")),
+      tileFetch(SNAPSHOT_POINTER, { next: { revalidate } }).then((r) => (r.ok ? r.text() : "")),
       elysiumHead(),
     ]);
     const files = parseListing(listing);

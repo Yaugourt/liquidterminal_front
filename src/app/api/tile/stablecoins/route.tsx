@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * Stablecoin supply on Hyperliquid as a standalone image: the total parked in
@@ -29,7 +30,7 @@ interface Stables {
 
 async function load(): Promise<Stables | null> {
   try {
-    const res = await fetch(backendUrl("/market/stablecoins"), { next: { revalidate } });
+    const res = await tileFetch(backendUrl("/market/stablecoins"), { next: { revalidate } });
     if (!res.ok) return null;
     return (await res.json()) as Stables;
   } catch {

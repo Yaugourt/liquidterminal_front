@@ -8,6 +8,7 @@ import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
 import { seriesPaths } from "@/lib/og/chart";
 import { CUSTOM_METRIC_KEYS, CUSTOM_MAX, SERIES_KEYS, CHART_STATS_MAX } from "@/lib/og/customCatalog";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * A visitor-composed share-tile. The share studio lets a visitor choose a
@@ -38,7 +39,7 @@ interface Sources {
 
 async function wrapped<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(backendUrl(path), { next: { revalidate } });
+    const res = await tileFetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: T };
     return json.data ?? null;
@@ -48,7 +49,7 @@ async function wrapped<T>(path: string): Promise<T | null> {
 }
 async function raw<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(backendUrl(path), { next: { revalidate } });
+    const res = await tileFetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {

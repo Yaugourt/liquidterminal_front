@@ -5,6 +5,7 @@ import { tileColors } from "@/lib/og/tileTheme";
 import { TileFrame } from "@/lib/og/TileFrame";
 import { loadTileFonts } from "@/lib/og/fonts";
 import { loadHypurr } from "@/lib/og/hypurr";
+import { tileFetch } from "@/lib/og/tileFetch";
 
 /**
  * HIP-3 ecosystem snapshot as a standalone image: how big the builder-deployed
@@ -35,7 +36,7 @@ interface Snapshot {
 
 async function loadJson<T>(path: string): Promise<T | null> {
   try {
-    const res = await fetch(backendUrl(path), { next: { revalidate } });
+    const res = await tileFetch(backendUrl(path), { next: { revalidate } });
     if (!res.ok) return null;
     const json = (await res.json()) as { data?: T };
     return json.data ?? null;
