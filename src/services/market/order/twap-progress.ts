@@ -19,7 +19,7 @@ export interface TwapProgressInput {
    * estimated one is the time elapsed.
    */
   lastFillAt?: number | null;
-  /** Full notional in USD: sizes the $10 chunk a small TWAP fills in (see `nextFillShare`). */
+  /** Full notional in USD: tells how many slices a small TWAP fills at a time (see `nextFillShare`). */
   totalUsd?: number;
 }
 
@@ -28,12 +28,31 @@ const SLICE_MS = 30_000;
 const MIN_SUBORDER_USD = 10;
 
 /**
- * Share of the TWAP its next fill takes on schedule: one 30 s slice, or the
- * $10 chunk a small TWAP waits for when its slices are worth less.
+ * How long the exact run-on keeps going past the next fill's due time. A fill
+ * reaches the browser 1–3 s after its block time (HypeDexer, then the
+ * backend's push once a second: median 1.6 s, p90 2.1 s on 2026-11-05), and
+ * the browser's clock may run a little ahead. Capped at the due time, the
+ * share stood still before 329 of 339 fills (6 min of prod feed: median
+ * 2.6 s), then jumped; with this margin and whole slices (nextFillShare), 16
+ * of 339 (small TWAPs that skipped a tick), and a fill lands where the run-on
+ * stands (median gap 0.14 s of schedule). A TWAP that stops filling runs on
+ * this much further before it stops.
+ */
+const FILL_DELAY_MS = 5_000;
+
+/**
+ * Share of the TWAP its next fill takes on schedule. Hyperliquid looks at a
+ * TWAP every 30 s and sends a suborder once what it is behind is worth $10:
+ * one slice each time, or, when slices are worth less, the whole slices that
+ * first add up to $10 (on 2026-11-05, TWAPs with $5–10 slices filled every
+ * 60 s, two slices at a time, 44 of 44 fills; smaller ones every 4, 7, 9…
+ * ticks).
  */
 function nextFillShare(duration: number, totalUsd: number | undefined): number {
   const slice = SLICE_MS / duration;
-  return totalUsd !== undefined && totalUsd > 0 ? Math.max(slice, MIN_SUBORDER_USD / totalUsd) : slice;
+  if (totalUsd === undefined || !(totalUsd > 0)) return slice;
+  // A hair under a whole number of slices still counts as that number (binary noise).
+  return slice * Math.max(1, Math.ceil(MIN_SUBORDER_USD / (totalUsd * slice) - 1e-9));
 }
 
 /**
@@ -47,10 +66,11 @@ function nextFillShare(duration: number, totalUsd: number | undefined): number {
  * fills, so what is left goes down every second:
  * - An exact share only moves when a fill lands: the clock runs it on from
  *   the last fill at the schedule's pace, by no more than the next fill's
- *   share, and it meets the real share again at each fill. A TWAP that stops
- *   filling stops there, one fill ahead at most. The clock stops at the
- *   scheduled end too, so the share holds there until the last fill or the
- *   final status lands instead of stepping back.
+ *   share plus the few seconds a fill takes to reach us (FILL_DELAY_MS), and
+ *   it meets the real share again at each fill. A TWAP that stops filling
+ *   stops there, one fill and a few seconds ahead at most. The clock stops at
+ *   the scheduled end too, so the share holds there until the last fill or
+ *   the final status lands instead of stepping back.
  * - An estimated share is the time elapsed plus one slice, where a TWAP on
  *   schedule stands: Hyperliquid sends the first suborder within seconds of
  *   the start, so right after a fill the executed share is up to a slice
@@ -68,28 +88,30 @@ export function doneFraction(p: TwapProgressInput, now: number): number {
   if (p.exact) {
     if (!running) return executed;
     const sinceFill = Math.max(0, Math.min(now, p.time + duration) - (p.lastFillAt ?? p.time));
-    return Math.min(1, executed + Math.min(nextFillShare(duration, p.totalUsd), sinceFill / duration));
+    return Math.min(1, executed + Math.min(nextFillShare(duration, p.totalUsd) + FILL_DELAY_MS / duration, sinceFill / duration));
   }
   const elapsed = duration > 0 ? Math.min(1, Math.max(0, (now - p.time) / duration)) : 1;
   const scheduled = running ? Math.min(1, elapsed + SLICE_MS / duration) : elapsed;
   return Math.max(scheduled, executed);
 }
 
+/** What `doneFraction` needs of an enriched order: a running one gets `lastFillAt`, so it moves with the clock between two fills. */
+export function twapProgressInput(order: EnrichedTwapOrder): TwapProgressInput {
+  const running = !order.ended && !order.error;
+  return {
+    size: parseFloat(order.action.twap.s),
+    executed: order.executedSz ?? 0,
+    exact: order.executedExact === true,
+    time: order.time,
+    durationMin: order.action.twap.m,
+    lastFillAt: running ? order.lastFillAt ?? null : undefined,
+    totalUsd: order.totalValueUSD,
+  };
+}
+
 /** `doneFraction` of an enriched order: a running one moves with the clock between two fills. */
 export function twapDoneFraction(order: EnrichedTwapOrder, now: number): number {
-  const running = !order.ended && !order.error;
-  return doneFraction(
-    {
-      size: parseFloat(order.action.twap.s),
-      executed: order.executedSz ?? 0,
-      exact: order.executedExact === true,
-      time: order.time,
-      durationMin: order.action.twap.m,
-      lastFillAt: running ? order.lastFillAt ?? null : undefined,
-      totalUsd: order.totalValueUSD,
-    },
-    now
-  );
+  return doneFraction(twapProgressInput(order), now);
 }
 
 /** A running TWAP with no fill for this long, though tracked since its start, may not really be executing. */
