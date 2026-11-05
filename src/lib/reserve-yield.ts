@@ -1,3 +1,5 @@
+import { unstable_cache } from "next/cache";
+
 /**
  * USDC reserve yield (AQAv2), read from the chain.
  *
@@ -15,8 +17,11 @@
  * path, so the only rate shown is the one implied by a payment that actually
  * landed: amount / sum of the sampled daily balances x 365.
  *
- * Server only: a cold run reads ~60 historical balances. Past dates never
- * change, so they are memoized for the life of the instance.
+ * Server only: a cold run reads 61 to 90 historical balances (the dates of the
+ * last three intervals), each behind a block search on the public RPC. Past
+ * dates never change, so each reading is
+ * memoized for the life of the instance and kept for good in Next's data
+ * cache, which every instance shares (see `keptForGood`).
  */
 
 const EVM_RPC = "https://rpc.hyperliquid.xyz/evm";
@@ -194,6 +199,23 @@ async function assertArchiveConsistent(block: number): Promise<void> {
 const blockAtCache = new Map<number, number>();
 const balanceAtDateCache = new Map<number, number>();
 
+/**
+ * A reading about a past block, kept for good in Next's data cache (on Vercel
+ * the Data Cache, shared by every instance), behind the per-instance maps
+ * above. The first block of a past date and a balance at a past block never
+ * change, but a new instance would otherwise search the chain again: ~6
+ * public-RPC calls per date, ~430 for the 71 dates sampled on 2026-11-05, and
+ * the public RPC starts answering "rate limited" partway through (that day the
+ * share tile answered 503 on each new instance until that instance had read
+ * every date). Only a reading that succeeded is kept; a failure throws and is
+ * tried again on the next request, so a run cut short still keeps the dates it
+ * read. Next also keys the entry on the source of `read`, so changing that
+ * code starts the cache over.
+ */
+function keptForGood<T>(key: string, read: () => Promise<T>): Promise<T> {
+  return unstable_cache(read, ["reserve-yield", key], { revalidate: false })();
+}
+
 let chainRate: { rate: number; at: number } | null = null;
 
 /** HyperEVM blocks per second, measured over the last ~1M blocks (refreshed hourly). */
@@ -206,15 +228,22 @@ async function blocksPerSecond(head: { n: number; ts: number }): Promise<number>
   return rate;
 }
 
+/** First block with timestamp >= `tSec`, a past moment: searched once, then kept. */
+async function firstBlockAtOrAfter(tSec: number, head: { n: number; ts: number }): Promise<number> {
+  const cached = blockAtCache.get(tSec);
+  if (cached !== undefined) return cached;
+  const block = await keptForGood(`first-block-at-${tSec}`, () => searchFirstBlockAtOrAfter(tSec, head));
+  blockAtCache.set(tSec, block);
+  return block;
+}
+
 /**
  * First block with timestamp >= `tSec`. Blocks come at a near-constant rate,
  * so the guess from the measured rate lands within a few hundred blocks; a
  * small bracket around it is then narrowed by interpolation, with a bisection
  * every other step so a lopsided bracket cannot stall the search.
  */
-async function firstBlockAtOrAfter(tSec: number, head: { n: number; ts: number }): Promise<number> {
-  const cached = blockAtCache.get(tSec);
-  if (cached !== undefined) return cached;
+async function searchFirstBlockAtOrAfter(tSec: number, head: { n: number; ts: number }): Promise<number> {
   if (tSec > head.ts) throw new Error("date is after the chain head");
   const rate = await blocksPerSecond(head);
   const guess = Math.round(head.n - (head.ts - tSec) * rate);
@@ -251,7 +280,6 @@ async function firstBlockAtOrAfter(tSec: number, head: { n: number; ts: number }
       tHi = tMid;
     }
   }
-  blockAtCache.set(tSec, hi);
   return hi;
 }
 
@@ -259,7 +287,8 @@ async function treasuryBalanceOnDate(dateMs: number, head: { n: number; ts: numb
   const cached = balanceAtDateCache.get(dateMs);
   if (cached !== undefined) return cached;
   const block = await firstBlockAtOrAfter(dateMs / 1000, head);
-  const v = await archiveBalance(RESERVE_YIELD_ADDRESSES.treasury, block);
+  const treasury = RESERVE_YIELD_ADDRESSES.treasury;
+  const v = await keptForGood(`usdc-of-${treasury}-at-${block}`, () => archiveBalance(treasury, block));
   balanceAtDateCache.set(dateMs, v);
   return v;
 }
