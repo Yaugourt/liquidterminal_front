@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTwapOrders } from "@/services/market/order/hooks/useTwapOrders";
-import { isTwapStalled, twapDoneFraction } from "@/services/market/order/twap-progress";
+import { doneFraction, isTwapStalled, twapProgressInput, type TwapProgressInput } from "@/services/market/order/twap-progress";
 import type { EnrichedTwapOrder, TwapMarketType } from "@/services/market/order/types";
 
 /**
@@ -34,6 +34,8 @@ export interface LiveTwap {
   /** Executed share when known, otherwise estimated from elapsed time. */
   doneFraction: number;
   remainingUsd: number;
+  /** What `doneFraction` was computed from: a row runs the drain on with it between two boards (see TwapRow). */
+  progress: TwapProgressInput;
   startTime: number;
   endTime: number;
 }
@@ -93,7 +95,8 @@ function side(list: LiveTwap[]): TwapSide {
 
 function toLive(o: EnrichedTwapOrder, now: number): LiveTwap {
   const duration = o.action.twap.m * 60_000;
-  const doneFraction = twapDoneFraction(o, now);
+  const progress = twapProgressInput(o);
+  const done = doneFraction(progress, now);
   return {
     hash: o.hash,
     user: o.user,
@@ -102,8 +105,9 @@ function toLive(o: EnrichedTwapOrder, now: number): LiveTwap {
     isBuy: o.action.twap.b,
     size: parseFloat(o.action.twap.s),
     totalUsd: o.totalValueUSD,
-    doneFraction,
-    remainingUsd: o.totalValueUSD * (1 - doneFraction),
+    doneFraction: done,
+    remainingUsd: o.totalValueUSD * (1 - done),
+    progress,
     startTime: o.time,
     endTime: o.time + duration,
   };

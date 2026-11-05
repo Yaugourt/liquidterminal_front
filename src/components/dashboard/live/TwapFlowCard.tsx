@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { CardHead, DataStatus, KpiRibbon, TokenAvatar, type KpiCell } from "@/components/common";
 import { compactUsd, formatPct, fullUsd } from "@/lib/formatters/numberFormatting";
 import type { LiveTwap, TwapBoard } from "@/services/dashboard/live/useTwapBoard";
+import { useTwapDrain } from "./useTwapDrain";
 
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
@@ -38,15 +39,17 @@ export function FlowBar({ buy, sell, className = "h-1.5" }: { buy: number; sell:
 
 /**
  * One running TWAP. First line: who, and what is left to execute in USD, to
- * the dollar so the drain shows as the board ticks each second. Second line:
- * the share executed as a bar, then the full size and the time left. Between
- * 1024 and 1279px the dashboard puts these rows in ~200px columns: the wallet
- * gives way there, and the full size is kept for screen readers and in the
- * amount's tooltip.
+ * the cent and drained continuously (`useTwapDrain`: the board's model ~20
+ * times a second, the cents dimmed). Second line: the share executed as a bar
+ * (same drain), then the full size and the time left. Between 1024 and 1279px
+ * the dashboard puts these rows in ~200px columns: the wallet and the cents
+ * give way there (amounts of $1M and more cut the coin's name at 1024px), the
+ * full size is kept for screen readers and in the amount's tooltip.
  */
 export function TwapRow({ t, now }: { t: LiveTwap; now: number }) {
+  const { rowRef, wholeRef, centsRef, barRef } = useTwapDrain(t.progress, t.totalUsd);
   return (
-    <div className="py-1.5 border-t border-border-subtle first:border-t-0">
+    <div ref={rowRef} className="py-1.5 border-t border-border-subtle first:border-t-0">
       <div className="flex items-center gap-1.5 text-[12px]">
         <Link
           href={`/market/${t.market === "spot" ? "spot" : "perp"}/${encodeURIComponent(t.coin)}`}
@@ -64,7 +67,8 @@ export function TwapRow({ t, now }: { t: LiveTwap; now: number }) {
           </Link>
         </span>
         <span className="ml-auto shrink-0 mono text-text-primary" title={`${fullUsd(t.remainingUsd)} left of ${fullUsd(t.totalUsd)}`}>
-          {fullUsd(t.remainingUsd)}
+          <span ref={wholeRef} />
+          <span ref={centsRef} className="text-[10.5px] text-text-tertiary lg:max-xl:hidden" />
         </span>
       </div>
       <div className="mt-1 flex items-center gap-2">
@@ -77,7 +81,7 @@ export function TwapRow({ t, now }: { t: LiveTwap; now: number }) {
           aria-valuenow={Math.round(t.doneFraction * 100)}
           title={`${formatPct(t.doneFraction)} executed`}
         >
-          <span className={`block h-full ${t.isBuy ? "bg-success/70" : "bg-danger/70"}`} style={{ width: `${t.doneFraction * 100}%` }} />
+          <span ref={barRef} className={`block h-full ${t.isBuy ? "bg-success/70" : "bg-danger/70"}`} />
         </div>
         <span className="shrink-0 mono text-[10.5px] text-text-tertiary whitespace-nowrap">
           <span className="lg:max-xl:sr-only">of {compactUsd(t.totalUsd)} · </span>

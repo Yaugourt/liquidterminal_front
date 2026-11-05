@@ -335,6 +335,22 @@ export function fullUsd(n: number | null | undefined, opts: { fallback?: string 
 }
 
 /**
+ * `fullUsd` to the cent, in two parts so the cents can be styled apart —
+ * `{ whole: '$1,234', cents: '.56' }`. Truncated, not rounded: the whole
+ * dollars never run ahead of the cents (`1234.999` → `$1,234` + `.99`). For
+ * amounts that run on continuously (the TWAP drain), where the cents are what
+ * moves between two whole dollars.
+ */
+export function fullUsdParts(n: number | null | undefined, opts: { fallback?: string } = {}): { whole: string; cents: string } {
+  const { fallback = '—' } = opts;
+  if (n == null || !Number.isFinite(n)) return { whole: fallback, cents: '' };
+  // Rounded to 1e-4 first, so binary noise (1234.56 * 100 = 123455.99…) does not lose a cent.
+  const c = Math.floor(Math.round(Math.abs(n) * 1e4) / 100);
+  const sign = n < 0 && c > 0 ? '-' : '';
+  return { whole: `${sign}$${Math.floor(c / 100).toLocaleString('en-US')}`, cents: `.${String(c % 100).padStart(2, '0')}` };
+}
+
+/**
  * Compact HYPE amount — `1.23B` / `4.56M` / `7.8K` / `123`.
  *
  * Same shape as `compactUsd` but without the `$` prefix — HYPE is a unit
