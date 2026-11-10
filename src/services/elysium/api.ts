@@ -111,14 +111,17 @@ export const fetchElysiumHead = async (): Promise<number> => {
   }, "fetching elysium head");
 };
 
-// ── Computed analytics (backend aggregates over the ingested chain) ──────────
-// Testnet only: our ingestion reads chain 99801. Mainnet pages hide these.
+// ── Computed analytics (backend aggregates over the indexed chain) ───────────
+// The backend serves these for both chains (mainnet from the provider's
+// from-genesis index), so they follow the selected network like getData.
 
 const ANALYTICS = "/elysium/analytics";
 
 async function getAnalytics<T>(path: string, params?: Record<string, unknown>): Promise<T> {
   return withErrorHandling(async () => {
-    const res = await get<Envelope<T>>(`${ANALYTICS}${path}`, params, OPTS);
+    const network = (params?.network as string | undefined) ?? currentElysiumNetwork();
+    const query = network === "mainnet" ? { ...params, network } : { ...params, network: undefined };
+    const res = await get<Envelope<T>>(`${ANALYTICS}${path}`, query, OPTS);
     return res.data;
   }, `fetching elysium analytics ${path}`);
 }
