@@ -40,6 +40,7 @@ import {
   useElysiumMethods,
   type ElysiumBlock,
 } from "@/services/elysium";
+import { useElysiumLiveBlocks } from "@/services/elysium/live-blocks.store";
 
 /** Blocks per second over the returned window, from block timestamps (1s resolution). */
 function blocksPerSecond(blocks: ElysiumBlock[] | null | undefined): number | null {
@@ -56,6 +57,9 @@ const ElysiumKpis = memo(function ElysiumKpis() {
   const { format } = useNumberFormat();
   const network = useElysiumNetwork((s) => s.network);
   const { data: head } = useElysiumHead();
+  // On mainnet the head ticks live from the archive node's newHeads (our /ws).
+  const { liveHead } = useElysiumLiveBlocks(network === "mainnet");
+  const effectiveHead = liveHead ?? head ?? null;
   const { data: stats } = useElysiumStats();
   const { data: daily } = useElysiumDaily(30);
   const { data: rateBlocks } = useElysiumBlocks(100);
@@ -72,9 +76,9 @@ const ElysiumKpis = memo(function ElysiumKpis() {
     {
       key: "head",
       label: "Block",
-      value: head != null ? formatNumber(head, format, { maximumFractionDigits: 0 }) : stats ? formatNumber(stats.last_block, format, { maximumFractionDigits: 0 }) : "…",
-      sub: head != null ? (network === "mainnet" ? "last indexed block" : "live, public RPC") : "indexed tip",
-      href: head != null ? `${EXPLORER}/block/${head}` : undefined,
+      value: effectiveHead != null ? formatNumber(effectiveHead, format, { maximumFractionDigits: 0 }) : stats ? formatNumber(stats.last_block, format, { maximumFractionDigits: 0 }) : "…",
+      sub: liveHead != null ? "live" : effectiveHead != null ? (network === "mainnet" ? "last indexed block" : "live, public RPC") : "indexed tip",
+      href: effectiveHead != null ? `${EXPLORER}/block/${effectiveHead}` : undefined,
     },
     { key: "bps", label: "Blocks / s", value: bps != null ? bps.toFixed(1) : "…", sub: "last 100 blocks" },
     {
@@ -216,10 +220,34 @@ const ElysiumTransactions = memo(function ElysiumTransactions() {
   );
 });
 
+interface BlockRow {
+  number: number;
+  userTx: number | null;
+  txCount: number | null;
+  timeMs: number;
+  l1: number | null;
+}
+
 const ElysiumBlocks = memo(function ElysiumBlocks() {
   const { format } = useNumberFormat();
+  const network = useElysiumNetwork((s) => s.network);
   const { data: blocks, error, isStale } = useElysiumBlocks(14);
+  // On mainnet, new blocks stream in from the archive node's newHeads (our /ws)
+  // with no tx count yet; the index fills each one's counts a moment later.
+  const { liveBlocks } = useElysiumLiveBlocks(network === "mainnet");
   const now = useNow(3_000);
+
+  const rows = useMemo<BlockRow[]>(() => {
+    const byNum = new Map<number, BlockRow>();
+    for (const b of blocks ?? [])
+      byNum.set(b.block_number, { number: b.block_number, userTx: b.user_tx_count, txCount: b.tx_count, timeMs: elysiumTimeMs(b.block_time), l1: b.l1_block_number });
+    // A live block only fills a gap above the newest indexed block, never overrides a counted one.
+    for (const b of liveBlocks)
+      if (!byNum.has(b.number)) byNum.set(b.number, { number: b.number, userTx: null, txCount: null, timeMs: b.timestamp * 1000, l1: null });
+    return [...byNum.values()].sort((a, b) => b.number - a.number).slice(0, 14);
+  }, [blocks, liveBlocks]);
+
+  const loading = !blocks && rows.length === 0;
   return (
     <Card className="overflow-hidden flex flex-col">
       <CardHead
@@ -227,9 +255,9 @@ const ElysiumBlocks = memo(function ElysiumBlocks() {
         actions={<DataStatus variant="live" connected={!error && !isStale} />}
       />
       <div className="h-[360px] overflow-y-auto scrollbar-brand fade-bottom">
-        {!blocks ? (
+        {loading ? (
           <Empty>{error ? "Elysium data is unavailable right now." : "Loading blocks…"}</Empty>
-        ) : blocks.length === 0 ? (
+        ) : rows.length === 0 ? (
           <Empty>No block indexed yet.</Empty>
         ) : (
           <ModuleTable
@@ -240,21 +268,27 @@ const ElysiumBlocks = memo(function ElysiumBlocks() {
               { header: "Age", width: 60 },
             ]}
           >
-            {blocks.map((b) => (
+            {rows.map((b) => (
               <ModuleTableRow
-                key={b.block_number}
+                key={b.number}
                 cells={[
                   <span key="block" className="mono whitespace-nowrap">
-                    <ExtLink href={`${EXPLORER}/block/${b.block_number}`} className="text-brand">
-                      {formatNumber(b.block_number, format, { maximumFractionDigits: 0 })}
+                    <ExtLink href={`${EXPLORER}/block/${b.number}`} className="text-brand">
+                      {formatNumber(b.number, format, { maximumFractionDigits: 0 })}
                     </ExtLink>
                   </span>,
                   <span key="txs" className="mono whitespace-nowrap text-text-primary" title="user transactions / all transactions">
-                    {b.user_tx_count}
-                    <span className="text-text-tertiary"> / {b.tx_count}</span>
+                    {b.txCount != null ? (
+                      <>
+                        {b.userTx}
+                        <span className="text-text-tertiary"> / {b.txCount}</span>
+                      </>
+                    ) : (
+                      <span className="text-text-tertiary">…</span>
+                    )}
                   </span>,
-                  <span key="age" className="mono whitespace-nowrap text-text-tertiary" title={`HyperEVM block ${b.l1_block_number}`}>
-                    {ago(elysiumTimeMs(b.block_time), now)}
+                  <span key="age" className="mono whitespace-nowrap text-text-tertiary" title={b.l1 != null ? `HyperEVM block ${b.l1}` : undefined}>
+                    {ago(b.timeMs, now)}
                   </span>,
                 ]}
               />
