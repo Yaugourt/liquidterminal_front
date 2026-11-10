@@ -9,15 +9,17 @@ import { toolForPath } from "@/lib/sidebar-config";
 import { ELYSIUM_CHAIN_ID, ELYSIUM_MAINNET_PUBLIC, useElysiumNetwork, type ElysiumNet } from "@/store/use-elysium-network";
 
 /**
- * Pages that follow the selected chain. The overview, address profiles and the
- * computed-analytics pages read the backend, which serves both networks; the
- * builder tools (Simulator, Decoder, Network, Tx inspector, Checker) stay
- * testnet-only until their mainnet RPC proxy is wired.
+ * Pages that follow the selected chain: the overview, address profiles and the
+ * computed-analytics pages read the backend (both networks), and the builder
+ * tools read the public testnet RPC or, on mainnet, the /elysium/rpc proxy.
+ * Only /elysium/node (testnet snapshots) stays testnet-only.
  */
 const MAINNET_READY = [
   /^\/elysium$/,
   /^\/elysium\/address\//,
   /^\/elysium\/(ecosystem|launchpads|fees|users|economics|dex|contracts|tokens|bridge)(\/|$)/,
+  // Builder tools: reads go through the /elysium/rpc proxy on mainnet.
+  /^\/elysium\/(simulate|decode|network|tx|check|start|trust)(\/|$)/,
 ];
 
 /**

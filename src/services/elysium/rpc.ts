@@ -1,5 +1,7 @@
-import { createPublicClient, defineChain, parseAbi, type Address } from "viem";
+import { createPublicClient, defineChain, http, parseAbi, type Address } from "viem";
 import { useDataFetching } from "@/hooks/useDataFetching";
+import { API_URLS } from "@/services/api/constants";
+import { currentElysiumNetwork } from "@/store/use-elysium-network";
 import { ELYSIUM_RPC_URL } from "./api";
 import { ELYSIUM_ALT_RPC_URL } from "@/lib/elysium-chain";
 import { simulateCall, simulateDeploy, type DeployCall, type SimCall } from "@/lib/elysium/simulate";
@@ -24,11 +26,45 @@ const rpc = freshElysiumTransport(ELYSIUM_RPC_URL, ELYSIUM_ALT_RPC_URL);
 export const elysiumRpcFreshness = rpc.freshness;
 
 // Contract reads are folded into one Multicall3 eth_call; reads go to the RPC whose head is current.
-export const elysiumClient = createPublicClient({
+const testnetClient = createPublicClient({
   chain: elysiumTestnet,
   batch: { multicall: true },
   transport: rpc.transport,
 });
+
+/** Elysium mainnet as a viem chain. Multicall3 is deployed at the canonical address. */
+export const elysiumMainnet = defineChain({
+  id: 99901,
+  name: "Elysium",
+  nativeCurrency: { name: "HYPE", symbol: "HYPE", decimals: 18 },
+  rpcUrls: { default: { http: [`${API_URLS.LOCAL_BACKEND}/elysium/rpc`] } },
+  blockExplorers: { default: { name: "Elysium Explorer", url: "https://explorer.elysium.kinetiq.xyz" } },
+  contracts: { multicall3: { address: "0xcA11bde05977b3631167028862bE2a173976CA11" } },
+});
+
+/**
+ * Mainnet reads go through our backend proxy (/elysium/rpc): the archive RPC is
+ * keyed, so the key must stay server-side, never in the browser bundle.
+ */
+const mainnetClient = createPublicClient({
+  chain: elysiumMainnet,
+  batch: { multicall: true },
+  transport: http(`${API_URLS.LOCAL_BACKEND}/elysium/rpc`, { retryCount: 1, retryDelay: 800 }),
+});
+
+/**
+ * The Elysium public client for the selected network: testnet reads the public
+ * RPCs, mainnet reads the proxy above. A Proxy routes every call to the current
+ * network's client, so callers keep using `elysiumClient` and automatically
+ * follow the network switch.
+ */
+export const elysiumClient = new Proxy(testnetClient, {
+  get(_target, prop, receiver) {
+    const client = currentElysiumNetwork() === "mainnet" ? mainnetClient : testnetClient;
+    const value = Reflect.get(client, prop, receiver);
+    return typeof value === "function" ? (value as (...a: unknown[]) => unknown).bind(client) : value;
+  },
+}) as typeof testnetClient;
 
 /** Arbitrum precompiles, identical on every Nitro chain. */
 export const PRECOMPILE = {
