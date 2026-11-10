@@ -1,37 +1,22 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
-import { useElysiumLaunchpads, type EcoToken } from "@/services/elysium";
+import { ECO_TOKENS_MAX, ECO_TOKENS_STEP, useElysiumLaunchpads, type EcoToken, type EcoTokenSort } from "@/services/elysium";
 import { AddrLink, EMPTY, Empty, ago, useNow } from "./shared";
 import { EcoLogo, EcoSource, pctDelta, tinyUsd } from "./eco-shared";
 
-type Sort = "hot" | "new" | "gainers" | "mcap";
-const SORTS: { value: Sort; label: string }[] = [
+const SORTS: { value: EcoTokenSort; label: string }[] = [
   { value: "hot", label: "Hot" },
   { value: "new", label: "New" },
   { value: "gainers", label: "Gainers" },
   { value: "mcap", label: "Market cap" },
 ];
 
-const PAGE = 50;
-const GAINER_MIN_VOLUME = 100;
-
-function sorter(sort: Sort): (a: EcoToken, b: EcoToken) => number {
-  switch (sort) {
-    case "new":
-      return (a, b) => b.bornAt - a.bornAt;
-    case "gainers":
-      return (a, b) => (b.change24h ?? -Infinity) - (a.change24h ?? -Infinity);
-    case "mcap":
-      return (a, b) => (b.marketCap ?? 0) - (a.marketCap ?? 0);
-    default:
-      return (a, b) => (b.volume24h ?? 0) - (a.volume24h ?? 0) || b.txns24h - a.txns24h;
-  }
-}
+const PAGE = ECO_TOKENS_STEP;
 
 function TokenCell({ t }: { t: EcoToken }) {
   return (
@@ -88,49 +73,46 @@ function MiniList({ title, rows, value, meta }: { title: string; rows: EcoToken[
  * Elysium · Launchpads: every token launched on the Elysium launchpads, with
  * price, volume, holders and bonding progress, decoded by our backend from
  * the launchpads' own launch and trade events.
+ *
+ * The backend sorts, filters and searches (there are several hundred thousand
+ * tokens): the page asks for the first rows of the chosen order, 50 more each
+ * time, and gets the totals and the three short lists with them.
  */
 export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
-  const { data, isLoading, error } = useElysiumLaunchpads();
   const now = useNow(30_000);
   const [pad, setPad] = useState("All");
-  const [sort, setSort] = useState<Sort>("hot");
+  const [sort, setSort] = useState<EcoTokenSort>("hot");
   const [query, setQuery] = useState("");
   const [shown, setShown] = useState(PAGE);
-  const tokens = useMemo(() => data?.tokens ?? [], [data]);
+  const { data: response, isLoading, error } = useElysiumLaunchpads({
+    pad: pad === "All" ? undefined : pad,
+    sort,
+    q: query.trim() || undefined,
+    limit: shown,
+  });
+  // A backend from before the paged route answers without totals: treated as no data.
+  const data = response?.summary ? response : null;
+  const rows = data?.tokens ?? [];
+  const summary = data?.summary;
+  const pads = summary?.pads ?? [];
+  const total = data?.total ?? 0;
+  const remaining = Math.max(0, total - rows.length);
+  const atCeiling = rows.length >= ECO_TOKENS_MAX;
 
-  const pads = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const t of tokens) counts.set(t.launchpad, (counts.get(t.launchpad) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  }, [tokens]);
-
-  const rows = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return tokens
-      .filter((t) => pad === "All" || t.launchpad === pad)
-      .filter((t) => !q || `${t.symbol} ${t.name} ${t.address}`.toLowerCase().includes(q))
-      .sort(sorter(sort));
-  }, [tokens, pad, sort, query]);
-
-  const vol24 = tokens.reduce((s, t) => s + (t.volume24h ?? 0), 0);
-  const txns24 = tokens.reduce((s, t) => s + t.txns24h, 0);
-  const graduated = tokens.filter((t) => t.graduated).length;
-  const day = now / 1000 - 86_400;
-  const born24 = tokens.filter((t) => t.bornAt >= day).length;
   const v = (x: string) => (data ? x : "…");
   const cells: KpiCell[] = [
-    { key: "tokens", label: "Tokens", value: v(compactCount(tokens.length)), sub: `${pads.length} launchpads` },
-    { key: "new", label: "Launched", value: v(compactCount(born24)), sub: "last 24h" },
-    { key: "vol", label: "Volume", value: v(compactUsd(vol24)), sub: `${compactCount(txns24)} trades, last 24h` },
-    { key: "grad", label: "Graduated", value: v(compactCount(graduated)), sub: "left the bonding curve" },
+    { key: "tokens", label: "Tokens", value: v(compactCount(summary?.tokens ?? 0)), sub: `${pads.length} launchpads` },
+    { key: "new", label: "Launched", value: v(compactCount(summary?.launched24h ?? 0)), sub: "last 24h" },
+    { key: "vol", label: "Volume", value: v(compactUsd(summary?.volume24h ?? 0)), sub: `${compactCount(summary?.trades24h ?? 0)} trades, last 24h` },
+    { key: "grad", label: "Graduated", value: v(compactCount(summary?.graduated ?? 0)), sub: "left the bonding curve" },
   ];
 
-  const hot = [...tokens].sort(sorter("hot")).filter((t) => (t.volume24h ?? 0) > 0).slice(0, 5);
-  const fresh = [...tokens].sort(sorter("new")).slice(0, 5);
-  // A $1 trade moves a near-empty curve by four digits: gainers need real volume to count.
-  const gainers = [...tokens].filter((t) => (t.volume24h ?? 0) >= GAINER_MIN_VOLUME).sort(sorter("gainers")).slice(0, 5);
+  const hot = data?.top.hot ?? [];
+  const fresh = data?.top.fresh ?? [];
+  // A $1 trade moves a near-empty curve by four digits: the backend lists gainers with real volume only.
+  const gainers = data?.top.gainers ?? [];
 
-  const padTabs = [{ value: "All", label: `All ${tokens.length || ""}`.trim() }, ...pads.map(([p, n]) => ({ value: p, label: `${p} ${n}` }))];
+  const padTabs = [{ value: "All", label: `All ${summary?.tokens || ""}`.trim() }, ...pads.map((p) => ({ value: p.launchpad, label: `${p.launchpad} ${p.tokens}` }))];
 
   return (
     <div className="space-y-4">
@@ -155,7 +137,7 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
       <Card className="overflow-hidden flex flex-col">
         <CardHead
           title="Launchpad tokens"
-          tag={data ? `${rows.length} tokens` : undefined}
+          tag={data ? `${total}${data.totalCapped ? "+" : ""} tokens` : undefined}
           actions={<SearchBar onSearch={(q) => { setQuery(q); setShown(PAGE); }} placeholder="Symbol, name or address" className="w-full sm:w-56" debounceMs={150} />}
         />
         <div className="px-3.5 pt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -163,7 +145,7 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
             <PillTabs tabs={padTabs} activeTab={pad} onTabChange={(p) => { setPad(p); setShown(PAGE); }} variant="text" />
           </div>
           <div className="sm:ml-auto">
-            <PillTabs tabs={SORTS} activeTab={sort} onTabChange={(s) => setSort(s as Sort)} />
+            <PillTabs tabs={SORTS} activeTab={sort} onTabChange={(s) => setSort(s as EcoTokenSort)} />
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -188,7 +170,7 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
                 { header: "Age", width: 60 },
               ]}
             >
-              {rows.slice(0, shown).map((t) => {
+              {rows.map((t) => {
                 const ch = pctDelta(t.change24h);
                 return (
                   <ModuleTableRow
@@ -211,14 +193,19 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
             </ModuleTable>
           )}
         </div>
-        {data && rows.length > shown && (
+        {data && remaining > 0 && !atCeiling && (
           <button
             type="button"
-            onClick={() => setShown((n) => n + PAGE)}
+            onClick={() => setShown((n) => Math.min(n + PAGE, ECO_TOKENS_MAX))}
             className="focus-ring border-t border-border-subtle py-2.5 text-[12px] text-text-secondary hover:text-brand"
           >
-            Show {Math.min(PAGE, rows.length - shown)} more of {rows.length - shown}
+            Show {Math.min(PAGE, remaining)} more of {remaining}{data.totalCapped ? "+" : ""}
           </button>
+        )}
+        {data && remaining > 0 && atCeiling && (
+          <p className="border-t border-border-subtle py-2.5 text-center text-[12px] text-text-tertiary">
+            Showing the first {ECO_TOKENS_MAX.toLocaleString("en-US")} of {total.toLocaleString("en-US")}. Search or pick a launchpad to narrow the list.
+          </p>
         )}
       </Card>
       <EcoSource what="Tokens, prices, holders and bonding progress" />

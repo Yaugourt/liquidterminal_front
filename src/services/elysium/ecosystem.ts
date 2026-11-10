@@ -88,8 +88,46 @@ export interface EcoProjectsSnapshot {
   computedAt: string;
 }
 
+export type EcoTokenSort = "hot" | "new" | "gainers" | "mcap";
+
+/** Rows the token list asks for: a multiple of the step, up to the backend's ceiling. */
+export const ECO_TOKENS_STEP = 50;
+export const ECO_TOKENS_MAX = 5_000;
+
+/** What the launchpad token list asks the backend for. */
+export interface EcoTokensQuery {
+  /** One launchpad; every launchpad when absent. */
+  pad?: string;
+  sort: EcoTokenSort;
+  /** Matches symbol, name or address. */
+  q?: string;
+  /** The first `limit` tokens of the order (a multiple of ECO_TOKENS_STEP). */
+  limit: number;
+}
+
+/** Totals over every launchpad token, computed by the backend. */
+export interface EcoTokensSummary {
+  tokens: number;
+  /** Launched over the 24h before `computedAt`. */
+  launched24h: number;
+  /** USD traded and trades over the same 24h. */
+  volume24h: number;
+  trades24h: number;
+  graduated: number;
+  /** Tokens per launchpad, largest first. */
+  pads: { launchpad: string; tokens: number }[];
+}
+
 export interface EcoTokensSnapshot {
+  /** The first `limit` tokens of the asked order, filters applied. */
   tokens: EcoToken[];
+  /** Tokens the filters match in all. */
+  total: number;
+  /** True when a search matched more than the backend sorts: `total` is then a floor. */
+  totalCapped: boolean;
+  summary: EcoTokensSummary;
+  /** The three short lists above the table. */
+  top: { hot: EcoToken[]; gainers: EcoToken[]; fresh: EcoToken[] };
   hypeUsd: number | null;
   computedAt: string;
 }
@@ -102,9 +140,12 @@ export const fetchElysiumProjects = () =>
     return res.data;
   }, "fetching elysium ecosystem");
 
-export const fetchElysiumLaunchpads = () =>
+export const fetchElysiumLaunchpads = (query: EcoTokensQuery, signal?: AbortSignal) =>
   withErrorHandling(async () => {
-    const res = await get<{ data: EcoTokensSnapshot }>("/elysium/analytics/launchpads", undefined, OPTS);
+    const params: Record<string, unknown> = { sort: query.sort, limit: query.limit };
+    if (query.pad) params.pad = query.pad;
+    if (query.q) params.q = query.q;
+    const res = await get<{ data: EcoTokensSnapshot }>("/elysium/analytics/launchpads", params, { ...OPTS, signal });
     return res.data;
   }, "fetching elysium launchpads");
 
@@ -112,6 +153,17 @@ export function useElysiumProjects() {
   return useDataFetching<EcoProjectsSnapshot>({ fetchFn: fetchElysiumProjects, refreshInterval: 120_000, maxRetries: 2 });
 }
 
-export function useElysiumLaunchpads() {
-  return useDataFetching<EcoTokensSnapshot>({ fetchFn: fetchElysiumLaunchpads, refreshInterval: 60_000, maxRetries: 2 });
+/**
+ * One page of the launchpad token list, sorted and filtered by the backend
+ * (it holds several hundred thousand tokens: the browser only ever gets the
+ * rows it shows). While new parameters load, the previous page stays on screen.
+ */
+export function useElysiumLaunchpads(query: EcoTokensQuery) {
+  const { pad, sort, q, limit } = query;
+  return useDataFetching<EcoTokensSnapshot>({
+    fetchFn: (signal) => fetchElysiumLaunchpads({ pad, sort, q, limit }, signal),
+    refreshInterval: 60_000,
+    maxRetries: 2,
+    dependencies: [pad, sort, q, limit],
+  });
 }
