@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
 import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
-import { ECO_TOKENS_MAX, ECO_TOKENS_STEP, useElysiumLaunchpads, type EcoToken, type EcoTokenSort } from "@/services/elysium";
+import { ECO_SEARCH_MIN_CHARS, ECO_TOKENS_MAX, ECO_TOKENS_STEP, useElysiumLaunchpads, type EcoToken, type EcoTokenSort } from "@/services/elysium";
 import { AddrLink, EMPTY, Empty, ago, useNow } from "./shared";
 import { EcoLogo, EcoSource, pctDelta, tinyUsd } from "./eco-shared";
 
@@ -76,7 +76,8 @@ function MiniList({ title, rows, value, meta }: { title: string; rows: EcoToken[
  *
  * The backend sorts, filters and searches (there are several hundred thousand
  * tokens): the page asks for the first rows of the chosen order, 50 more each
- * time, and gets the totals and the three short lists with them.
+ * time (200 per request at most), and gets the totals and the three short
+ * lists with them.
  */
 export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
   const now = useNow(30_000);
@@ -84,10 +85,12 @@ export const ElysiumLaunchpads = memo(function ElysiumLaunchpads() {
   const [sort, setSort] = useState<EcoTokenSort>("hot");
   const [query, setQuery] = useState("");
   const [shown, setShown] = useState(PAGE);
+  // The backend searches from two characters: a single one leaves the list as it is.
+  const search = query.trim();
   const { data: response, isLoading, error } = useElysiumLaunchpads({
     pad: pad === "All" ? undefined : pad,
     sort,
-    q: query.trim() || undefined,
+    q: search.length >= ECO_SEARCH_MIN_CHARS ? search : undefined,
     limit: shown,
   });
   // A backend from before the paged route answers without totals: treated as no data.

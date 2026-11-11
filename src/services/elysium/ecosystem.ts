@@ -90,9 +90,13 @@ export interface EcoProjectsSnapshot {
 
 export type EcoTokenSort = "hot" | "new" | "gainers" | "mcap";
 
-/** Rows the token list asks for: a multiple of the step, up to the backend's ceiling. */
+/** Rows the token list shows: a multiple of the step, up to the backend's ceiling. */
 export const ECO_TOKENS_STEP = 50;
 export const ECO_TOKENS_MAX = 5_000;
+/** Rows one request returns at most: a longer list is fetched page by page. */
+export const ECO_TOKENS_PAGE = 200;
+/** The backend searches from this many characters (a single one matches almost every token). */
+export const ECO_SEARCH_MIN_CHARS = 2;
 
 /** What the launchpad token list asks the backend for. */
 export interface EcoTokensQuery {
@@ -101,7 +105,7 @@ export interface EcoTokensQuery {
   sort: EcoTokenSort;
   /** Matches symbol, name or address. */
   q?: string;
-  /** The first `limit` tokens of the order (a multiple of ECO_TOKENS_STEP). */
+  /** The first `limit` tokens of the order (a multiple of ECO_TOKENS_STEP), fetched ECO_TOKENS_PAGE at a time. */
   limit: number;
 }
 
@@ -119,7 +123,7 @@ export interface EcoTokensSummary {
 }
 
 export interface EcoTokensSnapshot {
-  /** The first `limit` tokens of the asked order, filters applied. */
+  /** Tokens of the asked order, filters applied: one page from the backend, the first `limit` once the pages are joined. */
   tokens: EcoToken[];
   /** Tokens the filters match in all. */
   total: number;
@@ -140,13 +144,37 @@ export const fetchElysiumProjects = () =>
     return res.data;
   }, "fetching elysium ecosystem");
 
+/**
+ * The first `query.limit` tokens of an order. The backend returns at most
+ * ECO_TOKENS_PAGE rows per request, so a longer list is read page by page, one
+ * after the other, and joined here. The totals and the short lists are those
+ * of the first page.
+ */
 export const fetchElysiumLaunchpads = (query: EcoTokensQuery, signal?: AbortSignal) =>
   withErrorHandling(async () => {
-    const params: Record<string, unknown> = { sort: query.sort, limit: query.limit };
-    if (query.pad) params.pad = query.pad;
-    if (query.q) params.q = query.q;
-    const res = await get<{ data: EcoTokensSnapshot }>("/elysium/analytics/launchpads", params, { ...OPTS, signal });
-    return res.data;
+    let first: EcoTokensSnapshot | null = null;
+    const tokens: EcoToken[] = [];
+    // A token can move between two pages when the backend's snapshot changes mid-way: shown once.
+    const seen = new Set<string>();
+    for (let offset = 0; offset < query.limit; offset += ECO_TOKENS_PAGE) {
+      const limit = Math.min(ECO_TOKENS_PAGE, query.limit - offset);
+      const params: Record<string, unknown> = { sort: query.sort, limit };
+      if (offset > 0) params.offset = offset;
+      if (query.pad) params.pad = query.pad;
+      if (query.q) params.q = query.q;
+      const res = await get<{ data: EcoTokensSnapshot }>("/elysium/analytics/launchpads", params, { ...OPTS, signal });
+      const page = res.data;
+      first ??= page;
+      for (const token of page.tokens ?? []) {
+        if (seen.has(token.address)) continue;
+        seen.add(token.address);
+        tokens.push(token);
+      }
+      // A short page is the end of the list.
+      if ((page.tokens?.length ?? 0) < limit) break;
+    }
+    // `limit` is at least one step, so there is a first page.
+    return { ...(first as EcoTokensSnapshot), tokens };
   }, "fetching elysium launchpads");
 
 export function useElysiumProjects() {
@@ -154,9 +182,10 @@ export function useElysiumProjects() {
 }
 
 /**
- * One page of the launchpad token list, sorted and filtered by the backend
+ * The rows the launchpad token list shows, sorted and filtered by the backend
  * (it holds several hundred thousand tokens: the browser only ever gets the
- * rows it shows). While new parameters load, the previous page stays on screen.
+ * rows it shows, 200 per request). While new parameters load, the previous
+ * rows stay on screen.
  */
 export function useElysiumLaunchpads(query: EcoTokensQuery) {
   const { pad, sort, q, limit } = query;
