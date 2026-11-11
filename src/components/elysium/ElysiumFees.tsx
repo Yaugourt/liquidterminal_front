@@ -158,9 +158,10 @@ const ByDeployer = memo(function ByDeployer({ data }: { data: ElysiumFeesAnalyti
 });
 
 /**
- * Elysium · Fees by app: who pays for the blockspace. Every non-spam
- * transaction's full fee, grouped by the contract it called and by the
- * address that deployed that contract.
+ * Elysium · Fees by app: who pays for the blockspace. The total is every
+ * transaction's full fee (the same total as the Economics page); the tables
+ * group what the non-spam transactions paid by the contract they called and
+ * by the address that deployed that contract.
  */
 export function ElysiumFees() {
   const [window, setWindow] = useState<ElysiumFeesWindow>("7d");
@@ -169,7 +170,9 @@ export function ElysiumFees() {
   const t = data?.totals;
   const usd = (h: number | undefined) => (price && h != null ? compactUsd(h * price) : undefined);
 
-  const plain = t ? Math.max(0, 1 - t.appShare - t.systemShare) : 0;
+  // The backend gives these two shares since the total is every fee; a value computed before has neither.
+  const plain = t ? (t.transferShare ?? Math.max(0, 1 - t.appShare - t.systemShare)) : 0;
+  const other = t?.otherShare;
 
   const cells: KpiCell[] = [
     { key: "fees", label: "Fees paid", value: t ? `${fmtHypeFee(t.feesHype)} HYPE` : "…", sub: usd(t?.feesHype) ?? `last ${window}`, tone: "gold" },
@@ -181,6 +184,17 @@ export function ElysiumFees() {
       value: t ? formatPct(plain, { decimals: plain >= 0.1 ? 0 : 1 }) : "…",
       sub: "to wallets, not contracts",
     },
+    ...(other !== undefined
+      ? [
+          {
+            key: "other",
+            // A short label: the tile is half a phone's width.
+            label: "Deployments",
+            value: formatPct(other, { decimals: other >= 0.1 ? 0 : 1 }),
+            sub: "contract creations, flagged spam",
+          },
+        ]
+      : []),
     {
       key: "pool",
       label: "25% app pool",
@@ -194,7 +208,7 @@ export function ElysiumFees() {
       <IngestNotice />
       <div className="flex flex-wrap items-center gap-2">
         <PillTabs tabs={WINDOWS} activeTab={window} onTabChange={(v) => setWindow(v as ElysiumFeesWindow)} />
-        <span className="text-[11px] text-text-tertiary">non-spam transactions, full fee including posting to HyperEVM</span>
+        <span className="text-[11px] text-text-tertiary">every transaction, full fee including posting to HyperEVM</span>
         {/* Computed by the backend every minute (24h), every 5 minutes (7d) or every 30 (30d): the time it is as of. */}
         <DataStatus variant="polled" updatedAt={data ? dataUpdatedAt : null} stale={isStale} />
         {data && data.contracts.length > 0 && (

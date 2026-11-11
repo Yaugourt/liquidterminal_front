@@ -309,6 +309,15 @@ export interface ElysiumFeesAnalytics {
     /** Precompiles (bridge retryables, system calls). */
     systemFeesHype: number;
     systemShare: number;
+    /**
+     * Sent to an address that is neither a contract, a token nor a precompile; and the rest
+     * (contract creations, and what flagged spam paid). Given by the backend since 2026-11-11,
+     * when `feesHype` became every fee of the window: a value computed before has neither.
+     */
+    transferFeesHype?: number;
+    transferShare?: number;
+    otherFeesHype?: number;
+    otherShare?: number;
   };
   contracts: {
     address: string;
