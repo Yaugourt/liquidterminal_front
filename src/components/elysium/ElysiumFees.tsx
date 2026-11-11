@@ -4,7 +4,7 @@ import { memo, useState } from "react";
 import { Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, ShareTile, type KpiCell } from "@/components/common";
+import { CardHead, DataStatus, KpiRibbon, ModuleTable, ModuleTableRow, ShareTile, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd, formatPct } from "@/lib/formatters/numberFormatting";
 import { useHypePrice } from "@/services/market/hype";
 import { useElysiumFees, type ElysiumContractKind, type ElysiumFeesAnalytics, type ElysiumFeesWindow } from "@/services/elysium";
@@ -164,7 +164,7 @@ const ByDeployer = memo(function ByDeployer({ data }: { data: ElysiumFeesAnalyti
  */
 export function ElysiumFees() {
   const [window, setWindow] = useState<ElysiumFeesWindow>("7d");
-  const { data, error } = useElysiumFees(window);
+  const { data, error, dataUpdatedAt, isStale } = useElysiumFees(window);
   const { price } = useHypePrice();
   const t = data?.totals;
   const usd = (h: number | undefined) => (price && h != null ? compactUsd(h * price) : undefined);
@@ -195,6 +195,8 @@ export function ElysiumFees() {
       <div className="flex flex-wrap items-center gap-2">
         <PillTabs tabs={WINDOWS} activeTab={window} onTabChange={(v) => setWindow(v as ElysiumFeesWindow)} />
         <span className="text-[11px] text-text-tertiary">non-spam transactions, full fee including posting to HyperEVM</span>
+        {/* Computed by the backend every minute (24h), every 5 minutes (7d) or every 30 (30d): the time it is as of. */}
+        <DataStatus variant="polled" updatedAt={data ? dataUpdatedAt : null} stale={isStale} />
         {data && data.contracts.length > 0 && (
           <span className="ml-auto">
             <ShareTile src={`/api/tile/elysium-app-fees?window=${window}`} filename={`elysium-app-fees-${window}`} />

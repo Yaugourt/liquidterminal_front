@@ -1,5 +1,6 @@
 import { get, postExternal } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
+import { currentRequestPolicy, recordDataTimestamp } from "@/services/api/http/request-policy";
 import { currentElysiumNetwork } from "@/store/use-elysium-network";
 import type {
   ElysiumAddressProfile,
@@ -39,6 +40,9 @@ export const ELYSIUM_RPC_URL = "https://testnet-rpc.elysium.kinetiq.xyz";
 interface Envelope<T> {
   success: boolean;
   data: T;
+  /** Scheduled views only: the time the figures are as of, and how often the backend computes them (seconds). */
+  computedAt?: string;
+  refreshEveryS?: number;
 }
 
 /** Elysium timestamps are UTC without a suffix; read them as UTC. */
@@ -117,11 +121,22 @@ export const fetchElysiumHead = async (): Promise<number> => {
 
 const ANALYTICS = "/elysium/analytics";
 
+/**
+ * The backend computes these views on its own schedule (every minute for the
+ * windows of a day, every 5 minutes over 7 days, every 30 over 30 days) and
+ * says when: `computedAt` is recorded as the data's timestamp, so the hook's
+ * `dataUpdatedAt` is the time the figures are as of, not the time they reached
+ * the browser.
+ */
 async function getAnalytics<T>(path: string, params?: Record<string, unknown>): Promise<T> {
+  // Read now: the policy of the fetch is only visible while it starts its requests.
+  const policy = currentRequestPolicy();
   return withErrorHandling(async () => {
     const network = (params?.network as string | undefined) ?? currentElysiumNetwork();
     const query = network === "mainnet" ? { ...params, network } : { ...params, network: undefined };
     const res = await get<Envelope<T>>(`${ANALYTICS}${path}`, query, OPTS);
+    const computedAt = res.computedAt ? Date.parse(res.computedAt) : NaN;
+    if (Number.isFinite(computedAt)) recordDataTimestamp(policy, computedAt);
     return res.data;
   }, `fetching elysium analytics ${path}`);
 }

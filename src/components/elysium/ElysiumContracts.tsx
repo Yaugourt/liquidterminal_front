@@ -4,7 +4,7 @@ import { memo, useState } from "react";
 import { Boxes } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, chartPalette, type KpiCell } from "@/components/common";
+import { CardHead, DataStatus, KpiRibbon, ModuleTable, ModuleTableRow, chartPalette, type KpiCell } from "@/components/common";
 import { compactCount, formatNumber, formatPct } from "@/lib/formatters/numberFormatting";
 import { useNumberFormat } from "@/store/number-format.store";
 import { elysiumTimeMs, useElysiumContracts, useElysiumDeployments, useElysiumMethods, type ElysiumContractKind } from "@/services/elysium";
@@ -19,19 +19,21 @@ const KIND_TONE: Record<ElysiumContractKind, string> = {
 
 const TopContracts = memo(function TopContracts() {
   const [window, setWindow] = useState<"24h" | "7d">("24h");
-  const { data: rows, error } = useElysiumContracts(window);
+  const { data: rows, error, dataUpdatedAt, isStale } = useElysiumContracts(window);
   return (
     <Card className="overflow-hidden flex flex-col">
       <CardHead
         title="Most used contracts"
         tag="by transactions, spam excluded"
-        actions={
+        actions={<>
+          {/* Computed by the backend every minute (24h) or every 5 minutes (7d): the time it is as of. */}
+          <DataStatus variant="polled" updatedAt={rows ? dataUpdatedAt : null} stale={isStale} />
           <PillTabs
             tabs={[{ value: "24h", label: "24h" }, { value: "7d", label: "7d" }]}
             activeTab={window}
             onTabChange={(v) => setWindow(v as "24h" | "7d")}
           />
-        }
+        </>}
       />
       <div className="overflow-x-auto">
         {!rows ? (
@@ -101,19 +103,20 @@ const TopContracts = memo(function TopContracts() {
 
 const TopMethods = memo(function TopMethods() {
   const [window, setWindow] = useState<"24h" | "7d">("24h");
-  const { data, error } = useElysiumMethods(window);
+  const { data, error, dataUpdatedAt, isStale } = useElysiumMethods(window);
   return (
     <Card className="overflow-hidden flex flex-col">
       <CardHead
         title="Most called methods"
         tag={data ? `names for ${data.resolver.found} of the ${data.resolver.lookedUp} most used selectors` : "spam excluded"}
-        actions={
+        actions={<>
+          <DataStatus variant="polled" updatedAt={data ? dataUpdatedAt : null} stale={isStale} />
           <PillTabs
             tabs={[{ value: "24h", label: "24h" }, { value: "7d", label: "7d" }]}
             activeTab={window}
             onTabChange={(v) => setWindow(v as "24h" | "7d")}
           />
-        }
+        </>}
       />
       <div className="overflow-x-auto">
         {!data ? (

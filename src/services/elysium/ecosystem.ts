@@ -1,6 +1,7 @@
 import { useDataFetching } from "@/hooks/useDataFetching";
 import { get } from "@/services/api/axios-config";
 import { withErrorHandling } from "@/services/api/error-handler";
+import { currentRequestPolicy, recordDataTimestamp } from "@/services/api/http/request-policy";
 
 /**
  * Elysium ecosystem directory and launchpad token market. Both are computed by
@@ -138,11 +139,17 @@ export interface EcoTokensSnapshot {
 
 const OPTS = { useCache: false, retryOnError: false } as const;
 
-export const fetchElysiumProjects = () =>
-  withErrorHandling(async () => {
+export const fetchElysiumProjects = () => {
+  // Read now: the policy of the fetch is only visible while it starts its requests.
+  const policy = currentRequestPolicy();
+  return withErrorHandling(async () => {
     const res = await get<{ data: EcoProjectsSnapshot }>("/elysium/analytics/ecosystem", undefined, OPTS);
+    // The backend computes the directory every 2 minutes while it is watched: its own time, not the arrival's.
+    const computedAt = Date.parse(res.data?.computedAt ?? "");
+    if (Number.isFinite(computedAt)) recordDataTimestamp(policy, computedAt);
     return res.data;
   }, "fetching elysium ecosystem");
+};
 
 /**
  * The first `query.limit` tokens of an order. The backend returns at most

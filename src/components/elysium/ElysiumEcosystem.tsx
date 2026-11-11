@@ -4,7 +4,7 @@ import { memo, useMemo, useState } from "react";
 import { ArrowDown, ArrowUpRight, BadgeCheck, Boxes } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { PillTabs } from "@/components/ui/pill-tabs";
-import { CardHead, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, Sparkline, TimeframeTabs, type KpiCell } from "@/components/common";
+import { CardHead, DataStatus, KpiRibbon, ModuleTable, ModuleTableRow, SearchBar, Sparkline, TimeframeTabs, type KpiCell } from "@/components/common";
 import { compactCount, compactUsd } from "@/lib/formatters/numberFormatting";
 import { useElysiumProjects, type EcoProject } from "@/services/elysium";
 import { EMPTY, Empty, elysiumTimeLabel } from "./shared";
@@ -190,7 +190,7 @@ function moverSub(p: EcoProject, w: Window) {
  * last 7 days of on-chain activity, computed by our backend from the chain.
  */
 export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
-  const { data, isLoading, error } = useElysiumProjects();
+  const { data, isLoading, error, dataUpdatedAt, isStale } = useElysiumProjects();
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<SortKey | null>(null);
@@ -285,7 +285,11 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
         <CardHead
           title="Projects"
           tag={data ? `${rows.length} shown` : undefined}
-          actions={<SearchBar onSearch={setQuery} placeholder="Search projects" className="w-full sm:w-56" debounceMs={150} />}
+          actions={<>
+            {/* Computed by the backend every 2 minutes while the page is open: the time it is as of. */}
+            <DataStatus variant="polled" updatedAt={data ? dataUpdatedAt : null} stale={isStale} className="hidden sm:inline-flex" />
+            <SearchBar onSearch={setQuery} placeholder="Search projects" className="w-full sm:w-56" debounceMs={150} />
+          </>}
         />
         <div className="px-3.5 pt-3 overflow-x-auto">
           <PillTabs tabs={tabs} activeTab={category} onTabChange={setCategory} variant="text" />
@@ -392,7 +396,7 @@ export const ElysiumEcosystem = memo(function ElysiumEcosystem() {
         Hyperliquid price and test USDC at $1. &ldquo;Verified&rdquo; counts the listed contracts whose source is verified on the Elysium
         explorer.
       </p>
-      <EcoSource what="Project list, statuses and user activity" />
+      <EcoSource what="Project list, statuses and user activity" every="2 minutes" />
     </div>
   );
 });
