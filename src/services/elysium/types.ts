@@ -189,8 +189,22 @@ export interface ElysiumEconomicsAnalytics {
   totals: { feesHype: number; txs: number };
 }
 
+/**
+ * The public status of the ingestion: whether each stream runs and how far its data goes. How
+ * many rows a stream wrote is no longer served here (admin route, 2026-11-12).
+ */
 export interface ElysiumIngestStatus {
-  streams: { stream: string; cursor: string | null; rows: number; backfillDone: boolean; lastError: string | null; lagSeconds: number | null }[];
+  streams: {
+    stream: string;
+    /** The time the stream's data goes up to. */
+    cursor: string | null;
+    backfillDone: boolean;
+    lastError: string | null;
+    lagSeconds: number | null;
+    /** ok, failing, stalled, behind, waiting-provider or backfilling. */
+    state?: string;
+    lastOkAt?: string | null;
+  }[];
 }
 
 /** A 4-byte selector and, when a public signature database knows it, its signature. */
