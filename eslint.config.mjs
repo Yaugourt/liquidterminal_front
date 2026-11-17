@@ -313,7 +313,7 @@ const eslintConfig = [
       "src/components/ui/checkbox.tsx",
       "src/components/ui/sonner.tsx",
       "src/components/ui/table-states.tsx",
-      // labs/charts/** are isolated showcases (see AGENTS.md); hex is permitted there.
+      // labs/charts/** are isolated showcases; hex is permitted there.
       "src/components/labs/charts/**/*.{ts,tsx}",
       // Share tiles are rendered by Satori, which understands neither CSS
       // variables nor Tailwind — only literal inline styles. This file is to
