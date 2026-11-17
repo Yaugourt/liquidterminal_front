@@ -8,6 +8,10 @@ How to use it: every pull request whose change is visible to a user adds one lin
 
 ## [Unreleased]
 
+### Security
+
+- Next.js updated to 16.4.6, which fixes a known information-disclosure flaw in the versions before 16.4.5.
+
 ## 2026-11-11
 
 ### Added
