@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least privilege: this workflow only reads the repo.
+permissions:
+  contents: read
+
+# A newer push to the same branch or PR replaces the run in progress.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # No `packageManager` field in package.json, so the major is set here.
+      # It must stay able to read pnpm-lock.yaml (lockfileVersion 9.0).
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      # Node version comes from .nvmrc (same major as `engines.node`).
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm run typecheck
+
+      # src/lib/env.ts refuses to load without these two variables. They are
+      # placeholders: the API address points at nothing, so the build never
+      # reads the production backend and its result does not depend on it.
+      # Pages and share tiles that fetch at build time fall back to their
+      # empty state, as they do when the backend is down.
+      - name: Build
+        run: pnpm run build
+        env:
+          NEXT_PUBLIC_API: http://127.0.0.1:3002
+          NEXT_PUBLIC_PRIVY_AUDIENCE: ci-placeholder
+          NEXT_TELEMETRY_DISABLED: 1
