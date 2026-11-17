@@ -1,257 +1,127 @@
-# CLAUDE.md - Liquid Terminal Frontend Guidelines
+# CLAUDE.md: Liquid Terminal frontend
 
-> This file provides context for Claude Code when working on this codebase.
+Instructions for AI agents working in this repo. This is the only instruction file: keep it short and true. A version or a figure is read in the code (`package.json`, `tailwind.config.ts`, `docs/DATA_BUDGET.md`), never copied from memory.
 
-## Project Overview
+## Project
 
-**Liquid Terminal** is a comprehensive data platform for the HyperLiquid ecosystem, built with Next.js 15, React 19, and TypeScript. It provides real-time market data, blockchain exploration, analytics, educational resources, and community features.
+Liquid Terminal is a free, open-source data terminal for the Hyperliquid ecosystem: markets, explorer, HYPE analytics, capital (vaults, staking, builders), ecosystem, wiki and the Elysium pages. This repo is the web app. The API lives in a separate repo (`LiquidTerminal_Back`).
 
-## Tech Stack
+## Stack
 
-| Category | Technology |
-|----------|------------|
-| Framework | Next.js 15 (App Router), React 19 |
-| Language | TypeScript (strict mode) |
-| Styling | Tailwind CSS + shadcn/ui |
-| State | Zustand |
-| HTTP | Axios (custom configuration) |
-| Auth | Privy (Web3) |
-| Charts | TradingView Lightweight Charts, Recharts |
-| Animations | Framer Motion |
-| Validation | Zod |
+Majors below, exact versions in `package.json`.
 
-## Project Structure
-
-> Map of who-feeds-what (route → components → services → upstream, quirks included): [`docs/CODEMAP.md`](./docs/CODEMAP.md). Check it before exploring by hand.
-
-```
-src/
-├── app/                    # Next.js App Router pages
-│   ├── dashboard/          # User portfolio & dashboard
-│   ├── ecosystem/          # Public goods, projects
-│   ├── explorer/           # Blockchain explorer, liquidations
-│   ├── market/             # Trading data, tokens, perps
-│   ├── user/               # User profile
-│   └── wiki/               # Educational resources
-├── components/             # Domain-organized components
-│   ├── ui/                 # shadcn/ui base components
-│   ├── common/             # Shared components
-│   └── [domain]/           # Domain-specific components
-├── services/               # API layer (4-layer architecture)
-│   ├── api/                # Axios config, error handling, cache
-│   └── [domain]/           # Domain services (api.ts, types.ts, hooks/)
-├── hooks/                  # Custom React hooks
-├── contexts/               # React contexts (auth, theme)
-├── store/                  # Zustand stores
-└── lib/                    # Utilities (formatting, helpers)
-```
-
-## Architecture Patterns
-
-### 4-Layer API Architecture
-
-All API integrations follow this pattern:
-
-```
-Layer 1: api.ts       → HTTP calls with withErrorHandling()
-Layer 2: types.ts     → TypeScript interfaces
-Layer 3: hooks/       → React hooks using useDataFetching
-Layer 4: components   → UI consuming hooks
-```
-
-**Example service structure:**
-```
-src/services/explorer/liquidation/
-├── api.ts              # fetchRecentLiquidations(), fetchLiquidationsData()...
-├── types.ts            # Liquidation, LiquidationsParams, LiquidationStats
-├── hooks/
-│   ├── useLiquidationsData.ts
-│   └── useTopLiquidations.ts
-└── index.ts            # Re-exports
-```
-
-### API Implementation Rules
-
-1. **Always use `withErrorHandling`** to wrap API calls:
-```typescript
-export const fetchData = async (): Promise<DataType> => {
-  return withErrorHandling(async () => {
-    return await get<DataType>('/endpoint');
-  }, 'fetching data'); // Descriptive context
-};
-```
-
-2. **Always use centralized HTTP helpers** (`get`, `post`, `put`, `del`, `patch`):
-```typescript
-import { get, post } from '@/services/api/axios-config';
-```
-
-3. **Always use `useDataFetching`** hook as base for data fetching:
-```typescript
-const { data, isLoading, error, refetch } = useDataFetching<ResponseType>({
-  fetchFn: () => fetchData(params),
-  refreshInterval: 30000,  // 30s default, 10s real-time, 60s static
-  dependencies: [param1, JSON.stringify(complexObj)],
-  maxRetries: 3,
-});
-```
-
-4. **Type everything** - No `any` types allowed.
-
-## Design System (V4)
-
-**Full reference**: [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md). Read this file before any new screen or component.
-
-### Essential tokens
-
-| Token | Usage |
-|-------|-------|
-| `bg-base` `#08101A` | App background |
-| `bg-surface` `#0F1421` | Cards, sidebar |
-| `bg-surface-2` `#141B2A` | Table header, hover, pills |
-| `border-subtle` / `border-default` | Separators / borders |
-| `text-primary` / `secondary` / `tertiary` | Text hierarchy |
-| `brand` `#83E9FF` | Cyan accent (focus, active) |
-| `gold` `#F9E370` | Fees, secondary accent |
-| `success` `#1FA85B` / `danger` `#E53E3E` | Long/buy · Short/sell |
-
-### Primitives (always compose from here — import via `@/components/common` barrel)
-
-- **Cards**: `<Card>` + `<CardHead>` (minimal head: 13px title + optional subtitle / plain tag + right `actions` slot + "View all →" link — no brand icon square, no pill). CVA variants: `padding` (`none|sm|md|lg`), `interactive`, and `density` on `CardHeader/Content/Footer`.
-- **Page tables**: `<TypedDataTable>` only — raw `<Table>` outside `common/` blocked by ESLint. Two valid column patterns:
-  - **Simple** : `accessor: 'fieldName'` + `type: "numeric" | "fees" | "change" | "address" | "text"` → auto-styled (mono, alignment, gold for fees, signed green/red for change, truncated addresses).
-  - **Custom** : `accessor: (row) => <CustomCell />` returning fully-styled JSX. `type` omitted (defaults to `custom`). Use this for badges, mixed values, interactive cells, anything beyond a single value.
-  Don't mix : a function accessor with `type: "fees"` means the function should return a primitive value (number/string), the table styles it. If you return JSX, leave `type` off.
-  Server-side sort via `onSortChange` controlled mode; opt-in `rowMotion` + `toolbar` slot.
-- **Leaderboard cards (top N, any page)**: `OverviewModule + ModuleTable + ModuleTableRow + ModuleAsset` (see DESIGN_SYSTEM §5.b / §7.a). Lives in `common/` — usable from any domain.
-- **KPI ribbon (§7.b)**: `<KpiRibbon cells={[{label, value, sub?, tone?, sparkline?}]} />` — the **single** source for the horizontal stat strip (the dashboard LiveStrip, vaults, HIP-4, NetworkPulse all consume it). Never hand-roll the `gap-px bg-border-subtle` strip. Group ribbons by stacking `<KpiRibbon header={{label, helper}}>` in a `space-y-*` wrapper.
-- **Numbers (standalone)**: `<Num>` for chips/KPI tiles. Inside tables use `Column.type: "numeric" | "fees" | "change"` instead.
-- **Layout**: `<PageHeader>` (title + description + actions slot), `<PageSection>` (titled section wrapper). Timeframe selectors: `<TimeframeTabs>` built on `PillTabs`.
-- **Charts**: `<AuroraAreaChart>` single-series / `<MultiSeriesAreaChart>` dual-axis / `<Sparkline>` inline. Colors via `chartPalette` from `chartTheme.ts` — hardcoded hex blocked by ESLint (lab charts excepted).
-- **Number formatting**: import from `@/lib/formatters/numberFormatting` — `compactUsd`, `compactHype`, `compactCount`, `formatPct`, `formatNumber`, `formatPrice`, `formatMetricValue`. **Do not redeclare locally.**
-- **Layout shell**: `bg-base` + subtle halo `z-0`; content `relative z-10`; sidebar 232px; sticky header `bg-base/80 backdrop-blur-xl` without `border-b`.
-
-### Design catalogue (the live source)
-
-The source of truth for how a primitive renders is the real component in `src/components/common/` or `ui/` — read the component, never reconstruct its classes elsewhere.
-
-- **Design a page** → compose the real primitives. Don't invent one-off classes.
-- **A primitive is missing** → build it in `common/`, then document it in `DESIGN_SYSTEM.md`.
-- `dash-mockups/kit.html` is kept as a **historical reference only**: it is no longer a guaranteed 1:1 mirror of the code and must not be manually re-synced.
-
-### Hard rules
-
-- No hardcoded hex in styles — always a token (charts go through `chartPalette`).
-- `.mono` for tabular numbers.
-- Use semantic text tokens (`text-text-primary/secondary/tertiary`) — never `text-zinc-*`.
-- No raw `white` utilities (`text-white`, `bg-white/…`, `hover:*-white`) in new or migrated code — use `bg-surface-*` / `text-text-*` tokens. (Legacy sites are being migrated progressively; don't add new ones.)
-- Card heads go through `<CardHead>` (`@/components/common`) — directly, or via `<OverviewModule>` / `TypedDataTable` (`title` prop), which render it. Don't hand-roll a `border-b` head; legacy inline heads (icon square + pill) get migrated to `<CardHead>` when touched.
-- Tab styling comes from `<TabsTrigger size>` / `<TabsList size>` (Radix panels) or `PillTabs` variants (selection) — don't paste `data-[state=active]:` recipes on consumers.
-- One focus treatment everywhere: `.focus-ring`. Don't re-declare `focus-visible:ring-*` recipes.
-- No fake sparkline/delta: if the API has no history for the metric, don't display it.
-- Hypedexer (`/indexer/*`) is unstable (402) — any dependent chart must degrade gracefully. Robust sources: local DB `/liquidations/historical/chart`, Hypurrscan fees + `/spotUSDC`, DefiLlama bridge.
-
-See [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md) for the detailed composition patterns (Leaderboard card, KPI ribbon, card grids), paddings, font sizes and the full primitive inventory.
-
-## Key Files Reference
-
-| Purpose | Location |
-|---------|----------|
-| Axios config & HTTP helpers | `src/services/api/axios-config.ts` |
-| Error handling | `src/services/api/error-handler.ts` |
-| Data fetching hook | `src/hooks/useDataFetching.ts` |
-| API constants | `src/services/api/constants.ts` |
-| Tailwind tokens | `tailwind.config.ts` |
-| Global CSS & design tokens | `src/app/globals.css` |
-| Number formatting | `src/lib/formatters/numberFormatting.ts` |
-| Date formatting | `src/lib/dateFormatting.ts` |
-
-Before changing a poll interval, cache TTL, rate limit or upstream budget, read docs/DATA_BUDGET.md and update it in the same commit.
+| Area | Technology |
+|------|------------|
+| Framework | Next.js 16 (App Router, Turbopack), React 19 |
+| Language | TypeScript 5, strict mode |
+| Styling | Tailwind CSS 3 + shadcn/ui (Radix) |
+| State | Zustand 5 |
+| HTTP | Axios through the helpers of `src/services/api/axios-config.ts` |
+| Auth | Privy (login with X only), JWT injected by the axios interceptor |
+| Charts | TradingView Lightweight Charts 5, Recharts 3 |
+| Animation | Framer Motion 12 |
+| Runtime | Node 22 (`.nvmrc`, `engines`), pnpm (lockfile `pnpm-lock.yaml`) |
 
 ## Commands
 
 ```bash
-pnpm run dev            # Development server (Turbo mode, 127.0.0.1:3000)
-pnpm run build          # Production build (TypeScript + Next; does not replace ESLint)
-pnpm run lint           # ESLint on app source (`src/`, config, etc.) — run before PR/ship
-pnpm run start          # Production server
-pnpm run visual-check <route>   # Render gate: screenshots a route at 375/1024/1440 and
-                                # FAILS on content clipping / horizontal page overflow.
-                                # Needs `pnpm run dev` running. See scripts/visual-check.mjs.
+pnpm install            # use pnpm, not npm
+pnpm run dev            # dev server, 127.0.0.1:3000
+pnpm run lint           # ESLint
+pnpm run typecheck      # tsc --noEmit
+pnpm run build          # production build (does not run ESLint)
+pnpm run start          # serve the production build
+pnpm run visual-check <route>   # screenshots at 375/1024/1440, fails on clipping
+                                # or sideways scroll; needs the dev server
 ```
 
-**Use pnpm, not npm** (the repo is pinned via `pnpm-lock.yaml`).
+There is no test script. CI (`.github/workflows/ci.yml`) runs install, lint, typecheck and build on every PR and every push to `main`.
 
-**Build vs lint:** `pnpm run build` can succeed while `pnpm run lint` fails. Always run both before merging.
+The build needs `NEXT_PUBLIC_API` and `NEXT_PUBLIC_PRIVY_AUDIENCE` (see `env.example` and `src/lib/env.ts`).
 
-**Render gate (Definition of Done for a page):** a page migration isn't "done" on `tsc`+`lint` alone — those validate markup, never pixels or data. Before handing a page back, run `pnpm run visual-check <route>` (no clipping / no sideways scroll at the three breakpoints) and, for any new data endpoint, `curl` it and confirm it's non-empty with sane ranges. tsc green + lint green + visual-check green is the floor. Vendored paths under `.agents/` and `.cursor/` are ignored by ESLint (third-party gstack tooling, not Liquid Terminal source).
+## Structure
 
-## Important Conventions
+```
+src/
+├── app/            # App Router: (app)/ = pages inside the shell, api/ = route handlers
+│   └── (app)/      # dashboard, market, explorer, hype, ecosystem, wiki, elysium, ...
+├── components/     # ui/ (shadcn base), common/ (shared primitives), then one folder per domain
+├── services/       # API layer: api/ (axios, errors, cache), then one folder per domain
+├── hooks/          # shared hooks (useDataFetching)
+├── contexts/       # auth context
+├── store/          # Zustand stores
+├── layouts/
+└── lib/            # formatters/, env.ts, SEO, og/ (share tiles), helpers
+docs/               # CODEMAP.md, DATA_BUDGET.md, API_IMPLEMENTATION_GUIDE.md, ...
+scripts/            # visual-check.mjs, gen-og.mjs, predev-clean.mjs
+.agents/            # vendored third-party agent tooling: not our source, ignored by ESLint
+```
 
-### Do
+## Read before you work
 
-- Use the 4-layer architecture for new services
-- Use design system tokens (not raw hex colors)
-- Use the opaque surface tokens (`bg-surface` / `-2` / `-3`) for containers
-- Use `useMemo` and `useCallback` for performance
-- Add JSDoc to API functions
-- Type all responses and parameters
-- Use pagination hooks for large datasets
+| File | When |
+|------|------|
+| `docs/CODEMAP.md` | Start of any task: route to components to data source, fragile spots |
+| `DESIGN_SYSTEM.md` (root) | Before any new screen or component. It is the active reference; `docs/DESIGN_SYSTEM_V4.md` is history |
+| `docs/DATA_BUDGET.md` | Before changing a poll interval, cache TTL, rate limit or upstream budget. Update it in the same commit (an identical copy lives in the backend repo) |
+| `docs/API_IMPLEMENTATION_GUIDE.md` | Details of the API layer patterns |
+| `CHANGELOG.md` | What was delivered, in plain words |
 
-### Don't
+## Rules
 
-- Use raw axios calls (use centralized helpers)
-- Use `any` type
-- Create inline styles with hex colors
-- Skip error handling wrappers
-- Create components without loading/error states
-- Use `text-zinc-*` (use semantic tokens instead)
+### Workflow
 
-## Authentication
+- Every change goes through a branch, then a pull request. Never push to `main`: a push to `main` goes to production (Vercel). Each branch gets a Vercel preview: look at it before merging.
+- Every PR adds its line to `CHANGELOG.md` under `[Unreleased]` when the change is visible to a user.
+- Before opening a PR: `pnpm run lint`, `pnpm run typecheck` and `pnpm run build` pass. For a page, also `pnpm run visual-check <route>`, and for a new data endpoint, call it and check it is not empty and its ranges make sense.
+- Commit only the files of the task, not the whole working tree.
 
-- Uses Privy for Web3 authentication
-- JWT tokens auto-injected via axios interceptor
-- Token refresh handled automatically on 401
-- Role-based access: USER, MODERATOR, ADMIN
+### Writing
 
-## Performance Considerations
+- English in code, comments, JSDoc, commit messages and docs.
+- Never name a competitor or the private data indexer in code, comments, commits or shared documents. Write "the data indexer" and "an analytics site". Older code and docs still contain such names: do not add new ones.
+- Nothing invented: a figure has a source (API, Hyperliquid docs, a measurement) or it is not written.
 
-- `useDataFetching` has built-in caching
-- Use `refreshInterval` appropriate to data type:
-  - Real-time data: 10s
-  - Normal data: 30s
-  - Static data: 60s
-- Memoize expensive computations
-- Use server-side pagination when available
-- Lazy load heavy components
+### API layer (4 layers)
 
-## Documentation Files
+`api.ts` (HTTP calls) → `types.ts` → `hooks/` → components. See `src/services/explorer/liquidation/` for a complete example.
 
-| File | Content |
-|------|---------|
-| `docs/CODEMAP.md` | **Start here for any task**: route → components → data-source map, infra contracts, fragile spots, refactor backlog |
-| `docs/DATA_BUDGET.md` | Upstream calls, limits, caches and cadences with stable row IDs (identical copy in the backend repo); update it with any interval/TTL/limit change |
-| `DESIGN_SYSTEM.md` | Full design system reference |
-| `API_IMPLEMENTATION_GUIDE.md` | Detailed API patterns |
-| `XP_SYSTEM_README.md` | Gamification system |
-| `PUBLIC_GOODS_API.md` | Public goods feature |
-| `WIKI_FRONTEND_INTEGRATION.md` | Wiki/educational system |
-| `LIQUIDATIONS_DATA_API.md` | Liquidations API spec |
+- Wrap every API call in `withErrorHandling(fn, 'context')` (`src/services/api/error-handler.ts`).
+- Use the central helpers `get`, `post`, `put`, `del`, `patch`. No raw axios.
+- Data hooks are built on `useDataFetching` (`src/hooks/useDataFetching.ts`). Pick the refresh interval from `docs/DATA_BUDGET.md`.
+- Type every response and parameter. No `any`.
+- Every component that loads data has a loading state and an error state.
+- Routes under `/indexer/*` depend on the data indexer, which can refuse calls: anything built on them must degrade without breaking the page.
+- No fake sparkline or delta: if the API has no history for a metric, do not show one.
 
-## gstack
+### Design system
 
-This repo vendors [gstack](https://github.com/garrytan/gstack) under `.agents/skills/gstack` for **Cursor** (and other agents that load [Agent Skills](https://cursor.com/docs/context/skills) from `.agents/skills/`). After clone, `setup` emits sibling skill folders `gstack-*` (symlinks) at `.agents/skills/`.
+Compose from the real primitives, imported from `@/components/common`. Read the component, never rebuild its classes elsewhere. If a primitive is missing, build it in `common/` and document it in `DESIGN_SYSTEM.md`.
 
-**Prerequisite to run `setup`:** [Bun](https://bun.sh/) 1.x (`npm install -g bun` works if the curl installer is unavailable).
+- Cards: `<Card>` + `<CardHead>`. Card heads go through `<CardHead>`, directly or via `<OverviewModule>` / `TypedDataTable` (`title`).
+- Page tables: `<TypedDataTable>` only (raw `<Table>` outside `common/` is blocked by ESLint). A column is either simple (`accessor: 'field'` + `type`) or custom (function returning JSX, no `type`).
+- Top-N cards: `OverviewModule` + `ModuleTable` + `ModuleTableRow` + `ModuleAsset`.
+- Stat strip: `<KpiRibbon>` only. Never hand-roll one.
+- Numbers: `<Num>` outside tables, `Column.type` inside. Formatting from `@/lib/formatters/numberFormatting` and `dateFormatting`: do not redeclare formatters locally.
+- Layout: `<PageHeader>`, `<PageSection>`, `<TimeframeTabs>` / `PillTabs`.
+- Charts: `<AuroraAreaChart>`, `<MultiSeriesAreaChart>`, `<Sparkline>`, colors from `chartPalette` (`src/components/common/charts/chartTheme.ts`).
 
-**Invoking skills (Cursor Agent):** type `/` in chat and pick the skill (e.g. `gstack-review`, `gstack-qa`). Names use the `gstack-` prefix from this install.
+Hard rules:
 
-**Web browsing:** gstack’s `/gstack-browse` flow targets its Playwright/Chromium stack. For everyday work in **Cursor**, you may still use the **cursor-ide-browser** MCP when it fits; use gstack browse when following a gstack QA/review workflow end-to-end.
+- No hardcoded hex. Colors are tokens (`tailwind.config.ts`, `src/app/globals.css`); charts use `chartPalette`.
+- Text uses `text-text-primary` / `secondary` / `tertiary`. Never `text-zinc-*`, never raw `white` utilities in new code.
+- Containers use the opaque surfaces `bg-surface`, `bg-surface-2`, `bg-surface-3`.
+- `.mono` for tabular numbers. One focus treatment: `.focus-ring`.
+- Tabs are styled by `<TabsTrigger size>` / `<TabsList size>` or `PillTabs` variants, not by pasted `data-[state=active]:` recipes.
+- `common/` and `ui/` primitives are never dead code, even when unused for now.
 
-**Useful commands:** `gstack-office-hours`, `gstack-plan-ceo-review`, `gstack-plan-eng-review`, `gstack-plan-design-review`, `gstack-design-consultation`, `gstack-design-shotgun`, `gstack-design-html`, `gstack-review`, `gstack-ship`, `gstack-land-and-deploy`, `gstack-canary`, `gstack-benchmark`, `gstack-browse`, `gstack-connect-chrome`, `gstack-qa`, `gstack-qa-only`, `gstack-design-review`, `gstack-setup-browser-cookies`, `gstack-setup-deploy`, `gstack-retro`, `gstack-investigate`, `gstack-document-release`, `gstack-cso`, `gstack-autoplan`, `gstack-careful`, `gstack-freeze`, `gstack-guard`, `gstack-unfreeze`, `gstack-upgrade`, `gstack-learn`.
+## Gotchas
 
-**After clone or pull:** run `cd .agents/skills/gstack && ./setup --host codex` so `browse/dist` and the generated skill folders under `gstack/.agents/skills/` exist (they are gitignored inside the vendored tree; symlinks at `.agents/skills/gstack-*` point there).
-
-**Troubleshooting:** same `setup` command (or `--host auto`). If `/gstack-browse` fails: `cd .agents/skills/gstack && bun install && bun run build`. Confirm skills under **Cursor Settings → Rules**. Telemetry is off by default; see gstack README.
-
-**Claude Code (optional):** If skills are missing there, use the upstream path `~/.claude/skills/gstack` + `./setup`, or re-run `./setup --host auto` from `.agents/skills/gstack` so multiple hosts are registered.
+- Login buttons: `onClick={() => login()}` with `type="button"`, not `onClick={login}`. React passes the click event as first argument and `login` would read it as credentials, so Privy never opens.
+- Client pages read route params with `useParams()`; `params` is a Promise.
+- A panel or tab that owns data hooks is mounted once on first open, then hidden or shown. Mounting and unmounting on each toggle fires its requests again.
+- Do not use `scrollIntoView` to center a tab in a strip: it can scroll the page sideways. Scroll the strip's container.
+- The build runs on Turbopack: do not add a `webpack()` hook to `next.config.js`.
+- After deleting files, a stale "Module not found" in dev comes from `.next/`: clear it and restart.
+- The React Compiler rules of `eslint-plugin-react-hooks` are turned off in `eslint.config.mjs` on purpose.
+- Roles are `USER`, `MODERATOR`, `ADMIN`. The token is refreshed automatically on a 401.
