@@ -39,6 +39,7 @@
     "@radix-ui/react-tabs": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@solana-program/system": "^0.10.0",
+    "@solana-program/token": "^0.9.0",
     "@tanstack/react-query": "^5.100.7",
     "@usdh-kit/sdk": "0.2.0",
     "@usdh-kit/widget": "0.1.0",
