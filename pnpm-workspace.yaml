@@ -1,0 +1,25 @@
+# pnpm settings for this repo (a single package, not a monorepo).
+#
+# They live here and not under "pnpm" in package.json so that every tool that
+# rewrites pnpm-lock.yaml reads the same overrides. A lockfile written without
+# them is refused at install (ERR_PNPM_LOCKFILE_CONFIG_MISMATCH).
+
+# Minimum versions forced on transitive dependencies (security fixes).
+overrides:
+  shell-quote: ^1.11.0
+  follow-redirects: ^1.16.1
+  socket.io-parser: ^4.2.6
+  defu: ^6.1.5
+  js-cookie: ^3.0.8
+  lodash: ^4.18.1
+
+# The only dependencies allowed to run their install scripts.
+onlyBuiltDependencies:
+  - '@reown/appkit'
+  - bufferutil
+  - esbuild
+  - keccak
+  - sharp
+  - unrs-resolver
+  - utf-8-validate
+  - workerd

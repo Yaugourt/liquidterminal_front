@@ -76,25 +76,5 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.18",
     "typescript": "^5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@reown/appkit",
-      "bufferutil",
-      "esbuild",
-      "keccak",
-      "sharp",
-      "unrs-resolver",
-      "utf-8-validate",
-      "workerd"
-    ],
-    "overrides": {
-      "shell-quote": "^1.11.0",
-      "follow-redirects": "^1.16.1",
-      "socket.io-parser": "^4.2.6",
-      "defu": "^6.1.5",
-      "js-cookie": "^3.0.8",
-      "lodash": "^4.18.1"
-    }
   }
 }
