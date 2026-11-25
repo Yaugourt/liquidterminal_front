@@ -2,7 +2,7 @@
 /**
  * visual-check — the render-and-inspect gate (Chantier 2).
  *
- * Renders a route at three breakpoints in a real headless browser and FAILS
+ * Renders a route at four breakpoints in a real headless browser and FAILS
  * (non-zero exit) when content silently clips or the page scrolls sideways —
  * the exact class of defect that tsc + eslint cannot see (e.g. a 3-column
  * table crammed into a 1/3-width card, content disappearing off the right).
@@ -40,6 +40,7 @@ const GSTACK_NODE_MODULES = process.env.GSTACK_NODE_MODULES
 
 const BREAKPOINTS = [
   { name: "mobile", width: 375, height: 812 },
+  { name: "phone", width: 390, height: 844 }, // the phone width the redesign is checked at
   { name: "lg", width: 1024, height: 800 }, // where lg:grid-cols-3 makes cards narrowest
   { name: "desktop", width: 1440, height: 900 },
 ];
