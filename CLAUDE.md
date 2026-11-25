@@ -31,7 +31,7 @@ pnpm run lint           # ESLint
 pnpm run typecheck      # tsc --noEmit
 pnpm run build          # production build (does not run ESLint)
 pnpm run start          # serve the production build
-pnpm run visual-check <route>   # screenshots at 375/1024/1440, fails on clipping
+pnpm run visual-check <route>   # screenshots at 375/390/1024/1440, fails on clipping
                                 # or sideways scroll; needs the dev server
 ```
 
