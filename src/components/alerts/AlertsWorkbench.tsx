@@ -132,7 +132,7 @@ export function AlertsWorkbench() {
         <p className="max-w-prose text-sm text-text-secondary">
           Alerts go to your Telegram. Sign in, link Telegram in one tap, then pick what you want to hear about.
         </p>
-        <Button onClick={login} className="bg-brand font-semibold text-brand-text-on hover:bg-brand/90">
+        <Button type="button" onClick={() => login()} className="bg-brand font-semibold text-brand-text-on hover:bg-brand/90">
           Sign in
         </Button>
       </Card>

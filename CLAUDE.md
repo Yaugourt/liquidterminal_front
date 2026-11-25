@@ -117,7 +117,7 @@ Hard rules:
 
 ## Gotchas
 
-- Login buttons: `onClick={() => login()}` with `type="button"`, not `onClick={login}`. React passes the click event as first argument and `login` would read it as credentials, so Privy never opens.
+- Login buttons: `onClick={() => login()}` with `type="button"`, never `onClick={login}`. React passes the click event as first argument: the `login` of `useAuthContext` reads it as credentials and Privy never opens. The `login` of `usePrivy` accepts an event (checked 2026-11-25); write both the same way.
 - Client pages read route params with `useParams()`; `params` is a Promise.
 - A panel or tab that owns data hooks is mounted once on first open, then hidden or shown. Mounting and unmounting on each toggle fires its requests again.
 - Do not use `scrollIntoView` to center a tab in a strip: it can scroll the page sideways. Scroll the strip's container.
